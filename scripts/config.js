@@ -1,9 +1,4 @@
-/****************************************************
- * ADD BETTER ROOF CONFIGURATION TO THE TILE CONFIG *
- ****************************************************/
-
 Hooks.on("renderTileConfig", (app, html, data) => {
-  let tile = canvas.foreground.get(app.object.id)
     let heightRange = app.object.getFlag(
       _levelsModuleName,
       "heightRange"
@@ -11,7 +6,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 
   let newHtml = `
   <div class="form-group">
-  <label for="heightRange">Height Range<span class="units">(Pixels)</span></label>
+  <label for="heightRange">${game.i18n.localize("levels.tilecoonfig.range.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
   <div class="form-fields">
       <input type="number" name="heightRange" value="${heightRange}" step="1">
   </div>

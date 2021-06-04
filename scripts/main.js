@@ -15,7 +15,9 @@ Hooks.on("sightRefresh", () => {
   _levels.computeTokens(
     tokensState,
     cToken.data.elevation,
-    holes
+    holes,
+    cToken.data.elevation,
+    cToken.id
   );
   allTiles.forEach((tile)=>{
     _levels.computeTile(tile,_levels.getPositionRelativeToTile(cToken.data.elevation, tile))

@@ -81,12 +81,14 @@ class Levels {
     }
   }
 
-  computeTokens(tokens, elevation, holes) {
+  computeTokens(tokens, elevation, holes,cTokenElev,ctokenId) {
     tokens.forEach((t) => {
-      if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
-        let isInHole = this.isTokenInHole(t, holes);
-        if (!isInHole || (t.token.elevation <= isInHole.range[1] && t.token.elevation >= isInHole.range[0])) {
-          t.token.visible = false;
+      if(t.token.id != ctokenId){
+        if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
+          let isInHole = this.isTokenInHole(t, holes);
+          if (!isInHole || (t.token.data.elevation <= isInHole.range[1] && t.token.data.elevation >= isInHole.range[0] && !(cTokenElev <= isInHole.range[1] && cTokenElev >= isInHole.range[0]))) {
+            t.token.visible = false;
+          }
         }
       }
     });
