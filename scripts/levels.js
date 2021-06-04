@@ -200,7 +200,7 @@ class Levels {
     );
     holeDrawings.forEach((drawing) => {
       let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
-      let range = drawing.data.text.split("|")[1].split(".");
+      let range = drawing.data.text.split("|")[1].split(",");
       holes.push({ poly: p, range: [parseInt(range[0]),parseInt(range[1])] });
     });
     return holes;
