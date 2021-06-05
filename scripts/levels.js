@@ -16,6 +16,7 @@ class Levels {
   static get() {
     Levels._instance = new Levels();
     canvas.background.addChild(Levels._instance.floorContainer);
+    //canvas.lighting.coloration.addChild(Levels._instance.occlusionContainer);
     return Levels._instance;
   }
 
@@ -165,6 +166,28 @@ class Levels {
     sprite.name = tile.id;
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
+  }
+
+  occludeLights(tileIndex) {
+    let tile = tileIndex.tile;
+    let oldSprite = this.occlusionContainer.children.find((c) => c.name == tile.id);
+    let tileImg = tile.children[0];
+    if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
+    let sprite = new PIXI.Sprite.from(tileImg.texture);
+    sprite.isSprite = true;
+    sprite.width = tile.data.width;
+    sprite.height = tile.data.height;
+    sprite.position = tile.position;
+    sprite.position.x += tileImg.x;
+    sprite.position.y += tileImg.y;
+    sprite.anchor = tileImg.anchor;
+    sprite.angle = tileImg.angle;
+    sprite.alpha = 1;
+    sprite.name = tile.id;
+    sprite.tint = 0x000000
+    this.occlusionContainer.spriteIndex[tile.id] = sprite;
+    this.occlusionContainer.addChild(sprite);
+    
   }
 
   removeTempTile(tileIndex) {

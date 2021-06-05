@@ -28,7 +28,7 @@ Hooks.on("sightRefresh", () => {
 });
 
 Hooks.on("updateToken", (token, updates) => {
-  if ("elevation" in updates) canvas.sight.refresh();
+  if ("elevation" in updates || "x" in updates || "y" in updates) canvas.sight.refresh();
 });
 
 Hooks.on("controlToken", (token, contorlled) => {
