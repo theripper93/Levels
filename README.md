@@ -19,7 +19,6 @@ Using the module wall height in conjunction with levels is highly suggested
 
 Your tokens will change levels by changing their elevation, you can also setup zones with macros using multi level tokens
 
-[Video Link](https://streamable.com/txjm6x)
 
 ![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelstileconfig.jpg)
 
