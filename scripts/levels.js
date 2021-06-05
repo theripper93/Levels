@@ -299,8 +299,7 @@ class Levels {
   }
 
   removeTempToken(token) {
-    let tile = token;
-    let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
+    let sprite = this.floorContainer.children.find((c) => c.name == token.id);
     if (sprite) this.floorContainer.removeChild(sprite);
   }
 
