@@ -25,7 +25,3 @@ Your tokens will change levels by changing their elevation, you can also setup z
 ![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelstileconfig.jpg)
 
 ![alt text](https://raw.githubusercontent.com/theripper93/Levels/main/wiki/holesdconfig.jpg)
-
-![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelsdm2.png)
-
-![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelsdm1.png)
