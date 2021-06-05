@@ -1,3 +1,8 @@
+Hooks.on("ready",()=>{
+  libWrapper.register(_levelsModuleName,"Token.prototype.refresh", levelsTokenRefresh, "OVERRIDE")
+  libWrapper.register(_levelsModuleName,"Token.prototype._onMovementFrame", _levelsOnMovementFrame, "OVERRIDE")
+})
+
 Hooks.on("renderTileConfig", (app, html, data) => {
     let heightRange = app.object.getFlag(
       _levelsModuleName,

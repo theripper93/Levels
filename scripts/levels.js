@@ -15,8 +15,8 @@ class Levels {
 
   static get() {
     Levels._instance = new Levels();
+    Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
-    //canvas.lighting.coloration.addChild(Levels._instance.occlusionContainer);
     return Levels._instance;
   }
 
@@ -82,25 +82,55 @@ class Levels {
     }
   }
 
-  computeTokens(tokens, elevation, holes,cTokenElev,ctokenId) {
+  computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
     tokens.forEach((t) => {
-      if(t.token.id != ctokenId){
+      if (t.token.id != ctokenId) {
         if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
           let isInHole = this.isTokenInHole(t, holes);
-          if (!isInHole || (t.token.data.elevation <= isInHole.range[1] && t.token.data.elevation >= isInHole.range[0] && !(cTokenElev <= isInHole.range[1] && cTokenElev >= isInHole.range[0]))) {
+          if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
+            t.token.levelsHidden = true;
+            t.token.icon.alpha = 0;
+            if (!this.floorContainer.children.find((c) => c.name == t.token.id))
+              this.getTokenIconSprite(t.token);
+          } else {
             t.token.visible = false;
+            this.removeTempToken(t.token);
           }
+        } else {
+          t.token.levelsHidden = false;
+          t.token.icon.alpha = 1;
+          this.removeTempToken(t.token);
         }
       }
     });
   }
 
+  isInsideHoleRange(isInHole, t, cTokenElev) {
+    return (
+      !isInHole ||
+      (t.token.data.elevation <= isInHole.range[1] &&
+        t.token.data.elevation >= isInHole.range[0] &&
+        !(cTokenElev <= isInHole.range[1] && cTokenElev >= isInHole.range[0]))
+    );
+  }
+
   isTokenInHole(t, holes) {
-    for(let hole of holes){
-      if ((t.range[1] <= hole.range[1] && t.range[0] >= hole.range[0]) && hole.poly.contains(t.token.center.x,t.token.center.y)) {
+    let cs = canvas.scene.dimensions.size;
+    let th = t.token.height;
+    let tw = t.token.width;
+    for (let hole of holes) {
+      if (
+        t.range[1] <= hole.range[1] &&
+        t.range[0] >= hole.range[0] &&
+        (hole.poly.contains(t.token.center.x, t.token.center.y) ||
+          hole.poly.contains(t.token.x + tw, t.token.y) ||
+          hole.poly.contains(t.token.x, t.token.y + th) ||
+          hole.poly.contains(t.token.x + tw, t.token.y + th) ||
+          hole.poly.contains(t.token.x, t.token.y))
+      ) {
         return hole;
       }
-    };
+    }
     return false;
   }
 
@@ -164,13 +194,16 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
+    sprite.zIndex = tileIndex.range[1];
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
   }
 
   occludeLights(tileIndex) {
     let tile = tileIndex.tile;
-    let oldSprite = this.occlusionContainer.children.find((c) => c.name == tile.id);
+    let oldSprite = this.occlusionContainer.children.find(
+      (c) => c.name == tile.id
+    );
     let tileImg = tile.children[0];
     if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
@@ -184,10 +217,9 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
-    sprite.tint = 0x000000
+    sprite.tint = 0x000000;
     this.occlusionContainer.spriteIndex[tile.id] = sprite;
     this.occlusionContainer.addChild(sprite);
-    
   }
 
   removeTempTile(tileIndex) {
@@ -224,7 +256,7 @@ class Levels {
     holeDrawings.forEach((drawing) => {
       let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
       let range = drawing.data.text.split("|")[1].split(",");
-      holes.push({ poly: p, range: [parseInt(range[0]),parseInt(range[1])] });
+      holes.push({ poly: p, range: [parseInt(range[0]), parseInt(range[1])] });
     });
     return holes;
   }
@@ -235,6 +267,41 @@ class Levels {
       globalPoints.push(p[0] + drawing.x, p[1] + drawing.y);
     });
     return globalPoints;
+  }
+
+  getTokenIconSprite(token, x, y, rotate) {
+    let oldSprite = this.floorContainer.children.find((c) => c.name == token.id);
+    let icon = token.icon;
+    if (
+      token._controlled ||
+      (oldSprite && !rotate) ||
+      !icon ||
+      !icon.texture.baseTexture
+    )
+      return;
+    let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
+    sprite.isSprite = true;
+    sprite.width = token.data.width * canvas.scene.dimensions.size;
+    sprite.height = token.data.height * canvas.scene.dimensions.size;
+    sprite.position.x = x || token.position.x;
+    sprite.position.y = y || token.position.y;
+    sprite.position.x += icon.x;
+    sprite.position.y += icon.y;
+    sprite.anchor = icon.anchor;
+    sprite.angle = icon.angle;
+    sprite.alpha = 1;
+    sprite.name = token.id;
+    sprite.zIndex = token.data.elevation;
+    if (!oldSprite) {
+      this.floorContainer.spriteIndex[token.id] = sprite;
+      this.floorContainer.addChild(sprite);
+    }
+  }
+
+  removeTempToken(token) {
+    let tile = token;
+    let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
+    if (sprite) this.floorContainer.removeChild(sprite);
   }
 
   /*****************************************************
