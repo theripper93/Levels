@@ -9,7 +9,7 @@ Create maps multiple vertical levels
 
 * Tiles: You can set the elevation range of a tile through the overhead tile config, set it as a range like 5,15 for example. The tile must be Overehead and must have a Better Roofs mode enabled (set occlusion to Fade for best results)
 
-* Drawings: to create a hole (for example a balcony) create a POLYGON, then in the text field input "levelsHole|0,20" (no qoutes) 0,20 in this example is the range of the hole.
+* Drawings: to create a hole (for example a balcony) create a POLYGON or RECTANGLE, then in the text field input "levelsHole|0,20" (no qoutes) 0,20 in this example is the range of the hole.
 
 * Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section
 
