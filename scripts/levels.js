@@ -251,7 +251,9 @@ class Levels {
   getHoles() {
     let holes = [];
     let holeDrawings = canvas.drawings.placeables.filter(
-      (d) => d.data.text.includes("levelsHole") && d.data.points.length != 0
+      (d) =>
+        d.data.text &&
+        d.data.text.includes("levelsHole")
     );
     holeDrawings.forEach((drawing) => {
       let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
@@ -263,14 +265,29 @@ class Levels {
 
   adjustPolygonPoints(drawing) {
     let globalPoints = [];
-    drawing.data.points.forEach((p) => {
-      globalPoints.push(p[0] + drawing.x, p[1] + drawing.y);
-    });
+    if (drawing.data.points.length != 0) {
+      drawing.data.points.forEach((p) => {
+        globalPoints.push(p[0] + drawing.x, p[1] + drawing.y);
+      });
+    } else {
+      globalPoints = [
+        drawing.x,
+        drawing.y,
+        drawing.x + drawing.width,
+        drawing.y,
+        drawing.x + drawing.width,
+        drawing.y + drawing.height,
+        drawing.x,
+        drawing.y + drawing.height,
+      ];
+    }
     return globalPoints;
   }
 
   getTokenIconSprite(token, x, y, rotate) {
-    let oldSprite = this.floorContainer.children.find((c) => c.name == token.id);
+    let oldSprite = this.floorContainer.children.find(
+      (c) => c.name == token.id
+    );
     let icon = token.icon;
     if (
       token._controlled ||
