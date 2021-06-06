@@ -146,7 +146,7 @@ class Levels {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
     if (!tilesIsIn || tilesIsIn.length == 0) {
-      return { token: token, range: [0, elevation] };
+      return { token: token, range: [0, 1000] };//return { token: token, range: [0, elevation] };
     }
     let levelTile;
     tilesIsIn.forEach((t) => {
