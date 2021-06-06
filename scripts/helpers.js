@@ -1,4 +1,4 @@
-function levelsTokenRefresh() {
+function _levelsTokenRefresh() {
   // Token position and visibility
   if (!this._movement) this.position.set(this.data.x, this.data.y);
 
@@ -76,4 +76,79 @@ function _levelsOnMovementFrame(dt, anim, config) {
     sound: config.sound,
     fog: updateFog,
   });
+}
+
+function _lightingRefresh(darkness) {
+  const priorLevel = this.darknessLevel;
+  const darknessChanged = (darkness !== undefined) && (darkness !== priorLevel)
+  this.darknessLevel = darkness = Math.clamped(darkness ?? this.darknessLevel, 0, 1);
+
+  // Update lighting channels
+  if ( darknessChanged || !this.channels ) this.channels = this._configureChannels(darkness);
+
+  // Track global illumination
+  let refreshVision = false;
+  const globalLight = this.hasGlobalIllumination();
+  if ( globalLight !== this.globalLight ) {
+    this.globalLight = globalLight;
+    canvas.perception.schedule({sight: {initialize: true, refresh: true}});
+  }
+
+  // Clear currently rendered sources
+  const ilm = this.illumination;
+  ilm.lights.removeChildren();
+  const col = this.coloration;
+  col.removeChildren();
+  this._animatedSources = [];
+
+  // Tint the background color
+  canvas.app.renderer.backgroundColor = this.channels.canvas.hex;
+  ilm.background.tint = this.channels.background.hex;
+
+  // Render light sources
+  for ( let sources of [this.sources, canvas.sight.sources] ) {
+    for ( let source of sources ) {
+      // Check the active state of the light source
+      const isActive = source.skipRender ? false : darkness.between(source.darkness.min, source.darkness.max);
+      if ( source.active !== isActive ) refreshVision = true;
+      source.active = isActive;
+      if ( !source.active ) continue;
+
+      // Draw the light update
+      const light = source.drawLight();
+      if ( light ) ilm.lights.addChild(light);
+      const color = source.drawColor();
+      if ( color ) col.addChild(color);
+      if ( source.animation?.type ) this._animatedSources.push(source);
+    }
+  }
+
+  // Draw non-occluded roofs that block light
+  const displayRoofs = canvas.foreground.displayRoofs;
+  for ( let roof of canvas.foreground.roofs ) {
+    if ( !displayRoofs || roof.occluded) continue;
+    const si = roof.getRoofSprite();
+    if ( !si ) continue;
+
+    // Block illumination
+    si.tint = this.channels.background.hex;
+    this.illumination.lights.addChild(si)
+
+    // Block coloration
+    const sc = roof.getRoofSprite();
+    sc.tint = 0x000000;
+    this.coloration.addChild(sc);
+  }
+
+  // Refresh vision if necessary
+  if ( refreshVision ) canvas.perception.schedule({sight: {refresh: true}});
+
+  // Refresh audio if darkness changed
+  if ( darknessChanged ) {
+    this._onDarknessChange(darkness, priorLevel);
+    canvas.sounds._onDarknessChange(darkness, priorLevel);
+  }
+
+  // Dispatch a hook that modules can use
+  Hooks.callAll("lightingRefresh", this);
 }

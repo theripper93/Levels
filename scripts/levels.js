@@ -7,6 +7,7 @@ class Levels {
     this.DEBUG = false;
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
+    this.occlusionIndex = {};
   }
 
   /**********************************************
@@ -42,6 +43,7 @@ class Levels {
         let rangeFlag = tile.document.getFlag(_levelsModuleName, "heightRange");
         if (!rangeFlag) continue;
         let range = rangeFlag.split(".");
+        if (range.length != 2) range = rangeFlag.split(",");
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
@@ -52,7 +54,7 @@ class Levels {
     return tiles;
   }
 
-  computeTile(tile, altitude) {
+  computeTile(tile, altitude, lights) {
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -146,7 +148,7 @@ class Levels {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
     if (!tilesIsIn || tilesIsIn.length == 0) {
-      return { token: token, range: [0, 1000] };//return { token: token, range: [0, elevation] };
+      return { token: token, range: [0, 1000] }; //return { token: token, range: [0, elevation] };
     }
     let levelTile;
     tilesIsIn.forEach((t) => {
@@ -178,6 +180,15 @@ class Levels {
     );
   }
 
+  async saveLightConfig(event) {
+    let html = this.offsetParent;
+    await event.data.setFlag(
+      _levelsModuleName,
+      "heightRange",
+      html.querySelectorAll("input[name ='heightRange']")[0].value
+    );
+  }
+
   mirrorTileInBackground(tileIndex) {
     let tile = tileIndex.tile;
     let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
@@ -199,14 +210,128 @@ class Levels {
     this.floorContainer.addChild(sprite);
   }
 
-  occludeLights(tileIndex) {
+  _onElevationChangeUpdate() {
+    let perfEnd,perfStart; if(_levels.DEBUG) perfStart = performance.now()
+    let cToken = canvas.tokens.controlled[0];
+    if (!cToken) return;
+    let allTiles = this.findAllTiles();
+    let lights = this.getLights();
+    let holes = this.getHoles();
+    allTiles.forEach((tile) => {
+      this.clearLights(lights)
+      this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
+      this.computeTile(tile,_levels.getPositionRelativeToTile(cToken.data.elevation, tile),lights)
+    });
+    if(_levels.DEBUG){perfEnd = performance.now();console.log(`Levels _onElevationChangeUpdate took ${perfEnd-perfStart} ms, FPS:${Math.round(canvas.app.ticker.FPS)}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`)} 
+
+  }
+
+  clearLights(lights){
+    lights.forEach((lightIndex) => {
+      lightIndex.light.source.skipRender = false;
+    })
+  }
+
+  computeLightsForTile(tile, lights, elevation, holes) {
+    let lightsToOcclude = [];
+    let lightsToUnocclude = [];
+    lights.forEach((lightIndex) => {
+      let whereIsTheLight = this.getLightPositionRelativeToTile(
+        tile,
+        lightIndex,
+        elevation,
+        holes
+      );
+      switch (whereIsTheLight) {
+        case -1:
+          lightIndex.light.source.skipRender = false;
+          lightsToOcclude.push(lightIndex);
+          break;
+        case 0:
+          lightIndex.light.source.skipRender = false;
+          lightsToUnocclude.push(lightIndex);
+          break;
+        case 1:
+          lightIndex.light.source.skipRender = true;
+          break;
+      }
+    });
+    lights.forEach((light) => {
+      this.unoccludeLights(tile, light);
+    });
+    lightsToOcclude.forEach((light) => {
+      this.occludeLights(tile, light);
+    });
+    lightsToUnocclude.forEach((light) => {
+      this.unoccludeLights(tile, light);
+    });
+  }
+
+  /*****************************************************
+   * 1: LIGHT IS ABOVE -1: LIGHT IS BELOW 0 : SAME LEVEL *
+   *****************************************************/
+
+  getLightPositionRelativeToTile(tile, light, elevation, holes) {
+    if (
+      light.range[1] <= tile.range[1] &&
+      !(elevation >= light.range[0] && elevation <= light.range[1]) &&
+      elevation <= light.range[1]
+    )
+      return 1;
+    if (
+      light.range[0] >= tile.range[0] &&
+      light.range[1] <= tile.range[1] &&
+      elevation >= light.range[0] &&
+      elevation <= light.range[1]
+    )
+      return 0;
+    if (
+      light.range[1] <= tile.range[0] &&
+      elevation >= tile.range[0] &&
+      elevation <= tile.range[1]
+    ) {
+      return this.lightIluminatesHole(light, holes, elevation) ? -1 : 1;
+    }
+  }
+
+  lightIluminatesHole(light, holes, elevation) {
+    for (let hole of holes) {
+      for (let i = 0; i < light.light.source.fov.points.length; i += 2) {
+        if (
+          elevation <= hole.range[1] &&
+          elevation >= hole.range[0] &&
+          hole.poly.contains(
+            light.light.source.fov.points[i],
+            light.light.source.fov.points[i + 1]
+          )
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  occludeLights(tileIndex, light) {
     let tile = tileIndex.tile;
-    let oldSprite = this.occlusionContainer.children.find(
+    let oldSprite = light.light.source.coloration.children.find(
       (c) => c.name == tile.id
     );
+    let addChild = oldSprite ? false : true;
     let tileImg = tile.children[0];
-    if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
-    let sprite = new PIXI.Sprite.from(tileImg.texture);
+    if (!tileImg || !tileImg.texture.baseTexture) return;
+    let sprite = this.getTileSprite(oldSprite, tileImg, tile);
+    sprite.tint = 0x000000;
+    let Illumsprite = this.getTileSprite(oldSprite, tileImg, tile);
+    Illumsprite.tint = canvas.lighting.channels.bright.hex;
+    if (addChild) {
+      light.light.source.coloration.addChild(sprite);
+      light.light.source.illumination.addChild(Illumsprite);
+    }
+  }
+
+  getTileSprite(oldSprite, tileImg, tile) {
+    let sprite = oldSprite || new PIXI.Sprite.from(tileImg.texture);
     sprite.isSprite = true;
     sprite.width = tile.data.width;
     sprite.height = tile.data.height;
@@ -217,9 +342,44 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
-    sprite.tint = 0x000000;
-    this.occlusionContainer.spriteIndex[tile.id] = sprite;
-    this.occlusionContainer.addChild(sprite);
+    return sprite;
+  }
+
+  unoccludeLights(tileIndex, light) {
+    let tile = tileIndex.tile;
+    let sprite = light.light.source.coloration.children.find(
+      (c) => c.name == tile.id
+    );
+    let illumSprite = light.light.source.illumination.children.find(
+      (c) => c.name == tile.id
+    );
+    //if(!sprite) return
+    light.light.source.coloration.removeChild(sprite);
+    light.light.source.illumination.removeChild(illumSprite);
+    light.light.source.coloration.removeChild(this.occlusionIndex["HideMask"]);
+    //light.light.source.illumination.removeChild(this.occlusionIndex["HideMask"]);
+  }
+
+  hideLighs(tileIndex, lights) {
+    if (!this.occlusionIndex["HideMask"]) {
+      let g = new PIXI.Graphics();
+      g.beginFill().drawRect(
+        0,
+        0,
+        canvas.dimensions.width,
+        canvas.dimensions.height
+      );
+      let tex = canvas.app.renderer.generateTexture(g);
+      let p = new PIXI.Sprite.from(tex);
+      p.tint = 0x000000;
+      this.occlusionIndex["HideMask"] = p;
+    }
+    lights.forEach((lightIndex) => {
+      lightIndex.light.source.coloration.addChild(
+        this.occlusionIndex["HideMask"]
+      );
+      //lightIndex.light.source.illumination.addChild(this.occlusionIndex["HideMask"]);
+    });
   }
 
   removeTempTile(tileIndex) {
@@ -251,9 +411,7 @@ class Levels {
   getHoles() {
     let holes = [];
     let holeDrawings = canvas.drawings.placeables.filter(
-      (d) =>
-        d.data.text &&
-        d.data.text.includes("levelsHole")
+      (d) => d.data.text && d.data.text.includes("levelsHole")
     );
     holeDrawings.forEach((drawing) => {
       let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
@@ -261,6 +419,21 @@ class Levels {
       holes.push({ poly: p, range: [parseInt(range[0]), parseInt(range[1])] });
     });
     return holes;
+  }
+
+  getLights() {
+    let lights = [];
+    canvas.lighting.placeables.forEach((light) => {
+      let flag = light.document.getFlag(_levelsModuleName, "heightRange");
+      if (flag && flag != 0) {
+        let range = flag.split(",");
+        lights.push({
+          light: light,
+          range: [parseInt(range[0]), parseInt(range[1])],
+        });
+      }
+    });
+    return lights;
   }
 
   adjustPolygonPoints(drawing) {

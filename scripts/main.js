@@ -19,10 +19,6 @@ Hooks.on("sightRefresh", () => {
     cToken.data.elevation,
     cToken.id
   );
-  allTiles.forEach((tile)=>{
-    _levels.computeTile(tile,_levels.getPositionRelativeToTile(cToken.data.elevation, tile))
-  })
-
   if(_levels.DEBUG){perfEnd = performance.now();console.log(`Levels compute took ${perfEnd-perfStart} ms, FPS:${Math.round(canvas.app.ticker.FPS)}, Elevation: ${cToken.data.elevation} TokensState: `,tokensState)} 
 
 });
@@ -32,6 +28,9 @@ Hooks.on("updateToken", (token, updates) => {
   if ("elevation" in updates || "x" in updates || "y" in updates || "rotation" in updates) {
     _levels.getTokenIconSprite(canvas.tokens.get(token.id),updates.x,updates.y,"rotation" in updates)
     canvas.sight.refresh();
+  }
+  if("elevation" in updates){
+    _levels._onElevationChangeUpdate();
   }
 });
 
@@ -47,5 +46,8 @@ Hooks.on("controlToken", (token, contorlled) => {
         _levels.removeTempToken(t)
       }
     })
+  }else{
+    _levels._onElevationChangeUpdate();
   }
 });
+
