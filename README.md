@@ -15,6 +15,8 @@ Create maps multiple vertical levels
 
 * Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section
 
+* Walls: The building needs to be walled for better roof to understand where the building is (you can enable building preview in better roofs module settings to check that it's calculated correctly)
+
 **Wall Height**
 
 Using the module wall height in conjunction with levels is highly suggested
