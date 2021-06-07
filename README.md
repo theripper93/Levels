@@ -11,6 +11,8 @@ Create maps multiple vertical levels
 
 * Drawings: to create a hole (for example a balcony) create a POLYGON or RECTANGLE, then in the text field input "levelsHole|0,20" (no qoutes) 0,20 in this example is the range of the hole.
 
+* Lights: You can set the elevation range of a light through the overhead tile config, set it as a range like 5,15 for example
+
 * Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section
 
 **Wall Height**
