@@ -1,5 +1,5 @@
 /***********************************************************************************
- * BETTERROOFS CLASS, CONTAINS THE DATA NEEDED FOR FASTER SIGHT REFRESH PROCESSING *
+ * LEVELS CLASS, CONTAINS THE DATA NEEDED FOR FASTER SIGHT REFRESH PROCESSING *
  ***********************************************************************************/
 
 class Levels {
@@ -11,7 +11,7 @@ class Levels {
   }
 
   /**********************************************
-   * INITIALIZE THE ROOFS FOR THE FIRST TIME *
+   * INITIALIZE LEVELS FOR THE FIRST TIME *
    **********************************************/
 
   static get() {
@@ -92,7 +92,7 @@ class Levels {
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
             t.token.icon.alpha = 0;
-            if (!this.floorContainer.children.find((c) => c.name == t.token.id))
+            //if (!this.floorContainer.children.find((c) => c.name == t.token.id))
               this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
@@ -464,7 +464,7 @@ class Levels {
     let icon = token.icon;
     if (
       token._controlled ||
-      (oldSprite && !rotate) ||
+      //(oldSprite && !rotate) ||
       !icon ||
       !icon.texture.baseTexture
     )
@@ -479,7 +479,7 @@ class Levels {
     sprite.position.y += icon.y;
     sprite.anchor = icon.anchor;
     sprite.angle = icon.angle;
-    sprite.alpha = 1;
+    sprite.alpha = token.visible ? 1 : 0;
     sprite.name = token.id;
     sprite.zIndex = token.data.elevation;
     if (!oldSprite) {

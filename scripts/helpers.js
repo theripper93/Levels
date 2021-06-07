@@ -152,3 +152,37 @@ function _lightingRefresh(darkness) {
   // Dispatch a hook that modules can use
   Hooks.callAll("lightingRefresh", this);
 }
+
+function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
+  const visionSources = this.sources;
+  const lightSources = canvas.lighting.sources;
+  if ( !visionSources.size ) return game.user.isGM;
+
+  // Determine the array of offset points to test
+  const t = tolerance;
+  const offsets = t > 0 ? [[0, 0],[-t,0],[t,0],[0,-t],[0,t],[-t,-t],[-t,t],[t,t],[t,-t]] : [[0,0]];
+  const points = offsets.map(o => new PIXI.Point(point.x + o[0], point.y + o[1]));
+
+  // Test that a point falls inside a line-of-sight polygon
+  let inLOS = false;
+  for ( let source of visionSources.values() ) {
+    if ( points.some(p => source.los.contains(p.x, p.y) ) ) {
+      inLOS = true;
+      break;
+    }
+  }
+  if ( !inLOS ) return false;
+
+  // If global illumination is active, nothing more is required
+  if ( canvas.lighting.globalLight ) return true;
+
+  // Test that a point is also within some field-of-vision polygon
+  for ( let source of visionSources.values() ) {
+    if ( points.some(p => source.fov.contains(p.x, p.y)) ) return true;
+  }
+  for ( let source of lightSources.values() ) {
+    if(source.skipRender) continue
+    if ( points.some(p => source.fov.contains(p.x, p.y)) ) return true;
+  }
+  return false;
+}

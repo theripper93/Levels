@@ -3,6 +3,7 @@ let _levels;
 
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
+  if(canvas.tokens.controlled[0])_levels._onElevationChangeUpdate();
 });
 
 Hooks.on("sightRefresh", () => {
@@ -27,7 +28,7 @@ Hooks.on("updateToken", (token, updates) => {
   if(token._controlled) return
   if ("elevation" in updates || "x" in updates || "y" in updates || "rotation" in updates) {
     _levels.getTokenIconSprite(canvas.tokens.get(token.id),updates.x,updates.y,"rotation" in updates)
-    canvas.sight.refresh();
+    //canvas.sight.refresh();
   }
   if("elevation" in updates){
     _levels._onElevationChangeUpdate();
@@ -35,7 +36,7 @@ Hooks.on("updateToken", (token, updates) => {
 });
 
 Hooks.on("controlToken", (token, contorlled) => {
-  if(!contorlled){
+  if(!contorlled && game.user.isGM){
     canvas.foreground.placeables.forEach((t)=>{
       _levels.removeTempTile(t);
     })
