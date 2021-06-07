@@ -13,7 +13,7 @@ Create maps multiple vertical levels
 
 * Lights: You can set the elevation range of a light through the overhead tile config, set it as a range like 5,15 for example
 
-* Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section
+* Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section **ALL RANGES REQUIRE 2 VALUES**
 
 * Walls: The building needs to be walled for better roof to understand where the building is (you can enable building preview in better roofs module settings to check that it's calculated correctly)
 
