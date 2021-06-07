@@ -84,6 +84,32 @@ class Levels {
     }
   }
 
+  refreshTokens() {
+    let cToken = canvas.tokens.controlled[0];
+    if (!cToken) return;
+    let perfEnd, perfStart;
+    if (_levels.DEBUG) perfStart = performance.now();
+    let allTiles = _levels.findAllTiles();
+    let holes = _levels.getHoles();
+    let tokensState = _levels.getTokensState(allTiles);
+    _levels.computeTokens(
+      tokensState,
+      cToken.data.elevation,
+      holes,
+      cToken.data.elevation,
+      cToken.id
+    );
+    if (_levels.DEBUG) {
+      perfEnd = performance.now();
+      console.log(
+        `Levels compute took ${perfEnd - perfStart} ms, FPS:${Math.round(
+          canvas.app.ticker.FPS
+        )}, Elevation: ${cToken.data.elevation} TokensState: `,
+        tokensState
+      );
+    }
+  }
+
   computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
     tokens.forEach((t) => {
       if (t.token.id != ctokenId) {
@@ -93,7 +119,7 @@ class Levels {
             t.token.levelsHidden = true;
             t.token.icon.alpha = 0;
             //if (!this.floorContainer.children.find((c) => c.name == t.token.id))
-              this.getTokenIconSprite(t.token);
+            this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
             this.removeTempToken(t.token);
@@ -211,25 +237,38 @@ class Levels {
   }
 
   _onElevationChangeUpdate() {
-    let perfEnd,perfStart; if(_levels.DEBUG) perfStart = performance.now()
+    let perfEnd, perfStart;
+    if (_levels.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0];
     if (!cToken) return;
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
     let holes = this.getHoles();
     allTiles.forEach((tile) => {
-      this.clearLights(lights)
+      this.clearLights(lights);
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
-      this.computeTile(tile,_levels.getPositionRelativeToTile(cToken.data.elevation, tile),lights)
+      this.computeTile(
+        tile,
+        _levels.getPositionRelativeToTile(cToken.data.elevation, tile),
+        lights
+      );
     });
-    if(_levels.DEBUG){perfEnd = performance.now();console.log(`Levels _onElevationChangeUpdate took ${perfEnd-perfStart} ms, FPS:${Math.round(canvas.app.ticker.FPS)}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`)} 
-
+    if (_levels.DEBUG) {
+      perfEnd = performance.now();
+      console.log(
+        `Levels _onElevationChangeUpdate took ${
+          perfEnd - perfStart
+        } ms, FPS:${Math.round(
+          canvas.app.ticker.FPS
+        )}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`
+      );
+    }
   }
 
-  clearLights(lights){
+  clearLights(lights) {
     lights.forEach((lightIndex) => {
       lightIndex.light.source.skipRender = false;
-    })
+    });
   }
 
   computeLightsForTile(tile, lights, elevation, holes) {
