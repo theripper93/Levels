@@ -186,3 +186,90 @@ function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
   }
   return false;
 }
+
+function _levelsGetRayCollisions(ray, {type="movement", mode="all", _performance}={},roomTest) {
+  // Define inputs
+  const angleBounds = [ray.angle - (Math.PI/2), ray.angle + (Math.PI/2)];
+  const isClosest = mode === "closest";
+  const isAny = mode === "any";
+  const wallType = this.constructor._mapWallCollisionType(type);
+
+  // Track collisions
+  const collisions = {};
+  let collided = false;
+
+  // Track quadtree nodes and walls which have already been tested
+  const testedNodes = new Set();
+  const testedWalls = new Set();
+
+  // Expand the ray outward from the origin, identifying candidate walls as we go
+  const stages = 4;
+  for ( let i=1; i<=stages; i++ ) {
+
+    // Determine and iterate over the (unordered) set of nodes to test at this level of projection
+    const limit = i < stages ? ray.project(i / stages) : ray.B;
+    const bounds = new NormalizedRectangle(ray.A.x, ray.A.y, limit.x - ray.A.x, limit.y - ray.A.y);
+    const nodes = this.quadtree.getLeafNodes(bounds);
+    for ( let n of nodes ) {
+      if ( testedNodes.has(n) ) continue;
+      testedNodes.add(n);
+
+      // Iterate over walls in the node to test
+      const objects = n.objects;
+      for ( let o of objects ) {
+        const w = o.t;
+        const wt = w.data[wallType];
+        if (testedWalls.has(w)) continue;
+        testedWalls.add(w);
+
+        // Skip walls which don't fit the criteria
+        if ( wt === CONST.WALL_SENSE_TYPES.NONE ) continue;
+        if ((w.data.door > CONST.WALL_DOOR_TYPES.NONE) && (w.data.ds === CONST.WALL_DOOR_STATES.OPEN)) continue;
+        if (w.direction !== null) { // Directional walls where the ray angle is not in the same hemisphere
+          if (!w.isDirectionBetweenAngles(...angleBounds)) continue;
+        }
+
+        // Test a single wall
+        const x = WallsLayer.testWall(ray, w,roomTest);
+        if (_performance) _performance.tests++;
+        if (!x) continue;
+        if (isAny) return true;
+
+        // Update a known collision point to flag the sense type
+        const pt = `${x.x},${x.y}`;
+        let c = collisions[pt];
+        if (c) {
+          c.type = Math.min(wt, c.type);
+          for ( let n of o.n ) c.nodes.push(n);
+        } else {
+          x.type = wt;
+          x.nodes = Array.from(o.n);
+          collisions[pt] = x;
+          collided = true;
+        }
+      }
+    }
+
+    // At this point we may be done if the closest collision has been fully tested
+    if ( isClosest && collided ) {
+      const closest = this.getClosestCollision(Object.values(collisions));
+      if ( closest && closest.nodes.every(n => testedNodes.has(n) ) ) {
+        return closest;
+      }
+    }
+  }
+
+  // Return the collision result
+  if ( isAny ) return false;
+  if ( isClosest ) {
+    const closest = this.getClosestCollision(Object.values(collisions));
+    return closest || null;
+  }
+  return Object.values(collisions);
+}
+
+function _levelsCheckCollision(ray, {type="movement", mode="any"}={}, roomTest=false) {
+  if ( !canvas.grid.hitArea.contains(ray.B.x, ray.B.y) ) return true;
+  if ( !canvas.scene.data.walls.size ) return false;
+  return this.getRayCollisions(ray, {type, mode},roomTest);
+}

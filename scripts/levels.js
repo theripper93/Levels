@@ -16,6 +16,19 @@ class Levels {
     canvas.background.addChild(Levels._instance.floorContainer);
     return Levels._instance;
   }
+  getTileBoundingBox(tile) {
+    let tileZZ = {
+      x: tile.center.x - tile.width / 2,
+      y: tile.center.y - tile.height / 2,
+    };
+    let tileCorners = [
+      { x: tileZZ.x, y: tileZZ.y }, //tl
+      { x: tileZZ.x + tile.width, y: tileZZ.y }, //tr
+      { x: tileZZ.x + tile.width, y: tileZZ.y + tile.height }, //br
+      { x: tileZZ.x, y: tileZZ.y + tile.height }, //bl
+    ];
+    return new PIXI.Polygon(tileCorners)
+  }
 
   findRoomsTiles(token, allTiles) {
     let tiles = [];
@@ -40,12 +53,13 @@ class Levels {
         if (!rangeFlag) continue;
         let range = rangeFlag.split(".");
         if (range.length != 2) range = rangeFlag.split(",");
-        if (range.length != 2) continue
-        let range0 = parseInt(range[0])
-        let range1 = range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1])
+        if (range.length != 2) continue;
+        let range0 = parseInt(range[0]);
+        let range1 =
+          range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
         tiles.push({
           tile: tile,
-          poly: tile.roomPoly,
+          poly: this.getTileBoundingBox(tile),//tile.roomPoly,
           range: [range0, range1],
         });
       }
@@ -54,7 +68,7 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    if(tile.range[1] != 10000) tile.tile.visible=false
+    if (tile.range[1] != 10000) tile.tile.visible = false;
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -186,7 +200,7 @@ class Levels {
       return { token: token, range: levelTile.range };
     } else {
       levelTile = this.findCeiling(tilesIsIn);
-      return { token: token, range: [0, levelTile.range[0]-1] };
+      return { token: token, range: [0, levelTile.range[0] - 1] };
     }
   }
 
@@ -231,7 +245,7 @@ class Levels {
     });
     tilesIsIn.forEach((tile) => {
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
-    })
+    });
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -445,11 +459,12 @@ class Levels {
     let lights = [];
     canvas.lighting.placeables.forEach((light) => {
       let rangeFlag = light.document.getFlag(_levelsModuleName, "heightRange");
-      let range,range0,range1
-      if(rangeFlag) range = rangeFlag.split(",");
+      let range, range0, range1;
+      if (rangeFlag) range = rangeFlag.split(",");
       if (rangeFlag && rangeFlag != 0 && range.length == 2) {
-        range0 = parseInt(range[0])
-        range1 = range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1])
+        range0 = parseInt(range[0]);
+        range1 =
+          range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
         lights.push({
           light: light,
           range: [range0, range1],
@@ -516,13 +531,13 @@ class Levels {
     if (sprite) this.floorContainer.removeChild(sprite);
   }
 
-  hideAllTokensForPlayer(){
-    canvas.tokens.placeables.forEach((t)=>{
-      if(!t.actor.testUserPermission(game.user,2)){
-        t.visible=false
+  hideAllTokensForPlayer() {
+    canvas.tokens.placeables.forEach((t) => {
+      if (!t.actor.testUserPermission(game.user, 2)) {
+        t.visible = false;
         this.removeTempToken(t);
       }
-    })
+    });
   }
 
   /*****************************************************
@@ -535,32 +550,31 @@ class Levels {
     return 0;
   }
 
-  getWallHeightRange(wall){
+  getWallHeightRange(wall) {
     let wallRange = [
       wall.data.flags.wallHeight?.wallHeightBottom,
       wall.data.flags.wallHeight?.wallHeightTop,
     ];
-    if(!wallRange[0] && !wallRange[1]) return false
-    else return wallRange
+    if (!wallRange[0] && !wallRange[1]) return false;
+    else return wallRange;
   }
 
-  computeDoors(cToken){
-    if(!cToken && !game.user.isGM){
-      for ( let d of canvas.controls.doors.children ) {
-          d.visible=false
-        }
-        return
+  computeDoors(cToken) {
+    if (!cToken && !game.user.isGM) {
+      for (let d of canvas.controls.doors.children) {
+        d.visible = false;
       }
+      return;
+    }
 
-    if(!cToken) return
-    let tElev=cToken.data.elevation
-    for ( let d of canvas.controls.doors.children ) {
-      let range = this.getWallHeightRange(d.wall)
-      if(!range) continue
-      if(!(tElev>=range[0] && tElev<=range[1])){
-        d.visible=false
+    if (!cToken) return;
+    let tElev = cToken.data.elevation;
+    for (let d of canvas.controls.doors.children) {
+      let range = this.getWallHeightRange(d.wall);
+      if (!range) continue;
+      if (!(tElev >= range[0] && tElev <= range[1])) {
+        d.visible = false;
       }
-      
     }
   }
 }
