@@ -40,6 +40,7 @@ class Levels {
         if (!rangeFlag) continue;
         let range = rangeFlag.split(".");
         if (range.length != 2) range = rangeFlag.split(",");
+        if (range.length != 2) continue
         let range0 = parseInt(range[0])
         let range1 = range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1])
         tiles.push({
@@ -90,7 +91,7 @@ class Levels {
     if (_levels.DEBUG) perfStart = performance.now();
     let allTiles = _levels.findAllTiles();
     let holes = _levels.getHoles();
-    let tokensState = _levels.getTokensState(allTiles);
+    let tokensState = this.getTokensState(allTiles);
     _levels.computeTokens(
       tokensState,
       cToken.data.elevation,
@@ -189,29 +190,6 @@ class Levels {
     }
   }
 
-  async saveTileConfig(event) {
-    let html = this.offsetParent;
-    if (
-      !canvas.background.get(event.data.id) &&
-      !canvas.foreground.get(event.data.id)
-    )
-      return;
-    await event.data.setFlag(
-      _levelsModuleName,
-      "heightRange",
-      html.querySelectorAll("input[name ='heightRange']")[0].value
-    );
-  }
-
-  async saveLightConfig(event) {
-    let html = this.offsetParent;
-    await event.data.setFlag(
-      _levelsModuleName,
-      "heightRange",
-      html.querySelectorAll("input[name ='heightRange']")[0].value
-    );
-  }
-
   mirrorTileInBackground(tileIndex) {
     let tile = tileIndex.tile;
     let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
@@ -241,6 +219,7 @@ class Levels {
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
     let holes = this.getHoles();
+    let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     allTiles.forEach((tile) => {
       this.clearLights(lights);
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
@@ -250,6 +229,9 @@ class Levels {
         lights
       );
     });
+    tilesIsIn.forEach((tile) => {
+      this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
+    })
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -309,6 +291,7 @@ class Levels {
    *****************************************************/
 
   getLightPositionRelativeToTile(tile, light, elevation, holes) {
+    //if(!tile.poly.contains(light.light.center.x,light.light.center.y)) return
     if (
       light.range[1] <= tile.range[1] &&
       !(elevation >= light.range[0] && elevation <= light.range[1]) &&
@@ -461,12 +444,15 @@ class Levels {
   getLights() {
     let lights = [];
     canvas.lighting.placeables.forEach((light) => {
-      let flag = light.document.getFlag(_levelsModuleName, "heightRange");
-      if (flag && flag != 0) {
-        let range = flag.split(",");
+      let rangeFlag = light.document.getFlag(_levelsModuleName, "heightRange");
+      let range,range0,range1
+      if(rangeFlag) range = rangeFlag.split(",");
+      if (rangeFlag && rangeFlag != 0 && range.length == 2) {
+        range0 = parseInt(range[0])
+        range1 = range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1])
         lights.push({
           light: light,
-          range: [parseInt(range[0]), parseInt(range[1])],
+          range: [range0, range1],
         });
       }
     });
@@ -565,6 +551,8 @@ class Levels {
         }
         return
       }
+
+    if(!cToken) return
     let tElev=cToken.data.elevation
     for ( let d of canvas.controls.doors.children ) {
       let range = this.getWallHeightRange(d.wall)
