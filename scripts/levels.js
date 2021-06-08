@@ -206,7 +206,7 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
-    sprite.zIndex = tileIndex.range[1];
+    sprite.zIndex = tileIndex.range[0];
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
   }
