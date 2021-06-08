@@ -40,10 +40,12 @@ class Levels {
         if (!rangeFlag) continue;
         let range = rangeFlag.split(".");
         if (range.length != 2) range = rangeFlag.split(",");
+        let range0 = parseInt(range[0])
+        let range1 = range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1])
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
-          range: [parseInt(range[0]), parseInt(range[1])],
+          range: [range0, range1],
         });
       }
     }
@@ -51,6 +53,7 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
+    if(tile.range[1] != 10000) tile.tile.visible=false
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -108,7 +111,7 @@ class Levels {
 
   computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
     tokens.forEach((t) => {
-      if (t.token.id != ctokenId) {
+      if (t.token.id != ctokenId && !t.token.data.hidden) {
         if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
           let isInHole = this.isTokenInHole(t, holes);
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
@@ -525,6 +528,15 @@ class Levels {
   removeTempToken(token) {
     let sprite = this.floorContainer.children.find((c) => c.name == token.id);
     if (sprite) this.floorContainer.removeChild(sprite);
+  }
+
+  hideAllTokensForPlayer(){
+    canvas.tokens.placeables.forEach((t)=>{
+      if(!t.actor.testUserPermission(game.user,2)){
+        t.visible=false
+        this.removeTempToken(t);
+      }
+    })
   }
 
   /*****************************************************
