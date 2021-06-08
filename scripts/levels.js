@@ -548,4 +548,31 @@ class Levels {
     if (elevation > tile.range[1]) return -1;
     return 0;
   }
+
+  getWallHeightRange(wall){
+    let wallRange = [
+      wall.data.flags.wallHeight?.wallHeightBottom,
+      wall.data.flags.wallHeight?.wallHeightTop,
+    ];
+    if(!wallRange[0] && !wallRange[1]) return false
+    else return wallRange
+  }
+
+  computeDoors(cToken){
+    if(!cToken && !game.user.isGM){
+      for ( let d of canvas.controls.doors.children ) {
+          d.visible=false
+        }
+        return
+      }
+    let tElev=cToken.data.elevation
+    for ( let d of canvas.controls.doors.children ) {
+      let range = this.getWallHeightRange(d.wall)
+      if(!range) continue
+      if(!(tElev>=range[0] && tElev<=range[1])){
+        d.visible=false
+      }
+      
+    }
+  }
 }

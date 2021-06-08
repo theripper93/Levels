@@ -9,6 +9,7 @@ Hooks.on("canvasReady", () => {
 Hooks.on("sightRefresh", () => {
   if (_levels) {
     _levels.refreshTokens();
+    _levels.computeDoors(canvas.tokens.controlled[0]);
     if(!canvas.tokens.controlled[0])_levels.hideAllTokensForPlayer();
   }
 });
