@@ -23,8 +23,12 @@ Hooks.on("updateToken", (token, updates) => {
 
 Hooks.on("controlToken", (token, contorlled) => {
   if(!contorlled && game.user.isGM){
+    levelLigths = _levels.getLights()
     canvas.foreground.placeables.forEach((t)=>{
       _levels.removeTempTile(t);
+      levelLigths.forEach((light) => {
+        _levels.unoccludeLights(t, light,true);
+      });
     })
     canvas.tokens.placeables.forEach((t)=>{
       if(t.levelsHidden==true){
@@ -33,6 +37,7 @@ Hooks.on("controlToken", (token, contorlled) => {
         _levels.removeTempToken(t)
       }
     })
+    _levels.clearLights(_levels.getLights());
   }else{
     _levels._onElevationChangeUpdate();
   }

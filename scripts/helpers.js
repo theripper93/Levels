@@ -57,7 +57,7 @@ function _levelsOnMovementFrame(dt, anim, config) {
     tempTokenSprite.position.y += this.icon.y;
     tempTokenSprite.anchor = this.icon.anchor;
     tempTokenSprite.angle = this.icon.angle;
-    tempTokenSprite.alpha = 1;
+    tempTokenSprite.alpha = this.visible ? 1 : 0;
     tempTokenSprite.zIndex = this.data.elevation;
   }
   // Animate perception changes

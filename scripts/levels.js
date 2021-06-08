@@ -1,7 +1,3 @@
-/***********************************************************************************
- * LEVELS CLASS, CONTAINS THE DATA NEEDED FOR FASTER SIGHT REFRESH PROCESSING *
- ***********************************************************************************/
-
 class Levels {
   constructor() {
     this.DEBUG = false;
@@ -118,7 +114,6 @@ class Levels {
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
             t.token.icon.alpha = 0;
-            //if (!this.floorContainer.children.find((c) => c.name == t.token.id))
             this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
@@ -143,7 +138,6 @@ class Levels {
   }
 
   isTokenInHole(t, holes) {
-    let cs = canvas.scene.dimensions.size;
     let th = t.token.height;
     let tw = t.token.width;
     for (let hole of holes) {
@@ -263,6 +257,7 @@ class Levels {
         )}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`
       );
     }
+    canvas.lighting.refresh();
   }
 
   clearLights(lights) {
@@ -384,8 +379,8 @@ class Levels {
     return sprite;
   }
 
-  unoccludeLights(tileIndex, light) {
-    let tile = tileIndex.tile;
+  unoccludeLights(tileIndex, light, justTile = false) {
+    let tile = !justTile ? tileIndex.tile : tileIndex;
     let sprite = light.light.source.coloration.children.find(
       (c) => c.name == tile.id
     );
