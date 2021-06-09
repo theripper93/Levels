@@ -59,7 +59,7 @@ class Levels {
           range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
         tiles.push({
           tile: tile,
-          poly: this.getTileBoundingBox(tile),//tile.roomPoly,
+          poly: tile.roomPoly,
           range: [range0, range1],
         });
       }
@@ -256,6 +256,7 @@ class Levels {
         )}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`
       );
     }
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
     canvas.lighting.refresh();
   }
 

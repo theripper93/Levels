@@ -1,4 +1,6 @@
 {
     "levels.tilecoonfig.range.name": "Height Range",
-    "levels.tilecoonfig.range.unit": "Elevation"
+    "levels.tilecoonfig.range.unit": "Elevation",
+    "levels.wallconfig.hb.name": "Height Bottom",
+    "levels.wallconfig.ht.name": "Height Top"
 }

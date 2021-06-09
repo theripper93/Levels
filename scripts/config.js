@@ -5,6 +5,7 @@ Hooks.on("ready",()=>{
   libWrapper.register(_levelsModuleName,"SightLayer.prototype.testVisibility", _levelsTestVisibility, "OVERRIDE")
   libWrapper.register(_levelsModuleName,"WallsLayer.prototype.getRayCollisions", _levelsGetRayCollisions, "OVERRIDE")
   libWrapper.register(_levelsModuleName,"WallsLayer.prototype.checkCollision", _levelsCheckCollision, "OVERRIDE")
+  _betterRoofs.initializeRoofs();
 })
 
 Hooks.on("renderTileConfig", (app, html, data) => {

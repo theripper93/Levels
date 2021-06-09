@@ -3,14 +3,16 @@ let _levels;
 
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
-  if (canvas.tokens.controlled[0]) _levels._onElevationChangeUpdate();
+  if (canvas.tokens.controlled[0]) {
+    _levels._onElevationChangeUpdate();
+  }
 });
 
 Hooks.on("sightRefresh", () => {
   if (_levels) {
     _levels.refreshTokens();
     _levels.computeDoors(canvas.tokens.controlled[0]);
-    if(!canvas.tokens.controlled[0])_levels.hideAllTokensForPlayer();
+    if (!canvas.tokens.controlled[0]) _levels.hideAllTokensForPlayer();
   }
 });
 
@@ -33,7 +35,6 @@ Hooks.on("updateToken", (token, updates) => {
   }
   if ("elevation" in updates) {
     _levels._onElevationChangeUpdate();
-    canvas.lighting.placeables.forEach(l=>l.updateSource())
   }
 });
 
@@ -56,19 +57,19 @@ Hooks.on("controlToken", (token, contorlled) => {
     });
     _levels.clearLights(_levels.getLights());
   } else {
-    if(_levels) _levels._onElevationChangeUpdate();
+    if (_levels) _levels._onElevationChangeUpdate();
   }
 });
 
 Hooks.on("updateTile", (tile, updates) => {
-  if(canvas.tokens.controlled[0]){
+  console.log("updatetile");
+  if (canvas.tokens.controlled[0]) {
     if (_levels) {
-      let tileIndex = {tile:tile}
-      _levels.removeTempTile(tileIndex)
+      let tileIndex = { tile: tile };
+      _levels.removeTempTile(tileIndex);
       _levels.refreshTokens();
       _levels.computeDoors(canvas.tokens.controlled[0]);
       _levels._onElevationChangeUpdate();
     }
-    
   }
-})
+});
