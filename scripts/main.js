@@ -14,7 +14,6 @@ Hooks.on("sightRefresh", () => {
     _levels.computeDoors(cToken);
     if(!canvas.tokens.controlled[0] && !game.user.isGM){
       let ownedTokens = canvas.tokens.placeables.filter(t => t.actor && t.actor.testUserPermission(game.user, 2))
-      debugger
       let tokenPovs = []
       ownedTokens.forEach((t)=>{
         tokenPovs.push(_levels.refreshTokens(t));
@@ -76,13 +75,12 @@ Hooks.on("controlToken", (token, contorlled) => {
   } else {
     if (_levels && contorlled) _levels._onElevationChangeUpdate();
     if (_levels && !contorlled && token){ _levels._onElevationChangeUpdate(token);
-      _levels.lastReleasedToken=token
+      if(!game.user.isGM)_levels.lastReleasedToken=token
     }
   }
 });
 
 Hooks.on("updateTile", (tile, updates) => {
-  console.log("updatetile");
   if (canvas.tokens.controlled[0]) {
     if (_levels) {
       let tileIndex = { tile: tile };

@@ -4,7 +4,7 @@ class Levels {
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
-    this.lastReleasedToken = undefined
+    this.lastReleasedToken = undefined;
   }
 
   /**********************************************
@@ -28,7 +28,7 @@ class Levels {
       { x: tileZZ.x + tile.width, y: tileZZ.y + tile.height }, //br
       { x: tileZZ.x, y: tileZZ.y + tile.height }, //bl
     ];
-    return new PIXI.Polygon(tileCorners)
+    return new PIXI.Polygon(tileCorners);
   }
 
   findRoomsTiles(token, allTiles) {
@@ -58,10 +58,10 @@ class Levels {
         let range0 = parseInt(range[0]);
         let range1 =
           range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
-        if(range[1].toLowerCase()=="infinity"){
-          tile.isLevel=false
-        }else{
-          tile.isLevel=true
+        if (range[1].toLowerCase() == "infinity") {
+          tile.isLevel = false;
+        } else {
+          tile.isLevel = true;
         }
         tiles.push({
           tile: tile,
@@ -104,7 +104,7 @@ class Levels {
     }
   }
 
-  refreshTokens(overrideToken=undefined) {
+  refreshTokens(overrideToken = undefined) {
     let cToken = overrideToken || canvas.tokens.controlled[0];
     if (!cToken) return;
     let perfEnd, perfStart;
@@ -128,11 +128,11 @@ class Levels {
         tokensState
       );
     }
-    return tokenPov
+    return tokenPov;
   }
 
   computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
-    let tokenPov = []
+    let tokenPov = [];
     tokens.forEach((t) => {
       if (t.token.id != ctokenId && !t.token.data.hidden) {
         if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
@@ -140,22 +140,22 @@ class Levels {
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
             t.token.icon.alpha = 0;
-            tokenPov.push({token:t,visible:t.token.isVisible})
+            tokenPov.push({ token: t, visible: t.token.isVisible });
             this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
-            tokenPov.push({token:t,visible:false})
+            tokenPov.push({ token: t, visible: false });
             this.removeTempToken(t.token);
           }
         } else {
           t.token.levelsHidden = false;
           t.token.icon.alpha = 1;
-          tokenPov.push({token:t,visible:t.token.isVisible})
+          tokenPov.push({ token: t, visible: t.token.isVisible });
           this.removeTempToken(t.token);
         }
       }
     });
-    return tokenPov
+    return tokenPov;
   }
 
   isInsideHoleRange(isInHole, t, cTokenElev) {
@@ -198,7 +198,7 @@ class Levels {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
     if (!tilesIsIn || tilesIsIn.length == 0) {
-      return { token: token, range: [0, 1000] }; //return { token: token, range: [0, elevation] };
+      return { token: token, range: [0, Infinity] }; //return { token: token, range: [0, elevation] };
     }
     let levelTile;
     tilesIsIn.forEach((t) => {
@@ -237,7 +237,7 @@ class Levels {
     this.floorContainer.addChild(sprite);
   }
 
-  _onElevationChangeUpdate(overrideElevation=undefined) {
+  _onElevationChangeUpdate(overrideElevation = undefined) {
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
@@ -457,13 +457,16 @@ class Levels {
 
   getHoles() {
     let holes = [];
-    let holeDrawings = canvas.drawings.placeables.filter(
-      (d) => d.data.text && d.data.text.includes("levelsHole")
-    );
-    holeDrawings.forEach((drawing) => {
-      let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
-      let range = drawing.data.text.split("|")[1].split(",");
-      holes.push({ poly: p, range: [parseInt(range[0]), parseInt(range[1])] });
+    canvas.drawings.placeables.forEach((drawing) => {
+      let flag = drawing.document.getFlag(_levelsModuleName, "heightRange");
+      let range = flag ? flag.split(",") : undefined;
+      if (flag && range.length == 2) {
+        let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
+        holes.push({
+          poly: p,
+          range: [parseInt(range[0]), parseInt(range[1])],
+        });
+      }
     });
     return holes;
   }
@@ -548,7 +551,7 @@ class Levels {
     canvas.tokens.placeables.forEach((t) => {
       if (t.actor.testUserPermission(game.user, 2)) {
         t.visible = true;
-        t.icon.alpha=1
+        t.icon.alpha = 1;
       }
     });
   }
