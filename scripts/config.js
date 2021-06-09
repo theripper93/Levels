@@ -8,6 +8,28 @@ Hooks.on("ready",()=>{
   _betterRoofs.initializeRoofs();
 })
 
+Hooks.on("init",()=>{
+
+  /*game.settings.register(_levelsModuleName, "showAllTokensGM", {
+    name: game.i18n.localize("levels.settings.showTokensGM.name"),
+    hint: game.i18n.localize("levels.settings.showTokensGM.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });*/
+
+  /*game.settings.register(_levelsModuleName, "hideAllUnowned", {
+    name: game.i18n.localize("levels.settings.hideAllUnowned.name"),
+    hint: game.i18n.localize("levels.settings.hideAllUnowned.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });*/
+
+})
+
 Hooks.on("renderTileConfig", (app, html, data) => {
     let heightRange = app.object.getFlag(
       _levelsModuleName,

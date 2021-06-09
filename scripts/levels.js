@@ -4,6 +4,7 @@ class Levels {
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
+    this.lastReleasedToken = undefined
   }
 
   /**********************************************
@@ -103,15 +104,15 @@ class Levels {
     }
   }
 
-  refreshTokens() {
-    let cToken = canvas.tokens.controlled[0];
+  refreshTokens(overrideToken=undefined) {
+    let cToken = overrideToken || canvas.tokens.controlled[0];
     if (!cToken) return;
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let allTiles = _levels.findAllTiles();
     let holes = _levels.getHoles();
     let tokensState = this.getTokensState(allTiles);
-    _levels.computeTokens(
+    let tokenPov = _levels.computeTokens(
       tokensState,
       cToken.data.elevation,
       holes,
@@ -127,9 +128,11 @@ class Levels {
         tokensState
       );
     }
+    return tokenPov
   }
 
   computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
+    let tokenPov = []
     tokens.forEach((t) => {
       if (t.token.id != ctokenId && !t.token.data.hidden) {
         if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
@@ -137,18 +140,22 @@ class Levels {
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
             t.token.icon.alpha = 0;
+            tokenPov.push({token:t,visible:t.token.isVisible})
             this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
+            tokenPov.push({token:t,visible:false})
             this.removeTempToken(t.token);
           }
         } else {
           t.token.levelsHidden = false;
           t.token.icon.alpha = 1;
+          tokenPov.push({token:t,visible:t.token.isVisible})
           this.removeTempToken(t.token);
         }
       }
     });
+    return tokenPov
   }
 
   isInsideHoleRange(isInHole, t, cTokenElev) {
@@ -230,10 +237,10 @@ class Levels {
     this.floorContainer.addChild(sprite);
   }
 
-  _onElevationChangeUpdate() {
+  _onElevationChangeUpdate(overrideElevation=undefined) {
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
-    let cToken = canvas.tokens.controlled[0];
+    let cToken = overrideElevation || canvas.tokens.controlled[0];
     if (!cToken) return;
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
@@ -537,11 +544,11 @@ class Levels {
     if (sprite) this.floorContainer.removeChild(sprite);
   }
 
-  hideAllTokensForPlayer() {
+  showOwnedTokensForPlayer() {
     canvas.tokens.placeables.forEach((t) => {
-      if (!t.actor.testUserPermission(game.user, 2)) {
-        t.visible = false;
-        this.removeTempToken(t);
+      if (t.actor.testUserPermission(game.user, 2)) {
+        t.visible = true;
+        t.icon.alpha=1
       }
     });
   }
@@ -578,7 +585,7 @@ class Levels {
     for (let d of canvas.controls.doors.children) {
       let range = this.getWallHeightRange(d.wall);
       if (!range) continue;
-      if (!(tElev >= range[0] && tElev <= range[1])) {
+      if (!(tElev >= range[0] && tElev < range[1])) {
         d.visible = false;
       }
     }

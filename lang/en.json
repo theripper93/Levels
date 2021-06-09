@@ -1,4 +1,9 @@
 {
+    "levels.settings.showTokensGM.name": "Show all Tokens for GM",
+    "levels.settings.showTokensGM.hint": "Show all the tokens regardless of the elevation for the GM",
+    "levels.settings.hideAllUnowned.name": "Hide all unowned tokens for Players",
+    "levels.settings.hideAllUnowned.hint": "Hide all unowned tokens for players when there is no token controlled",
+
     "levels.tilecoonfig.range.name": "Height Range",
     "levels.tilecoonfig.range.unit": "Elevation",
     "levels.wallconfig.hb.name": "Height Bottom",
