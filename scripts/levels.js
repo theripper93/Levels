@@ -57,6 +57,11 @@ class Levels {
         let range0 = parseInt(range[0]);
         let range1 =
           range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
+        if(range[1].toLowerCase()=="infinity"){
+          tile.isLevel=false
+        }else{
+          tile.isLevel=true
+        }
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
@@ -256,8 +261,8 @@ class Levels {
         )}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`
       );
     }
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
     canvas.lighting.refresh();
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
 
   clearLights(lights) {
