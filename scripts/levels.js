@@ -5,6 +5,7 @@ class Levels {
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
+    this.UI = new LevelsUI()
   }
 
   /**********************************************
@@ -15,6 +16,8 @@ class Levels {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
+    canvas["voidLayer"] = new CanvasLayer()
+    Levels._instance.UI.readLevels()
     return Levels._instance;
   }
   getTileBoundingBox(tile) {

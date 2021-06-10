@@ -21,7 +21,8 @@
         "./scripts/main.js",
         "./scripts/levels.js",
         "./scripts/helpers.js",
-        "./scripts/config.js"
+        "./scripts/config.js",
+        "./scripts/ui.js"
     ],
     "minimumCoreVersion": "0.8.5",
     "compatibleCoreVersion": "0.8.6",

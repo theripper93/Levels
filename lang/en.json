@@ -8,5 +8,24 @@
     "levels.tilecoonfig.range.unit": "Bottom,Top",
     "levels.wallconfig.hb.name": "Height Bottom",
     "levels.wallconfig.ht.name": "Height Top",
-    "levels.drawingconfig.range.name": "Hole Range"
+    "levels.drawingconfig.range.name": "Hole Range",
+
+    "levels.controls.main.name": "Levels",
+    "levels.controls.levelsview.name": "Enable Levels View/Placement",
+    "levels.controls.definelevels.name": "Define Levels",
+    "levels.controls.levelup.name": "Up one Level",
+    "levels.controls.leveldown.name": "Down one Level",
+    "levels.controls.levelsclear.name": "Clear Levels",
+
+    "levels.dialog.levelsclear.title": "Clear Levels",
+    "levels.dialog.levelsclear.content": "Clear all stored levels?",
+    "levels.dialog.define.warn": "Define levels as: bottom,top|bottom,top - eg. 0,9|10,19|20,29",
+    "levels.dialog.define.title": "Define Levels for this Scene",
+    "levels.dialog.define.text": "Levels: ",
+
+    "levels.yesnodialog.yes": "Confirm",
+    "levels.yesnodialog.no": "Cancel",
+
+    "levels.widget.title": "Levels",
+    "levels.widget.element": "Level"
 }
