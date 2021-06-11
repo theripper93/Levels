@@ -5,7 +5,7 @@ class Levels {
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
-    this.UI = new LevelsUI();
+    this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
   /**********************************************
@@ -16,8 +16,8 @@ class Levels {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
-    canvas["voidLayer"] = new CanvasLayer();
-    Levels._instance.UI.readLevels();
+    canvas["levelsLayer"] = new CanvasLayer();
+    if(this.UI) Levels._instance.UI.readLevels();
     return Levels._instance;
   }
 
@@ -630,6 +630,6 @@ class Levels {
       }
     }
 
-    ui.notifications.info(`Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings`);
+    ui.notifications.info(`Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings. Remember to also Update Better Roofs`);
   }
 }

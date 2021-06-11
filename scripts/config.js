@@ -5,7 +5,7 @@ Hooks.on("ready",()=>{
   libWrapper.register(_levelsModuleName,"SightLayer.prototype.testVisibility", _levelsTestVisibility, "OVERRIDE")
   libWrapper.register(_levelsModuleName,"WallsLayer.prototype.getRayCollisions", _levelsGetRayCollisions, "OVERRIDE")
   libWrapper.register(_levelsModuleName,"WallsLayer.prototype.checkCollision", _levelsCheckCollision, "OVERRIDE")
-  _betterRoofs.initializeRoofs();
+  if(_betterRoofs)_betterRoofs.initializeRoofs();
 })
 
 Hooks.on("init",()=>{
@@ -19,15 +19,6 @@ Hooks.on("init",()=>{
     default: false,
     onChange: () => {window.location.reload()}
   });
-
-  /*game.settings.register(_levelsModuleName, "hideAllUnowned", {
-    name: game.i18n.localize("levels.settings.hideAllUnowned.name"),
-    hint: game.i18n.localize("levels.settings.hideAllUnowned.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });*/
 
 })
 
@@ -53,7 +44,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 <div class="form-group">
 <label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+    <input type="text" name="flags.${_levelsModuleName}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 

@@ -28,5 +28,12 @@
     "levels.yesnodialog.no": "Cancel",
 
     "levels.widget.title": "Levels",
-    "levels.widget.element": "Level"
+    "levels.widget.element": "Level",
+
+    "levels.form.bottom": "Bottom:",
+    "levels.form.top": "Top:",
+    "levels.form.name": "Name:",
+    "levels.form.currentLevel": "Current Levels",
+    "levels.form.addNew": "Add a new level",
+    "levels.form.tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)"
 }

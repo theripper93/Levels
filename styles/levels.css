@@ -47,6 +47,19 @@
     margin: 5px 8px 0 0;
 }
 
+#levels-levels a.change-level span:last-child {
+    float: right;
+    margin-left: 5px;
+}
+
 #levels-levels a:hover {
     text-shadow: 0 0 10px #ff6400;
+}
+
+#levels-define .form-fields {
+    margin: 0 5px;
+}
+
+#levels-define input.level-name {
+    width: 150px;
 }
