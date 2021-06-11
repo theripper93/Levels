@@ -24,6 +24,9 @@
         "./scripts/config.js",
         "./scripts/ui.js"
     ],
+    "styles": [
+        "./styles/levels.css"
+    ],
     "minimumCoreVersion": "0.8.5",
     "compatibleCoreVersion": "0.8.6",
     "url": "https://github.com/theripper93/Levels",

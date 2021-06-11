@@ -4,10 +4,11 @@
     "levels.settings.hideAllUnowned.name": "Hide all unowned tokens for Players",
     "levels.settings.hideAllUnowned.hint": "Hide all unowned tokens for players when there is no token controlled",
 
-    "levels.tilecoonfig.range.name": "Height Range",
-    "levels.tilecoonfig.range.unit": "Bottom,Top",
-    "levels.wallconfig.hb.name": "Height Bottom",
-    "levels.wallconfig.ht.name": "Height Top",
+    "levels.tilecoonfig.rangeTop.name": "Height (Top)",
+    "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
+    "levels.tilecoonfig.range.unit": "Elevation",
+    "levels.drawingconfig.hb.name": "Hole Bottom",
+    "levels.drawingconfig.ht.name": "Hole Top",
     "levels.drawingconfig.range.name": "Hole Range",
 
     "levels.controls.main.name": "Levels",

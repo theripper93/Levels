@@ -10,14 +10,15 @@ Hooks.on("ready",()=>{
 
 Hooks.on("init",()=>{
 
-  /*game.settings.register(_levelsModuleName, "showAllTokensGM", {
-    name: game.i18n.localize("levels.settings.showTokensGM.name"),
-    hint: game.i18n.localize("levels.settings.showTokensGM.hint"),
+  game.settings.register(_levelsModuleName, "disableMigrate", {
+    name: "Disable Migration on Startup",
+    hint: "Disable the migration to the new system when opening a wold (requires refresh)",
     scope: "world",
     config: true,
     type: Boolean,
     default: false,
-  });*/
+    onChange: () => {window.location.reload()}
+  });
 
   /*game.settings.register(_levelsModuleName, "hideAllUnowned", {
     name: game.i18n.localize("levels.settings.hideAllUnowned.name"),
@@ -31,38 +32,64 @@ Hooks.on("init",()=>{
 })
 
 Hooks.on("renderTileConfig", (app, html, data) => {
-    let heightRange = app.object.getFlag(
+    let heightRangeTop = app.object.getFlag(
       _levelsModuleName,
-      "heightRange"
-    ) || 0;
+      "rangeTop"
+    ) || Infinity;
+
+    let heightRangeBottom = app.object.getFlag(
+      _levelsModuleName,
+      "rangeBottom"
+    ) || -Infinity;
 
   let newHtml = `
   <div class="form-group">
-  <label for="heightRange">${game.i18n.localize("levels.tilecoonfig.range.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+  <label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeTop.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
   <div class="form-fields">
-      <input type="text" name="flags.${_levelsModuleName}.heightRange" value="${heightRange}" step="1">
+      <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
   </div>
 </div>
+
+<div class="form-group">
+<label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<div class="form-fields">
+    <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+</div>
+</div>
+
 `;
-  const overh = html.find('input[name="overhead"]');
+  const overh = html.find('input[name="occlusion.alpha"]');
   const formGroup = overh.closest(".form-group");
   formGroup.after(newHtml);
   app.setPosition({ height: "auto" });
 })
 
 Hooks.on("renderLightConfig", (app, html, data) => {
-  let heightRange = app.object.getFlag(
+  let heightRangeTop = app.object.getFlag(
     _levelsModuleName,
-    "heightRange"
-  ) || 0;
+    "rangeTop"
+  ) || Infinity;
+
+  let heightRangeBottom = app.object.getFlag(
+    _levelsModuleName,
+    "rangeBottom"
+  ) || -Infinity;
 
 let newHtml = `
 <div class="form-group">
-<label for="heightRange">${game.i18n.localize("levels.tilecoonfig.range.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeTop.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.heightRange" value="${heightRange}" step="1">
+    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
+
+<div class="form-group">
+<label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<div class="form-fields">
+  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+</div>
+</div>
+
 `;
 const overh = html.find('input[name="angle"]');
 const formGroup = overh.closest(".form-group");
@@ -71,18 +98,31 @@ app.setPosition({ height: "auto" });
 })
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
-  let heightRange = app.object.getFlag(
+  let heightRangeTop = app.object.getFlag(
     _levelsModuleName,
-    "heightRange"
-  ) || 0;
+    "rangeTop"
+  ) || Infinity;
+
+  let heightRangeBottom = app.object.getFlag(
+    _levelsModuleName,
+    "rangeBottom"
+  ) || -Infinity;
 
 let newHtml = `
 <div class="form-group">
-<label for="heightRange">${game.i18n.localize("levels.drawingconfig.range.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<label for="rangeTop">${game.i18n.localize("levels.drawingconfig.ht.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.heightRange" value="${heightRange}" step="1">
+    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
+
+<div class="form-group">
+<label for="rangeTop">${game.i18n.localize("levels.drawingconfig.hb.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<div class="form-fields">
+  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+</div>
+</div>
+
 `;
 const overh = html.find('input[name="z"]');
 const formGroup = overh.closest(".form-group");

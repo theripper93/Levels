@@ -13,66 +13,57 @@ class LevelsUI {
       return;
     }
     this.computeLevelsVisibility(this.range);
-    let UIHtml = `<div id="levels-levels" class="app " style="z-index:1000; position: fixed; right: 315px; border: 1px solid #000">
-    <h3 style="border-bottom: 2px groove #23221d; margin: 3px; padding: 4px">
+    let UIHtml = `<div id="levels-levels" class="app">
+    <h3>
       <i class="fas fa-layer-group"></i>
       ${game.i18n.localize("levels.widget.title")}
-      <i id="levelDown" class="players-mode fas fa-angle-down"></i>
-      <i id="levelUp" class="players-mode fas fa-angle-up"></i>
-      <i id="levelClose" class="players-mode fas fa-times"></i>
+      <a class="link"><i id="levelDown" class="fas fa-angle-down"></i></a>
+      <a class="link"><i id="levelUp" class="fas fa-angle-up"></i></a>
+      <a class="link"><i id="levelClose" class="fas fa-times"></i></a>
     </h3>
-    <ol id="player-list" style="display: inline-grid;grid-template-columns: repeat(auto-fit, 150px);margin-right: 10px;padding: 0;">
+    <ol>
     
   `;
     let sortedLevels = this.definedLevels.map((x) => x);
     sortedLevels.reverse();
     for (let level of sortedLevels) {
-      if (this.definedLevels.indexOf(level) == this.currentLevel) {
-        UIHtml += `<li class="player gm flexrow" data-user-id="Cspu3pxFr7tu7SU7">
-        <span class="player-active active" style="background: #cc288f; border: 1px solid #ff50ff;border-radius:50%; flex: 0 0 8px; height: 8px; margin: 5px 8px 0 0;"></span>
-        <span class="player-name self" style="color:navajowhite">
-        ${game.i18n.localize(
-          "levels.widget.element"
-        )} ${this.definedLevels.indexOf(level)}: [${level[0]} - ${level[1]}]
-                </span>
+      let cssClass = this.definedLevels.indexOf(level) == this.currentLevel ? 'active' : 'inactive';
+      UIHtml += `<li class="level flexrow" data-level="${this.definedLevels.indexOf(level)}">
+        <span class="${cssClass}"></span>
+        <a class="link change-level">
+          <span>
+        ${level[2] || game.i18n.localize(
+        'levels.widget.element',
+      ) + " " + this.definedLevels.indexOf(level)}: [${level[0]} - ${level[1]}]
+          </span>
+        </a>
       </li>`;
-      } else {
-        UIHtml += `<li class="player  flexrow" data-user-id="xJOkk908LjZkr6uM">
-        <span class="player-active inactive" style="background: #333333; border: 1px solid #000000;border-radius:50%; flex: 0 0 8px; height: 8px; margin: 5px 8px 0 0;"></span>
-        <span class="player-name ">
-        ${game.i18n.localize(
-          "levels.widget.element"
-        )} ${this.definedLevels.indexOf(level)}: [${level[0]} - ${level[1]}]
-                </span>
-      </li>`;
-      }
     }
 
     UIHtml += "	</ol></div>";
-    function onHoverBtnIn() {
-      this.style.border = "1px solid red";
-      this.style["border-bottom"] = "1px solid #ff6400";
-      this.style["box-shadow"] = "0 0 10px #ff6400";
-    }
-    function onHoverBtnOut() {
-      this.style.border = "";
-      this.style["border-bottom"] = "";
-      this.style["box-shadow"] = "";
-    }
-    $("body").append(UIHtml);
+    let $UIHtml = $(UIHtml);
+    $("body").append($UIHtml);
 
-    $("#levelDown").click(function () {
+    $UIHtml.find("a.change-level").click(function () {
+      _levels.UI.currentLevel = $(this).closest('li.level').data('level');
+      _levels.UI.refreshLevels();
+    });
+
+    $UIHtml.find("#levelDown").click(function () {
       if (_levels.UI.currentLevel > 0) _levels.UI.currentLevel -= 1;
       _levels.UI.refreshLevels();
     });
-    
-    $("#levelUp").click(function () {
+
+    $UIHtml.find("#levelUp").click(function () {
       if (_levels.UI.currentLevel < _levels.UI.definedLevels.length - 1)
         _levels.UI.currentLevel += 1;
       _levels.UI.refreshLevels();
     });
-    $("#levelDown").hover(onHoverBtnIn,onHoverBtnOut);
-    $("#levelUp").hover(onHoverBtnIn,onHoverBtnOut);
+
+    $UIHtml.find("#levelClose").click(function () {
+      _levels.UI.rangeEnabled = false;
+      _levels.UI.renderHud(false);
+    });
   }
 
   async defineLevels() {
@@ -99,11 +90,11 @@ class LevelsUI {
         close: { label: game.i18n.localize("levels.yesnodialog.no") },
         confirm: {
           label: game.i18n.localize("levels.yesnodialog.yes"),
-          callback: (dialog) => {
+          callback: async (dialog) => {
             let definedLevels = dialog[0].querySelectorAll(
               'input[name="definedlevels"]'
             )[0].value;
-            canvas.scene.setFlag(
+            await canvas.scene.setFlag(
               _levelsModuleName,
               "sceneLevels",
               definedLevels
@@ -164,16 +155,8 @@ class LevelsUI {
   }
 
   computeRangeForDocument(document, range) {
-    let levelsRangeFlag = document.document
-      .getFlag(_levelsModuleName, "heightRange")
-      ?.split(",");
-    if (!levelsRangeFlag || levelsRangeFlag.length != 2) return false;
-    let range0 = parseInt(levelsRangeFlag[0]);
-    let range1 =
-      levelsRangeFlag[1].toLowerCase() == "infinity"
-        ? 10000
-        : parseInt(levelsRangeFlag[1]);
-    let entityRange = [range0, range1];
+    let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document)
+    let entityRange = [rangeBottom, rangeTop];
     if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
       return true;
     } else {
@@ -237,12 +220,18 @@ class LevelsUI {
     let result = await dialog;
     return result;
   }
+
+  getObjUpdateData(range){
+    return {
+      flags: { [`${_levelsModuleName}`]: { rangeTop: range[0],rangeBottom: range[1] } },
+    }
+  }
 }
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   let levelsTools = [
     {
-      name: "levels-enablerange",
+      name: "enablerange",
       title: game.i18n.localize("levels.controls.levelsview.name"),
       icon: "fas fa-layer-group",
       toggle: true,
@@ -253,7 +242,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       },
     },
     {
-      name: "levels-define",
+      name: "define",
       title: game.i18n.localize("levels.controls.definelevels.name"),
       icon: "fas fa-plus-square",
       button: true,
@@ -262,7 +251,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       },
     },
     {
-      name: "levels-up",
+      name: "up",
       title: game.i18n.localize("levels.controls.levelup.name"),
       icon: "fas fa-level-up-alt",
       button: true,
@@ -273,7 +262,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       },
     },
     {
-      name: "levels-down",
+      name: "down",
       title: game.i18n.localize("levels.controls.leveldown.name"),
       icon: "fas fa-level-down-alt",
       button: true,
@@ -283,7 +272,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       },
     },
     {
-      name: "levels-clear",
+      name: "clear",
       title: game.i18n.localize("levels.controls.levelsclear.name"),
       icon: "fas fa-trash",
       button: true,
@@ -304,31 +293,19 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
 
 Hooks.on("createTile", (tile, updates) => {
   if (_levels.UI.rangeEnabled == true) {
-    let rangeFlag =
-      String(_levels.UI.range[0]) + "," + String(_levels.UI.range[1]);
-    tile.update({
-      flags: { [`${_levelsModuleName}`]: { heightRange: rangeFlag } },
-    });
+    tile.update(_levels.UI.getObjUpdateData(_levels.UI.range));
   }
 });
 
 Hooks.on("createLight", (light, updates) => {
   if (_levels.UI.rangeEnabled == true) {
-    let rangeFlag =
-      String(_levels.UI.range[0]) + "," + String(_levels.UI.range[1]);
-    light.update({
-      flags: { [`${_levelsModuleName}`]: { heightRange: rangeFlag } },
-    });
+    light.update(_levels.UI.getObjUpdateData(_levels.UI.range));
   }
 });
 
 Hooks.on("createDrawing", (drawing, updates) => {
   if (_levels.UI.rangeEnabled == true) {
-    let rangeFlag =
-      String(_levels.UI.range[0]) + "," + String(_levels.UI.range[1]);
-    drawing.update({
-      flags: { [`${_levelsModuleName}`]: { heightRange: rangeFlag } },
-    });
+    drawing.update(_levels.UI.getObjUpdateData(_levels.UI.range));
   }
 });
 

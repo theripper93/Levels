@@ -1,0 +1,52 @@
+#levels-levels {
+    z-index: 1000;
+    position: fixed;
+    right: 310px;
+    border: 1px solid #000;
+}
+
+#levels-levels.collapsed {
+    right: 10px;
+}
+
+#levels-levels h3 {
+    border-bottom: 2px groove #23221d;
+    margin: 3px;
+    padding: 4px;
+}
+
+#levels-levels h3 a:last-child {
+    float: right;
+}
+
+#levels-levels ol {
+    padding: 0;
+}
+
+#levels-levels ol li {
+    display: block;
+}
+
+#levels-levels ol li span.active {
+    background: #cc288f;
+    border: 1px solid #ff50ff;
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+    display: inline-block;
+    margin: 5px 8px 0 0;
+}
+
+#levels-levels ol li span.inactive {
+    background: #333333;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+    display: inline-block;
+    margin: 5px 8px 0 0;
+}
+
+#levels-levels a:hover {
+    text-shadow: 0 0 10px #ff6400;
+}

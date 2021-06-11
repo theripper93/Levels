@@ -5,7 +5,7 @@ class Levels {
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
-    this.UI = new LevelsUI()
+    this.UI = new LevelsUI();
   }
 
   /**********************************************
@@ -16,10 +16,11 @@ class Levels {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
-    canvas["voidLayer"] = new CanvasLayer()
-    Levels._instance.UI.readLevels()
+    canvas["voidLayer"] = new CanvasLayer();
+    Levels._instance.UI.readLevels();
     return Levels._instance;
   }
+
   getTileBoundingBox(tile) {
     let tileZZ = {
       x: tile.center.x - tile.width / 2,
@@ -53,23 +54,13 @@ class Levels {
     let tiles = [];
     for (let tile of canvas.foreground.placeables) {
       if (tile.roomPoly) {
-        let rangeFlag = tile.document.getFlag(_levelsModuleName, "heightRange");
-        if (!rangeFlag) continue;
-        let range = rangeFlag.split(".");
-        if (range.length != 2) range = rangeFlag.split(",");
-        if (range.length != 2) continue;
-        let range0 = parseInt(range[0]);
-        let range1 =
-          range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
-        if (range[1].toLowerCase() == "infinity") {
-          tile.isLevel = false;
-        } else {
-          tile.isLevel = true;
-        }
+        let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
+        if (!rangeBottom) continue;
+        tile.isLevel = isLevel;
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
-          range: [range0, range1],
+          range: [rangeBottom, rangeTop],
         });
       }
     }
@@ -77,7 +68,7 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    if (tile.range[1] != 10000) tile.tile.visible = false;
+    if (tile.range[1] != Infinity) tile.tile.visible = false;
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -461,13 +452,12 @@ class Levels {
   getHoles() {
     let holes = [];
     canvas.drawings.placeables.forEach((drawing) => {
-      let flag = drawing.document.getFlag(_levelsModuleName, "heightRange");
-      let range = flag ? flag.split(",") : undefined;
-      if (flag && range.length == 2) {
+      let  { rangeBottom, rangeTop } = this.getFlagsForObject(drawing);
+      if (rangeBottom) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
-          range: [parseInt(range[0]), parseInt(range[1])],
+          range: [rangeBottom, rangeTop],
         });
       }
     });
@@ -477,16 +467,11 @@ class Levels {
   getLights() {
     let lights = [];
     canvas.lighting.placeables.forEach((light) => {
-      let rangeFlag = light.document.getFlag(_levelsModuleName, "heightRange");
-      let range, range0, range1;
-      if (rangeFlag) range = rangeFlag.split(",");
-      if (rangeFlag && rangeFlag != 0 && range.length == 2) {
-        range0 = parseInt(range[0]);
-        range1 =
-          range[1].toLowerCase() == "infinity" ? 10000 : parseInt(range[1]);
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(light);
+      if (rangeBottom) {
         lights.push({
           light: light,
-          range: [range0, range1],
+          range: [rangeBottom, rangeTop],
         });
       }
     });
@@ -595,5 +580,56 @@ class Levels {
         d.visible = false;
       }
     }
+  }
+
+  getFlagsForObject(object) {
+    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
+    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
+    if (!rangeTop) rangeTop = Infinity;
+    if (!rangeBottom) rangeBottom = -Infinity;
+    let isLevel = rangeTop == Infinity ? false : true;
+    if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
+    return { rangeBottom, rangeTop, isLevel };
+  }
+
+  async migrateFlags() {
+    ui.notifications.error(
+      `WARNING! Migrating Levels to new model please don't touch anything!`
+    );
+    let migrated = 0;
+    async function migrateForObject(object) {
+      let oldLevelsFlag = object.getFlag(
+        _levelsModuleName,
+        "heightRange"
+      );
+      if (!oldLevelsFlag) return;
+      let splitFlag = oldLevelsFlag.split(",");
+      if (splitFlag.length != 2) {
+        await object.unsetFlag(_levelsModuleName,"heightRange");
+        return;
+      }
+      let range0 = parseInt(splitFlag[0]);
+      let range1 =
+        splitFlag[1].toLowerCase() == "infinity"
+          ? Infinity
+          : parseInt(splitFlag[1]);
+      await object.setFlag(_levelsModuleName, "rangeBottom", range0);
+      await object.setFlag(_levelsModuleName, "rangeTop", range1);
+      await object.unsetFlag(_levelsModuleName,"heightRange");
+      migrated++;
+    }
+    for (let scene of Array.from(game.scenes)) {
+      for (let object of Array.from(scene.data.tiles)) {
+        await migrateForObject(object);
+      }
+      for (let object of Array.from(scene.data.lights)) {
+        await migrateForObject(object);
+      }
+      for (let object of Array.from(scene.data.drawings)) {
+        await migrateForObject(object);
+      }
+    }
+
+    ui.notifications.info(`Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings`);
   }
 }
