@@ -7,6 +7,7 @@ class LevelsUI {
   }
 
   renderHud(toggle) {
+    this.readLevels()
     $("body").find('div[id="levels-levels"]').remove();
     if (!toggle) {
       this.clearVisibility();
@@ -513,6 +514,5 @@ Hooks.on("ready", () => {
         });
       }
     });
-    Hooks.call("getSceneControlButtons");
   }
 });
