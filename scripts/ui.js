@@ -28,7 +28,7 @@ class LevelsUI {
     sortedLevels.reverse();
     for (let level of sortedLevels) {
       let cssClass = this.definedLevels.indexOf(level) == this.currentLevel ? 'active' : 'inactive';
-      UIHtml += `<li class="level flexrow" data-level="${this.definedLevels.indexOf(level)}">
+      UIHtml += `<li class="level" data-level="${this.definedLevels.indexOf(level)}">
         <span class="${cssClass}"></span>
         <a class="link change-level">
           <span>
