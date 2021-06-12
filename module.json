@@ -27,6 +27,15 @@
     "styles": [
         "./styles/levels.css"
     ],
+    "packs": [
+        {
+          "name": "levelsmacros",
+          "label": "Levels Macros",
+          "path": "packs/macros.db",
+          "entity": "Macro",
+          "module": "levels"
+        }
+      ],
     "minimumCoreVersion": "0.8.5",
     "compatibleCoreVersion": "0.8.6",
     "url": "https://github.com/theripper93/Levels",

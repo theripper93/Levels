@@ -7,7 +7,7 @@ class LevelsUI {
   }
 
   renderHud(toggle) {
-    this.readLevels()
+    this.readLevels();
     $("body").find('div[id="levels-levels"]').remove();
     if (!toggle) {
       this.clearVisibility();
