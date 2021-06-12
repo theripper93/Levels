@@ -5,6 +5,8 @@ Create maps multiple vertical levels
 
 # WARNING: MAY BE BUGGY AF BUT I NEED TESTERS, PLEASE OPEN ISSUES WHEN YOU FIND BUGS
 
+## Video Tuorial coming Soon(TM)
+
 **How to use:**
 
 * Tiles: You can set the elevation range of a tile through the overhead tile config. The tile must be Overehead and must have a Better Roofs mode other than "None" enabled (set occlusion to Fade for best results). **Range for actual roofs must be set to bottom,infinity (eg. 20,infnity)**
