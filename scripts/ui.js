@@ -476,32 +476,32 @@ Hooks.on("ready", () => {
       if (canvas["levelsLayer"]) canvas["levelsLayer"].deactivate();
     });
 
-    Hooks.on("createTile", (tile, updates) => {
+    Hooks.on("preCreateTile", (tile, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        tile.update(_levels.UI.getObjUpdateData(_levels.UI.range));
-        tile.update({ flags: { betterroofs: { brMode: 2 } } });
+        tile.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+        tile.data.update({ flags: { betterroofs: { brMode: 2 } } });
       }
     });
 
-    Hooks.on("createAmbientLight", (light, updates) => {
+    Hooks.on("preCreateAmbientLight", (light, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        light.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+        light.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
       }
     });
 
-    Hooks.on("createDrawing", (drawing, updates) => {
+    Hooks.on("preCreateDrawing", (drawing, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        drawing.update(_levels.UI.getObjUpdateData(_levels.UI.range));
-        drawing.update({
+        drawing.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+        drawing.data.update({
           text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
           flags: { levels: { drawingMode: 2 } },
         });
       }
     });
 
-    Hooks.on("createWall", (wall, updates) => {
+    Hooks.on("preCreateWall", (wall, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        wall.update({
+        wall.data.update({
           flags: {
             wallHeight: {
               wallHeightBottom: _levels.UI.range[0],
@@ -512,12 +512,16 @@ Hooks.on("ready", () => {
       }
     });
 
-    Hooks.on("createToken", (token, updates) => {
+    Hooks.on("preCreateToken", (token, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        token.update({
+        token.data.update({
           elevation: _levels.UI.range[0],
         });
       }
     });
+
+    Hooks.on("renderApplication",()=>{
+      if(_levels.UI.rangeEnabled)_levels.UI.refreshLevels()
+    })
   }
 });

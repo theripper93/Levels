@@ -55,7 +55,7 @@ class Levels {
     for (let tile of canvas.foreground.placeables) {
       if (tile.roomPoly) {
         let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
-        if (!rangeBottom) continue;
+        if (!rangeBottom && rangeBottom!=0) continue;
         tile.isLevel = isLevel;
         tiles.push({
           tile: tile,
@@ -453,7 +453,7 @@ class Levels {
     let holes = [];
     canvas.drawings.placeables.forEach((drawing) => {
       let  { rangeBottom, rangeTop, drawingMode } = this.getFlagsForObject(drawing);
-      if (drawingMode == 1 && rangeBottom) {
+      if (drawingMode == 1 && (rangeBottom || rangeBottom==0)) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
@@ -483,7 +483,7 @@ class Levels {
     let lights = [];
     canvas.lighting.placeables.forEach((light) => {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(light);
-      if (rangeBottom) {
+      if (rangeBottom || rangeBottom==0) {
         lights.push({
           light: light,
           range: [rangeBottom, rangeTop],

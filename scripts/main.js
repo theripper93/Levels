@@ -80,6 +80,8 @@ Hooks.on("controlToken", (token, contorlled) => {
         _levels.unoccludeLights(t, light, true);
       });
     });
+    _levels.floorContainer.removeChildren()
+    _levels.floorContainer.spriteIndex = {}
     canvas.tokens.placeables.forEach((t) => {
       if (t.levelsHidden == true) {
         t.levelsHidden == false;
