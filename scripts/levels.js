@@ -452,8 +452,23 @@ class Levels {
   getHoles() {
     let holes = [];
     canvas.drawings.placeables.forEach((drawing) => {
-      let  { rangeBottom, rangeTop } = this.getFlagsForObject(drawing);
-      if (rangeBottom) {
+      let  { rangeBottom, rangeTop, drawingMode } = this.getFlagsForObject(drawing);
+      if (drawingMode == 1 && rangeBottom) {
+        let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
+        holes.push({
+          poly: p,
+          range: [rangeBottom, rangeTop],
+        });
+      }
+    });
+    return holes;
+  }
+
+  getStairs() {
+    let holes = [];
+    canvas.drawings.placeables.forEach((drawing) => {
+      let  { rangeBottom, rangeTop, drawingMode } = this.getFlagsForObject(drawing);
+      if (drawingMode == 2 && rangeBottom !=-Infinity && rangeTop!=Infinity) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
@@ -585,11 +600,15 @@ class Levels {
   getFlagsForObject(object) {
     let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
     let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
-    if (!rangeTop) rangeTop = Infinity;
-    if (!rangeBottom) rangeBottom = -Infinity;
+    if (!rangeTop && rangeTop!= 0) rangeTop = Infinity;
+    if (!rangeBottom && rangeBottom!= 0) rangeBottom = -Infinity;
     let isLevel = rangeTop == Infinity ? false : true;
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
-    return { rangeBottom, rangeTop, isLevel };
+    let drawingMode = object.document.getFlag(
+      _levelsModuleName,
+      "drawingMode"
+    ) || 0;
+    return { rangeBottom, rangeTop, isLevel, drawingMode };
   }
 
   async migrateFlags() {

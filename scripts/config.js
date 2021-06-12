@@ -19,6 +19,15 @@ Hooks.on("init",()=>{
     default: false,
     onChange: () => {window.location.reload()}
   });
+  
+  game.settings.register(_levelsModuleName, "enableTooltips", {
+    name: game.i18n.localize("levels.settings.enableTooltips.name"),
+    hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true
+  });
 
 })
 
@@ -26,12 +35,14 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     let heightRangeTop = app.object.getFlag(
       _levelsModuleName,
       "rangeTop"
-    ) || Infinity;
+    )
+    if(heightRangeTop==undefined || heightRangeTop==null)heightRangeTop=Infinity
 
     let heightRangeBottom = app.object.getFlag(
       _levelsModuleName,
       "rangeBottom"
-    ) || -Infinity;
+    )
+    if(heightRangeBottom==undefined || heightRangeBottom==null)heightRangeBottom=-Infinity
 
   let newHtml = `
   <div class="form-group">
@@ -42,7 +53,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 </div>
 
 <div class="form-group">
-<label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<label for="rangeBottom">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
     <input type="text" name="flags.${_levelsModuleName}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
@@ -59,12 +70,14 @@ Hooks.on("renderLightConfig", (app, html, data) => {
   let heightRangeTop = app.object.getFlag(
     _levelsModuleName,
     "rangeTop"
-  ) || Infinity;
+  )
+  if(heightRangeTop==undefined || heightRangeTop==null)heightRangeTop=Infinity
 
   let heightRangeBottom = app.object.getFlag(
     _levelsModuleName,
     "rangeBottom"
-  ) || -Infinity;
+  )
+  if(heightRangeBottom==undefined || heightRangeBottom==null)heightRangeBottom=-Infinity
 
 let newHtml = `
 <div class="form-group">
@@ -75,7 +88,7 @@ let newHtml = `
 </div>
 
 <div class="form-group">
-<label for="rangeTop">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<label for="rangeBottom">${game.i18n.localize("levels.tilecoonfig.rangeBottom.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
   <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
@@ -92,14 +105,34 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
   let heightRangeTop = app.object.getFlag(
     _levelsModuleName,
     "rangeTop"
-  ) || Infinity;
+  )
+  if(heightRangeTop==undefined || heightRangeTop==null)heightRangeTop=Infinity
 
   let heightRangeBottom = app.object.getFlag(
     _levelsModuleName,
     "rangeBottom"
-  ) || -Infinity;
+  )
+  if(heightRangeBottom==undefined || heightRangeBottom==null)heightRangeBottom=-Infinity
 
-let newHtml = `
+  let drawingMode = app.object.getFlag(
+    _levelsModuleName,
+    "drawingMode"
+  ) || 0;
+let opt0 = drawingMode == 0 ? `selected=""` : ``
+let opt1 = drawingMode == 1 ? `selected=""` : ``
+let opt2 = drawingMode == 2 ? `selected=""` : ``
+
+const newHtml = `
+
+<div class="form-group">
+            <label>${game.i18n.localize("levels.drawingconfig.isHole.name")}</label>
+            <div class="form-fields">
+                <select name="flags.${_levelsModuleName}.drawingMode" data-dtype="Number">
+                    <option value="0" ${opt0}>${game.i18n.localize("levels.drawingconfig.isHole.opt0")}</option><option value="1" ${opt1}>${game.i18n.localize("levels.drawingconfig.isHole.opt1")}</option><option value="2" ${opt2}>${game.i18n.localize("levels.drawingconfig.isHole.opt2")}</option>
+                </select>
+            </div>
+        </div>
+
 <div class="form-group">
 <label for="rangeTop">${game.i18n.localize("levels.drawingconfig.ht.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
@@ -108,7 +141,7 @@ let newHtml = `
 </div>
 
 <div class="form-group">
-<label for="rangeTop">${game.i18n.localize("levels.drawingconfig.hb.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
+<label for="rangeBottom">${game.i18n.localize("levels.drawingconfig.hb.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>
 <div class="form-fields">
   <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>

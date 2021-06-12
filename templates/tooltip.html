@@ -1,0 +1,16 @@
+<form id="{{id}}" class="{{classes}}" data-appid="{{appId}}" autocomplete="off">
+    <span class='name'><i class="fas fa-arrow-up"></i></span>
+    <span class='value'>{{#if_null flags.levels.rangeTop}}
+        <i class="fas fa-infinity"></i>
+    {{else}}
+        {{{flags.levels.rangeTop}}}
+    {{/if_null}}
+    </span>
+    <span class='name'><i class="fas fa-arrow-down"></i></span>
+    <span class='value'>{{#if_null flags.levels.rangeBottom}}
+        <i class="fas fa-infinity"></i>
+    {{else}}
+        {{{flags.levels.rangeBottom}}}
+    {{/if_null}}
+    </span>
+</form>

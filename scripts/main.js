@@ -5,44 +5,45 @@ Hooks.on("canvasReady", () => {
   if (canvas.tokens.controlled[0]) {
     _levels._onElevationChangeUpdate();
   }
-
-
-
 });
 
 // MIGRATION
 
 Hooks.once("canvasReady", () => {
-  if(!_levels)_levels = Levels.get();
-  if(game.user.isGM && !game.settings.get(_levelsModuleName, "disableMigrate")){
-    _levels.migrateFlags()
-    }
-})
+  if (!_levels) _levels = Levels.get();
+  if (
+    game.user.isGM &&
+    !game.settings.get(_levelsModuleName, "disableMigrate")
+  ) {
+    _levels.migrateFlags();
+  }
+});
 
 //////
 
-
 Hooks.on("sightRefresh", () => {
   if (_levels) {
-    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken
+    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     _levels.refreshTokens(cToken);
     _levels.computeDoors(cToken);
-    if(!canvas.tokens.controlled[0] && !game.user.isGM){
-      let ownedTokens = canvas.tokens.placeables.filter(t => t.actor && t.actor.testUserPermission(game.user, 2))
-      let tokenPovs = []
-      ownedTokens.forEach((t)=>{
+    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
+      let ownedTokens = canvas.tokens.placeables.filter(
+        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
+      );
+      let tokenPovs = [];
+      ownedTokens.forEach((t) => {
         tokenPovs.push(_levels.refreshTokens(t));
         _levels.computeDoors(t);
-      })
-      tokenPovs.forEach((povs)=>{
-        povs.forEach((pov)=>{
-          if(pov.visible){
-            pov.token.token.visible=true
-            pov.token.token.icon.alpha=1
+      });
+      tokenPovs.forEach((povs) => {
+        povs.forEach((pov) => {
+          if (pov.visible) {
+            pov.token.token.visible = true;
+            pov.token.token.icon.alpha = 1;
           }
-        })
-      })
-      _levels.showOwnedTokensForPlayer()
+        });
+      });
+      _levels.showOwnedTokensForPlayer();
     }
   }
 });
@@ -89,8 +90,9 @@ Hooks.on("controlToken", (token, contorlled) => {
     _levels.clearLights(_levels.getLights());
   } else {
     if (_levels && contorlled) _levels._onElevationChangeUpdate();
-    if (_levels && !contorlled && token){ _levels._onElevationChangeUpdate(token);
-      if(!game.user.isGM)_levels.lastReleasedToken=token
+    if (_levels && !contorlled && token) {
+      _levels._onElevationChangeUpdate(token);
+      if (!game.user.isGM) _levels.lastReleasedToken = token;
     }
   }
 });
@@ -104,5 +106,45 @@ Hooks.on("updateTile", (tile, updates) => {
       _levels.computeDoors(canvas.tokens.controlled[0]);
       _levels._onElevationChangeUpdate();
     }
+  }
+});
+
+Hooks.on("updateToken", (token, updates) => {
+  if ("x" in updates || "y" in updates) {
+    let stairs = _levels.getStairs();
+    let tokenX = updates.x || token.data.x;
+    let tokenY = updates.y || token.data.y;
+    let newUpdates;
+    let tokenElev = updates.elevation || token.data.elevation;
+    let gridSize = canvas.scene.dimensions.size
+    let newTokenCenter = { x: tokenX + (gridSize*token.data.width)/2, y: tokenY + (gridSize*token.data.height)/2 };
+    for (let stair of stairs) {
+      if(
+        stair.poly.contains(newTokenCenter.x, newTokenCenter.y)){
+          if(token.inStair){
+console.log("inStair")
+          }
+          else{
+            if (
+              tokenElev <= stair.range[1] &&
+              tokenElev >= stair.range[0]
+            ) {
+              if (tokenElev == stair.range[1]) {
+                token.inStair = true
+                newUpdates = { elevation: stair.range[0] };
+              }
+              if (tokenElev == stair.range[0]) {
+                token.inStair = true
+                newUpdates = { elevation: stair.range[1] };
+              }
+            }
+          }
+
+        }else{
+          token.inStair = false
+        }
+      
+    }
+    if(newUpdates)token.update(newUpdates)
   }
 });

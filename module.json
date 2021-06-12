@@ -22,7 +22,8 @@
         "./scripts/levels.js",
         "./scripts/helpers.js",
         "./scripts/config.js",
-        "./scripts/ui.js"
+        "./scripts/ui.js",
+        "./scripts/tooltip.js"
     ],
     "styles": [
         "./styles/levels.css"

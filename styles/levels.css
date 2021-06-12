@@ -63,3 +63,20 @@
 #levels-define input.level-name {
     width: 150px;
 }
+
+#levels-tooltip {
+    grid-template-columns: 40% 60%;
+    grid-auto-rows: auto;
+    justify-items: start;
+    align-content: start;
+    justify-content: start;
+    padding: 3px 0;
+    color: #f1f1f1;
+    border: 2px solid;
+    border-radius: 5px;
+    background-color:rgba(0, 0, 0, 0.6);
+  }
+  #levels-tooltip span {
+    padding: 0 3px;
+    text-align: left;
+  }
