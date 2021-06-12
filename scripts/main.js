@@ -118,11 +118,12 @@ Hooks.on("updateToken", (token, updates) => {
     let tokenElev = updates.elevation || token.data.elevation;
     let gridSize = canvas.scene.dimensions.size
     let newTokenCenter = { x: tokenX + (gridSize*token.data.width)/2, y: tokenY + (gridSize*token.data.height)/2 };
+    let inStair
     for (let stair of stairs) {
       if(
         stair.poly.contains(newTokenCenter.x, newTokenCenter.y)){
           if(token.inStair){
-console.log("inStair")
+            inStair=true
           }
           else{
             if (
@@ -130,21 +131,22 @@ console.log("inStair")
               tokenElev >= stair.range[0]
             ) {
               if (tokenElev == stair.range[1]) {
-                token.inStair = true
+                inStair=true
                 newUpdates = { elevation: stair.range[0] };
               }
               if (tokenElev == stair.range[0]) {
-                token.inStair = true
+                inStair=true
                 newUpdates = { elevation: stair.range[1] };
               }
             }
           }
 
         }else{
-          token.inStair = false
+          inStair = inStair || false
         }
       
     }
+    token.inStair=inStair
     if(newUpdates)token.update(newUpdates)
   }
 });
