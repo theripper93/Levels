@@ -424,6 +424,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         icon: "fas fa-plus-square",
         button: true,
         onClick: () => {
+          _levels.UI.readLevels();
           _levels.UI.defineLevels();
         },
       },
@@ -491,6 +492,10 @@ Hooks.on("ready", () => {
     Hooks.on("createDrawing", (drawing, updates) => {
       if (_levels.UI.rangeEnabled == true) {
         drawing.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+        drawing.update({
+          text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
+          flags: { levels: { drawingMode: 2 } },
+        });
       }
     });
 

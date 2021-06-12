@@ -472,7 +472,7 @@ class Levels {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
-          range: [rangeBottom, rangeTop],
+          range: [rangeBottom, rangeTop+1],
         });
       }
     });
