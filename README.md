@@ -7,15 +7,17 @@ Create maps multiple vertical levels
 
 **How to use:**
 
-* Tiles: You can set the elevation range of a tile through the overhead tile config, set it as a range like 5,15 for example. The tile must be Overehead and must have a Better Roofs mode other than "None" enabled (set occlusion to Fade for best results). **Range for actual roofs must be set to bottom,infinity (eg. 20,infnity)**
+* Tiles: You can set the elevation range of a tile through the overhead tile config. The tile must be Overehead and must have a Better Roofs mode other than "None" enabled (set occlusion to Fade for best results). **Range for actual roofs must be set to bottom,infinity (eg. 20,infnity)**
 
 * Drawings: to create a hole (for example a balcony) create a POLYGON or RECTANGLE, then set the range for the hole in the drawing config
 
 * Lights: You can set the elevation range of a light through the light config, set it as a range like 5,15 for example
 
-* Range: When talking about a range (eg. 3,12) it means what's the floor heigh and ceiling height of that section **ALL RANGES REQUIRE 2 VALUES**
-
 * Walls: The building needs to be walled for better roof to understand where the building is (you can enable building preview in better roofs module settings to check that it's calculated correctly)
+
+**UI**
+
+You can use the levels's ui to make things easier for you, just select the levels layer from the left side buttons and define your levels - with the widget you can then navigate the levels, anything you place (related to levels) when a level is selected will be automatically setup with the chosen top and bottom
 
 **Wall Height**
 
