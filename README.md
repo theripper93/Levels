@@ -5,7 +5,7 @@ Create maps multiple vertical levels
 
 # WARNING: MAY BE BUGGY AF BUT I NEED TESTERS, PLEASE OPEN ISSUES WHEN YOU FIND BUGS
 
-## Video Tuorial coming Soon(TM)
+## [Video Tuorial](https://youtu.be/VDOp1nNTwF0)
 
 **How to use:**
 
