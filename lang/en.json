@@ -20,6 +20,7 @@
     "levels.controls.levelup.name": "Up one Level",
     "levels.controls.leveldown.name": "Down one Level",
     "levels.controls.levelsroof.name": "Enable Levels Roofs View/Placement",
+    "levels.controls.levelshole.name": "Place drawings as Stairs when enabled, place as holes when disabled",
     "levels.controls.levelsclear.name": "Clear Levels",
 
     "levels.dialog.levelsclear.title": "Clear Levels",

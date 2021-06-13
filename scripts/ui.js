@@ -5,12 +5,14 @@ class LevelsUI {
     this.definedLevels = [];
     this.currentLevel = 0;
     this.roofEnabled = false;
+    this.stairEnabled = true;
   }
 
   renderHud(toggle) {
     this.readLevels(this.currentLevel);
     $("body").find('div[id="levels-levels"]').remove();
     if (!toggle) {
+      this.computeLevelsVisibility();
       this.clearVisibility();
       return;
     }
@@ -402,6 +404,8 @@ class LevelsUI {
   }
 
   computeLevelsVisibility(range) {
+    _levels.floorContainer.removeChildren();
+    _levels.floorContainer.spriteIndex = {};
     if (!range) return;
     for (let wall of canvas.walls.placeables) {
       let entityRange = [
@@ -423,7 +427,6 @@ class LevelsUI {
       );
       let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
       let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
-      if (tile.visible) tile.alpha = 1;
       if (tile.visible) {
         _levels.mirrorTileInBackground(tileIndex);
       } else {
@@ -540,7 +543,37 @@ Hooks.on("canvasInit", () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
+  debugger
   if (game.user.isGM) {
+    if (_levels?.UI?.rangeEnabled) {
+      controls.find((c) => c.name == "tiles").layer = "foreground";
+      controls
+        .find((c) => c.name == "tiles")
+        .tools.push({
+          name: "placeRoof",
+          title: game.i18n.localize("levels.controls.levelsroof.name"),
+          icon: "fas fa-archway",
+          toggle: true,
+          active: _levels?.UI?.roofEnabled || false,
+          onClick: (toggle) => {
+            _levels.UI.roofEnabled = toggle;
+          },
+        });
+
+      controls
+        .find((c) => c.name == "drawings")
+        .tools.push({
+          name: "placeStair",
+          title: game.i18n.localize("levels.controls.levelshole.name"),
+          icon: "fas fa-swimming-pool",
+          toggle: true,
+          active: _levels?.UI?.stairEnabled || false,
+          onClick: (toggle) => {
+            _levels.UI.stairEnabled = toggle;
+          },
+        });
+    }
+
     let levelsTools = [
       {
         name: "enablerange",
@@ -549,6 +582,9 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         toggle: true,
         active: _levels?.UI?.rangeEnabled || false,
         onClick: (toggle) => {
+          if (toggle)
+            controls.find((c) => c.name == "tiles").layer = "foreground";
+          else controls.find((c) => c.name == "tiles").layer = "background";
           _levels.UI.rangeEnabled = toggle;
           _levels.UI.renderHud(toggle);
         },
@@ -595,6 +631,16 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         },
       },
       {
+        name: "placeStair",
+        title: game.i18n.localize("levels.controls.levelshole.name"),
+        icon: "fas fa-swimming-pool",
+        toggle: true,
+        active: _levels?.UI?.stairEnabled || false,
+        onClick: (toggle) => {
+          _levels.UI.stairEnabled = toggle;
+        },
+      },
+      {
         name: "clear",
         title: game.i18n.localize("levels.controls.levelsclear.name"),
         icon: "fas fa-trash",
@@ -631,9 +677,21 @@ Hooks.on("ready", () => {
                 : _levels.UI.range[0],
               rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
             },
+            betterroofs: { brMode: 2 },
           },
         });
-        tile.data.update({ flags: { betterroofs: { brMode: 2 } } });
+      }
+    });
+
+    Hooks.on("deleteTile", (tile, updates) => {
+      if (_levels.UI.rangeEnabled == true) {
+        _levels.UI.computeLevelsVisibility();
+      }
+    });
+
+    Hooks.on("updateTile", (tile, updates) => {
+      if (_levels.UI.rangeEnabled == true) {
+        _levels.UI.computeLevelsVisibility();
       }
     });
 
@@ -645,13 +703,18 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        drawing.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
         drawing.data.update({
           hidden: true,
-          text: `Levels Stair ${_levels.UI.range[0]}-${
-            _levels.UI.range[1] + 1
-          }`,
-          flags: { levels: { drawingMode: 2 } },
+          text: _levels.UI.stairEnabled
+            ? `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1] + 1}`
+            : `Levels Hole ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
+          flags: {
+            levels: {
+              drawingMode: _levels.UI.stairEnabled ? 2 : 1,
+              rangeBottom: _levels.UI.range[0],
+              rangeTop: _levels.UI.range[1],
+            },
+          },
         });
       }
     });
