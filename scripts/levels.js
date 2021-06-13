@@ -528,8 +528,8 @@ class Levels {
       return;
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
-    sprite.width = token.data.width * canvas.scene.dimensions.size;
-    sprite.height = token.data.height * canvas.scene.dimensions.size;
+    sprite.width = token.data.width * canvas.scene.dimensions.size * token.data.scale;
+    sprite.height = token.data.height * canvas.scene.dimensions.size * token.data.scale;
     sprite.position.x = x || token.position.x;
     sprite.position.y = y || token.position.y;
     sprite.position.x += icon.x;

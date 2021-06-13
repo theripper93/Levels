@@ -3,6 +3,7 @@
     position: fixed;
     right: 310px;
     border: 1px solid #000;
+    min-width: 150px;
 }
 
 #levels-levels.collapsed {

@@ -4,10 +4,11 @@ class LevelsUI {
     this.rangeEnabled = false;
     this.definedLevels = [];
     this.currentLevel = 0;
+    this.roofEnabled = false;
   }
 
   renderHud(toggle) {
-    this.readLevels();
+    this.readLevels(this.currentLevel);
     $("body").find('div[id="levels-levels"]').remove();
     if (!toggle) {
       this.clearVisibility();
@@ -119,7 +120,6 @@ class LevelsUI {
               let name = $(node).find('input[class="level-name"]')[0].value;
               flagToSet.push([bottom, top, name]);
             }
-            console.log(flagToSet);
             await canvas.scene.setFlag(
               _levelsModuleName,
               "sceneLevels",
@@ -138,6 +138,9 @@ class LevelsUI {
     });
     await dialog._render(true);
     let renderedFrom = $("body").find(`div[id="levels-define-window"]`);
+    $($(renderedFrom)
+      .find(`div[class="button"]`)[0])
+      .on("click", autoReadLevels);
     for (let delBtn of $(renderedFrom).find("a")) {
       if (delBtn.id == "addLevel") {
         $(delBtn).on("click", addToDialog);
@@ -145,10 +148,10 @@ class LevelsUI {
         $(delBtn).on("click", refreshDialog);
       }
     }
-    async function refreshDialog() {
-      let index = this.id.split("-")[1];
-      _levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
-      _levels.UI.definedLevels.splice(index, 1);
+    async function refreshDialog(add = true) {
+      if(add)_levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
+      let index = add ? this.id.split("-")[1] : undefined;
+      if (index) _levels.UI.definedLevels.splice(index, 1);
       let currentLevels = "";
       if (!_levels.UI.definedLevels.length) {
         currentLevels = "<p>No levels defined. Add one below.</p>";
@@ -158,6 +161,9 @@ class LevelsUI {
       let oldForm = $("body").find(`div[id="levels-define-window"]`);
       await oldForm.replaceWith(newcontent);
       let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
+      $($(newRenderedFrom)
+      .find(`div[class="button"]`)[0])
+      .on("click", autoReadLevels);
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -172,7 +178,6 @@ class LevelsUI {
       let bottom = $(node).find('input[class="level-bottom"]')[0].valueAsNumber;
       let top = $(node).find('input[class="level-top"]')[0].valueAsNumber;
       let name = $(node).find('input[class="level-name"]')[0].value;
-      console.log(bottom, top, name);
       _levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
       _levels.UI.definedLevels.push([bottom, top, name]);
       let currentLevels = "";
@@ -184,6 +189,9 @@ class LevelsUI {
       let oldForm = $("body").find(`div[id="levels-define-window"]`);
       await oldForm.replaceWith(newcontent);
       let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
+      $($(newRenderedFrom)
+      .find(`div[class="button"]`)[0])
+      .on("click", autoReadLevels);
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -191,6 +199,44 @@ class LevelsUI {
           $(delBtn).on("click", refreshDialog);
         }
       }
+    }
+
+    function autoReadLevels(event) {
+      event.preventDefault();
+      let autoLevels = {};
+      for (let wall of canvas.walls.placeables) {
+        let entityRange = [
+          wall.data.flags.wallHeight?.wallHeightBottom,
+          wall.data.flags.wallHeight?.wallHeightTop,
+        ];
+        if (entityRange[0] != -Infinity && entityRange[1] != Infinity && (entityRange[0] || entityRange[0]==0) && (entityRange[1] || entityRange[1]==0)) {
+          autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
+        }
+      }
+
+      for (let tile of canvas.foreground.placeables) {
+        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
+        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+        }
+      }
+
+      for (let light of canvas.lighting.placeables) {
+        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(light);
+        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+        }
+      }
+
+      for (let drawing of canvas.drawings.placeables) {
+        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
+        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+        }
+      }
+      let autoRange = Object.entries(autoLevels).map(x=>x[1]).sort();
+      if (autoRange.length) _levels.UI.definedLevels = autoRange;
+      refreshDialog(false);
     }
   }
 
@@ -276,18 +322,21 @@ class LevelsUI {
         </div>
         <a class="trash" id="addLevel"><i class="fas fa-plus"></i></a>
       </div>
+      <div class="button">
+        <button class="add-level">Test</button>
+      </div>
     </form>
 </div>
 
       `;
   }
 
-  readLevels() {
+  readLevels(currentLevel=0) {
     let levelsFlag =
       canvas.scene.getFlag(_levelsModuleName, "sceneLevels") || [];
-    this.currentLevel = 0;
+    this.currentLevel = currentLevel
     this.definedLevels = levelsFlag;
-    this.range = levelsFlag[0];
+    this.range = this.definedLevels[currentLevel];
   }
 
   refreshLevels() {
@@ -311,7 +360,11 @@ class LevelsUI {
     }
 
     for (let tile of canvas.foreground.placeables) {
-      tile.visible = this.computeRangeForDocument(tile, range);
+      tile.visible = this.computeRangeForDocument(
+        tile,
+        range,
+        this.roofEnabled
+      );
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -323,13 +376,25 @@ class LevelsUI {
     }
   }
 
-  computeRangeForDocument(document, range) {
+  computeRangeForDocument(document, range, isTile = false) {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
     let entityRange = [rangeBottom, rangeTop];
-    if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
-      return true;
+    if (!isTile) {
+      if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      if (entityRange[0] == range[1] + 1 && entityRange[1] == Infinity) {
+        return true;
+      } else {
+        if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
   }
 
@@ -450,6 +515,16 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         },
       },
       {
+        name: "placeRoof",
+        title: game.i18n.localize("levels.controls.levelsclear.name"),
+        icon: "fas fa-home",
+        toggle: true,
+        active: _levels?.UI?.roofEnabled || false,
+        onClick: (toggle) => {
+          _levels.UI.roofEnabled = toggle;
+        },
+      },
+      {
         name: "clear",
         title: game.i18n.localize("levels.controls.levelsclear.name"),
         icon: "fas fa-trash",
@@ -478,7 +553,16 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateTile", (tile, updates) => {
       if (_levels.UI.rangeEnabled == true) {
-        tile.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+        tile.data.update({
+          flags: {
+            [`${_levelsModuleName}`]: {
+              rangeBottom: _levels.UI.roofEnabled
+                ? _levels.UI.range[1] + 1
+                : _levels.UI.range[0],
+              rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
+            },
+          },
+        });
         tile.data.update({ flags: { betterroofs: { brMode: 2 } } });
       }
     });
@@ -493,6 +577,7 @@ Hooks.on("ready", () => {
       if (_levels.UI.rangeEnabled == true) {
         drawing.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
         drawing.data.update({
+          hidden: true,
           text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
           flags: { levels: { drawingMode: 2 } },
         });
@@ -520,8 +605,8 @@ Hooks.on("ready", () => {
       }
     });
 
-    Hooks.on("renderApplication",()=>{
-      if(_levels.UI.rangeEnabled)_levels.UI.refreshLevels()
-    })
+    Hooks.on("renderApplication", () => {
+      if (_levels.UI.rangeEnabled) _levels.UI.refreshLevels();
+    });
   }
 });
