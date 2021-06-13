@@ -386,6 +386,7 @@ class LevelsUI {
         range,
         this.roofEnabled
       );
+      if(tile.visible) tile.alpha = 1
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -422,18 +423,22 @@ class LevelsUI {
   clearVisibility() {
     for (let wall of canvas.walls.placeables) {
       wall.visible = true;
+      wall.refresh()
     }
 
     for (let tile of canvas.foreground.placeables) {
       tile.visible = true;
+      tile.refresh()
     }
 
     for (let light of canvas.lighting.placeables) {
       light.visible = true;
+      light.refresh()
     }
 
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = true;
+      drawing.refresh()
     }
   }
 
