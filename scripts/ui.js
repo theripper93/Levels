@@ -138,12 +138,14 @@ class LevelsUI {
     });
     await dialog._render(true);
     let renderedFrom = $("body").find(`div[id="levels-define-window"]`);
-    $($(renderedFrom)
-      .find(`div[class="button"]`)[0])
-      .on("click", autoReadLevels);
-      $($(renderedFrom)
-      .find(`div[class="button"]`)[1])
-      .on("click", suggestedLevels);
+    $($(renderedFrom).find(`div[class="button"]`)[0]).on(
+      "click",
+      autoReadLevels
+    );
+    $($(renderedFrom).find(`div[class="button"]`)[1]).on(
+      "click",
+      suggestedLevels
+    );
     for (let delBtn of $(renderedFrom).find("a")) {
       if (delBtn.id == "addLevel") {
         $(delBtn).on("click", addToDialog);
@@ -152,7 +154,7 @@ class LevelsUI {
       }
     }
     async function refreshDialog(add = true) {
-      if(add)_levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
+      if (add) _levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
       let index = add ? this.id.split("-")[1] : undefined;
       if (index) _levels.UI.definedLevels.splice(index, 1);
       let currentLevels = "";
@@ -164,12 +166,14 @@ class LevelsUI {
       let oldForm = $("body").find(`div[id="levels-define-window"]`);
       await oldForm.replaceWith(newcontent);
       let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
-      $($(newRenderedFrom)
-      .find(`div[class="button"]`)[0])
-      .on("click", autoReadLevels);
-      $($(newRenderedFrom)
-      .find(`div[class="button"]`)[1])
-      .on("click", suggestedLevels);
+      $($(newRenderedFrom).find(`div[class="button"]`)[0]).on(
+        "click",
+        autoReadLevels
+      );
+      $($(newRenderedFrom).find(`div[class="button"]`)[1]).on(
+        "click",
+        suggestedLevels
+      );
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -195,12 +199,14 @@ class LevelsUI {
       let oldForm = $("body").find(`div[id="levels-define-window"]`);
       await oldForm.replaceWith(newcontent);
       let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
-      $($(newRenderedFrom)
-      .find(`div[class="button"]`)[0])
-      .on("click", autoReadLevels);
-      $($(newRenderedFrom)
-      .find(`div[class="button"]`)[1])
-      .on("click", suggestedLevels);
+      $($(newRenderedFrom).find(`div[class="button"]`)[0]).on(
+        "click",
+        autoReadLevels
+      );
+      $($(newRenderedFrom).find(`div[class="button"]`)[1]).on(
+        "click",
+        suggestedLevels
+      );
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -218,41 +224,66 @@ class LevelsUI {
           wall.data.flags.wallHeight?.wallHeightBottom,
           wall.data.flags.wallHeight?.wallHeightTop,
         ];
-        if (entityRange[0] != -Infinity && entityRange[1] != Infinity && (entityRange[0] || entityRange[0]==0) && (entityRange[1] || entityRange[1]==0)) {
+        if (
+          entityRange[0] != -Infinity &&
+          entityRange[1] != Infinity &&
+          (entityRange[0] || entityRange[0] == 0) &&
+          (entityRange[1] || entityRange[1] == 0)
+        ) {
           autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
         }
       }
 
       for (let tile of canvas.foreground.placeables) {
         let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
-        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+        if (
+          (rangeBottom || rangeBottom == 0) &&
+          (rangeTop || rangeTop == 0) &&
+          rangeTop != Infinity &&
+          rangeBottom != -Infinity
+        ) {
           autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
         }
       }
 
       for (let light of canvas.lighting.placeables) {
         let { rangeBottom, rangeTop } = _levels.getFlagsForObject(light);
-        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+        if (
+          (rangeBottom || rangeBottom == 0) &&
+          (rangeTop || rangeTop == 0) &&
+          rangeTop != Infinity &&
+          rangeBottom != -Infinity
+        ) {
           autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
         }
       }
 
       for (let drawing of canvas.drawings.placeables) {
         let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
-        if ((rangeBottom || rangeBottom == 0) && (rangeTop || rangeTop == 0) && rangeTop!=Infinity && rangeBottom!=-Infinity) {
+        if (
+          (rangeBottom || rangeBottom == 0) &&
+          (rangeTop || rangeTop == 0) &&
+          rangeTop != Infinity &&
+          rangeBottom != -Infinity
+        ) {
           autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
         }
       }
-      let autoRange = Object.entries(autoLevels).map(x=>x[1]).sort();
+      let autoRange = Object.entries(autoLevels)
+        .map((x) => x[1])
+        .sort();
       if (autoRange.length) _levels.UI.definedLevels = autoRange;
       refreshDialog(false);
     }
 
-    function suggestedLevels(event){
+    function suggestedLevels(event) {
       event.preventDefault();
-      let suggestedRange = [[0,9,"Ground Floor"],[10,19,"First Floor"],[20,29,"Second Floor"],[30,39,"Third Floor"]
-
-      ]
+      let suggestedRange = [
+        [0, 9, "Ground Floor"],
+        [10, 19, "First Floor"],
+        [20, 29, "Second Floor"],
+        [30, 39, "Third Floor"],
+      ];
       _levels.UI.definedLevels = suggestedRange;
       refreshDialog(false);
     }
@@ -341,10 +372,14 @@ class LevelsUI {
         <a class="trash" id="addLevel"><i class="fas fa-plus"></i></a>
       </div>
       <div class="button">
-        <button class="add-level">${game.i18n.localize("levels.form.autoLevels")}</button>
+        <button class="add-level">${game.i18n.localize(
+          "levels.form.autoLevels"
+        )}</button>
       </div>
       <div class="button">
-      <button class="add-level">${game.i18n.localize("levels.form.suggestedLevels")}</button>
+      <button class="add-level">${game.i18n.localize(
+        "levels.form.suggestedLevels"
+      )}</button>
     </div>
     </form>
 </div>
@@ -352,10 +387,10 @@ class LevelsUI {
       `;
   }
 
-  readLevels(currentLevel=0) {
+  readLevels(currentLevel = 0) {
     let levelsFlag =
       canvas.scene.getFlag(_levelsModuleName, "sceneLevels") || [];
-    this.currentLevel = currentLevel
+    this.currentLevel = currentLevel;
     this.definedLevels = levelsFlag;
     this.range = this.definedLevels[currentLevel];
   }
@@ -386,7 +421,14 @@ class LevelsUI {
         range,
         this.roofEnabled
       );
-      if(tile.visible) tile.alpha = 1
+      let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
+      let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
+      if (tile.visible) tile.alpha = 1;
+      if (tile.visible) {
+        _levels.mirrorTileInBackground(tileIndex);
+      } else {
+        _levels.removeTempTile(tileIndex);
+      }
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -423,23 +465,25 @@ class LevelsUI {
   clearVisibility() {
     for (let wall of canvas.walls.placeables) {
       wall.visible = true;
-      wall.refresh()
+      wall.refresh();
     }
 
     for (let tile of canvas.foreground.placeables) {
       tile.visible = true;
-      tile.refresh()
+      tile.refresh();
     }
 
     for (let light of canvas.lighting.placeables) {
       light.visible = true;
-      light.refresh()
+      light.refresh();
     }
 
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = true;
-      drawing.refresh()
+      drawing.refresh();
     }
+    _levels.floorContainer.removeChildren();
+    _levels.floorContainer.spriteIndex = {};
   }
 
   async clearLevels() {
@@ -604,7 +648,9 @@ Hooks.on("ready", () => {
         drawing.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
         drawing.data.update({
           hidden: true,
-          text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]+1}`,
+          text: `Levels Stair ${_levels.UI.range[0]}-${
+            _levels.UI.range[1] + 1
+          }`,
           flags: { levels: { drawingMode: 2 } },
         });
       }
