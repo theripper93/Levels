@@ -16,9 +16,10 @@
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",
-    "levels.controls.definelevels.name": "Define Levels",
+    "levels.controls.definelevels.name": "Edit Levels",
     "levels.controls.levelup.name": "Up one Level",
     "levels.controls.leveldown.name": "Down one Level",
+    "levels.controls.levelsroof.name": "Enable Levels Roofs View/Placement",
     "levels.controls.levelsclear.name": "Clear Levels",
 
     "levels.dialog.levelsclear.title": "Clear Levels",
@@ -38,5 +39,7 @@
     "levels.form.name": "Name:",
     "levels.form.currentLevel": "Current Levels",
     "levels.form.addNew": "Add a new level",
-    "levels.form.tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)"
+    "levels.form.tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)",
+    "levels.form.suggestedLevels": "Generate Suggested Levels",
+    "levels.form.autoLevels": "Get levels from Scene"
 }

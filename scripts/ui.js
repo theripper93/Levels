@@ -141,6 +141,9 @@ class LevelsUI {
     $($(renderedFrom)
       .find(`div[class="button"]`)[0])
       .on("click", autoReadLevels);
+      $($(renderedFrom)
+      .find(`div[class="button"]`)[1])
+      .on("click", suggestedLevels);
     for (let delBtn of $(renderedFrom).find("a")) {
       if (delBtn.id == "addLevel") {
         $(delBtn).on("click", addToDialog);
@@ -164,6 +167,9 @@ class LevelsUI {
       $($(newRenderedFrom)
       .find(`div[class="button"]`)[0])
       .on("click", autoReadLevels);
+      $($(newRenderedFrom)
+      .find(`div[class="button"]`)[1])
+      .on("click", suggestedLevels);
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -192,6 +198,9 @@ class LevelsUI {
       $($(newRenderedFrom)
       .find(`div[class="button"]`)[0])
       .on("click", autoReadLevels);
+      $($(newRenderedFrom)
+      .find(`div[class="button"]`)[1])
+      .on("click", suggestedLevels);
       for (let delBtn of $(newRenderedFrom).find("a")) {
         if (delBtn.id == "addLevel") {
           $(delBtn).on("click", addToDialog);
@@ -236,6 +245,15 @@ class LevelsUI {
       }
       let autoRange = Object.entries(autoLevels).map(x=>x[1]).sort();
       if (autoRange.length) _levels.UI.definedLevels = autoRange;
+      refreshDialog(false);
+    }
+
+    function suggestedLevels(event){
+      event.preventDefault();
+      let suggestedRange = [[0,9,"Ground Floor"],[10,19,"First Floor"],[20,29,"Second Floor"],[30,39,"Third Floor"]
+
+      ]
+      _levels.UI.definedLevels = suggestedRange;
       refreshDialog(false);
     }
   }
@@ -298,7 +316,7 @@ class LevelsUI {
   <p class="notes">${game.i18n.localize("levels.form.tip")}</p>
   <hr>
     <form id="levels-define" autocomplete="off">
-      <div class="current-levels" style="height:200px">
+      <div class="current-levels" style="min-height:200px">
         ${currentLevels}
       </div>
       <hr>
@@ -323,8 +341,11 @@ class LevelsUI {
         <a class="trash" id="addLevel"><i class="fas fa-plus"></i></a>
       </div>
       <div class="button">
-        <button class="add-level">Test</button>
+        <button class="add-level">${game.i18n.localize("levels.form.autoLevels")}</button>
       </div>
+      <div class="button">
+      <button class="add-level">${game.i18n.localize("levels.form.suggestedLevels")}</button>
+    </div>
     </form>
 </div>
 
@@ -486,7 +507,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       {
         name: "define",
         title: game.i18n.localize("levels.controls.definelevels.name"),
-        icon: "fas fa-plus-square",
+        icon: "fas fa-edit",
         button: true,
         onClick: () => {
           _levels.UI.readLevels();
@@ -516,8 +537,8 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       },
       {
         name: "placeRoof",
-        title: game.i18n.localize("levels.controls.levelsclear.name"),
-        icon: "fas fa-home",
+        title: game.i18n.localize("levels.controls.levelsroof.name"),
+        icon: "fas fa-archway",
         toggle: true,
         active: _levels?.UI?.roofEnabled || false,
         onClick: (toggle) => {
@@ -578,7 +599,7 @@ Hooks.on("ready", () => {
         drawing.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
         drawing.data.update({
           hidden: true,
-          text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
+          text: `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1]+1}`,
           flags: { levels: { drawingMode: 2 } },
         });
       }
