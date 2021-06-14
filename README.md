@@ -25,6 +25,12 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 # **API**
 
+**Patched canvas.walls.checkCollision method to check against a specific elevation**
+
+```js
+  checkCollision(ray, options, elevation) → {boolean}
+```
+
 **Get the ceiling\floor of one or multiple tokens**
 
 ```js
@@ -35,12 +41,6 @@ Your tokens will change levels by changing their elevation, you can also setup z
   **/
 
   _levels.getTokens(tokenIds)
-```
-
-**Patched canvas.walls.checkCollision method to check against a specific elevation**
-
-```js
-  checkCollision(ray, options, elevation) → {boolean}
 ```
 
 **Get variables containing the flags data**
@@ -58,7 +58,7 @@ _levels.getFlagsForObject(object)
 **Get an array that contains { tile : the floor tile, poly : the polygon computed for the tile, range : an array where the index 0 is the bottom flag and 1 is the top}**
 
 ```js
-    /**
+  /**
    * Get all the levels a point is in
    * @param {Object} point - an object containing x and y coordinates {x:x,y:y}
    * @returns {Object[]} returns an array of object each containing {tile,range,poly}
@@ -71,7 +71,7 @@ _levels.getFloorsForPoint(point)
 **Get an array where the index 0 is the bottom and 1 is the top**
 
 ```js
-    /**
+  /**
    * Get all the levels a point is in
    * @param {Integer} elevation - an integer representing elevation
    * @param {Object[]} floors - an array of object each containing {tile,range,poly}
