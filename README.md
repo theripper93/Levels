@@ -29,6 +29,16 @@ Using the module wall height in conjunction with levels is highly suggested
 
 Your tokens will change levels by changing their elevation, you can also setup zones with macros using multi level tokens
 
+**#API**
+
+```js
+  /**
+   * Get the floor and ceiling of one or multiple tokens.
+   * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
+  **/
+
+  getTokens(tokenIds)
+```
 
 ![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelstileconfig.jpg)
 
