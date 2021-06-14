@@ -46,18 +46,39 @@ Your tokens will change levels by changing their elevation, you can also setup z
 **Get an array where the index 0 is the bottom flag and 1 is the top**
 
 ```js
+  /**
+   * Get the floor and ceiling of one tile\drawing\light\sound object.
+   * @param {Object} object - A Tile, Drawing, Light or Sound object
+   * @returns {rangeBottom, rangeTop, isLevel, drawingMode} returns variables containing the flags data
+  **/
+
 _levels.getFlagsForObject(object)
 ```
 
 **Get an array that contains { tile : the floor tile, poly : the polygon computed for the tile, range : an array where the index 0 is the bottom flag and 1 is the top}**
 
 ```js
+    /**
+   * Get all the levels a point is in
+   * @param {Object} point - an object containing x and y coordinates {x:x,y:y}
+   * @returns {Object[]} returns an array of object each containing {tile,range,poly}
+   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
+  **/
+
 _levels.getFloorsForPoint(point)
 ```
 
 **Get an array where the index 0 is the bottom and 1 is the top**
 
 ```js
+    /**
+   * Get all the levels a point is in
+   * @param {Integer} elevation - an integer representing elevation
+   * @param {Object[]} floors - an array of object each containing {tile,range,poly}
+   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
+   * @returns {Array|false} returns false if the elevation is not contained in any of the provided floors, return an Array with [bottom,top] if one is found
+  **/
+
 _levels.findCurrentFloorForElevation(elevation,floors)
 ```
 
