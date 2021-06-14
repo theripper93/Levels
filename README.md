@@ -55,7 +55,7 @@ _levels.getFlagsForObject(object)
 _levels.getFloorsForPoint(point)
 ```
 
-**Get an array where the index 0 is the bottom flag and 1 is the top**
+**Get an array where the index 0 is the bottom and 1 is the top**
 
 ```js
 _levels.findCurrentFloorForElevation(elevation,floors)
