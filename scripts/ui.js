@@ -438,6 +438,10 @@ class LevelsUI {
       light.visible = this.computeRangeForDocument(light, range);
     }
 
+    for (let sound of canvas.sounds.placeables) {
+      sound.visible = this.computeRangeForDocument(sound, range);
+    }
+
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = this.computeRangeForDocument(drawing, range);
     }
@@ -484,6 +488,11 @@ class LevelsUI {
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = true;
       drawing.refresh();
+    }
+
+    for (let sound of canvas.sounds.placeables) {
+      sound.visible = true;
+      sound.refresh();
     }
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};

@@ -264,6 +264,7 @@ class Levels {
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
     let holes = this.getHoles();
+    this.computeSounds(cToken)
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     allTiles.forEach((tile) => {
       this.clearLights(lights);
@@ -522,6 +523,27 @@ class Levels {
       }
     });
     return lights;
+  }
+
+  computeSounds(cToken) {
+    if (!cToken && !game.user.isGM) {
+      for (let s of canvas.sounds.placeables) {
+        s.levelsInaudible = false;
+      }
+      return;
+    }
+
+    if (!cToken) return;
+    let tElev = cToken.data.elevation;
+    for (let s of canvas.sounds.placeables) {
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(s)
+      if (!rangeBottom && rangeBottom!=0) continue;
+      if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
+        s.levelsInaudible = true;
+      }else{
+        s.levelsInaudible = false;
+      }
+    }
   }
 
   adjustPolygonPoints(drawing) {

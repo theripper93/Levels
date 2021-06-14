@@ -273,3 +273,9 @@ function _levelsCheckCollision(ray, {type="movement", mode="any"}={}, roomTest=f
   if ( !canvas.scene.data.walls.size ) return false;
   return this.getRayCollisions(ray, {type, mode},roomTest);
 }
+
+function _levelsIsAudible() {
+  if(this.levelsInaudible) return false;
+  if ( this.data.hidden ) return false;
+  return canvas.lighting.darknessLevel.between(this.data.darkness.min ?? 0, this.data.darkness.max ?? 1);
+}
