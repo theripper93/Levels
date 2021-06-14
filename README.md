@@ -40,7 +40,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
    * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
   **/
 
-  getTokens(tokenIds)
+  _levels.getTokens(tokenIds)
 ```
 
 **Patched canvas.walls.checkCollision method to check against a specific elevation**
