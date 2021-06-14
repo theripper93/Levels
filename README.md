@@ -42,3 +42,9 @@ Your tokens will change levels by changing their elevation, you can also setup z
 ```js
   checkCollision(ray, options, elevation) → {boolean}
 ```
+
+**Get an array where the index 0 is the bottom flag and 1 is the top**
+
+```js
+_levels.getFlagsForObject(object)
+```
