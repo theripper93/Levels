@@ -54,3 +54,16 @@ _levels.getFlagsForObject(object)
 ```js
 _levels.getFloorsForPoint(point)
 ```
+
+**Get an array where the index 0 is the bottom flag and 1 is the top**
+
+```js
+_levels.findCurrentFloorForElevation(elevation,floors)
+```
+
+EXAMPLE:
+
+```js
+_levels.findCurrentFloorForElevation(10,_levels.getFloorsForPoint({x:token.center.x,y:token.center.y}))
+```
+Returns in wich floor of a building any entity (given a point and an elevation) is in. Returns False if it's in none
