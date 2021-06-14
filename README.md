@@ -31,13 +31,22 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 **#API**
 
+**Get the ceiling\floor of one or multiple tokens**
+
 ```js
   /**
    * Get the floor and ceiling of one or multiple tokens.
    * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
+   * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
   **/
 
   getTokens(tokenIds)
+```
+
+**Patched checkCollision method to check against a specific elevation**
+
+```js
+  canvas.walls.checkCollision(new Ray(point, c), {}, elevation)
 ```
 
 ![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelstileconfig.jpg)
