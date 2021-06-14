@@ -9,8 +9,7 @@ Create maps with multiple vertical levels
 
 * Tiles: You can set the elevation range of a tile through the overhead tile config. The tile must be Overehead and must have a Better Roofs mode other than "None" enabled (set occlusion to Fade for best results). **Range for actual roofs must be set to bottom,infinity (eg. 20,infnity)**
 
-* Drawings: to create a hole (for example a balcony) create a POLYGON or RECTANGLE, then set the range for the hole in the drawing config and set the levels mode as hole
-            to create a stair do the same but set the levels mode as stair, a stair will toggle between the bottom elevation and the top elevation + 1
+* Drawings: to create a hole (for example a balcony) create a POLYGON or RECTANGLE, then set the range for the hole in the drawing config and set the levels mode as hole. To create a stair do the same but set the levels mode as stair, a stair will toggle between the bottom elevation and the top elevation + 1
 
 * Lights: You can set the elevation range of a light through the light config, set it as a range like 5,15 for example
 
@@ -22,7 +21,7 @@ You can use the levels's ui to make things easier for you, just select the level
 
 **Elevation**
 
-Your tokens will change levels by changing their elevation, you can also setup zones with drawings
+Your tokens will change levels by changing their elevation, you can also setup zones with drawings to automatically change elevation
 
 # **API**
 
