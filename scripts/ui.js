@@ -565,7 +565,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         .tools.push({
           name: "placeStair",
           title: game.i18n.localize("levels.controls.levelshole.name"),
-          icon: "fas fa-swimming-pool",
+          icon: "fab fa-firstdraft",
           toggle: true,
           active: _levels?.UI?.stairEnabled || false,
           onClick: (toggle) => {
@@ -633,7 +633,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       {
         name: "placeStair",
         title: game.i18n.localize("levels.controls.levelshole.name"),
-        icon: "fas fa-swimming-pool",
+        icon: "fab fa-firstdraft",
         toggle: true,
         active: _levels?.UI?.stairEnabled || false,
         onClick: (toggle) => {
