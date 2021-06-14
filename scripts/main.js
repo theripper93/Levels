@@ -7,20 +7,6 @@ Hooks.on("canvasReady", () => {
   }
 });
 
-// MIGRATION
-
-Hooks.once("canvasReady", () => {
-  if (!_levels) _levels = Levels.get();
-  if (
-    game.user.isGM &&
-    !game.settings.get(_levelsModuleName, "disableMigrate")
-  ) {
-    _levels.migrateFlags();
-  }
-});
-
-//////
-
 Hooks.on("sightRefresh", () => {
   if (_levels) {
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;

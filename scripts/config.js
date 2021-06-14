@@ -10,7 +10,7 @@ Hooks.on("ready",()=>{
 
 Hooks.on("init",()=>{
 
-  game.settings.register(_levelsModuleName, "disableMigrate", {
+  /*game.settings.register(_levelsModuleName, "disableMigrate", {
     name: "Disable Migration on Startup",
     hint: "Disable the migration to the new system when opening a wold (requires refresh)",
     scope: "world",
@@ -18,7 +18,7 @@ Hooks.on("init",()=>{
     type: Boolean,
     default: false,
     onChange: () => {window.location.reload()}
-  });
+  });*/
   
   game.settings.register(_levelsModuleName, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),

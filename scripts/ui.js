@@ -543,7 +543,6 @@ Hooks.on("canvasInit", () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
-  debugger
   if (game.user.isGM) {
     if (_levels?.UI?.rangeEnabled) {
       controls.find((c) => c.name == "tiles").layer = "foreground";

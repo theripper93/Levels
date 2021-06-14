@@ -5,6 +5,7 @@ class Levels {
     this.floorContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
+    this.levelsTiles = [];
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
@@ -17,7 +18,7 @@ class Levels {
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
     canvas["levelsLayer"] = new CanvasLayer();
-    if(this.UI) Levels._instance.UI.readLevels();
+    if (this.UI) Levels._instance.UI.readLevels();
     return Levels._instance;
   }
 
@@ -55,7 +56,7 @@ class Levels {
     for (let tile of canvas.foreground.placeables) {
       if (tile.roomPoly) {
         let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
-        if (!rangeBottom && rangeBottom!=0) continue;
+        if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         tiles.push({
           tile: tile,
@@ -64,6 +65,7 @@ class Levels {
         });
       }
     }
+    this.levelsTiles = tiles;
     return tiles;
   }
 
@@ -143,7 +145,7 @@ class Levels {
           }
         } else {
           t.token.levelsHidden = false;
-          t.token.icon.alpha = 1;
+          if (t.token.icon) t.token.icon.alpha = 1;
           tokenPov.push({ token: t, visible: t.token.isVisible });
           this.removeTempToken(t.token);
         }
@@ -182,10 +184,33 @@ class Levels {
 
   getTokensState(allTiles) {
     let tokensState = [];
+    this.levelsTokens = {};
     for (let token of canvas.tokens.placeables) {
-      tokensState.push(this.getTokenState(token, allTiles));
+      let tokenstate = this.getTokenState(token, allTiles);
+      tokensState.push(tokenstate);
+      this.levelsTokens[token.id] = tokenstate;
     }
     return tokensState;
+  }
+
+  /**
+   * Get the floor and ceiling of one or multiple tokens.
+   * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
+   * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
+  **/
+
+  getTokens(tokenIds) {
+    if (Array.isArray(tokenIds)) {
+      let tokensState = {};
+      tokenIds.forEach((token) => {
+        let tId = token.id || token;
+        tokensState[tId] = this.levelsTokens[tokenIds];
+      });
+      return tokensState;
+    } else {
+      let tId = token.id || token;
+      return this.levelsTokens[tId];
+    }
   }
 
   getTokenState(token, allTiles) {
@@ -452,8 +477,9 @@ class Levels {
   getHoles() {
     let holes = [];
     canvas.drawings.placeables.forEach((drawing) => {
-      let  { rangeBottom, rangeTop, drawingMode } = this.getFlagsForObject(drawing);
-      if (drawingMode == 1 && (rangeBottom || rangeBottom==0)) {
+      let { rangeBottom, rangeTop, drawingMode } =
+        this.getFlagsForObject(drawing);
+      if (drawingMode == 1 && (rangeBottom || rangeBottom == 0)) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
@@ -467,12 +493,17 @@ class Levels {
   getStairs() {
     let holes = [];
     canvas.drawings.placeables.forEach((drawing) => {
-      let  { rangeBottom, rangeTop, drawingMode } = this.getFlagsForObject(drawing);
-      if (drawingMode == 2 && rangeBottom !=-Infinity && rangeTop!=Infinity) {
+      let { rangeBottom, rangeTop, drawingMode } =
+        this.getFlagsForObject(drawing);
+      if (
+        drawingMode == 2 &&
+        rangeBottom != -Infinity &&
+        rangeTop != Infinity
+      ) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
           poly: p,
-          range: [rangeBottom, rangeTop+1],
+          range: [rangeBottom, rangeTop + 1],
         });
       }
     });
@@ -483,7 +514,7 @@ class Levels {
     let lights = [];
     canvas.lighting.placeables.forEach((light) => {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(light);
-      if (rangeBottom || rangeBottom==0) {
+      if (rangeBottom || rangeBottom == 0) {
         lights.push({
           light: light,
           range: [rangeBottom, rangeTop],
@@ -528,8 +559,10 @@ class Levels {
       return;
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
-    sprite.width = token.data.width * canvas.scene.dimensions.size * token.data.scale;
-    sprite.height = token.data.height * canvas.scene.dimensions.size * token.data.scale;
+    sprite.width =
+      token.data.width * canvas.scene.dimensions.size * token.data.scale;
+    sprite.height =
+      token.data.height * canvas.scene.dimensions.size * token.data.scale;
     sprite.position.x = x || token.position.x;
     sprite.position.y = y || token.position.y;
     sprite.position.x += icon.x;
@@ -600,14 +633,12 @@ class Levels {
   getFlagsForObject(object) {
     let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
     let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
-    if (!rangeTop && rangeTop!= 0) rangeTop = Infinity;
-    if (!rangeBottom && rangeBottom!= 0) rangeBottom = -Infinity;
+    if (!rangeTop && rangeTop != 0) rangeTop = Infinity;
+    if (!rangeBottom && rangeBottom != 0) rangeBottom = -Infinity;
     let isLevel = rangeTop == Infinity ? false : true;
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
-    let drawingMode = object.document.getFlag(
-      _levelsModuleName,
-      "drawingMode"
-    ) || 0;
+    let drawingMode =
+      object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
     return { rangeBottom, rangeTop, isLevel, drawingMode };
   }
 
@@ -617,14 +648,11 @@ class Levels {
     );
     let migrated = 0;
     async function migrateForObject(object) {
-      let oldLevelsFlag = object.getFlag(
-        _levelsModuleName,
-        "heightRange"
-      );
+      let oldLevelsFlag = object.getFlag(_levelsModuleName, "heightRange");
       if (!oldLevelsFlag) return;
       let splitFlag = oldLevelsFlag.split(",");
       if (splitFlag.length != 2) {
-        await object.unsetFlag(_levelsModuleName,"heightRange");
+        await object.unsetFlag(_levelsModuleName, "heightRange");
         return;
       }
       let range0 = parseInt(splitFlag[0]);
@@ -634,7 +662,7 @@ class Levels {
           : parseInt(splitFlag[1]);
       await object.setFlag(_levelsModuleName, "rangeBottom", range0);
       await object.setFlag(_levelsModuleName, "rangeTop", range1);
-      await object.unsetFlag(_levelsModuleName,"heightRange");
+      await object.unsetFlag(_levelsModuleName, "heightRange");
       migrated++;
     }
     for (let scene of Array.from(game.scenes)) {
@@ -649,6 +677,8 @@ class Levels {
       }
     }
 
-    ui.notifications.info(`Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings. Remember to also Update Better Roofs`);
+    ui.notifications.info(
+      `Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings. Remember to also Update Better Roofs`
+    );
   }
 }
