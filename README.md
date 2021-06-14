@@ -43,8 +43,8 @@ Your tokens will change levels by changing their elevation, you can also setup z
   getTokens(tokenIds)
 ```
 
-**Patched checkCollision method to check against a specific elevation**
+**Patched canvas.walls.checkCollision method to check against a specific elevation**
 
 ```js
-  canvas.walls.checkCollision(new Ray(point, c), {}, elevation)
+  checkCollision(ray, options, elevation) → {boolean}
 ```
