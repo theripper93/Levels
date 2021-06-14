@@ -48,9 +48,3 @@ Your tokens will change levels by changing their elevation, you can also setup z
 ```js
   canvas.walls.checkCollision(new Ray(point, c), {}, elevation)
 ```
-
-![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelstileconfig.jpg)
-
-![alt text](https://raw.githubusercontent.com/theripper93/Levels/main/wiki/holesdconfig.jpg)
-
-![alt text](https://github.com/theripper93/Levels/raw/main/wiki/levelslightconfig.jpg)
