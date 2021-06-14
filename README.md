@@ -48,3 +48,9 @@ Your tokens will change levels by changing their elevation, you can also setup z
 ```js
 _levels.getFlagsForObject(object)
 ```
+
+**Get an array that contains { tile : the floor tile, poly : the polygon computed for the tile, range : an array where the index 0 is the bottom flag and 1 is the top}**
+
+```js
+_levels.getFloorsForPoint(point)
+```
