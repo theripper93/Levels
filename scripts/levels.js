@@ -274,6 +274,7 @@ class Levels {
     tilesIsIn.forEach((tile) => {
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
     });
+    lights.forEach(lightIndex => lightIndex.light.source.skipAlreadyComputed=false)
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -372,14 +373,15 @@ class Levels {
       );
       switch (whereIsTheLight) {
         case -1:
-          lightIndex.light.source.skipRender = false;
+          if(!lightIndex.light.source.skipAlreadyComputed) lightIndex.light.source.skipRender = false;
           lightsToOcclude.push(lightIndex);
           break;
         case 0:
-          lightIndex.light.source.skipRender = false;
+          if(!lightIndex.light.source.skipAlreadyComputed) lightIndex.light.source.skipRender = false;
           lightsToUnocclude.push(lightIndex);
           break;
         case 1:
+          lightIndex.light.source.skipAlreadyComputed = true
           lightIndex.light.source.skipRender = true;
           break;
       }
