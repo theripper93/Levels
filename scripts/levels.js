@@ -255,7 +255,7 @@ class Levels {
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
     let holes = this.getHoles();
-    if(this.elevationScale) this.updateScales()
+    this.updateScales()
     this.computeSounds(cToken)
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     allTiles.forEach((tile) => {
