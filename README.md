@@ -26,6 +26,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 # **KNOWN ISSUES\INCOMPATIBILITES**
 
 * ## **Less Fog**: Will make token visibility calculations for levels not work correctly
+* ## **Perfect Vision**: Tokens in holes may not appear in black and white, possible other issues present
 
 # **API**
 
