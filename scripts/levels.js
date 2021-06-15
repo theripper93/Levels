@@ -262,8 +262,8 @@ class Levels {
     this.computeSounds(cToken);
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     let lights = this.getLights();
+    this.clearLights(lights);
     allTiles.forEach((tile) => {
-      this.clearLights(lights);
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
       this.computeTile(
         tile,
