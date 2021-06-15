@@ -6,7 +6,7 @@ class Levels {
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
-    this.levelsTokens = {}
+    this.levelsTokens = {};
     this.elevationScale = game.settings.get(
       _levelsModuleName,
       "tokenElevScale"
@@ -251,7 +251,7 @@ class Levels {
   }
 
   _onElevationChangeUpdate(overrideElevation = undefined) {
-    if(!this.init) this._levelsOnSightRefresh()
+    if (!this.init) this._levelsOnSightRefresh();
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
@@ -274,7 +274,9 @@ class Levels {
     tilesIsIn.forEach((tile) => {
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
     });
-    lights.forEach(lightIndex => lightIndex.light.source.skipAlreadyComputed=false)
+    lights.forEach(
+      (lightIndex) => (lightIndex.light.source.skipAlreadyComputed = false)
+    );
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -373,15 +375,19 @@ class Levels {
       );
       switch (whereIsTheLight) {
         case -1:
-          if(!lightIndex.light.source.skipAlreadyComputed) lightIndex.light.source.skipRender = false;
-          lightsToOcclude.push(lightIndex);
+          if (!lightIndex.light.source.skipAlreadyComputed) {
+            lightIndex.light.source.skipRender = false;
+            lightsToOcclude.push(lightIndex);
+          }
           break;
         case 0:
-          if(!lightIndex.light.source.skipAlreadyComputed) lightIndex.light.source.skipRender = false;
-          lightsToUnocclude.push(lightIndex);
+          if (!lightIndex.light.source.skipAlreadyComputed) {
+            lightIndex.light.source.skipRender = false;
+            lightsToUnocclude.push(lightIndex);
+          }
           break;
         case 1:
-          lightIndex.light.source.skipAlreadyComputed = true
+          lightIndex.light.source.skipAlreadyComputed = true;
           lightIndex.light.source.skipRender = true;
           break;
       }
@@ -426,7 +432,7 @@ class Levels {
   }
 
   lightIluminatesHole(light, holes, elevation) {
-    if(!light.light.source.fov) return false
+    if (!light.light.source.fov) return false;
     for (let hole of holes) {
       for (let i = 0; i < light.light.source.fov.points.length; i += 2) {
         if (
@@ -561,7 +567,7 @@ class Levels {
     canvas.drawings.placeables.forEach((drawing) => {
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
-        let isLocked =  drawing.document.getFlag(_levelsModuleName, "stairLocked") 
+      let isLocked = drawing.document.getFlag(_levelsModuleName, "stairLocked");
       if (
         (drawingMode == 2 || drawingMode == 3) &&
         rangeBottom != -Infinity &&
@@ -631,15 +637,20 @@ class Levels {
         });
       }
     });
-    canvas.tokens.placeables.forEach((token)=>{
-      if((token.light.dim || token.light.bright) && this.levelsTokens[token.id]){
+    canvas.tokens.placeables.forEach((token) => {
+      if (
+        (token.light.dim || token.light.bright) &&
+        this.levelsTokens[token.id]
+      ) {
         lights.push({
-          light: {source: token.light},
-          range: [this.levelsTokens[token.id].range[0], this.levelsTokens[token.id].range[1]],
+          light: { source: token.light },
+          range: [
+            this.levelsTokens[token.id].range[0],
+            this.levelsTokens[token.id].range[1],
+          ],
         });
       }
-
-    })
+    });
     return lights;
   }
 
