@@ -51,11 +51,6 @@ class Levels {
     return tiles;
   }
 
-  getFloorsForPoint(point){
-    let cPoint = {center:{x:point.x,y:point.y}}
-    return findRoomsTiles(cPoint, this.levelsTiles)
-  }
-
   findCurrentFloorForElevation(elevation,floors){
     floors.forEach((floor)=>{
       if(elevation<=floor.range[1] && elevation >= floor.range[0]) return floor.range
@@ -205,25 +200,7 @@ class Levels {
     return tokensState;
   }
 
-  /**
-   * Get the floor and ceiling of one or multiple tokens.
-   * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
-   * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
-  **/
 
-  getTokens(tokenIds) {
-    if (Array.isArray(tokenIds)) {
-      let tokensState = {};
-      tokenIds.forEach((token) => {
-        let tId = token.id || token;
-        tokensState[tId] = this.levelsTokens[tokenIds];
-      });
-      return tokensState;
-    } else {
-      let tId = token.id || token;
-      return this.levelsTokens[tId];
-    }
-  }
 
   getTokenState(token, allTiles) {
     let elevation = token.data.elevation;
@@ -283,7 +260,7 @@ class Levels {
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
       this.computeTile(
         tile,
-        _levels.getPositionRelativeToTile(cToken.data.elevation, tile),
+        this.getPositionRelativeToTile(cToken.data.elevation, tile),
         lights
       );
     });
@@ -632,7 +609,7 @@ class Levels {
 
   getPositionRelativeToTile(elevation, tile) {
     if (elevation < tile.range[0]) return 1;
-    if (elevation > tile.range[1]) return -1;
+    if (elevation > tile.range[1]) return 0//-1;
     return 0;
   }
 
@@ -664,17 +641,7 @@ class Levels {
     }
   }
 
-  getFlagsForObject(object) {
-    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
-    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
-    if (!rangeTop && rangeTop != 0) rangeTop = Infinity;
-    if (!rangeBottom && rangeBottom != 0) rangeBottom = -Infinity;
-    let isLevel = rangeTop == Infinity ? false : true;
-    if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
-    let drawingMode =
-      object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
-    return { rangeBottom, rangeTop, isLevel, drawingMode };
-  }
+
 
   async migrateFlags() {
     ui.notifications.error(
@@ -715,4 +682,74 @@ class Levels {
       `Migration completed: Migrated ${migrated} Entities - You can disable migration on startup in the module settings. Remember to also Update Better Roofs`
     );
   }
+
+/*****************
+ * API FUNCTIONS *
+ *****************/
+
+  /**
+   * Get the floor and ceiling of one or multiple tokens.
+   * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
+   * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
+  **/
+
+   getTokens(tokenIds) {
+    if (Array.isArray(tokenIds)) {
+      let tokensState = {};
+      tokenIds.forEach((token) => {
+        let tId = token.id || token;
+        tokensState[tId] = this.levelsTokens[tokenIds];
+      });
+      return tokensState;
+    } else {
+      let tId = token.id || token;
+      return this.levelsTokens[tId];
+    }
+  }
+
+  /**
+   * Get the floor and ceiling of one tile\drawing\light\sound object.
+   * @param {Object} object - A Tile, Drawing, Light or Sound object
+   * @returns {rangeBottom, rangeTop, isLevel, drawingMode} returns variables containing the flags data
+  **/
+
+  getFlagsForObject(object) {
+    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
+    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
+    if (!rangeTop && rangeTop != 0) rangeTop = Infinity;
+    if (!rangeBottom && rangeBottom != 0) rangeBottom = -Infinity;
+    let isLevel = rangeTop == Infinity ? false : true;
+    if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
+    let drawingMode =
+      object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
+    return { rangeBottom, rangeTop, isLevel, drawingMode };
+  }
+
+    /**
+   * Get all the levels a point is in
+   * @param {Object} point - an object containing x and y coordinates {x:x,y:y}
+   * @returns {Object[]} returns an array of object each containing {tile,range,poly}
+   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
+  **/
+
+  getFloorsForPoint(point){
+    let cPoint = {center:{x:point.x,y:point.y}}
+    return findRoomsTiles(cPoint, this.levelsTiles)
+  }
+
+    /**
+   * Get all the levels a point is in
+   * @param {Integer} elevation - an integer representing elevation
+   * @param {Object[]} floors - an array of object each containing {tile,range,poly}
+   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
+   * @returns {Array|false} returns false if the elevation is not contained in any of the provided floors, return an Array with [bottom,top] if one is found
+  **/
+
+  findCurrentFloorForElevation(elevation,floors){
+    floors.forEach((floor)=>{
+      if(elevation<=floor.range[1] && elevation >= floor.range[0]) return floor.range
+    })
+    return false
+  }
+
 }
