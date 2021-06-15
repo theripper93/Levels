@@ -25,7 +25,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 # **KNOWN ISSUES\INCOMPATIBILITES**
 
-* ##**Less Fog**: Will make token visibility calculations for levels not work correctly
+* ## **Less Fog**: Will make token visibility calculations for levels not work correctly
 
 # **API**
 
