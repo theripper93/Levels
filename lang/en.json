@@ -18,6 +18,7 @@
     "levels.drawingconfig.isHole.opt1": "Hole",
     "levels.drawingconfig.isHole.opt2": "Stair",
     "levels.drawingconfig.isHole.opt3": "Elevator",
+    "levels.drawingHud.title": "Toggle Locked State for Stair",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",

@@ -559,10 +559,12 @@ class Levels {
     canvas.drawings.placeables.forEach((drawing) => {
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
+        let isLocked =  drawing.document.getFlag(_levelsModuleName, "stairLocked") 
       if (
         (drawingMode == 2 || drawingMode == 3) &&
         rangeBottom != -Infinity &&
-        rangeTop != Infinity
+        rangeTop != Infinity &&
+        !isLocked
       ) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
