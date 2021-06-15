@@ -112,6 +112,50 @@ Hooks.on("updateToken", (token, updates) => {
     let inStair;
     for (let stair of stairs) {
       if (stair.poly.contains(newTokenCenter.x, newTokenCenter.y)) {
+        if (token.inStair == stair.drawing.id) {
+          inStair = stair.drawing.id;
+        } else {
+          if (stair.drawingMode == 2) {
+            if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
+              if (tokenElev == stair.range[1]) {
+                inStair = stair.drawing.id;
+                newUpdates = { elevation: stair.range[0] };
+              }
+              if (tokenElev == stair.range[0]) {
+                inStair = stair.drawing.id;
+                newUpdates = { elevation: stair.range[1] };
+              }
+            }
+          }else if(stair.drawingMode == 3){
+            _levels.renderElevatorDalog(stair.drawing.document.getFlag(_levelsModuleName,"elevatorFloors"),token)
+            inStair = stair.drawing.id;
+          }
+        }
+      } else {
+        inStair = inStair || false;
+      }
+    }
+    token.inStair = inStair;
+    if (newUpdates) token.update(newUpdates);
+  }
+});
+
+
+/*Hooks.on("updateToken", (token, updates) => {
+  if ("x" in updates || "y" in updates) {
+    let stairs = _levels.getStairs();
+    let tokenX = updates.x || token.data.x;
+    let tokenY = updates.y || token.data.y;
+    let newUpdates;
+    let tokenElev = updates.elevation || token.data.elevation;
+    let gridSize = canvas.scene.dimensions.size;
+    let newTokenCenter = {
+      x: tokenX + (gridSize * token.data.width) / 2,
+      y: tokenY + (gridSize * token.data.height) / 2,
+    };
+    let inStair;
+    for (let stair of stairs) {
+      if (stair.poly.contains(newTokenCenter.x, newTokenCenter.y)) {
         if (token.inStair) {
           inStair = true;
         } else {
@@ -139,3 +183,4 @@ Hooks.on("updateToken", (token, updates) => {
     if (newUpdates) token.update(newUpdates);
   }
 });
+*/
