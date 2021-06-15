@@ -6,6 +6,7 @@ class Levels {
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
+    this.elevationScale = game.settings.get(_levelsModuleName, "tokenElevScale")
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
@@ -254,6 +255,7 @@ class Levels {
     let allTiles = this.findAllTiles();
     let lights = this.getLights();
     let holes = this.getHoles();
+    if(this.elevationScale) this.updateScales()
     this.computeSounds(cToken)
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     allTiles.forEach((tile) => {
@@ -281,6 +283,30 @@ class Levels {
     canvas.lighting.refresh();
     canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
+
+updateScales(){
+  if(this.elevationScale){
+    canvas.tokens.placeables.forEach((token)=>{
+      let elevScaleFactor=1
+      if(canvas.tokens.controlled[0]){
+      let HeightDiff = Math.abs(token.data.elevation - canvas.tokens.controlled[0].data.elevation)
+      let HeightDiffFactor= Math.sqrt((HeightDiff/8))
+      elevScaleFactor=1/HeightDiffFactor > 1 ? 1 : 1/HeightDiffFactor
+      token.elevationScaleFactor =  token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1
+    }
+      token.icon.width = token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+      token.icon.height = token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+    })
+  }else{
+    canvas.tokens.placeables.forEach((token)=>{
+      token.elevationScaleFactor =  1
+      token.icon.width = token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+      token.icon.height = token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+    })
+  }
+
+
+}
 
   clearLights(lights) {
     lights.forEach((lightIndex) => {
@@ -614,9 +640,9 @@ class Levels {
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
     sprite.width =
-      token.data.width * canvas.scene.dimensions.size * token.data.scale;
+      token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
     sprite.height =
-      token.data.height * canvas.scene.dimensions.size * token.data.scale;
+      token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
     sprite.position.x = x || token.position.x;
     sprite.position.y = y || token.position.y;
     sprite.position.x += icon.x;

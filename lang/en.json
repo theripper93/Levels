@@ -2,6 +2,8 @@
     "levels.modulename": "Levels",
     "levels.settings.enableTooltips.name": "Enable Tooltips",
     "levels.settings.enableTooltips.hint": "Show tooltips with top and bottom when hovering levels objects",
+    "levels.settings.tokenElevScale.name": "Change token sized based on elevation",
+    "levels.settings.tokenElevScale.hint": "Change size of tokens based on elevation of the controlled token",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
