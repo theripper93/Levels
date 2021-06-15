@@ -23,6 +23,10 @@ You can use the levels's ui to make things easier for you, just select the level
 
 Your tokens will change levels by changing their elevation, you can also setup zones with drawings to automatically change elevation
 
+# **KNOWN ISSUES\INCOMPATIBILITES**
+
+* Less Fog: Will make token visibility calculations for levels not work correctly
+
 # **API**
 
 **Patched canvas.walls.checkCollision method to check against a specific elevation**
