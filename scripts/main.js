@@ -66,8 +66,8 @@ Hooks.on("controlToken", (token, contorlled) => {
         _levels.unoccludeLights(t, light, true);
       });
     });
-    _levels.floorContainer.removeChildren()
-    _levels.floorContainer.spriteIndex = {}
+    _levels.floorContainer.removeChildren();
+    _levels.floorContainer.spriteIndex = {};
     canvas.tokens.placeables.forEach((t) => {
       if (t.levelsHidden == true) {
         t.levelsHidden == false;
@@ -104,37 +104,38 @@ Hooks.on("updateToken", (token, updates) => {
     let tokenY = updates.y || token.data.y;
     let newUpdates;
     let tokenElev = updates.elevation || token.data.elevation;
-    let gridSize = canvas.scene.dimensions.size
-    let newTokenCenter = { x: tokenX + (gridSize*token.data.width)/2, y: tokenY + (gridSize*token.data.height)/2 };
-    let inStair
+    let gridSize = canvas.scene.dimensions.size;
+    let newTokenCenter = {
+      x: tokenX + (gridSize * token.data.width) / 2,
+      y: tokenY + (gridSize * token.data.height) / 2,
+    };
+    let inStair;
     for (let stair of stairs) {
-      if(
-        stair.poly.contains(newTokenCenter.x, newTokenCenter.y)){
-          if(token.inStair){
-            inStair=true
-          }
-          else{
-            if (
-              tokenElev <= stair.range[1] &&
-              tokenElev >= stair.range[0]
-            ) {
+      if (stair.poly.contains(newTokenCenter.x, newTokenCenter.y)) {
+        if (token.inStair) {
+          inStair = true;
+        } else {
+          if (stair.drawingMode == 2) {
+            if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
               if (tokenElev == stair.range[1]) {
-                inStair=true
+                inStair = true;
                 newUpdates = { elevation: stair.range[0] };
               }
               if (tokenElev == stair.range[0]) {
-                inStair=true
+                inStair = true;
                 newUpdates = { elevation: stair.range[1] };
               }
             }
+          }else if(stair.drawingMode == 3){
+            _levels.renderElevatorDalog(stair.drawing.document.getFlag(_levelsModuleName,"elevatorFloors"),token)
+            inStair = true;
           }
-
-        }else{
-          inStair = inStair || false
         }
-      
+      } else {
+        inStair = inStair || false;
+      }
     }
-    token.inStair=inStair
-    if(newUpdates)token.update(newUpdates)
+    token.inStair = inStair;
+    if (newUpdates) token.update(newUpdates);
   }
 });

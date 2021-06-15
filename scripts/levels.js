@@ -487,18 +487,60 @@ class Levels {
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
       if (
-        drawingMode == 2 &&
+        (drawingMode == 2 || drawingMode == 3) &&
         rangeBottom != -Infinity &&
         rangeTop != Infinity
       ) {
         let p = new PIXI.Polygon(this.adjustPolygonPoints(drawing));
         holes.push({
+          drawing: drawing,
           poly: p,
           range: [rangeBottom, rangeTop + 1],
+          drawingMode:drawingMode
         });
       }
     });
     return holes;
+  }
+
+ async renderElevatorDalog(levelsFlag){
+    let elevatorFloors = []
+    levelsFlag.split("|").forEach((f)=>{
+      elevatorFloors.push(f.split(","))
+    })
+
+    let content = `<div id="levels-elevator">`
+
+  elevatorFloors.forEach((f)=>{
+    content+= ` <div>
+    <div class="button">
+    <button id="${f[0]}" class="elevator-level">${f[1]}</button>
+  </div>`
+  })
+  content+=`</div>`
+
+  let dialog = new Dialog({
+    title: game.i18n.localize("levels.dialog.elevator.title"),
+    content: content,
+    buttons: {
+      close: {
+        label: game.i18n.localize("levels.yesnodialog.no"),
+        callback: () => {},
+      },
+    },
+    default: "close",
+    close: () => {},
+  });
+  await dialog._render(true);
+  let renderedFrom = $("body").find(`div[id="levels-elevator"]`);
+  for (let btn of $(renderedFrom).find("button")) {
+      $(btn).on("click", updateElev);
+  }
+  function updateElev(event){
+    let newElev = parseInt(event.target.id)
+    if(newElev || newElev==0) canvas.tokens.controlled[0].update({elevation:newElev})
+  }
+
   }
 
   getLights() {

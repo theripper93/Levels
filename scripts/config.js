@@ -162,6 +162,9 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 let opt0 = drawingMode == 0 ? `selected=""` : ``
 let opt1 = drawingMode == 1 ? `selected=""` : ``
 let opt2 = drawingMode == 2 ? `selected=""` : ``
+let opt3 = drawingMode == 3 ? `selected=""` : ``
+
+let elevatorFloors = app.object.getFlag(_levelsModuleName,"elevatorFloors") || ""
 
 const newHtml = `
 
@@ -169,10 +172,19 @@ const newHtml = `
             <label>${game.i18n.localize("levels.drawingconfig.isHole.name")}</label>
             <div class="form-fields">
                 <select name="flags.${_levelsModuleName}.drawingMode" data-dtype="Number">
-                    <option value="0" ${opt0}>${game.i18n.localize("levels.drawingconfig.isHole.opt0")}</option><option value="1" ${opt1}>${game.i18n.localize("levels.drawingconfig.isHole.opt1")}</option><option value="2" ${opt2}>${game.i18n.localize("levels.drawingconfig.isHole.opt2")}</option>
+                    <option value="0" ${opt0}>${game.i18n.localize("levels.drawingconfig.isHole.opt0")}</option><option value="1" ${opt1}>${game.i18n.localize("levels.drawingconfig.isHole.opt1")}</option><option value="2" ${opt2}>${game.i18n.localize("levels.drawingconfig.isHole.opt2")}</option><option value="3" ${opt3}>${game.i18n.localize("levels.drawingconfig.isHole.opt3")}</option>
                 </select>
             </div>
         </div>
+
+<div class="form-group">
+<p class="notes">${game.i18n.localize("levels.drawingconfig.elevatorFloors.hint")}.</p>
+<label for="elevatorFloors">${game.i18n.localize("levels.drawingconfig.elevatorFloors.name")}</label>
+<div class="form-fields">
+    <input type="text" name="flags.${_levelsModuleName}.elevatorFloors" value="${elevatorFloors}">
+</div>
+</div>
+
 
 <div class="form-group">
 <label for="rangeTop">${game.i18n.localize("levels.drawingconfig.ht.name")}<span class="units">(${game.i18n.localize("levels.tilecoonfig.range.unit")})</span></label>

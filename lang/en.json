@@ -9,10 +9,13 @@
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
     "levels.drawingconfig.range.name": "Hole Range",
+    "levels.drawingconfig.elevatorFloors.name": "Elevator Floors",
+    "levels.drawingconfig.elevatorFloors.hint": "Define Floors as: elevation,name|elevation,name... - eg. 0,Ground Floor|10,First Floor...",
     "levels.drawingconfig.isHole.name": "Levels Drawing Mode",
     "levels.drawingconfig.isHole.opt0": "None",
     "levels.drawingconfig.isHole.opt1": "Hole",
     "levels.drawingconfig.isHole.opt2": "Stair",
+    "levels.drawingconfig.isHole.opt3": "Elevator",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",
@@ -28,6 +31,7 @@
     "levels.dialog.define.warn": "Define levels as: bottom,top|bottom,top - eg. 0,9|10,19|20,29",
     "levels.dialog.define.title": "Define Levels for this Scene",
     "levels.dialog.define.text": "Levels: ",
+    "levels.dialog.elevator.title": "Levels - Choose a Floor",
 
     "levels.yesnodialog.yes": "Confirm",
     "levels.yesnodialog.no": "Cancel",
