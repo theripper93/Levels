@@ -84,6 +84,7 @@ class Levels {
         return false;
         break;
       case -1:
+        this.mirrorTileInBackground(tile);
         return false;
         break;
       case 0:
@@ -609,7 +610,7 @@ class Levels {
 
   getPositionRelativeToTile(elevation, tile) {
     if (elevation < tile.range[0]) return 1;
-    if (elevation > tile.range[1]) return 0//-1;
+    if (elevation > tile.range[1]) return -1;
     return 0;
   }
 
