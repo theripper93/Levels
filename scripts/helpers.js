@@ -56,8 +56,8 @@ function _levelsOnMovementFrame(dt, anim, config) {
   // Update the token copy
   let tempTokenSprite = _levels.floorContainer.spriteIndex[this.id];
   if (tempTokenSprite) {
-    tempTokenSprite.width = this.data.width * canvas.scene.dimensions.size * this.data.scale * this.elevationScaleFactor;
-    tempTokenSprite.height = this.data.height * canvas.scene.dimensions.size * this.data.scale * this.elevationScaleFactor;
+    tempTokenSprite.width = this.data.width * canvas.scene.dimensions.size * this.data.scale * (this.elevationScaleFactor || 1);
+    tempTokenSprite.height = this.data.height * canvas.scene.dimensions.size * this.data.scale * (this.elevationScaleFactor || 1);
     tempTokenSprite.position.x = this.position.x;
     tempTokenSprite.position.y = this.position.y;
     tempTokenSprite.position.x += this.icon.x;

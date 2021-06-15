@@ -2,35 +2,26 @@ const _levelsModuleName = "levels";
 let _levels;
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
+  _levels.getTokensState(_levels.findAllTiles())
   if (canvas.tokens.controlled[0]) {
     _levels._onElevationChangeUpdate();
   }
+
+  Hooks.once("controlToken", (token, contorlled) => {
+    if(contorlled){
+      _levels.init = true
+    }
+  })
+
 });
+
+Hooks.on("betterRoofsReady",()=>{
+  if(_levels)_levels.getTokensState(_levels.findAllTiles())
+})
 
 Hooks.on("sightRefresh", () => {
   if (_levels) {
-    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    _levels.refreshTokens(cToken);
-    _levels.computeDoors(cToken);
-    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      let ownedTokens = canvas.tokens.placeables.filter(
-        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-      );
-      let tokenPovs = [];
-      ownedTokens.forEach((t) => {
-        tokenPovs.push(_levels.refreshTokens(t));
-        _levels.computeDoors(t);
-      });
-      tokenPovs.forEach((povs) => {
-        povs.forEach((pov) => {
-          if (pov.visible) {
-            pov.token.token.visible = true;
-            pov.token.token.icon.alpha = 1;
-          }
-        });
-      });
-      _levels.showOwnedTokensForPlayer();
-    }
+    _levels._levelsOnSightRefresh();
   }
 });
 
@@ -139,6 +130,8 @@ Hooks.on("updateToken", (token, updates) => {
     if (newUpdates) token.update(newUpdates);
   }
 });
+
+
 
 
 /*Hooks.on("updateToken", (token, updates) => {

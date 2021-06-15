@@ -6,7 +6,11 @@ class Levels {
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
-    this.elevationScale = game.settings.get(_levelsModuleName, "tokenElevScale")
+    this.levelsTokens = {}
+    this.elevationScale = game.settings.get(
+      _levelsModuleName,
+      "tokenElevScale"
+    );
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
@@ -52,11 +56,12 @@ class Levels {
     return tiles;
   }
 
-  findCurrentFloorForElevation(elevation,floors){
-    floors.forEach((floor)=>{
-      if(elevation<=floor.range[1] && elevation >= floor.range[0]) return floor.range
-    })
-    return false
+  findCurrentFloorForElevation(elevation, floors) {
+    floors.forEach((floor) => {
+      if (elevation <= floor.range[1] && elevation >= floor.range[0])
+        return floor.range;
+    });
+    return false;
   }
 
   findAllTiles() {
@@ -202,8 +207,6 @@ class Levels {
     return tokensState;
   }
 
-
-
   getTokenState(token, allTiles) {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
@@ -248,16 +251,17 @@ class Levels {
   }
 
   _onElevationChangeUpdate(overrideElevation = undefined) {
+    if(!this.init) this._levelsOnSightRefresh()
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
     if (!cToken) return;
     let allTiles = this.findAllTiles();
-    let lights = this.getLights();
     let holes = this.getHoles();
-    this.updateScales()
-    this.computeSounds(cToken)
+    if (this.elevationScale) this.updateScales();
+    this.computeSounds(cToken);
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
+    let lights = this.getLights();
     allTiles.forEach((tile) => {
       this.clearLights(lights);
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
@@ -284,29 +288,71 @@ class Levels {
     canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
 
-updateScales(){
-  if(this.elevationScale){
-    canvas.tokens.placeables.forEach((token)=>{
-      let elevScaleFactor=1
-      if(canvas.tokens.controlled[0]){
-      let HeightDiff = Math.abs(token.data.elevation - canvas.tokens.controlled[0].data.elevation)
-      let HeightDiffFactor= Math.sqrt((HeightDiff/8))
-      elevScaleFactor=1/HeightDiffFactor > 1 ? 1 : 1/HeightDiffFactor
-      token.elevationScaleFactor =  token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1
+  _levelsOnSightRefresh() {
+    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+    _levels.refreshTokens(cToken);
+    _levels.computeDoors(cToken);
+    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
+      let ownedTokens = canvas.tokens.placeables.filter(
+        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
+      );
+      let tokenPovs = [];
+      ownedTokens.forEach((t) => {
+        tokenPovs.push(_levels.refreshTokens(t));
+        _levels.computeDoors(t);
+      });
+      tokenPovs.forEach((povs) => {
+        povs.forEach((pov) => {
+          if (pov.visible) {
+            pov.token.token.visible = true;
+            pov.token.token.icon.alpha = 1;
+          }
+        });
+      });
+      _levels.showOwnedTokensForPlayer();
     }
-      token.icon.width = token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
-      token.icon.height = token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
-    })
-  }else{
-    canvas.tokens.placeables.forEach((token)=>{
-      token.elevationScaleFactor =  1
-      token.icon.width = token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
-      token.icon.height = token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
-    })
   }
 
-
-}
+  updateScales() {
+    if (this.elevationScale) {
+      canvas.tokens.placeables.forEach((token) => {
+        let elevScaleFactor = 1;
+        if (canvas.tokens.controlled[0]) {
+          let HeightDiff = Math.abs(
+            token.data.elevation - canvas.tokens.controlled[0].data.elevation
+          );
+          let HeightDiffFactor = Math.sqrt(HeightDiff / 8);
+          elevScaleFactor = 1 / HeightDiffFactor > 1 ? 1 : 1 / HeightDiffFactor;
+          token.elevationScaleFactor =
+            token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1;
+        }
+        token.icon.width =
+          token.data.width *
+          canvas.scene.dimensions.size *
+          token.data.scale *
+          token.elevationScaleFactor;
+        token.icon.height =
+          token.data.height *
+          canvas.scene.dimensions.size *
+          token.data.scale *
+          token.elevationScaleFactor;
+      });
+    } else {
+      canvas.tokens.placeables.forEach((token) => {
+        token.elevationScaleFactor = 1;
+        token.icon.width =
+          token.data.width *
+          canvas.scene.dimensions.size *
+          token.data.scale *
+          (token.elevationScaleFactor || 1);
+        token.icon.height =
+          token.data.height *
+          canvas.scene.dimensions.size *
+          token.data.scale *
+          (token.elevationScaleFactor || 1);
+      });
+    }
+  }
 
   clearLights(lights) {
     lights.forEach((lightIndex) => {
@@ -378,6 +424,7 @@ updateScales(){
   }
 
   lightIluminatesHole(light, holes, elevation) {
+    if(!light.light.source.fov) return false
     for (let hole of holes) {
       for (let i = 0; i < light.light.source.fov.points.length; i += 2) {
         if (
@@ -522,51 +569,51 @@ updateScales(){
           drawing: drawing,
           poly: p,
           range: [rangeBottom, rangeTop + 1],
-          drawingMode:drawingMode
+          drawingMode: drawingMode,
         });
       }
     });
     return holes;
   }
 
- async renderElevatorDalog(levelsFlag){
-    let elevatorFloors = []
-    levelsFlag.split("|").forEach((f)=>{
-      elevatorFloors.push(f.split(","))
-    })
+  async renderElevatorDalog(levelsFlag) {
+    let elevatorFloors = [];
+    levelsFlag.split("|").forEach((f) => {
+      elevatorFloors.push(f.split(","));
+    });
 
-    let content = `<div id="levels-elevator">`
+    let content = `<div id="levels-elevator">`;
 
-  elevatorFloors.forEach((f)=>{
-    content+= ` <div>
+    elevatorFloors.forEach((f) => {
+      content += ` <div>
     <div class="button">
     <button id="${f[0]}" class="elevator-level">${f[1]}</button>
-  </div>`
-  })
-  content+=`</div>`
+  </div>`;
+    });
+    content += `</div>`;
 
-  let dialog = new Dialog({
-    title: game.i18n.localize("levels.dialog.elevator.title"),
-    content: content,
-    buttons: {
-      close: {
-        label: game.i18n.localize("levels.yesnodialog.no"),
-        callback: () => {},
+    let dialog = new Dialog({
+      title: game.i18n.localize("levels.dialog.elevator.title"),
+      content: content,
+      buttons: {
+        close: {
+          label: game.i18n.localize("levels.yesnodialog.no"),
+          callback: () => {},
+        },
       },
-    },
-    default: "close",
-    close: () => {},
-  });
-  await dialog._render(true);
-  let renderedFrom = $("body").find(`div[id="levels-elevator"]`);
-  for (let btn of $(renderedFrom).find("button")) {
+      default: "close",
+      close: () => {},
+    });
+    await dialog._render(true);
+    let renderedFrom = $("body").find(`div[id="levels-elevator"]`);
+    for (let btn of $(renderedFrom).find("button")) {
       $(btn).on("click", updateElev);
-  }
-  function updateElev(event){
-    let newElev = parseInt(event.target.id)
-    if(newElev || newElev==0) canvas.tokens.controlled[0].update({elevation:newElev})
-  }
-
+    }
+    function updateElev(event) {
+      let newElev = parseInt(event.target.id);
+      if (newElev || newElev == 0)
+        canvas.tokens.controlled[0].update({ elevation: newElev });
+    }
   }
 
   getLights() {
@@ -580,6 +627,15 @@ updateScales(){
         });
       }
     });
+    canvas.tokens.placeables.forEach((token)=>{
+      if((token.light.dim || token.light.bright) && this.levelsTokens[token.id]){
+        lights.push({
+          light: {source: token.light},
+          range: [this.levelsTokens[token.id].range[0], this.levelsTokens[token.id].range[1]],
+        });
+      }
+
+    })
     return lights;
   }
 
@@ -594,11 +650,11 @@ updateScales(){
     if (!cToken) return;
     let tElev = cToken.data.elevation;
     for (let s of canvas.sounds.placeables) {
-      let { rangeBottom, rangeTop } = this.getFlagsForObject(s)
-      if (!rangeBottom && rangeBottom!=0) continue;
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(s);
+      if (!rangeBottom && rangeBottom != 0) continue;
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
         s.levelsInaudible = true;
-      }else{
+      } else {
         s.levelsInaudible = false;
       }
     }
@@ -640,9 +696,15 @@ updateScales(){
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
     sprite.width =
-      token.data.width * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+      token.data.width *
+      canvas.scene.dimensions.size *
+      token.data.scale *
+      (token.elevationScaleFactor || 1);
     sprite.height =
-      token.data.height * canvas.scene.dimensions.size * token.data.scale * token.elevationScaleFactor;
+      token.data.height *
+      canvas.scene.dimensions.size *
+      token.data.scale *
+      (token.elevationScaleFactor || 1);
     sprite.position.x = x || token.position.x;
     sprite.position.y = y || token.position.y;
     sprite.position.x += icon.x;
@@ -710,8 +772,6 @@ updateScales(){
     }
   }
 
-
-
   async migrateFlags() {
     ui.notifications.error(
       `WARNING! Migrating Levels to new model please don't touch anything!`
@@ -752,17 +812,17 @@ updateScales(){
     );
   }
 
-/*****************
- * API FUNCTIONS *
- *****************/
+  /*****************
+   * API FUNCTIONS *
+   *****************/
 
   /**
    * Get the floor and ceiling of one or multiple tokens.
    * @param {Object|Object[]|String|String[]} tokenIds - A Token, an Array of Tokens, a Token ID or an Array of Tokens IDs
    * @returns {Object|Object[]} - returns an object containing token as the token object and range as an Array with 0 = Floor 1 = Ceiling
-  **/
+   **/
 
-   getTokens(tokenIds) {
+  getTokens(tokenIds) {
     if (Array.isArray(tokenIds)) {
       let tokensState = {};
       tokenIds.forEach((token) => {
@@ -780,7 +840,7 @@ updateScales(){
    * Get the floor and ceiling of one tile\drawing\light\sound object.
    * @param {Object} object - A Tile, Drawing, Light or Sound object
    * @returns {rangeBottom, rangeTop, isLevel, drawingMode} returns variables containing the flags data
-  **/
+   **/
 
   getFlagsForObject(object) {
     let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
@@ -794,31 +854,31 @@ updateScales(){
     return { rangeBottom, rangeTop, isLevel, drawingMode };
   }
 
-    /**
+  /**
    * Get all the levels a point is in
    * @param {Object} point - an object containing x and y coordinates {x:x,y:y}
    * @returns {Object[]} returns an array of object each containing {tile,range,poly}
    * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
-  **/
+   **/
 
-  getFloorsForPoint(point){
-    let cPoint = {center:{x:point.x,y:point.y}}
-    return findRoomsTiles(cPoint, this.levelsTiles)
+  getFloorsForPoint(point) {
+    let cPoint = { center: { x: point.x, y: point.y } };
+    return findRoomsTiles(cPoint, this.levelsTiles);
   }
 
-    /**
+  /**
    * Get all the levels a point is in
    * @param {Integer} elevation - an integer representing elevation
    * @param {Object[]} floors - an array of object each containing {tile,range,poly}
    * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
    * @returns {Array|false} returns false if the elevation is not contained in any of the provided floors, return an Array with [bottom,top] if one is found
-  **/
+   **/
 
-  findCurrentFloorForElevation(elevation,floors){
-    floors.forEach((floor)=>{
-      if(elevation<=floor.range[1] && elevation >= floor.range[0]) return floor.range
-    })
-    return false
+  findCurrentFloorForElevation(elevation, floors) {
+    floors.forEach((floor) => {
+      if (elevation <= floor.range[1] && elevation >= floor.range[0])
+        return floor.range;
+    });
+    return false;
   }
-
 }
