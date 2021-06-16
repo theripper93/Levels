@@ -58,6 +58,19 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "fogHiding", {
+    name: game.i18n.localize("levels.settings.fogHiding.name"),
+    hint: game.i18n.localize("levels.settings.fogHiding.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (setting) => {
+      _levels.fogHiding = setting;
+      _levels._onElevationChangeUpdate();
+    },
+  });
+
   game.settings.register(_levelsModuleName, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),
     hint: game.i18n.localize("levels.settings.enableTooltips.hint"),

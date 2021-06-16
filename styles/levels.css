@@ -81,3 +81,7 @@
     padding: 0 3px;
     text-align: left;
   }
+
+  #levels-elevator .button {
+    margin: 5px 0;
+}

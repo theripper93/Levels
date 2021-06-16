@@ -3,10 +3,16 @@ class Levels {
     this.DEBUG = false;
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
+    this.fogContainer = new PIXI.Container();
+    this.fogContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
     this.levelsTokens = {};
+    this.fogHiding =game.settings.get(
+      _levelsModuleName,
+      "fogHiding"
+    );
     this.elevationScale = game.settings.get(
       _levelsModuleName,
       "tokenElevScale"
@@ -22,6 +28,7 @@ class Levels {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
+    canvas.sight.explored.addChild(Levels._instance.fogContainer);
     canvas["levelsLayer"] = new CanvasLayer();
     if (this.UI) Levels._instance.UI.readLevels();
     return Levels._instance;
@@ -76,6 +83,26 @@ class Levels {
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
         });
+      }else{
+        let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
+        if (!rangeBottom && rangeBottom != 0) continue;
+        tile.isLevel = isLevel;
+        let tileZZ = {
+          x: tile.center.x - tile.width / 2,
+          y: tile.center.y - tile.height / 2,
+        };
+        let tileCorners = [
+          { x: tileZZ.x, y: tileZZ.y }, //tl
+          { x: tileZZ.x + tile.width, y: tileZZ.y }, //tr
+          { x: tileZZ.x + tile.width, y: tileZZ.y + tile.height }, //br
+          { x: tileZZ.x, y: tileZZ.y + tile.height }, //bl
+        ];
+        tiles.push({
+          tile: tile,
+          poly: new PIXI.Polygon(tileCorners),
+          range: [rangeBottom, rangeTop],
+          levelsOverhead: true
+        });
       }
     }
     this.levelsTiles = tiles;
@@ -94,7 +121,14 @@ class Levels {
         return false;
         break;
       case 0:
-        this.mirrorTileInBackground(tile);
+        if(!tile.levelsOverhead){
+          this.mirrorTileInBackground(tile,true);
+        }
+        else
+        {
+          tile.tile.visible=true
+          this.removeTempTile(tile);
+        }
         return tile;
         break;
     }
@@ -229,7 +263,7 @@ class Levels {
     }
   }
 
-  mirrorTileInBackground(tileIndex) {
+  mirrorTileInBackground(tileIndex,hideFog=false) {
     let tile = tileIndex.tile;
     let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.children[0];
@@ -245,9 +279,47 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
-    sprite.zIndex = tileIndex.range[0];
+    sprite.zIndex = tileIndex.levelsOverhead ? tileIndex.range[0]+2:tileIndex.range[0];
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
+    if(hideFog && this.fogHiding) this.obscureFogForTile(tileIndex)
+  }
+
+  removeTempTile(tileIndex) {
+    let tile = tileIndex.tile;
+    let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
+    if (sprite) this.floorContainer.removeChild(sprite);
+    this.clearFogForTile(tileIndex)
+
+  }
+
+  obscureFogForTile(tileIndex){
+    let tile = tileIndex.tile;
+    let oldSprite = this.fogContainer.children.find((c) => c.name == tile.id);
+    let tileImg = tile.children[0];
+    if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
+    let sprite = new PIXI.Sprite.from(tileImg.texture);
+    sprite.isSprite = true;
+    sprite.width = tile.data.width;
+    sprite.height = tile.data.height;
+    sprite.position = tile.position;
+    sprite.position.x += tileImg.x;
+    sprite.position.y += tileImg.y;
+    sprite.anchor = tileImg.anchor;
+    sprite.angle = tileImg.angle;
+    sprite.alpha = 1;
+    sprite.name = tile.id;
+    sprite.zIndex = tileIndex.range[0];
+    sprite.tint = 0x000000
+    this.fogContainer.spriteIndex[tile.id] = sprite;
+    this.fogContainer.addChild(sprite);
+  }
+
+  clearFogForTile(tileIndex){
+    if(!this.fogHiding) return
+    let tile = tileIndex.tile;
+    let sprite = this.fogContainer.children.find((c) => c.name == tile.id);
+    if (sprite) this.fogContainer.removeChild(sprite);
   }
 
   _onElevationChangeUpdate(overrideElevation = undefined) {
@@ -520,12 +592,6 @@ class Levels {
     });
   }
 
-  removeTempTile(tileIndex) {
-    let tile = tileIndex.tile;
-    let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
-    if (sprite) this.floorContainer.removeChild(sprite);
-  }
-
   getTokensInBuilding(poly) {
     let tokensInBuilding = [];
     canvas.tokens.placeables.forEach((t) => {
@@ -595,12 +661,11 @@ class Levels {
     let content = `<div id="levels-elevator">`;
 
     elevatorFloors.forEach((f) => {
-      content += ` <div>
-    <div class="button">
-    <button id="${f[0]}" class="elevator-level">${f[1]}</button>
-  </div>`;
-    });
-    content += `</div>`;
+      content += `<div class="button">
+      <button id="${f[0]}" class="elevator-level">${f[1]}</button>
+    </div>`;
+      });
+      content += `<hr></div>`;
 
     let dialog = new Dialog({
       title: game.i18n.localize("levels.dialog.elevator.title"),
@@ -728,7 +793,7 @@ class Levels {
     sprite.angle = icon.angle;
     sprite.alpha = token.visible ? 1 : 0;
     sprite.name = token.id;
-    sprite.zIndex = token.data.elevation;
+    sprite.zIndex = token.data.elevation+1;
     if (!oldSprite) {
       this.floorContainer.spriteIndex[token.id] = sprite;
       this.floorContainer.addChild(sprite);
