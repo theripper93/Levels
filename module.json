@@ -35,6 +35,12 @@
           "path": "packs/macros.db",
           "entity": "Macro",
           "module": "levels"
+        },
+        {
+            "name": "maps",
+            "label": "Levels Sample Scenes",
+            "path": "/packs/levels-samples.db",
+            "entity": "Scene"
         }
       ],
     "minimumCoreVersion": "0.8.5",
