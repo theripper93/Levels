@@ -332,6 +332,7 @@ class Levels {
     let holes = this.getHoles();
     if (this.elevationScale) this.updateScales();
     this.computeSounds(cToken);
+    this.computeNotes(cToken)
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     let lights = this.getLights();
     this.clearLights(lights);
@@ -849,6 +850,28 @@ class Levels {
       if (!(tElev >= range[0] && tElev < range[1])) {
         d.visible = false;
       }
+    }
+  }
+
+  computeNotes(cToken) {
+    if (!cToken || !canvas.notes.interactiveChildren) return;
+    let tElev = cToken.data.elevation;
+    for (let n of canvas.notes.placeables) {
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
+      if (!rangeBottom && rangeBottom!=0) continue;
+      if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
+        n.visible = false;
+      }else{
+        n.visible = n.document.testUserPermission(game.user, 2)
+      }
+    }
+  }
+
+  hideNotes() {
+    for (let n of canvas.notes.placeables) {
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
+      if (!rangeBottom && rangeBottom!=0) continue;
+        n.visible = false;
     }
   }
 

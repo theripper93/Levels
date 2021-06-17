@@ -67,6 +67,14 @@ Hooks.on("hoverAmbientLight", (object, hovered) => {
   }
 });
 
+Hooks.on("hoverNote", (object, hovered) => {
+  if (game.user.isGM && hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
+    canvas.hud.levels.bind(object);
+  } else {
+    canvas.hud.levels.clear();
+  }
+});
+
 Hooks.on("hoverAmbientSound", (object, hovered) => {
   if (hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
     canvas.hud.levels.bind(object);

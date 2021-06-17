@@ -3,6 +3,7 @@ let _levels;
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
   _levels.getTokensState(_levels.findAllTiles())
+  _levels.hideNotes()
   if (canvas.tokens.controlled[0]) {
     _levels._onElevationChangeUpdate();
   }
@@ -131,6 +132,9 @@ Hooks.on("updateToken", (token, updates) => {
   }
 });
 
+Hooks.on("renderSceneControls",()=>{
+  if(_levels)_levels.computeNotes(_levels.lastReleasedToken || canvas.tokens.controlled[0])
+})
 
 
 

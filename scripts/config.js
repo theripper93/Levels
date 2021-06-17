@@ -71,6 +71,15 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "lockElevation", {
+    name: game.i18n.localize("levels.settings.lockElevation.name"),
+    hint: game.i18n.localize("levels.settings.lockElevation.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register(_levelsModuleName, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),
     hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
@@ -159,6 +168,45 @@ Hooks.on("renderLightConfig", (app, html, data) => {
   app.setPosition({ height: "auto" });
 });
 
+Hooks.on("renderNoteConfig", (app, html, data) => {
+  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  if (heightRangeTop == undefined || heightRangeTop == null)
+    heightRangeTop = Infinity;
+
+  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  if (heightRangeBottom == undefined || heightRangeBottom == null)
+    heightRangeBottom = -Infinity;
+
+  let newHtml = `
+<div class="form-group">
+<label for="rangeTop">${game.i18n.localize(
+    "levels.tilecoonfig.rangeTop.name"
+  )}<span class="units">(${game.i18n.localize(
+    "levels.tilecoonfig.range.unit"
+  )})</span></label>
+<div class="form-fields">
+    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+</div>
+</div>
+
+<div class="form-group">
+<label for="rangeBottom">${game.i18n.localize(
+    "levels.tilecoonfig.rangeBottom.name"
+  )}<span class="units">(${game.i18n.localize(
+    "levels.tilecoonfig.range.unit"
+  )})</span></label>
+<div class="form-fields">
+  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+</div>
+</div>
+
+`;
+  const overh = html.find('select[name="textAnchor"]');
+  const formGroup = overh.closest(".form-group");
+  formGroup.after(newHtml);
+  app.setPosition({ height: "auto" });
+});
+
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
   let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
@@ -167,14 +215,6 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
   let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
-  if (
-    _levels.UI.rangeEnabled == true &&
-    html[0].innerText.includes("Create") &&
-    html[0].innerText.includes("Update")
-  ) {
-    heightRangeBottom = _levels.UI.range[0];
-    heightRangeTop = _levels.UI.range[1];
-  }
 
   let newHtml = `
 <div class="form-group">
@@ -317,3 +357,10 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
     }
   }
 });
+
+Hooks.on("renderTokenHUD", (data, hud, drawData) => {
+  if(game.settings.get(_levelsModuleName, "lockElevation") && !game.user.isGM){
+    const controlIcons = hud.find(`div[class="attribute elevation"]`);
+    $(controlIcons[0]).remove()
+  }
+})

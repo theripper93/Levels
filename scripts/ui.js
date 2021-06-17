@@ -436,6 +436,11 @@ class LevelsUI {
 
     for (let light of canvas.lighting.placeables) {
       light.visible = this.computeRangeForDocument(light, range);
+      light.source.skipRender = !light.visible
+    }
+
+    for (let note of canvas.notes.placeables) {
+      note.visible = this.computeRangeForDocument(note, range);
     }
 
     for (let sound of canvas.sounds.placeables) {
@@ -445,6 +450,9 @@ class LevelsUI {
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = this.computeRangeForDocument(drawing, range);
     }
+
+    canvas.lighting.refresh();
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
 
   computeRangeForDocument(document, range, isTile = false) {
@@ -482,6 +490,7 @@ class LevelsUI {
 
     for (let light of canvas.lighting.placeables) {
       light.visible = true;
+      light.source.skipRender = false
       light.refresh();
     }
 
@@ -494,8 +503,16 @@ class LevelsUI {
       sound.visible = true;
       sound.refresh();
     }
+
+    for (let note of canvas.notes.placeables) {
+      note.visible = true;
+      note.refresh();
+    }
+
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
+    canvas.lighting.refresh();
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
 
   async clearLevels() {
@@ -706,6 +723,18 @@ Hooks.on("ready", () => {
     Hooks.on("preCreateAmbientLight", (light, updates) => {
       if (_levels.UI.rangeEnabled == true) {
         light.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+      }
+    });
+
+    Hooks.on("preCreateAmbientSound", (sound, updates) => {
+      if (_levels.UI.rangeEnabled == true) {
+        sound.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+      }
+    });
+
+    Hooks.on("preCreateNote", (note, updates) => {
+      if (_levels.UI.rangeEnabled == true) {
+        note.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
       }
     });
 

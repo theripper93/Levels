@@ -6,6 +6,8 @@
     "levels.settings.tokenElevScale.hint": "Change size of tokens based on elevation of the controlled token",
     "levels.settings.fogHiding.name": "EXPERIMENTAL: Advanced Fog of War",
     "levels.settings.fogHiding.hint": "Hide unexplored floors from the explored fog of war",
+    "levels.settings.lockElevation.name": "Lock Elevation",
+    "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
