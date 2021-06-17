@@ -23,7 +23,7 @@ Andere Sprachen: [English](README.md), [Deutsch](README.de.md)
 
 Sie können die UI der Ebenen nutzen, um sich die Arbeit zu erleichtern, wählen Sie einfach den Ebenen-Layer aus den Schaltflächen auf der linken Seite aus und definieren Sie Ihre Ebenen - mit dem Widget können Sie dann in den Ebenen navigieren, alles, was Sie platzieren (bezogen auf die Ebenen), wenn eine Ebene ausgewählt ist, wird automatisch mit der gewählten Ober- und Unterseite eingerichtet
 
-**Elevation**
+**Aufzug**
 
 Ihre Token ändern die Ebenen, indem sie ihre Höhe ändern, Sie können auch Zonen mit Zeichnungen einrichten, um die Höhe automatisch zu ändern
 
