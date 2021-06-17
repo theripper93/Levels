@@ -876,7 +876,7 @@ class Levels {
   }
 
   computeDrawings(cToken) {
-    if (!cToken || game.user.isGM) return;
+    if (!cToken) return;
     let tElev = cToken.data.elevation;
     for (let d of canvas.drawings.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
@@ -888,6 +888,15 @@ class Levels {
       }
     }
   }
+
+  hideDrawings() {
+    for (let d of canvas.drawings.placeables) {
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
+      if (!rangeBottom && rangeBottom!=0) continue;
+        d.visible = false;
+    }
+  }
+
 
   async migrateFlags() {
     ui.notifications.error(

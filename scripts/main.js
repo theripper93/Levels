@@ -4,6 +4,7 @@ Hooks.on("canvasReady", () => {
   _levels = Levels.get();
   _levels.getTokensState(_levels.findAllTiles())
   _levels.hideNotes()
+  _levels.hideDrawings()
   if (canvas.tokens.controlled[0]) {
     _levels._onElevationChangeUpdate();
   }
@@ -68,6 +69,7 @@ Hooks.on("controlToken", (token, contorlled) => {
       }
     });
     _levels.clearLights(_levels.getLights());
+    canvas.drawings.placeables.forEach(d=>d.visible=true)
   } else {
     if (_levels && contorlled) _levels._onElevationChangeUpdate();
     if (_levels && !contorlled && token) {
