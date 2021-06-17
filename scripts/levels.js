@@ -151,8 +151,6 @@ class Levels {
   refreshTokens(overrideToken = undefined) {
     let cToken = overrideToken || canvas.tokens.controlled[0];
     if (!cToken) return;
-    let perfEnd, perfStart;
-    if (_levels.DEBUG) perfStart = performance.now();
     let allTiles = _levels.findAllTiles();
     let holes = _levels.getHoles();
     let tokensState = this.getTokensState(allTiles);
@@ -163,15 +161,6 @@ class Levels {
       cToken.data.elevation,
       cToken.id
     );
-    if (_levels.DEBUG) {
-      perfEnd = performance.now();
-      console.log(
-        `Levels compute took ${perfEnd - perfStart} ms, FPS:${Math.round(
-          canvas.app.ticker.FPS
-        )}, Elevation: ${cToken.data.elevation} TokensState: `,
-        tokensState
-      );
-    }
     return tokenPov;
   }
 
@@ -332,7 +321,8 @@ class Levels {
     let holes = this.getHoles();
     if (this.elevationScale) this.updateScales();
     this.computeSounds(cToken);
-    this.computeNotes(cToken)
+    this.computeNotes(cToken);
+    this.computeDrawings(cToken);
     let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     let lights = this.getLights();
     this.clearLights(lights);
@@ -357,7 +347,7 @@ class Levels {
           perfEnd - perfStart
         } ms, FPS:${Math.round(
           canvas.app.ticker.FPS
-        )}, Tiles: ${allTiles} Lights: ${lights} Holes: ${holes}`
+        )}, Tiles: `, allTiles, `Lights: `,lights, `Holes: `,holes
       );
     }
     canvas.lighting.refresh();
@@ -365,17 +355,19 @@ class Levels {
   }
 
   _levelsOnSightRefresh() {
+    let perfStart,perfEnd
+    if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    _levels.refreshTokens(cToken);
-    _levels.computeDoors(cToken);
+    this.refreshTokens(cToken);
+    this.computeDoors(cToken);
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
       let ownedTokens = canvas.tokens.placeables.filter(
         (t) => t.actor && t.actor.testUserPermission(game.user, 2)
       );
       let tokenPovs = [];
       ownedTokens.forEach((t) => {
-        tokenPovs.push(_levels.refreshTokens(t));
-        _levels.computeDoors(t);
+        tokenPovs.push(this.refreshTokens(t));
+        this.computeDoors(t);
       });
       tokenPovs.forEach((povs) => {
         povs.forEach((pov) => {
@@ -385,7 +377,15 @@ class Levels {
           }
         });
       });
-      _levels.showOwnedTokensForPlayer();
+      this.showOwnedTokensForPlayer();
+    }
+    if (this.DEBUG) {
+      perfEnd = performance.now();
+      console.log(
+        `_levelsOnSightRefresh took ${perfEnd - perfStart} ms, FPS:${Math.round(
+          canvas.app.ticker.FPS
+        )}`
+      );
     }
   }
 
@@ -872,6 +872,20 @@ class Levels {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
       if (!rangeBottom && rangeBottom!=0) continue;
         n.visible = false;
+    }
+  }
+
+  computeDrawings(cToken) {
+    if (!cToken || game.user.isGM) return;
+    let tElev = cToken.data.elevation;
+    for (let d of canvas.drawings.placeables) {
+      let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
+      if (!rangeBottom && rangeBottom!=0) continue;
+      if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
+        d.visible = false;
+      }else{
+        d.visible = !d.data.hidden
+      }
     }
   }
 
