@@ -15,14 +15,6 @@ function _levelsTokenRefresh() {
       scale.x = Number(scale.y);
     }
   }
-  /*/ Calculate scale factor based on vertical distance
-  let elevScaleFactor=1
-  if(canvas.tokens.controlled[0] && this.id != canvas.tokens.controlled[0].id){
-    let HeightDiff = Math.abs(this.data.elevation - canvas.tokens.controlled[0].data.elevation)
-    let HeightDiffFactor= Math.sqrt((HeightDiff/8))
-    elevScaleFactor=1/HeightDiffFactor > 1 ? 1 : 1/HeightDiffFactor
-    this.elevationScaleFactor = elevScaleFactor
-  }*/
   // Mirror horizontally or vertically
   this.icon.scale.x =
     Math.abs(this.icon.scale.x) * (this.data.mirrorX ? -1 : 1) * (this.elevationScaleFactor || 1);

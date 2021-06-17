@@ -359,8 +359,11 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 });
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
-  if(game.settings.get(_levelsModuleName, "lockElevation") && !game.user.isGM){
+  if (
+    game.settings.get(_levelsModuleName, "lockElevation") &&
+    !game.user.isGM
+  ) {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
-    $(controlIcons[0]).remove()
+    $(controlIcons[0]).remove();
   }
-})
+});
