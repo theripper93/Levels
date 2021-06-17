@@ -7,7 +7,7 @@
     "levels.settings.fogHiding.name": "EXPERIMENTAL: Advanced Fog of War",
     "levels.settings.fogHiding.hint": "Unerforschte Etagen vor dem erforschten Kriegsnebel ausblenden",
     "levels.settings.lockElevation.name": "Lock Elevation",
-    "levels.settings.lockElevation.hint": "Verhindert, dass der Spieler die Höhe über das Token-HUD ändern kann. Denken Sie daran, dass der Spieler, wenn er die Berechtigung hat, Token zu bearbeiten, diese in der Token-Konfiguration ändern kann."
+    "levels.settings.lockElevation.hint": "Verhindert, dass der Spieler die Höhe über das Token-HUD ändern kann. Denken Sie daran, dass der Spieler, wenn er die Berechtigung hat, Token zu bearbeiten, diese in der Token-Konfiguration ändern kann.",
 
     "levels.tilecoonfig.rangeTop.name": "Höhe (Oben)",
     "levels.tilecoonfig.rangeBottom.name": "Höhe (Unten)",
@@ -46,10 +46,10 @@
     "levels.widget.title": "Levels",
     "levels.widget.element": "Level",
 
-    "levels.form.bottom": "bottom": "unten",
+    "levels.form.bottom": "Unten:",
     "levels.form.top": "Oben:",
     "levels.form.name": "Name:",
-    "levels.form.currentLevel": "CurrentLevels": "Aktuelles Level",
+    "levels.form.currentLevel": "Aktuelles Level",
     "levels.form.addNew": "Neue Ebene hinzufügen",
     "levels.form.tip": "*Levels sollten sich nicht überschneiden (z.B. 0,9 / 10,19 / 20,29)",
     "levels.form.suggestedLevels": "Vorgeschlagene Levels generieren",
