@@ -751,12 +751,12 @@ class Levels {
       globalPoints = [
         drawing.x,
         drawing.y,
-        drawing.x + drawing.width,
+        drawing.x + drawing.data.width,
         drawing.y,
-        drawing.x + drawing.width,
-        drawing.y + drawing.height,
+        drawing.x + drawing.data.width,
+        drawing.y + drawing.data.height,
         drawing.x,
-        drawing.y + drawing.height,
+        drawing.y + drawing.data.height,
       ];
     }
     return globalPoints;
