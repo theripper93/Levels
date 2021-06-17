@@ -138,6 +138,14 @@ Hooks.on("renderSceneControls",()=>{
   if(_levels)_levels.computeNotes(_levels.lastReleasedToken || canvas.tokens.controlled[0])
 })
 
+/*********************
+ * DISPATCH WARNINGS *
+ *********************/
+
+Hooks.once("canvasReady",()=>{
+  if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
+})
+
 
 
 /*Hooks.on("updateToken", (token, updates) => {
