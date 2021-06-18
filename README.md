@@ -7,6 +7,8 @@ Other Language: [English](README.md), [Deutsch](README.de.md)
 
 ## [Video Tuorial by Baileywiki](https://youtu.be/ELlweNunn4g)
 
+*The module is free but if you are selling maps that use my modules you'll need a commercial licence wich is available on my patreon
+
 **How to use:**
 
 * Tiles: You can set the elevation range of a tile through the overhead tile config. The tile must be Overehead and must have a Better Roofs mode other than "None" enabled (set occlusion to Fade for best results). **Range for actual roofs must be set to bottom,infinity (eg. 20,infnity)**
