@@ -9,10 +9,7 @@ class Levels {
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
     this.levelsTokens = {};
-    this.fogHiding =game.settings.get(
-      _levelsModuleName,
-      "fogHiding"
-    );
+    this.fogHiding = game.settings.get(_levelsModuleName, "fogHiding");
     this.elevationScale = game.settings.get(
       _levelsModuleName,
       "tokenElevScale"
@@ -83,7 +80,7 @@ class Levels {
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
         });
-      }else{
+      } else {
         let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -101,7 +98,7 @@ class Levels {
           tile: tile,
           poly: new PIXI.Polygon(tileCorners),
           range: [rangeBottom, rangeTop],
-          levelsOverhead: true
+          levelsOverhead: true,
         });
       }
     }
@@ -121,12 +118,10 @@ class Levels {
         return false;
         break;
       case 0:
-        if(!tile.levelsOverhead){
-          this.mirrorTileInBackground(tile,true);
-        }
-        else
-        {
-          tile.tile.visible=true
+        if (!tile.levelsOverhead) {
+          this.mirrorTileInBackground(tile, true);
+        } else {
+          tile.tile.visible = true;
           this.removeTempTile(tile);
         }
         return tile;
@@ -252,7 +247,7 @@ class Levels {
     }
   }
 
-  mirrorTileInBackground(tileIndex,hideFog=false) {
+  mirrorTileInBackground(tileIndex, hideFog = false) {
     let tile = tileIndex.tile;
     let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.children[0];
@@ -268,21 +263,22 @@ class Levels {
     sprite.angle = tileImg.angle;
     sprite.alpha = 1;
     sprite.name = tile.id;
-    sprite.zIndex = tileIndex.levelsOverhead ? tileIndex.range[0]+2:tileIndex.range[0];
+    sprite.zIndex = tileIndex.levelsOverhead
+      ? tileIndex.range[0] + 2
+      : tileIndex.range[0];
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
-    if(hideFog && this.fogHiding) this.obscureFogForTile(tileIndex)
+    if (hideFog && this.fogHiding) this.obscureFogForTile(tileIndex);
   }
 
   removeTempTile(tileIndex) {
     let tile = tileIndex.tile;
     let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
     if (sprite) this.floorContainer.removeChild(sprite);
-    this.clearFogForTile(tileIndex)
-
+    this.clearFogForTile(tileIndex);
   }
 
-  obscureFogForTile(tileIndex){
+  obscureFogForTile(tileIndex) {
     let tile = tileIndex.tile;
     let oldSprite = this.fogContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.children[0];
@@ -299,13 +295,13 @@ class Levels {
     sprite.alpha = 1;
     sprite.name = tile.id;
     sprite.zIndex = tileIndex.range[0];
-    sprite.tint = 0x000000
+    sprite.tint = 0x000000;
     this.fogContainer.spriteIndex[tile.id] = sprite;
     this.fogContainer.addChild(sprite);
   }
 
-  clearFogForTile(tileIndex){
-    if(!this.fogHiding) return
+  clearFogForTile(tileIndex) {
+    if (!this.fogHiding) return;
     let tile = tileIndex.tile;
     let sprite = this.fogContainer.children.find((c) => c.name == tile.id);
     if (sprite) this.fogContainer.removeChild(sprite);
@@ -345,9 +341,12 @@ class Levels {
       console.log(
         `Levels _onElevationChangeUpdate took ${
           perfEnd - perfStart
-        } ms, FPS:${Math.round(
-          canvas.app.ticker.FPS
-        )}, Tiles: `, allTiles, `Lights: `,lights, `Holes: `,holes
+        } ms, FPS:${Math.round(canvas.app.ticker.FPS)}, Tiles: `,
+        allTiles,
+        `Lights: `,
+        lights,
+        `Holes: `,
+        holes
       );
     }
     canvas.lighting.refresh();
@@ -355,7 +354,7 @@ class Levels {
   }
 
   _levelsOnSightRefresh() {
-    let perfStart,perfEnd
+    let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     this.refreshTokens(cToken);
@@ -665,8 +664,8 @@ class Levels {
       content += `<div class="button">
       <button id="${f[0]}" class="elevator-level">${f[1]}</button>
     </div>`;
-      });
-      content += `<hr></div>`;
+    });
+    content += `<hr></div>`;
 
     let dialog = new Dialog({
       title: game.i18n.localize("levels.dialog.elevator.title"),
@@ -794,7 +793,7 @@ class Levels {
     sprite.angle = icon.angle;
     sprite.alpha = token.visible ? 1 : 0;
     sprite.name = token.id;
-    sprite.zIndex = token.data.elevation+1;
+    sprite.zIndex = token.data.elevation + 1;
     if (!oldSprite) {
       this.floorContainer.spriteIndex[token.id] = sprite;
       this.floorContainer.addChild(sprite);
@@ -858,11 +857,11 @@ class Levels {
     let tElev = cToken.data.elevation;
     for (let n of canvas.notes.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
-      if (!rangeBottom && rangeBottom!=0) continue;
+      if (!rangeBottom && rangeBottom != 0) continue;
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
         n.visible = false;
-      }else{
-        n.visible = n.document.testUserPermission(game.user, 2)
+      } else {
+        n.visible = n.document.testUserPermission(game.user, 2);
       }
     }
   }
@@ -870,8 +869,8 @@ class Levels {
   hideNotes() {
     for (let n of canvas.notes.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
-      if (!rangeBottom && rangeBottom!=0) continue;
-        n.visible = false;
+      if (!rangeBottom && rangeBottom != 0) continue;
+      n.visible = false;
     }
   }
 
@@ -880,11 +879,11 @@ class Levels {
     let tElev = cToken.data.elevation;
     for (let d of canvas.drawings.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
-      if (!rangeBottom && rangeBottom!=0) continue;
+      if (!rangeBottom && rangeBottom != 0) continue;
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
         d.visible = false;
-      }else{
-        d.visible = !d.data.hidden
+      } else {
+        d.visible = !d.data.hidden;
       }
     }
   }
@@ -892,11 +891,10 @@ class Levels {
   hideDrawings() {
     for (let d of canvas.drawings.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
-      if (!rangeBottom && rangeBottom!=0) continue;
-        d.visible = false;
+      if (!rangeBottom && rangeBottom != 0) continue;
+      d.visible = false;
     }
   }
-
 
   async migrateFlags() {
     ui.notifications.error(
@@ -1006,5 +1004,78 @@ class Levels {
         return floor.range;
     });
     return false;
+  }
+
+  /**
+   * Perform a collision test between 2 point in 3D space
+   * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z}
+   * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z}
+   * @param {Integer} token1Height - the z offset of the first point, 0 if none provided
+   * @param {Integer} token2Height - the z offset of the second point, 0 if none provided
+   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   **/
+
+  checkCollision(p0, p1, token1Height = 0, token2Height = 0) {
+    //Start recording performance if _levels.DEBUG == true
+    let perfEnd, perfStart;
+    if (_levels.DEBUG) perfStart = performance.now();
+
+    //Declare points adjusted with token height to use in the loop
+    const x0 = p0.x;
+    const y0 = p0.y;
+    const z0 = p0.z + token1Height;
+    const x1 = p1.x;
+    const y1 = p1.y;
+    const z1 = p1.z + token2Height;
+
+    //If the point are on the same Z axis return false
+    if (z0 == z1) {
+      debug();
+      return false;
+    }
+
+    //Loop through all the planes and check for both ceiling and floor collision on each tile
+    for (let tile of this.levelsTiles) {
+      const bottom = tile.range[0];
+      const top = tile.range[1];
+      if ((bottom && bottom != -Infinity) || bottom == 0) {
+        const zIntersectionPoint = getPointForPlane(bottom);
+        if (
+          ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
+          tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
+        ) {
+          debug();
+          return true;
+        }
+      }
+      if ((top && top != Infinity) || top == 0) {
+        const zIntersectionPoint = getPointForPlane(top);
+        if (
+          ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
+          tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
+        ) {
+          debug();
+          return true;
+        }
+      }
+    }
+
+    //Return false if no collisions were detected
+    debug();
+    return false;
+
+    //Get the intersection point between the ray and the Z plane
+    function getPointForPlane(z) {
+      const x = ((z - z0) * (x1 - x0) + x0 * z1 - x0 * z0) / (z1 - z0);
+      const y = ((z - z0) * (y1 - y0) + z1 * y0 - z0 * y0) / (z1 - z0);
+      const point = { x: x, y: y };
+      return point;
+    }
+    function debug() {
+      if (_levels.DEBUG) {
+        perfEnd = performance.now();
+        console.log(`Levels 3D checkCollision took ${perfEnd - perfStart} ms`);
+      }
+    }
   }
 }
