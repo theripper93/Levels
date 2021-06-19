@@ -112,7 +112,7 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
   **/
 
-  checkCollision(token1, token2, standardTest = false)
+  _levels.checkCollision(token1, token2, standardTest = false)
 ```
 
 ```js
@@ -122,7 +122,7 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * @returns {Integer} returns token elevation plus the LOS height stored in the flags
   **/
 
-  getTokenLOSheight(token)
+  _levels.getTokenLOSheight(token)
 ```
 
 ```js
@@ -134,5 +134,5 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
   **/
 
-  testCollision(p0, p1, standardTest = false)
+  _levels.testCollision(p0, p1, standardTest = false)
 ```
