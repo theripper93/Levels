@@ -7,7 +7,13 @@
     "levels.settings.fogHiding.name": "EXPERIMENTAL: Advanced Fog of War",
     "levels.settings.fogHiding.hint": "Hide unexplored floors from the explored fog of war",
     "levels.settings.lockElevation.name": "Lock Elevation",
-    "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config",
+    "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config.",
+    "levels.settings.defaultLosHeight.name": "Default Token Height",
+    "levels.settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6.",
+    "levels.settings.advancedLOS.name": "EXPERIMENTAL: Advanced Line of Sight",
+    "levels.settings.advancedLOS.hint": "Calculate sight in 3D space, uses the token height to do calculations.",
+    "levels.settings.autoLOSHeight.name": "Automatic token height",
+    "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore ALL manual settings. ",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
@@ -23,6 +29,8 @@
     "levels.drawingconfig.isHole.opt2": "Stair",
     "levels.drawingconfig.isHole.opt3": "Elevator",
     "levels.drawingHud.title": "Toggle Locked State for Stair",
+    "levels.tokenconfig.tokenHeight.name": "Token LOS Height",
+    "levels.tokenconfig.tokenHeight.unit": "(Distance)",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",

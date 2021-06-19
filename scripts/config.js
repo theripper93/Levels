@@ -80,6 +80,36 @@ Hooks.on("init", () => {
     default: false,
   });
 
+  game.settings.register(_levelsModuleName, "advancedLOS", {
+    name: game.i18n.localize("levels.settings.advancedLOS.name"),
+    hint: game.i18n.localize("levels.settings.advancedLOS.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (setting) => {_levels.advancedLOS=setting}
+  });
+
+  game.settings.register(_levelsModuleName, "defaultLosHeight", {
+    name: game.i18n.localize("levels.settings.defaultLosHeight.name"),
+    hint: game.i18n.localize("levels.settings.defaultLosHeight.hint"),
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 6,
+    onChange: (setting) => {_levels.defaultTokenHeight=setting}
+  });
+
+  game.settings.register(_levelsModuleName, "autoLOSHeight", {
+    name: game.i18n.localize("levels.settings.autoLOSHeight.name"),
+    hint: game.i18n.localize("levels.settings.autoLOSHeight.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (setting) => {_levels.autoLOSHeight=setting}
+  });
+
   game.settings.register(_levelsModuleName, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),
     hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
@@ -324,6 +354,21 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 
 `;
   const overh = html.find('input[name="z"]');
+  const formGroup = overh.closest(".form-group");
+  formGroup.after(newHtml);
+  app.setPosition({ height: "auto" });
+});
+
+Hooks.on("renderTokenConfig", (app, html, data) => {
+  let tokenHeight = app.object.getFlag(_levelsModuleName, "tokenHeight") || 0;
+
+  let newHtml = `
+<div class="form-group">
+            <label>${game.i18n.localize("levels.tokenconfig.tokenHeight.name")}<span class="units">${game.i18n.localize("levels.tokenconfig.tokenHeight.unit")}</span></label>
+            <input type="number" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
+        </div>
+`;
+  const overh = html.find('input[name="elevation"]');
   const formGroup = overh.closest(".form-group");
   formGroup.after(newHtml);
   app.setPosition({ height: "auto" });

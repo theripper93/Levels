@@ -3,6 +3,8 @@ class Levels {
     this.DEBUG = false;
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
+    this.overContainer = new PIXI.Container();
+    this.overContainer.spriteIndex = {};
     this.fogContainer = new PIXI.Container();
     this.fogContainer.spriteIndex = {};
     this.occlusionIndex = {};
@@ -14,6 +16,12 @@ class Levels {
       _levelsModuleName,
       "tokenElevScale"
     );
+    this.defaultTokenHeight = game.settings.get(
+      _levelsModuleName,
+      "defaultLosHeight"
+    );
+    this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight")
+    this.advancedLOS = game.settings.get(_levelsModuleName, "advancedLOS");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
@@ -25,6 +33,7 @@ class Levels {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
     canvas.background.addChild(Levels._instance.floorContainer);
+    canvas.foreground.addChild(Levels._instance.overContainer);
     canvas.sight.explored.addChild(Levels._instance.fogContainer);
     canvas["levelsLayer"] = new CanvasLayer();
     if (this.UI) Levels._instance.UI.readLevels();
@@ -186,6 +195,47 @@ class Levels {
     return tokenPov;
   }
 
+  compute3DCollisionsForToken(sourceToken) {
+    if (!sourceToken || !this.advancedLOS) return;
+    for (let token of canvas.tokens.placeables) {
+      if (token == sourceToken) continue;
+      let inForeground = false;
+      if (token.visible && token.icon.alpha != 0) {
+        if (this.checkCollision(sourceToken, token)) token.visible = false;
+      } else if (
+        token.visible == false &&
+        this.levelsTokens[token.id].range[1] == Infinity &&
+        this.levelsTokens[token.id].range[0] != 0 &&
+        this.tokenInRange(sourceToken, token) &&
+        !this.checkCollision(sourceToken, token)
+      ) {
+        inForeground = true;
+        token.visible = true;
+        this.getTokenIconSpriteOverhead(token);
+      }
+      if (!this.tokenInRange(sourceToken, token)) {
+        inForeground = false;
+        token.visible = false;
+      }
+      if (!inForeground) {
+        this.removeTempTokenOverhead(token);
+      }
+    }
+  }
+
+  tokenInRange(sourceToken, token) {
+    const dist = this.getUnitTokenDist(sourceToken, token);
+    const range = canvas.scene.data.globalLight
+      ? Infinity
+      : Math.max(
+          sourceToken.data.dimSight,
+          sourceToken.data.brightSight,
+          sourceToken.data.dimLight,
+          sourceToken.data.brightLight
+        );
+    return dist <= range;
+  }
+
   isInsideHoleRange(isInHole, t, cTokenElev) {
     return (
       !isInHole ||
@@ -313,6 +363,8 @@ class Levels {
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
     if (!cToken) return;
+    this.removeTempTokenOverhead(cToken);
+    this.removeTempToken(cToken);
     let allTiles = this.findAllTiles();
     let holes = this.getHoles();
     if (this.elevationScale) this.updateScales();
@@ -359,6 +411,7 @@ class Levels {
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     this.refreshTokens(cToken);
     this.computeDoors(cToken);
+    this.compute3DCollisionsForToken(cToken);
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
       let ownedTokens = canvas.tokens.placeables.filter(
         (t) => t.actor && t.actor.testUserPermission(game.user, 2)
@@ -805,6 +858,58 @@ class Levels {
     if (sprite) this.floorContainer.removeChild(sprite);
   }
 
+  getTokenIconSpriteOverhead(token, x, y, rotate) {
+    let oldSprite = this.overContainer.children.find((c) => c.name == token.id);
+    let icon = token.icon;
+    if (token._controlled || !icon || !icon.texture.baseTexture) return;
+    let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
+    sprite.isSprite = true;
+    sprite.width =
+      token.data.width *
+      canvas.scene.dimensions.size *
+      token.data.scale *
+      (token.elevationScaleFactor || 1);
+    sprite.height =
+      token.data.height *
+      canvas.scene.dimensions.size *
+      token.data.scale *
+      (token.elevationScaleFactor || 1);
+    sprite.position.x = x || token.position.x;
+    sprite.position.y = y || token.position.y;
+    sprite.position.x += icon.x;
+    sprite.position.y += icon.y;
+    sprite.anchor = icon.anchor;
+    sprite.angle = icon.angle;
+    sprite.alpha = token.data.hidden ? 0 : 1;
+    sprite.name = token.id;
+    sprite.zIndex = token.data.elevation + 1;
+    if (!oldSprite) {
+      this.overContainer.spriteIndex[token.id] = sprite;
+      this.overContainer.addChild(sprite);
+    }
+  }
+
+  removeTempTokenOverhead(token) {
+    let sprite = this.overContainer.children.find((c) => c.name == token.id);
+    if (sprite) this.overContainer.removeChild(sprite);
+  }
+
+  getUnitTokenDist(token1, token2) {
+    const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+    const x1 = token1.center.x;
+    const y1 = token1.center.y;
+    const z1 = this.getTokenLOSheight(token1) * unitsToPixel;
+    const x2 = token2.center.x;
+    const y2 = token2.center.y;
+    const z2 = this.getTokenLOSheight(token2) * unitsToPixel;
+
+    const d =
+      Math.sqrt(
+        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
+      ) / unitsToPixel;
+    return d;
+  }
+
   showOwnedTokensForPlayer() {
     canvas.tokens.placeables.forEach((t) => {
       if (t.actor.testUserPermission(game.user, 2)) {
@@ -1008,30 +1113,28 @@ class Levels {
 
   /**
    * Perform a collision test between 2 point in 3D space
-   * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z}
-   * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z}
-   * @param {Integer} token1Height - the z offset of the first point, 0 if none provided
-   * @param {Integer} token2Height - the z offset of the second point, 0 if none provided
+   * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Boolean} standardTest - perform a standard collision test if false would be returned using the height of the first point
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
    **/
 
-  checkCollision(p0, p1, token1Height = 0, token2Height = 0) {
-    //Start recording performance if _levels.DEBUG == true
-    let perfEnd, perfStart;
-    if (_levels.DEBUG) perfStart = performance.now();
-
+  testCollision(p0, p1, standardTest = false) {
     //Declare points adjusted with token height to use in the loop
     const x0 = p0.x;
     const y0 = p0.y;
-    const z0 = p0.z + token1Height;
+    const z0 = p0.z;
     const x1 = p1.x;
     const y1 = p1.y;
-    const z1 = p1.z + token2Height;
+    const z1 = p1.z;
 
     //If the point are on the same Z axis return false
     if (z0 == z1) {
-      debug();
-      return false;
+      if (standardTest) {
+        return performStandardTest();
+      } else {
+        return false;
+      }
     }
 
     //Loop through all the planes and check for both ceiling and floor collision on each tile
@@ -1044,7 +1147,6 @@ class Levels {
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          debug();
           return true;
         }
       }
@@ -1054,15 +1156,17 @@ class Levels {
           ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          debug();
           return true;
         }
       }
     }
 
     //Return false if no collisions were detected
-    debug();
-    return false;
+    if (standardTest) {
+      return performStandardTest();
+    } else {
+      return false;
+    }
 
     //Get the intersection point between the ray and the Z plane
     function getPointForPlane(z) {
@@ -1071,11 +1175,54 @@ class Levels {
       const point = { x: x, y: y };
       return point;
     }
-    function debug() {
-      if (_levels.DEBUG) {
-        perfEnd = performance.now();
-        console.log(`Levels 3D checkCollision took ${perfEnd - perfStart} ms`);
-      }
+
+    function performStandardTest() {
+      return canvas.walls.checkCollision(
+        new Ray({ x: p0.x, y: p0.y }, { x: p1.x, y: p1.y }),
+        {},
+        p0.z
+      );
     }
+  }
+
+  /**
+   * Get the total LOS height for a token
+   * @param {Object} token - a token object
+   * @returns {Integer} returns token elevation plus the LOS height stored in the flags
+   **/
+
+  getTokenLOSheight(token) {
+    let losDiff
+    if(this.autoLOSHeight){
+      losDiff = canvas.scene.dimensions.distance*Math.max(token.data.width,token.data.height)*token.data.scale
+    }else{
+      losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
+    }
+
+    return token.data.elevation + losDiff;
+  }
+
+  /**
+   * Perform a collision test between 2 TOKENS in 3D space
+   * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Boolean} standardTest - perform a standard wall collision test if false would be returned using the height of the first point
+   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   **/
+
+  checkCollision(token1, token2, standardTest = false) {
+    const token1LosH = this.getTokenLOSheight(token1);
+    const token2LosH = this.getTokenLOSheight(token2);
+    const p0 = {
+      x: token1.center.x,
+      y: token1.center.y,
+      z: token1LosH,
+    };
+    const p1 = {
+      x: token2.center.x,
+      y: token2.center.y,
+      z: token2LosH,
+    };
+    return this.testCollision(p0, p1, standardTest);
   }
 }
