@@ -100,3 +100,39 @@ EXAMPLE:
 _levels.findCurrentFloorForElevation(10,_levels.getFloorsForPoint({ x : token.center.x , y : token.center.y }))
 ```
 Returns in wich floor of a building any entity (given a point and an elevation) is in. Returns False if it's in none
+
+## **3D COLLISION CHECKING**
+
+```js
+  /**
+   * Perform a collision test between 2 tokens in 3D space
+   * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Boolean} standardTest - perform a standard wall collision test if false would be returned using the height of the first point
+   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+  **/
+
+  checkCollision(token1, token2, standardTest = false)
+```
+
+```js
+  /**
+   * Get the total LOS height for a token
+   * @param {Object} token - a token object
+   * @returns {Integer} returns token elevation plus the LOS height stored in the flags
+  **/
+
+  getTokenLOSheight(token)
+```
+
+```js
+  /**
+   * Perform a collision test between 2 point in 3D space
+   * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Boolean} standardTest - perform a standard collision test if false would be returned using the height of the first point
+   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+  **/
+
+  testCollision(p0, p1, standardTest = false)
+```
