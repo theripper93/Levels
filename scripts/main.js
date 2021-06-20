@@ -2,28 +2,45 @@ const _levelsModuleName = "levels";
 let _levels;
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
-  _levels.getTokensState(_levels.findAllTiles())
-  _levels.hideNotes()
-  _levels.hideDrawings()
+  _levels.getTokensState(_levels.findAllTiles());
+  _levels.hideNotes();
+  _levels.hideDrawings();
   if (canvas.tokens.controlled[0]) {
     _levels._onElevationChangeUpdate();
   }
 
   Hooks.once("controlToken", (token, contorlled) => {
-    if(contorlled){
-      _levels.init = true
+    if (contorlled) {
+      _levels.init = true;
     }
-  })
-
+  });
 });
 
-Hooks.on("betterRoofsReady",()=>{
-  if(_levels)_levels.getTokensState(_levels.findAllTiles())
-})
+Hooks.on("betterRoofsReady", () => {
+  if (_levels) _levels.getTokensState(_levels.findAllTiles());
+});
 
 Hooks.on("sightRefresh", () => {
   if (_levels) {
     _levels._levelsOnSightRefresh();
+    //Raycast Debug
+    if (_levels.RAYS && canvas.tokens.controlled[0]) {
+      let oldcontainer = canvas.controls.debug.children.find(
+        (c) => (c.name = "levelsRAYS")
+      );
+      if (oldcontainer) oldcontainer.clear();
+      let g = oldcontainer || new PIXI.Graphics();
+      g.name = "levelsRAYS";
+      let ctk = canvas.tokens.controlled[0];
+      canvas.tokens.placeables.forEach((t) => {
+        let isCollision = _levels.checkCollision(ctk, t, "sight");
+        let color = isCollision ? 0xff0000 : 0x00ff08;
+        let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
+        if (ctk != t)
+          g.beginFill(color).lineStyle(5, color).drawPolygon(coords).endFill();
+      });
+      if (!oldcontainer) canvas.controls.debug.addChild(g);
+    }
   }
 });
 
@@ -69,7 +86,7 @@ Hooks.on("controlToken", (token, contorlled) => {
       }
     });
     _levels.clearLights(_levels.getLights());
-    canvas.drawings.placeables.forEach(d=>d.visible=true)
+    canvas.drawings.placeables.forEach((d) => (d.visible = true));
   } else {
     if (_levels && contorlled) _levels._onElevationChangeUpdate();
     if (_levels && !contorlled && token) {
@@ -120,8 +137,14 @@ Hooks.on("updateToken", (token, updates) => {
                 newUpdates = { elevation: stair.range[1] };
               }
             }
-          }else if(stair.drawingMode == 3){
-            _levels.renderElevatorDalog(stair.drawing.document.getFlag(_levelsModuleName,"elevatorFloors"),token)
+          } else if (stair.drawingMode == 3) {
+            _levels.renderElevatorDalog(
+              stair.drawing.document.getFlag(
+                _levelsModuleName,
+                "elevatorFloors"
+              ),
+              token
+            );
             inStair = stair.drawing.id;
           }
         }
@@ -134,19 +157,20 @@ Hooks.on("updateToken", (token, updates) => {
   }
 });
 
-Hooks.on("renderSceneControls",()=>{
-  if(_levels)_levels.computeNotes(_levels.lastReleasedToken || canvas.tokens.controlled[0])
-})
+Hooks.on("renderSceneControls", () => {
+  if (_levels)
+    _levels.computeNotes(
+      _levels.lastReleasedToken || canvas.tokens.controlled[0]
+    );
+});
 
 /*********************
  * DISPATCH WARNINGS *
  *********************/
 
-Hooks.once("canvasReady",()=>{
-  if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
-})
-
-
+Hooks.once("canvasReady", () => {
+  //if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
+});
 
 /*Hooks.on("updateToken", (token, updates) => {
   if ("x" in updates || "y" in updates) {

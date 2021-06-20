@@ -1,6 +1,12 @@
 class Levels {
   constructor() {
     this.DEBUG = false;
+    this.RAYS = game.settings.get(_levelsModuleName, "debugRaycast");
+    this.CONSTS = {};
+    this.CONSTS.COLLISIONTYPE = {
+      sight: 0,
+      collision: 1,
+    };
     this.floorContainer = new PIXI.Container();
     this.floorContainer.spriteIndex = {};
     this.overContainer = new PIXI.Container();
@@ -10,6 +16,7 @@ class Levels {
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
+    this.levelsHoles = [];
     this.levelsTokens = {};
     this.fogHiding = game.settings.get(_levelsModuleName, "fogHiding");
     this.elevationScale = game.settings.get(
@@ -20,7 +27,7 @@ class Levels {
       _levelsModuleName,
       "defaultLosHeight"
     );
-    this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight")
+    this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.advancedLOS = game.settings.get(_levelsModuleName, "advancedLOS");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -199,26 +206,21 @@ class Levels {
     if (!sourceToken || !this.advancedLOS) return;
     for (let token of canvas.tokens.placeables) {
       if (token == sourceToken) continue;
-      let inForeground = false;
-      if (token.visible && token.icon.alpha != 0) {
-        if (this.checkCollision(sourceToken, token)) token.visible = false;
-      } else if (
-        token.visible == false &&
-        this.levelsTokens[token.id].range[1] == Infinity &&
-        this.levelsTokens[token.id].range[0] != 0 &&
-        this.tokenInRange(sourceToken, token) &&
-        !this.checkCollision(sourceToken, token)
-      ) {
-        inForeground = true;
-        token.visible = true;
+      token.visible =
+        !this.checkCollision(sourceToken, token, "sight") &&
+        this.tokenInRange(sourceToken, token) && !token.data.hidden;
+      if (this.levelsTokens[token.id].range[1] == Infinity && token.visible && !token.data.hidden) {
         this.getTokenIconSpriteOverhead(token);
-      }
-      if (!this.tokenInRange(sourceToken, token)) {
-        inForeground = false;
-        token.visible = false;
-      }
-      if (!inForeground) {
+      } else {
         this.removeTempTokenOverhead(token);
+      }
+      if(token.visible && !token.data.hidden){
+        token.icon.alpha=0
+        token.levelsHidden = true;
+        this.getTokenIconSprite(token);
+      }else{
+        token.levelsHidden = false;
+        this.removeTempToken(token);
       }
     }
   }
@@ -279,7 +281,7 @@ class Levels {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
     if (!tilesIsIn || tilesIsIn.length == 0) {
-      return { token: token, range: [0, Infinity] }; //return { token: token, range: [0, elevation] };
+      return { token: token, range: [-Infinity, Infinity] }; //return { token: token, range: [0, elevation] };
     }
     let levelTile;
     tilesIsIn.forEach((t) => {
@@ -293,7 +295,7 @@ class Levels {
       return { token: token, range: levelTile.range };
     } else {
       levelTile = this.findCeiling(tilesIsIn);
-      return { token: token, range: [0, levelTile.range[0] - 1] };
+      return { token: token, range: [-Infinity, levelTile.range[0] - 1] };
     }
   }
 
@@ -411,26 +413,34 @@ class Levels {
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     this.refreshTokens(cToken);
     this.computeDoors(cToken);
-    this.compute3DCollisionsForToken(cToken);
-    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      let ownedTokens = canvas.tokens.placeables.filter(
-        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-      );
-      let tokenPovs = [];
-      ownedTokens.forEach((t) => {
-        tokenPovs.push(this.refreshTokens(t));
-        this.computeDoors(t);
-      });
-      tokenPovs.forEach((povs) => {
-        povs.forEach((pov) => {
-          if (pov.visible) {
-            pov.token.token.visible = true;
-            pov.token.token.icon.alpha = 1;
-          }
+    if(this.advancedLOS){
+      this.compute3DCollisionsForToken(cToken);
+    }else{
+      if (!canvas.tokens.controlled[0] && !game.user.isGM) {
+        let ownedTokens = canvas.tokens.placeables.filter(
+          (t) => t.actor && t.actor.testUserPermission(game.user, 2)
+        );
+        let tokenPovs = [];
+        ownedTokens.forEach((t) => {
+          tokenPovs.push(this.refreshTokens(t));
+          this.computeDoors(t);
         });
-      });
+        tokenPovs.forEach((povs) => {
+          povs.forEach((pov) => {
+            if (pov.visible) {
+              pov.token.token.visible = true;
+              pov.token.token.icon.alpha = 1;
+            }
+          });
+        });
+        this.showOwnedTokensForPlayer();
+      }
+    }
+    
+    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
       this.showOwnedTokensForPlayer();
     }
+
     if (this.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -678,6 +688,7 @@ class Levels {
         });
       }
     });
+    this.levelsHoles = holes;
     return holes;
   }
 
@@ -934,6 +945,10 @@ class Levels {
       wall.data.flags.wallHeight?.wallHeightBottom,
       wall.data.flags.wallHeight?.wallHeightTop,
     ];
+    if (wallRange[0] === undefined || wallRange[0] === null)
+      wallRange[0] = -Infinity;
+    if (wallRange[1] === undefined || wallRange[1] === null)
+      wallRange[1] = Infinity;
     if (!wallRange[0] && !wallRange[1]) return false;
     else return wallRange;
   }
@@ -1115,11 +1130,11 @@ class Levels {
    * Perform a collision test between 2 point in 3D space
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Boolean} standardTest - perform a standard collision test if false would be returned using the height of the first point
+   * @param {String} type - "sight" or "collision" (defaults to "sight")
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
    **/
 
-  testCollision(p0, p1, standardTest = false) {
+  testCollision(p0, p1, type = "sight") {
     //Declare points adjusted with token height to use in the loop
     const x0 = p0.x;
     const y0 = p0.y;
@@ -1127,18 +1142,15 @@ class Levels {
     const x1 = p1.x;
     const y1 = p1.y;
     const z1 = p1.z;
-
+    const TYPE = this.CONSTS.COLLISIONTYPE[type];
     //If the point are on the same Z axis return false
     if (z0 == z1) {
-      if (standardTest) {
-        return performStandardTest();
-      } else {
-        return false;
-      }
+      return walls3dTest();
     }
 
     //Loop through all the planes and check for both ceiling and floor collision on each tile
     for (let tile of this.levelsTiles) {
+      if(tile.levelsOverhead) continue
       const bottom = tile.range[0];
       const top = tile.range[1];
       if ((bottom && bottom != -Infinity) || bottom == 0) {
@@ -1147,7 +1159,7 @@ class Levels {
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          return true;
+          if(checkForHole(zIntersectionPoint,bottom)) return true;
         }
       }
       if ((top && top != Infinity) || top == 0) {
@@ -1156,17 +1168,13 @@ class Levels {
           ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          return true;
+          if(checkForHole(zIntersectionPoint,top)) return true;
         }
       }
     }
 
     //Return false if no collisions were detected
-    if (standardTest) {
-      return performStandardTest();
-    } else {
-      return false;
-    }
+    return walls3dTest();
 
     //Get the intersection point between the ray and the Z plane
     function getPointForPlane(z) {
@@ -1175,13 +1183,110 @@ class Levels {
       const point = { x: x, y: y };
       return point;
     }
+    //Check if a floor is hollowed by a hole
+    function checkForHole(intersectionPT,zz) {
+      for (let hole of _levels.levelsHoles) {
+        const hbottom = hole.range[0];
+        const htop = hole.range[1];
+        if(zz>htop || zz<hbottom) continue
+          if (
+            hole.poly.contains(intersectionPT.x, intersectionPT.y)
+          ) {
+            return false;
+          }
+          if (
+            hole.poly.contains(intersectionPT.x, intersectionPT.y)
+          ) {
+            return false;
+          }
+      }
+      return true
+    }
+    //Check if a point in 2d space is betweeen 2 points
+    function isBetween(a, b, c) {
+      const crossproduct =
+        (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y);
 
-    function performStandardTest() {
-      return canvas.walls.checkCollision(
-        new Ray({ x: p0.x, y: p0.y }, { x: p1.x, y: p1.y }),
-        {},
-        p0.z
-      );
+      //if (crossproduct > Number.EPSILON) return false;
+
+      const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
+      if (dotproduct < 0) return false;
+
+      const squaredlengthba =
+        (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
+      if (dotproduct > squaredlengthba) return false;
+
+      return true;
+    }
+    //Compute 3d collision for walls
+    function walls3dTest() {
+      for (let wall of canvas.walls.placeables) {
+        //continue if we have to ignore the wall
+        if (TYPE === 0) {
+          //sight
+          if (
+            wall.data.sense === 0 ||
+            (wall.data.door != 0 && wall.data.ds === 1)
+          )
+            continue;
+        }
+        if (TYPE === 1) {
+          //collision
+          if (
+            wall.data.move === 0 ||
+            (wall.data.door != 0 && wall.data.ds === 1)
+          )
+            continue;
+        }
+
+        //declare points in 3d space of the rectangle created by the wall
+        const wallBotTop = _levels.getWallHeightRange(wall);
+        const wx1 = wall.data.c[0];
+        const wx2 = wall.data.c[2];
+        const wx3 = wall.data.c[2];
+        const wy1 = wall.data.c[1];
+        const wy2 = wall.data.c[3];
+        const wy3 = wall.data.c[3];
+        const wz1 = wallBotTop[0];
+        const wz2 = wallBotTop[0];
+        const wz3 = wallBotTop[1];
+        const wx4 = wall.data.c[0];
+        const wy4 = wall.data.c[1];
+        const wz4 = wallBotTop[1];
+
+        //calculate the parameters for the infinite plane the rectangle defines
+        const A = wy1 * (wz2 - wz3) + wy2 * (wz3 - wz1) + wy3 * (wz1 - wz2);
+        const B = wz1 * (wx2 - wx3) + wz2 * (wx3 - wx1) + wz3 * (wx1 - wx2);
+        const C = wx1 * (wy2 - wy3) + wx2 * (wy3 - wy1) + wx3 * (wy1 - wy2);
+        const D =
+          -wx1 * (wy2 * wz3 - wy3 * wz2) -
+          wx2 * (wy3 * wz1 - wy1 * wz3) -
+          wx3 * (wy1 * wz2 - wy2 * wz1);
+
+        //solve for p0 p1 to check if the points are on opposite sides of the plane or not
+        const P1 = A * x0 + B * y0 + C * z0 + D;
+        const P2 = A * x1 + B * y1 + C * z1 + D;
+
+        //don't do anything else if the points are on the same side of the plane
+        if (P1 * P2 > 0) continue;
+
+        //calculate intersection point
+        const t =
+          -(A * x0 + B * y0 + C * z0 + D) /
+          (A * (x1 - x0) + B * (y1 - y0) + C * (z1 - z0)); //-(A*x0 + B*y0 + C*z0 + D) / (A*x1 + B*y1 + C*z1)
+        const ix = x0 + (x1 - x0) * t;
+        const iy = y0 + (y1 - y0) * t;
+        const iz = z0 + (z1 - z0) * t;
+
+        //return true if the point is inisde the rectangle
+        const isb = isBetween(
+          { x: wx1, y: wy1 },
+          { x: wx2, y: wy2 },
+          { x: ix, y: iy }
+        );
+        if (isb && iz < wallBotTop[1] && iz >= wallBotTop[0]) return true;
+      }
+      return false;
     }
   }
 
@@ -1192,10 +1297,13 @@ class Levels {
    **/
 
   getTokenLOSheight(token) {
-    let losDiff
-    if(this.autoLOSHeight){
-      losDiff = canvas.scene.dimensions.distance*Math.max(token.data.width,token.data.height)*token.data.scale
-    }else{
+    let losDiff;
+    if (this.autoLOSHeight) {
+      losDiff =
+        canvas.scene.dimensions.distance *
+        Math.max(token.data.width, token.data.height) *
+        token.data.scale;
+    } else {
       losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
     }
 
@@ -1206,11 +1314,11 @@ class Levels {
    * Perform a collision test between 2 TOKENS in 3D space
    * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Boolean} standardTest - perform a standard wall collision test if false would be returned using the height of the first point
+   * @param {String} type - "sight" or "collision" (defaults to "sight")
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
    **/
 
-  checkCollision(token1, token2, standardTest = false) {
+  checkCollision(token1, token2, type = "sight") {
     const token1LosH = this.getTokenLOSheight(token1);
     const token2LosH = this.getTokenLOSheight(token2);
     const p0 = {
@@ -1223,6 +1331,6 @@ class Levels {
       y: token2.center.y,
       z: token2LosH,
     };
-    return this.testCollision(p0, p1, standardTest);
+    return this.testCollision(p0, p1, type);
   }
 }

@@ -14,6 +14,8 @@
     "levels.settings.advancedLOS.hint": "Calculate sight in 3D space, uses the token height to do calculations.",
     "levels.settings.autoLOSHeight.name": "Automatic token height",
     "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore ALL manual settings. ",
+    "levels.settings.debugRaycast.name": "DEBUG: Enable ray visualization",
+    "levels.settings.debugRaycast.hint": "Show the 3D Sight rays (green visible, red not visible)",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
