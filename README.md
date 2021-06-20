@@ -105,14 +105,14 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
 
 ```js
   /**
-   * Perform a collision test between 2 tokens in 3D space
+   * Perform a collision test between 2 TOKENS in 3D space
    * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Boolean} standardTest - perform a standard wall collision test if false would be returned using the height of the first point
+   * @param {String} type - "sight" or "collision" (defaults to "sight")
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
   **/
 
-  _levels.checkCollision(token1, token2, standardTest = false)
+  _levels.checkCollision(token1, token2, type = "sight")
 ```
 
 ```js
@@ -130,9 +130,9 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * Perform a collision test between 2 point in 3D space
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Boolean} standardTest - perform a standard collision test if false would be returned using the height of the first point
+   * @param {String} type - "sight" or "collision" (defaults to "sight")
    * @returns {Boolean} returns true if a collision is detected, flase if it's not
   **/
 
-  _levels.testCollision(p0, p1, standardTest = false)
+  _levels.testCollision(p0, p1, type = "sight")
 ```
