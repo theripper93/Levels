@@ -343,7 +343,7 @@ class Levels {
       return { token: token, range: levelTile.range };
     } else {
       levelTile = this.findCeiling(tilesIsIn);
-      return { token: token, range: [-Infinity, levelTile.range[0] - 1] };
+      return { token: token, range: [0, levelTile.range[0] - 1] };
     }
   }
 
