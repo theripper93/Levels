@@ -41,6 +41,12 @@ Hooks.on("ready", () => {
     _levelsIsAudible,
     "OVERRIDE"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "Token.prototype.isVisible",
+    _levelsTokenIsVisible,
+    "OVERRIDE"
+  );
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 

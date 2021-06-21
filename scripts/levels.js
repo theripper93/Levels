@@ -160,12 +160,16 @@ class Levels {
   }
 
   refreshTokens(overrideToken = undefined) {
+    if(this.advancedLOS){
+      this.advancedLosTokenRefresh()
+      return
+    }
     let cToken = overrideToken || canvas.tokens.controlled[0];
     if (!cToken) return;
-    let allTiles = _levels.findAllTiles();
-    let holes = _levels.getHoles();
+    let allTiles = this.findAllTiles();
+    let holes = this.getHoles();
     let tokensState = this.getTokensState(allTiles);
-    let tokenPov = _levels.computeTokens(
+    let tokenPov = this.computeTokens(
       tokensState,
       cToken.data.elevation,
       holes,
@@ -202,23 +206,67 @@ class Levels {
     return tokenPov;
   }
 
+  advancedLosTokenRefresh(){
+    this.getHoles();
+    this.getTokensState(this.findAllTiles());
+  }
+
+  advancedLosTestVisibility(sourceToken,token){
+    const gm = game.user.isGM
+    const inLOS = !this.checkCollision(sourceToken, token, "sight")
+    const inRange = this.tokenInRange(sourceToken, token)
+    if(inLOS && inRange && token.data.hidden && gm) return true
+    if(inLOS && inRange && !token.data.hidden) return true
+    const inLight = this.advancedLOSCheckInLight(token)
+    if(inLOS && inLight && !token.data.hidden) return true
+    return false
+  }
+
+  advancedLOSCheckInLight(token){
+    for(let source of canvas.lighting.sources){
+      if(source.skipRender) continue
+      if(source.object.document.documentName === "Token"){
+        const lightRadius = Math.max(source.object.data.dimLight,source.object.data.brightLight)
+        const lightTop = source.object.data.elevation+lightRadius ?? Infinity
+        const lightBottom = source.object.data.elevation-lightRadius ?? -Infinity
+        if(token.data.elevation>=lightBottom && token.data.elevation <= lightTop)
+        {
+          if(source.fov.contains(token.center.x,token.center.y)) return true
+        }
+      }else{
+        const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity
+        const lightBottom = source.object.data.flags.levels?.rangeBottom ?? -Infinity
+        if(token.data.elevation>=lightBottom && token.data.elevation <= lightTop)
+        {
+          if(source.fov.contains(token.center.x,token.center.y)) return true
+        }
+      }
+      
+    }
+    return false
+  }
+
   compute3DCollisionsForToken(sourceToken) {
     if (!sourceToken || !this.advancedLOS) return;
+    this.advancedLosTokenRefresh()
     for (let token of canvas.tokens.placeables) {
       if (token == sourceToken) continue;
-      token.visible =
-        !this.checkCollision(sourceToken, token, "sight") &&
-        this.tokenInRange(sourceToken, token) && !token.data.hidden;
-      if (this.levelsTokens[token.id].range[1] == Infinity && token.visible && !token.data.hidden) {
+      token.visible = this.advancedLosTestVisibility(sourceToken,token)
+      token.levelsVisible = token.visible;
+      if (
+        this.levelsTokens[token.id].range[1] == Infinity &&
+        token.visible &&
+        !token.data.hidden
+      ) {
         this.getTokenIconSpriteOverhead(token);
       } else {
         this.removeTempTokenOverhead(token);
       }
-      if(token.visible && !token.data.hidden){
-        token.icon.alpha=0
+      if (token.visible && !token.data.hidden) {
+        token.icon.alpha = 0;
         token.levelsHidden = true;
         this.getTokenIconSprite(token);
-      }else{
+      } else {
         token.levelsHidden = false;
         this.removeTempToken(token);
       }
@@ -411,11 +459,11 @@ class Levels {
     let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    this.refreshTokens(cToken);
-    this.computeDoors(cToken);
-    if(this.advancedLOS){
+    if (this.advancedLOS) {
       this.compute3DCollisionsForToken(cToken);
-    }else{
+    } else {
+      this.refreshTokens(cToken);
+      this.computeDoors(cToken);
       if (!canvas.tokens.controlled[0] && !game.user.isGM) {
         let ownedTokens = canvas.tokens.placeables.filter(
           (t) => t.actor && t.actor.testUserPermission(game.user, 2)
@@ -436,7 +484,7 @@ class Levels {
         this.showOwnedTokensForPlayer();
       }
     }
-    
+
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
       this.showOwnedTokensForPlayer();
     }
@@ -1143,14 +1191,14 @@ class Levels {
     const y1 = p1.y;
     const z1 = p1.z;
     const TYPE = this.CONSTS.COLLISIONTYPE[type];
-    //If the point are on the same Z axis return false
+    //If the point are on the same Z axis return the 3d wall test
     if (z0 == z1) {
       return walls3dTest();
     }
 
     //Loop through all the planes and check for both ceiling and floor collision on each tile
     for (let tile of this.levelsTiles) {
-      if(tile.levelsOverhead) continue
+      if (tile.levelsOverhead) continue;
       const bottom = tile.range[0];
       const top = tile.range[1];
       if ((bottom && bottom != -Infinity) || bottom == 0) {
@@ -1159,7 +1207,7 @@ class Levels {
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          if(checkForHole(zIntersectionPoint,bottom)) return true;
+          if (checkForHole(zIntersectionPoint, bottom)) return true;
         }
       }
       if ((top && top != Infinity) || top == 0) {
@@ -1168,12 +1216,12 @@ class Levels {
           ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          if(checkForHole(zIntersectionPoint,top)) return true;
+          if (checkForHole(zIntersectionPoint, top)) return true;
         }
       }
     }
 
-    //Return false if no collisions were detected
+    //Return the 3d wall test if no collisions were detected on the Z plane
     return walls3dTest();
 
     //Get the intersection point between the ray and the Z plane
@@ -1184,23 +1232,19 @@ class Levels {
       return point;
     }
     //Check if a floor is hollowed by a hole
-    function checkForHole(intersectionPT,zz) {
+    function checkForHole(intersectionPT, zz) {
       for (let hole of _levels.levelsHoles) {
         const hbottom = hole.range[0];
         const htop = hole.range[1];
-        if(zz>htop || zz<hbottom) continue
-          if (
-            hole.poly.contains(intersectionPT.x, intersectionPT.y)
-          ) {
-            return false;
-          }
-          if (
-            hole.poly.contains(intersectionPT.x, intersectionPT.y)
-          ) {
-            return false;
-          }
+        if (zz > htop || zz < hbottom) continue;
+        if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
+          return false;
+        }
+        if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
+          return false;
+        }
       }
-      return true
+      return true;
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {
@@ -1217,6 +1261,19 @@ class Levels {
       if (dotproduct > squaredlengthba) return false;
 
       return true;
+    }
+    //Get wall heights flags, avoid infinity, use arbitrary large number instead
+    function getWallHeightRange3Dcollision(wall) {
+      let wallRange = [
+        wall.data.flags.wallHeight?.wallHeightBottom,
+        wall.data.flags.wallHeight?.wallHeightTop,
+      ];
+      if (wallRange[0] === undefined || wallRange[0] === null)
+        wallRange[0] = -1000000000000;
+      if (wallRange[1] === undefined || wallRange[1] === null)
+        wallRange[1] = 1000000000000;
+      if (!wallRange[0] && !wallRange[1]) return false;
+      else return wallRange;
     }
     //Compute 3d collision for walls
     function walls3dTest() {
@@ -1238,9 +1295,8 @@ class Levels {
           )
             continue;
         }
-
         //declare points in 3d space of the rectangle created by the wall
-        const wallBotTop = _levels.getWallHeightRange(wall);
+        const wallBotTop = getWallHeightRange3Dcollision(wall);
         const wx1 = wall.data.c[0];
         const wx2 = wall.data.c[2];
         const wx3 = wall.data.c[2];

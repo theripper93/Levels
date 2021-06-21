@@ -293,6 +293,29 @@ function _levelsIsAudible() {
   return canvas.lighting.darknessLevel.between(this.data.darkness.min ?? 0, this.data.darkness.max ?? 1);
 }
 
+function _levelsTokenIsVisible() {
+  if(!_levels || !_levels.advancedLOS){
+    const gm = game.user.isGM;
+    if ( this.data.hidden ) return gm;
+    if ( !canvas.sight.tokenVision ) return true;
+    if ( this._controlled ) return true;
+    if ( canvas.sight.sources.has(this.sourceId) ) return true;
+    const tolerance = Math.min(this.w, this.h) / 4;
+    return canvas.sight.testVisibility(this.center, {tolerance, object: this});
+  }else{
+    if(this.levelsVisible === true || this.levelsVisible === false && canvas.tokens.controlled[0]) return this.levelsVisible
+    this.levelsVisible=undefined
+    const gm = game.user.isGM;
+    if ( this.data.hidden ) return gm;
+    if ( !canvas.sight.tokenVision ) return true;
+    if ( this._controlled ) return true;
+    if ( canvas.sight.sources.has(this.sourceId) ) return true;
+    const tolerance = Math.min(this.w, this.h) / 4;
+    return canvas.sight.testVisibility(this.center, {tolerance, object: this});
+  }
+  
+}
+
 /*WallsLayer.prototype.computePolygon = function computePolygon(origin, radius, {type="sight", angle=360, density=6, rotation=0, unrestricted=false, elevation=false}={}) {
   // Determine the maximum ray distance needs to reach all areas of the canvas
   let d = canvas.dimensions;
