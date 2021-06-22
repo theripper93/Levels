@@ -270,8 +270,8 @@ class Levels {
         token.levelsHidden = false;
         this.removeTempToken(token);
       }
-      this.computeDoors(sourceToken);
     }
+    this.computeDoors(sourceToken);
   }
 
   tokenInRange(sourceToken, token) {
