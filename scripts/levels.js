@@ -88,16 +88,17 @@ class Levels {
     let tiles = [];
     for (let tile of canvas.foreground.placeables) {
       if (tile.roomPoly) {
-        let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
+        let { rangeBottom, rangeTop, isLevel, showIfAbove } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
+          showIfAbove: showIfAbove
         });
       } else {
-        let { rangeBottom, rangeTop, isLevel } = this.getFlagsForObject(tile);
+        let { rangeBottom, rangeTop, isLevel, showIfAbove } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         let tileZZ = {
@@ -115,6 +116,7 @@ class Levels {
           poly: new PIXI.Polygon(tileCorners),
           range: [rangeBottom, rangeTop],
           levelsOverhead: true,
+          showIfAbove: showIfAbove
         });
       }
     }
@@ -123,10 +125,11 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    if (tile.range[1] != Infinity) tile.tile.visible = false;
+    if (tile.range[1] != Infinity && (!tile.showIfAbove || tile.range[0]<=canvas.tokens.controlled[0].data.elevation)) tile.tile.visible = false;
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
+        if(tile.showIfAbove) tile.tile.visible = true;
         return false;
         break;
       case -1:
@@ -254,7 +257,7 @@ class Levels {
       token.visible = this.advancedLosTestVisibility(sourceToken,token)
       token.levelsVisible = token.visible;
       if (
-        this.levelsTokens[token.id].range[1] == Infinity &&
+        (this.levelsTokens[token.id].range[1] == Infinity || token.data.elevation > sourceToken.data.elevation) &&
         token.visible &&
         !token.data.hidden
       ) {
@@ -1144,7 +1147,8 @@ class Levels {
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
     let drawingMode =
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
-    return { rangeBottom, rangeTop, isLevel, drawingMode };
+    let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
+    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove };
   }
 
   /**

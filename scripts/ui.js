@@ -5,6 +5,7 @@ class LevelsUI {
     this.definedLevels = [];
     this.currentLevel = 0;
     this.roofEnabled = false;
+    this.placeOverhead = false
     this.stairEnabled = true;
   }
 
@@ -583,7 +584,18 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
           onClick: (toggle) => {
             _levels.UI.roofEnabled = toggle;
           },
-        });
+        },
+        {
+          name: "placeOverhead",
+          title: game.i18n.localize("levels.controls.placeOverhead.name"),
+          icon: "fas fa-tree",
+          toggle: true,
+          active: _levels?.UI?.placeOverhead || false,
+          onClick: (toggle) => {
+            _levels.UI.placeOverhead = toggle;
+          },
+        }
+        );
 
       controls
         .find((c) => c.name == "drawings")
@@ -656,6 +668,16 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         },
       },
       {
+        name: "placeOverhead",
+        title: game.i18n.localize("levels.controls.placeOverhead.name"),
+        icon: "fas fa-tree",
+        toggle: true,
+        active: _levels?.UI?.placeOverhead || false,
+        onClick: (toggle) => {
+          _levels.UI.placeOverhead = toggle;
+        },
+      },
+      {
         name: "placeStair",
         title: game.i18n.localize("levels.controls.levelshole.name"),
         icon: "fab fa-firstdraft",
@@ -702,7 +724,7 @@ Hooks.on("ready", () => {
                 : _levels.UI.range[0],
               rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
             },
-            betterroofs: { brMode: 2 },
+            betterroofs: { brMode: _levels.UI.placeOverhead ? 0 : 2 },
           },
         });
       }

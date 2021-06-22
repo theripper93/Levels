@@ -146,6 +146,9 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
+  let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
+  let checkedbox = showifbelow ? ` checked=""` : ""
+
   let newHtml = `
   <div class="form-group">
   <label for="rangeTop">${game.i18n.localize(
@@ -168,6 +171,15 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     <input type="text" name="flags.${_levelsModuleName}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
+
+<div class="form-group">
+            <label>${game.i18n.localize(
+              "levels.tilecoonfig.showIfAbove.name"
+            )}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="flags.${_levelsModuleName}.showIfAbove"${checkedbox}>
+            </div>
+        </div>
 
 `;
   const overh = html.find('input[name="occlusion.alpha"]');

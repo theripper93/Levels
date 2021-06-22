@@ -19,6 +19,7 @@
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
+    "levels.tilecoonfig.showIfAbove.name": "Show even when below?",
     "levels.tilecoonfig.range.unit": "Elevation",
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
@@ -42,6 +43,7 @@
     "levels.controls.levelsroof.name": "Enable Levels Roofs View/Placement",
     "levels.controls.levelshole.name": "Place drawings as Stairs when enabled, place as holes when disabled",
     "levels.controls.levelsclear.name": "Clear Levels",
+    "levels.controls.placeOverhead.name": "If enabled place tiles as overhead tiles 'inside' levels",
 
     "levels.dialog.levelsclear.title": "Clear Levels",
     "levels.dialog.levelsclear.content": "Clear all stored levels?",
