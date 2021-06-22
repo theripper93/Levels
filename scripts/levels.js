@@ -270,6 +270,7 @@ class Levels {
         token.levelsHidden = false;
         this.removeTempToken(token);
       }
+      this.computeDoors(sourceToken);
     }
   }
 
