@@ -66,8 +66,12 @@ Hooks.on("updateToken", (token, updates) => {
   }
 });
 
-Hooks.on("controlToken", (token, contorlled) => {
-  if (!contorlled && game.user.isGM) {
+Hooks.on("controlToken", (token, controlled) => {
+  if(controlled) {
+    token.visible=true
+    token.levelsVisible=true
+  }
+  if (!controlled && game.user.isGM) {
     levelLigths = _levels.getLights();
     canvas.foreground.placeables.forEach((t) => {
       t.visible = true;
@@ -88,8 +92,8 @@ Hooks.on("controlToken", (token, contorlled) => {
     _levels.clearLights(_levels.getLights());
     canvas.drawings.placeables.forEach((d) => (d.visible = true));
   } else {
-    if (_levels && contorlled) _levels._onElevationChangeUpdate();
-    if (_levels && !contorlled && token) {
+    if (_levels && controlled) _levels._onElevationChangeUpdate();
+    if (_levels && !controlled && token) {
       _levels._onElevationChangeUpdate(token);
       if (!game.user.isGM) _levels.lastReleasedToken = token;
     }

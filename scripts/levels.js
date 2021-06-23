@@ -125,7 +125,7 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    if (tile.range[1] != Infinity && (!tile.showIfAbove || tile.range[0]<=canvas.tokens.controlled[0].data.elevation)) tile.tile.visible = false;
+    if (tile.range[1] != Infinity && (!tile.showIfAbove || (canvas.tokens.controlled[0] && tile.range[0]<=canvas.tokens.controlled[0].data.elevation))) tile.tile.visible = false;
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -162,8 +162,8 @@ class Levels {
     }
   }
 
-  refreshTokens(overrideToken = undefined) {
-    if(this.advancedLOS){
+  refreshTokens(overrideToken = undefined, release = false) {
+    if(this.advancedLOS && !release){
       this.advancedLosTokenRefresh()
       return
     }
@@ -465,6 +465,25 @@ class Levels {
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (this.advancedLOS) {
       this.compute3DCollisionsForToken(cToken);
+      if (!canvas.tokens.controlled[0] && !game.user.isGM) {
+        let ownedTokens = canvas.tokens.placeables.filter(
+          (t) => t.actor && t.actor.testUserPermission(game.user, 2)
+        );
+        let tokenPovs = [];
+        ownedTokens.forEach((t) => {
+          tokenPovs.push(this.refreshTokens(t,true));
+          this.computeDoors(t);
+        });
+        tokenPovs.forEach((povs) => {
+          povs.forEach((pov) => {
+            if (pov.visible) {
+              pov.token.token.visible = true;
+              pov.token.token.icon.alpha = 1;
+            }
+          });
+        });
+        this.showOwnedTokensForPlayer();
+      }
     } else {
       this.refreshTokens(cToken);
       this.computeDoors(cToken);
