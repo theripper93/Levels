@@ -107,6 +107,7 @@ Hooks.on("controlToken", (token, controlled) => {
     }
   }
   if(_levels) _levels.currentElevation = token.data.elevation
+  if(_levels && !controlled) _levels.currentElevation = undefined
 });
 
 Hooks.on("updateTile", (tile, updates) => {
