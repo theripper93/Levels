@@ -21,7 +21,7 @@ Hooks.on("betterRoofsReady", () => {
 });
 
 Hooks.on("sightRefresh", () => {
-  if (_levels) {
+  if (_levels && canvas.scene.data.tokenVision) {
     _levels._levelsOnSightRefresh();
     //Raycast Debug
     if (_levels.RAYS && canvas.tokens.controlled[0]) {
@@ -37,7 +37,7 @@ Hooks.on("sightRefresh", () => {
         let color = isCollision ? 0xff0000 : 0x00ff08;
         let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
         if (ctk != t)
-          g.beginFill(color).lineStyle(5, color).drawPolygon(coords).endFill();
+          g.beginFill(color).lineStyle(1, color).drawPolygon(coords).endFill();
       });
       if (!oldcontainer) canvas.controls.debug.addChild(g);
     }
@@ -53,23 +53,31 @@ Hooks.on("updateToken", (token, updates) => {
     "rotation" in updates ||
     "hidden" in updates
   ) {
-    _levels.getTokenIconSprite(
-      canvas.tokens.get(token.id),
-      updates.x,
-      updates.y,
-      "rotation" in updates
-    );
+    if(_levels.floorContainer.children.find((c) => c.name == token.id))_levels.getTokenIconSprite(canvas.tokens.get(token.id),updates.x,updates.y,"rotation" in updates);
     _levels.refreshTokens();
   }
   if ("elevation" in updates) {
     _levels._onElevationChangeUpdate();
   }
+  if("hidden" in updates){
+    _levels.removeTempTokenOverhead(token);
+    _levels.removeTempToken(token);
+    token.icon.alpha = 1;
+    token.levelsHidden = false;
+    token.levelsVisible = undefined;
+  }
+  if (_levels.advancedLOS) {
+    _levels.debounce3DRefresh(100);
+  }
 });
 
 Hooks.on("controlToken", (token, controlled) => {
+  let ElevDiff 
+  if(_levels) ElevDiff = token.data.elevation != _levels.currentElevation
   if(controlled) {
     token.visible=true
     token.levelsVisible=true
+    token.icon.alpha = 1
   }
   if (!controlled && game.user.isGM) {
     levelLigths = _levels.getLights();
@@ -92,12 +100,13 @@ Hooks.on("controlToken", (token, controlled) => {
     _levels.clearLights(_levels.getLights());
     canvas.drawings.placeables.forEach((d) => (d.visible = true));
   } else {
-    if (_levels && controlled) _levels._onElevationChangeUpdate();
+    if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
     if (_levels && !controlled && token) {
-      _levels._onElevationChangeUpdate(token);
+      if(ElevDiff)_levels._onElevationChangeUpdate(token);
       if (!game.user.isGM) _levels.lastReleasedToken = token;
     }
   }
+  if(_levels) _levels.currentElevation = token.data.elevation
 });
 
 Hooks.on("updateTile", (tile, updates) => {

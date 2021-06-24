@@ -126,6 +126,8 @@ class Levels {
 
   computeTile(tile, altitude, lights) {
     if (tile.range[1] != Infinity && (!tile.showIfAbove || (canvas.tokens.controlled[0] && tile.range[0]<=canvas.tokens.controlled[0].data.elevation))) tile.tile.visible = false;
+    if (tile.range[1] == Infinity &&  canvas.tokens.controlled[0] && canvas.tokens.controlled[0].data.elevation<0) tile.tile.visible = false
+    else if(tile.range[1] == Infinity &&  canvas.tokens.controlled[0] && canvas.tokens.controlled[0].data.elevation>=0) tile.tile.visible = true
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
@@ -253,11 +255,12 @@ class Levels {
     if (!sourceToken || !this.advancedLOS) return;
     this.advancedLosTokenRefresh()
     for (let token of canvas.tokens.placeables) {
-      if (token == sourceToken) continue;
+      if(token.data.hidden) token.levelsVisible = undefined
+      if (token == sourceToken || (!game.user.isGM && token.actor && token.actor.testUserPermission(game.user, 2)) || token.data.hidden) continue;
       token.visible = this.advancedLosTestVisibility(sourceToken,token)
       token.levelsVisible = token.visible;
       if (
-        (this.levelsTokens[token.id].range[1] == Infinity || token.data.elevation > sourceToken.data.elevation) &&
+        (this.levelsTokens[token.id].range[1] == Infinity && token.data.elevation > sourceToken.data.elevation) &&
         token.visible &&
         !token.data.hidden
       ) {
@@ -265,16 +268,16 @@ class Levels {
       } else {
         this.removeTempTokenOverhead(token);
       }
-      if (token.visible && !token.data.hidden) {
+      if (token.visible && !token.data.hidden && token.data.elevation < sourceToken.data.elevation) {
         token.icon.alpha = 0;
         token.levelsHidden = true;
         this.getTokenIconSprite(token);
       } else {
+        token.icon.alpha = 1;
         token.levelsHidden = false;
         this.removeTempToken(token);
       }
     }
-    this.computeDoors(sourceToken);
   }
 
   tokenInRange(sourceToken, token) {
@@ -464,7 +467,8 @@ class Levels {
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (this.advancedLOS) {
-      this.compute3DCollisionsForToken(cToken);
+      this.debounce3DRefresh(32)// this.compute3DCollisionsForToken(cToken);
+      this.computeDoors(cToken);
       if (!canvas.tokens.controlled[0] && !game.user.isGM) {
         let ownedTokens = canvas.tokens.placeables.filter(
           (t) => t.actor && t.actor.testUserPermission(game.user, 2)
@@ -530,6 +534,7 @@ class Levels {
           let HeightDiff = Math.abs(
             token.data.elevation - canvas.tokens.controlled[0].data.elevation
           );
+          if(HeightDiff===0)HeightDiff=1
           let HeightDiffFactor = Math.sqrt(HeightDiff / 8);
           elevScaleFactor = 1 / HeightDiffFactor > 1 ? 1 : 1 / HeightDiffFactor;
           token.elevationScaleFactor =
@@ -567,6 +572,27 @@ class Levels {
     lights.forEach((lightIndex) => {
       lightIndex.light.source.skipRender = false;
     });
+  }
+  
+  debounce3DRefresh(timeout){
+    if(!this.updateQueued){
+    this.updateQueued=true
+    setTimeout(()=>{
+      let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken; 
+      this.compute3DCollisionsForToken(cToken)
+      this.updateQueued=false
+     }, timeout);
+  }
+  }
+
+  debounceElevationChange(timeout){
+    if(!this.updateQueued){
+    this.elevUpdateQueued=true
+    setTimeout(()=>{
+      this._onElevationChangeUpdate()
+      this.elevUpdateQueued=false
+     }, timeout);
+  }
   }
 
   computeLightsForTile(tile, lights, elevation, holes) {
@@ -1272,10 +1298,6 @@ class Levels {
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {
-      const crossproduct =
-        (c.y - a.y) * (b.x - a.x) - (c.x - a.x) * (b.y - a.y);
-
-      //if (crossproduct > Number.EPSILON) return false;
 
       const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
       if (dotproduct < 0) return false;
@@ -1330,9 +1352,6 @@ class Levels {
         const wz1 = wallBotTop[0];
         const wz2 = wallBotTop[0];
         const wz3 = wallBotTop[1];
-        const wx4 = wall.data.c[0];
-        const wy4 = wall.data.c[1];
-        const wz4 = wallBotTop[1];
 
         //calculate the parameters for the infinite plane the rectangle defines
         const A = wy1 * (wz2 - wz3) + wy2 * (wz3 - wz1) + wy3 * (wz1 - wz2);
