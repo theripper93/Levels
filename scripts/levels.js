@@ -88,17 +88,19 @@ class Levels {
     let tiles = [];
     for (let tile of canvas.foreground.placeables) {
       if (tile.roomPoly) {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove } = this.getFlagsForObject(tile);
+        let { rangeBottom, rangeTop, isLevel, showIfAbove } =
+          this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         tiles.push({
           tile: tile,
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
-          showIfAbove: showIfAbove
+          showIfAbove: showIfAbove,
         });
       } else {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove } = this.getFlagsForObject(tile);
+        let { rangeBottom, rangeTop, isLevel, showIfAbove } =
+          this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         let tileZZ = {
@@ -116,7 +118,7 @@ class Levels {
           poly: new PIXI.Polygon(tileCorners),
           range: [rangeBottom, rangeTop],
           levelsOverhead: true,
-          showIfAbove: showIfAbove
+          showIfAbove: showIfAbove,
         });
       }
     }
@@ -125,13 +127,32 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    if (tile.range[1] != Infinity && (!tile.showIfAbove || (canvas.tokens.controlled[0] && tile.range[0]<=canvas.tokens.controlled[0].data.elevation))) tile.tile.visible = false;
-    if (tile.range[1] == Infinity &&  canvas.tokens.controlled[0] && canvas.tokens.controlled[0].data.elevation<0) tile.tile.visible = false
-    else if(tile.range[1] == Infinity &&  canvas.tokens.controlled[0] && canvas.tokens.controlled[0].data.elevation>=0) tile.tile.visible = true
+    if (
+      tile.range[1] != Infinity &&
+      (!tile.showIfAbove ||
+        (canvas.tokens.controlled[0] &&
+          tile.range[0] <= canvas.tokens.controlled[0].data.elevation))
+    )
+      tile.tile.visible = false;
+    if (
+      tile.range[1] == Infinity &&
+      canvas.tokens.controlled[0] &&
+      canvas.tokens.controlled[0].data.elevation < 0
+    ) {
+      tile.tile.visible = false;
+      tile.tile.isLevel = true;
+    } else if (
+      tile.range[1] == Infinity &&
+      canvas.tokens.controlled[0] &&
+      canvas.tokens.controlled[0].data.elevation >= 0
+    ) {
+      tile.tile.visible = true;
+      tile.tile.isLevel = false;
+    }
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
-        if(tile.showIfAbove) tile.tile.visible = true;
+        if (tile.showIfAbove) tile.tile.visible = true;
         return false;
         break;
       case -1:
@@ -165,9 +186,9 @@ class Levels {
   }
 
   refreshTokens(overrideToken = undefined, release = false) {
-    if(this.advancedLOS && !release){
-      this.advancedLosTokenRefresh()
-      return
+    if (this.advancedLOS && !release) {
+      this.advancedLosTokenRefresh();
+      return;
     }
     let cToken = overrideToken || canvas.tokens.controlled[0];
     if (!cToken) return;
@@ -211,56 +232,72 @@ class Levels {
     return tokenPov;
   }
 
-  advancedLosTokenRefresh(){
+  advancedLosTokenRefresh() {
     this.getHoles();
     this.getTokensState(this.findAllTiles());
   }
 
-  advancedLosTestVisibility(sourceToken,token){
-    const gm = game.user.isGM
-    const inLOS = !this.checkCollision(sourceToken, token, "sight")
-    const inRange = this.tokenInRange(sourceToken, token)
-    if(inLOS && inRange && token.data.hidden && gm) return true
-    if(inLOS && inRange && !token.data.hidden) return true
-    const inLight = this.advancedLOSCheckInLight(token)
-    if(inLOS && inLight && !token.data.hidden) return true
-    return false
+  advancedLosTestVisibility(sourceToken, token) {
+    const gm = game.user.isGM;
+    const inLOS = !this.checkCollision(sourceToken, token, "sight");
+    const inRange = this.tokenInRange(sourceToken, token);
+    if (inLOS && inRange && token.data.hidden && gm) return true;
+    if (inLOS && inRange && !token.data.hidden) return true;
+    const inLight = this.advancedLOSCheckInLight(token);
+    if (inLOS && inLight && !token.data.hidden) return true;
+    return false;
   }
 
-  advancedLOSCheckInLight(token){
-    for(let source of canvas.lighting.sources){
-      if(source.skipRender) continue
-      if(source.object.document.documentName === "Token"){
-        const lightRadius = Math.max(source.object.data.dimLight,source.object.data.brightLight)
-        const lightTop = source.object.data.elevation+lightRadius ?? Infinity
-        const lightBottom = source.object.data.elevation-lightRadius ?? -Infinity
-        if(token.data.elevation>=lightBottom && token.data.elevation <= lightTop)
-        {
-          if(source.fov.contains(token.center.x,token.center.y)) return true
+  advancedLOSCheckInLight(token) {
+    for (let source of canvas.lighting.sources) {
+      if (source.skipRender) continue;
+      if (source.object.document.documentName === "Token") {
+        const lightRadius = Math.max(
+          source.object.data.dimLight,
+          source.object.data.brightLight
+        );
+        const lightTop = source.object.data.elevation + lightRadius ?? Infinity;
+        const lightBottom =
+          source.object.data.elevation - lightRadius ?? -Infinity;
+        if (
+          token.data.elevation >= lightBottom &&
+          token.data.elevation <= lightTop
+        ) {
+          if (source.fov.contains(token.center.x, token.center.y)) return true;
         }
-      }else{
-        const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity
-        const lightBottom = source.object.data.flags.levels?.rangeBottom ?? -Infinity
-        if(token.data.elevation>=lightBottom && token.data.elevation <= lightTop)
-        {
-          if(source.fov.contains(token.center.x,token.center.y)) return true
+      } else {
+        const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity;
+        const lightBottom =
+          source.object.data.flags.levels?.rangeBottom ?? -Infinity;
+        if (
+          token.data.elevation >= lightBottom &&
+          token.data.elevation <= lightTop
+        ) {
+          if (source.fov.contains(token.center.x, token.center.y)) return true;
         }
       }
-      
     }
-    return false
+    return false;
   }
 
   compute3DCollisionsForToken(sourceToken) {
     if (!sourceToken || !this.advancedLOS) return;
-    this.advancedLosTokenRefresh()
+    this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      if(token.data.hidden) token.levelsVisible = undefined
-      if (token == sourceToken || (!game.user.isGM && token.actor && token.actor.testUserPermission(game.user, 2)) || token.data.hidden) continue;
-      token.visible = this.advancedLosTestVisibility(sourceToken,token)
+      if (token.data.hidden) token.levelsVisible = undefined;
+      if (
+        token == sourceToken ||
+        (!game.user.isGM &&
+          token.actor &&
+          token.actor.testUserPermission(game.user, 2)) ||
+        token.data.hidden
+      )
+        continue;
+      token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (
-        (this.levelsTokens[token.id].range[1] == Infinity && token.data.elevation > sourceToken.data.elevation) &&
+        this.levelsTokens[token.id].range[1] == Infinity &&
+        token.data.elevation > sourceToken.data.elevation &&
         token.visible &&
         !token.data.hidden
       ) {
@@ -268,7 +305,11 @@ class Levels {
       } else {
         this.removeTempTokenOverhead(token);
       }
-      if (token.visible && !token.data.hidden && token.data.elevation < sourceToken.data.elevation) {
+      if (
+        token.visible &&
+        !token.data.hidden &&
+        token.data.elevation < sourceToken.data.elevation
+      ) {
         token.icon.alpha = 0;
         token.levelsHidden = true;
         this.getTokenIconSprite(token);
@@ -467,7 +508,7 @@ class Levels {
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (this.advancedLOS) {
-      this.debounce3DRefresh(32)// this.compute3DCollisionsForToken(cToken);
+      this.debounce3DRefresh(32); // this.compute3DCollisionsForToken(cToken);
       this.computeDoors(cToken);
       if (!canvas.tokens.controlled[0] && !game.user.isGM) {
         let ownedTokens = canvas.tokens.placeables.filter(
@@ -475,7 +516,7 @@ class Levels {
         );
         let tokenPovs = [];
         ownedTokens.forEach((t) => {
-          tokenPovs.push(this.refreshTokens(t,true));
+          tokenPovs.push(this.refreshTokens(t, true));
           this.computeDoors(t);
         });
         tokenPovs.forEach((povs) => {
@@ -534,7 +575,7 @@ class Levels {
           let HeightDiff = Math.abs(
             token.data.elevation - canvas.tokens.controlled[0].data.elevation
           );
-          if(HeightDiff===0)HeightDiff=1
+          if (HeightDiff === 0) HeightDiff = 1;
           let HeightDiffFactor = Math.sqrt(HeightDiff / 8);
           elevScaleFactor = 1 / HeightDiffFactor > 1 ? 1 : 1 / HeightDiffFactor;
           token.elevationScaleFactor =
@@ -573,26 +614,26 @@ class Levels {
       lightIndex.light.source.skipRender = false;
     });
   }
-  
-  debounce3DRefresh(timeout){
-    if(!this.updateQueued){
-    this.updateQueued=true
-    setTimeout(()=>{
-      let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken; 
-      this.compute3DCollisionsForToken(cToken)
-      this.updateQueued=false
-     }, timeout);
-  }
+
+  debounce3DRefresh(timeout) {
+    if (!this.updateQueued) {
+      this.updateQueued = true;
+      setTimeout(() => {
+        let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+        this.compute3DCollisionsForToken(cToken);
+        this.updateQueued = false;
+      }, timeout);
+    }
   }
 
-  debounceElevationChange(timeout){
-    if(!this.updateQueued){
-    this.elevUpdateQueued=true
-    setTimeout(()=>{
-      this._onElevationChangeUpdate()
-      this.elevUpdateQueued=false
-     }, timeout);
-  }
+  debounceElevationChange(timeout) {
+    if (!this.updateQueued) {
+      this.elevUpdateQueued = true;
+      setTimeout(() => {
+        this._onElevationChangeUpdate();
+        this.elevUpdateQueued = false;
+      }, timeout);
+    }
   }
 
   computeLightsForTile(tile, lights, elevation, holes) {
@@ -1298,7 +1339,6 @@ class Levels {
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {
-
       const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
       if (dotproduct < 0) return false;
 
