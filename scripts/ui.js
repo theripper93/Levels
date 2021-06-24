@@ -428,7 +428,7 @@ class LevelsUI {
       );
       let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
       let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
-      if (tile.visible) {
+      if (tile.visible || tileIndex.range[1] <= range[1]) {
         _levels.mirrorTileInBackground(tileIndex);
       } else {
         _levels.removeTempTile(tileIndex);
@@ -460,7 +460,7 @@ class LevelsUI {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
     let entityRange = [rangeBottom, rangeTop];
     if (!isTile) {
-      if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
+      if ((entityRange[0] >= range[0] && entityRange[0] <= range[1]) || (entityRange[1] >= range[0] && entityRange[1] <= range[1])) {
         return true;
       } else {
         return false;
@@ -799,7 +799,7 @@ Hooks.on("ready", () => {
       }
     });
 
-    Hooks.on("renderApplication", () => {
+    Hooks.on("renderSceneControls", () => {
       if (_levels.UI.rangeEnabled) _levels.UI.refreshLevels();
     });
   }
