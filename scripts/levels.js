@@ -239,6 +239,7 @@ class Levels {
 
   advancedLosTestVisibility(sourceToken, token) {
     const gm = game.user.isGM;
+    if(!sourceToken.data.vision) return gm
     const inLOS = !this.checkCollision(sourceToken, token, "sight");
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange && token.data.hidden && gm) return true;
