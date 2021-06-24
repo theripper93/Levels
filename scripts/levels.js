@@ -1230,6 +1230,12 @@ class Levels {
     if (!rangeTop && rangeTop != 0) rangeTop = Infinity;
     if (!rangeBottom && rangeBottom != 0) rangeBottom = -Infinity;
     let isLevel = rangeTop == Infinity ? false : true;
+    if (
+      rangeTop == Infinity &&
+      canvas.tokens.controlled[0] &&
+      canvas.tokens.controlled[0].data.elevation < 0
+    )
+    isLevel=true
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
     let drawingMode =
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
