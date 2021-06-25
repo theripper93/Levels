@@ -29,7 +29,7 @@ Hooks.on("sightRefresh", () => {
 });
 
 Hooks.on("updateToken", (token, updates) => {
-  if (token._controlled) return;
+  let rToken = canvas.tokens.get(token.id)
   if (
     "elevation" in updates ||
     "x" in updates ||
@@ -39,13 +39,13 @@ Hooks.on("updateToken", (token, updates) => {
   ) {
     if (_levels.floorContainer.children.find((c) => c.name == token.id))
       _levels.getTokenIconSprite(
-        canvas.tokens.get(token.id),
+        rToken,
         updates.x,
         updates.y,
         "rotation" in updates
       );
   }
-  if ("elevation" in updates) {
+  if ("elevation" in updates && rToken._controlled) {
     _levels._onElevationChangeUpdate();
   }
   if ("hidden" in updates && updates.hidden==true) {
