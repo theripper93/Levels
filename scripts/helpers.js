@@ -89,6 +89,9 @@ function _levelsOnMovementFrame(dt, anim, config) {
     sound: config.sound,
     fog: updateFog,
   });
+  if (_levels && _levels.advancedLOS) {
+    _levels.debounce3DRefresh(100);
+  }
 }
 
 function _lightingRefresh(darkness) {

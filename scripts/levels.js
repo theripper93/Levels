@@ -509,7 +509,7 @@ class Levels {
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (this.advancedLOS) {
-      this.debounce3DRefresh(32); // this.compute3DCollisionsForToken(cToken);
+      this.debounce3DRefresh(32);
       this.computeDoors(cToken);
       if (!canvas.tokens.controlled[0] && !game.user.isGM) {
         let ownedTokens = canvas.tokens.placeables.filter(
