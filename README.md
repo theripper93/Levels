@@ -33,6 +33,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 * ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, you might be fine ignoring it but it's not guaranteed
 * ### **Perfect Vision**: Tokens in holes may not appear in black and white, possible other issues present
+* ### **Lichtgeschwindigkeit**: This module messes heavly with sight and while it's a great module it completely breaks vision of walls
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
 
 # **API**
