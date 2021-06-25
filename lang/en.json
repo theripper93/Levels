@@ -10,8 +10,6 @@
     "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config.",
     "levels.settings.defaultLosHeight.name": "Default Token Height",
     "levels.settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6.",
-    "levels.settings.advancedLOS.name": "Advanced Line of Sight",
-    "levels.settings.advancedLOS.hint": "Calculate sight in 3D space, uses the token height to do calculations.",
     "levels.settings.autoLOSHeight.name": "Automatic token height",
     "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore ALL manual settings. ",
     "levels.settings.debugRaycast.name": "DEBUG: Enable ray visualization",

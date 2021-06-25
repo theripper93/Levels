@@ -24,23 +24,7 @@ Hooks.on("sightRefresh", () => {
   if (_levels && canvas.scene.data.tokenVision) {
     _levels._levelsOnSightRefresh();
     //Raycast Debug
-    if (_levels.RAYS && canvas.tokens.controlled[0]) {
-      let oldcontainer = canvas.controls.debug.children.find(
-        (c) => (c.name = "levelsRAYS")
-      );
-      if (oldcontainer) oldcontainer.clear();
-      let g = oldcontainer || new PIXI.Graphics();
-      g.name = "levelsRAYS";
-      let ctk = canvas.tokens.controlled[0];
-      canvas.tokens.placeables.forEach((t) => {
-        let isCollision = _levels.checkCollision(ctk, t, "sight");
-        let color = isCollision ? 0xff0000 : 0x00ff08;
-        let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
-        if (ctk != t)
-          g.beginFill(color).lineStyle(1, color).drawPolygon(coords).endFill();
-      });
-      if (!oldcontainer) canvas.controls.debug.addChild(g);
-    }
+    _levels.raycastDebug();
   }
 });
 
@@ -53,61 +37,47 @@ Hooks.on("updateToken", (token, updates) => {
     "rotation" in updates ||
     "hidden" in updates
   ) {
-    if(_levels.floorContainer.children.find((c) => c.name == token.id))_levels.getTokenIconSprite(canvas.tokens.get(token.id),updates.x,updates.y,"rotation" in updates);
-    _levels.refreshTokens();
+    if (_levels.floorContainer.children.find((c) => c.name == token.id))
+      _levels.getTokenIconSprite(
+        canvas.tokens.get(token.id),
+        updates.x,
+        updates.y,
+        "rotation" in updates
+      );
   }
   if ("elevation" in updates) {
     _levels._onElevationChangeUpdate();
   }
-  if("hidden" in updates){
+  if ("hidden" in updates && updates.hidden==true) {
+    let nt = canvas.tokens.get(token.id)
     _levels.removeTempTokenOverhead(token);
     _levels.removeTempToken(token);
-    token.icon.alpha = 1;
-    token.levelsHidden = false;
-    token.levelsVisible = undefined;
+    nt.icon.alpha = game.user.isGM ? 0.5 : 1;
+    nt.levelsHidden = false;
+    nt.levelsVisible = undefined;
   }
-  if (_levels.advancedLOS) {
-    _levels.debounce3DRefresh(100);
-  }
+  _levels.debounce3DRefresh(100);
 });
 
 Hooks.on("controlToken", (token, controlled) => {
-  let ElevDiff 
-  if(_levels) ElevDiff = token.data.elevation != _levels.currentElevation
-  if(controlled) {
-    token.visible=true
-    token.levelsVisible=true
-    token.icon.alpha = 1
+  let ElevDiff;
+  if (_levels) ElevDiff = token.data.elevation != _levels.currentElevation;
+  if (controlled) {
+    token.visible = true;
+    token.levelsVisible = true;
+    token.icon.alpha = 1;
   }
   if (!controlled && game.user.isGM) {
-    levelLigths = _levels.getLights();
-    canvas.foreground.placeables.forEach((t) => {
-      t.visible = true;
-      _levels.removeTempTile(t);
-      levelLigths.forEach((light) => {
-        _levels.unoccludeLights(t, light, true);
-      });
-    });
-    _levels.floorContainer.removeChildren();
-    _levels.floorContainer.spriteIndex = {};
-    canvas.tokens.placeables.forEach((t) => {
-      if (t.levelsHidden == true) {
-        t.levelsHidden == false;
-        t.icon.alpha = 1;
-        _levels.removeTempToken(t);
-      }
-    });
-    _levels.clearLights(_levels.getLights());
-    canvas.drawings.placeables.forEach((d) => (d.visible = true));
+    _levels.restoreGMvisibility();
   } else {
     if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
     if (_levels && !controlled && token) {
-      if(ElevDiff)_levels._onElevationChangeUpdate(token);
+      if (ElevDiff) _levels._onElevationChangeUpdate(token);
       if (!game.user.isGM) _levels.lastReleasedToken = token;
     }
   }
-  if(_levels) _levels.currentElevation = token.data.elevation
-  if(_levels && !controlled) _levels.currentElevation = undefined
+  if (_levels) _levels.currentElevation = token.data.elevation;
+  if (_levels && !controlled) _levels.currentElevation = undefined;
 });
 
 Hooks.on("updateTile", (tile, updates) => {
@@ -122,55 +92,14 @@ Hooks.on("updateTile", (tile, updates) => {
   }
 });
 
+Hooks.on("deleteTile",()=>{_levels.findAllTiles();})
+Hooks.on("deleteDrawing",()=>{_levels.getHoles();})
+Hooks.on("updateDrawing",()=>{_levels.getHoles();})
+
+
 Hooks.on("updateToken", (token, updates) => {
-  if ("x" in updates || "y" in updates) {
-    let stairs = _levels.getStairs();
-    let tokenX = updates.x || token.data.x;
-    let tokenY = updates.y || token.data.y;
-    let newUpdates;
-    let tokenElev = updates.elevation || token.data.elevation;
-    let gridSize = canvas.scene.dimensions.size;
-    let newTokenCenter = {
-      x: tokenX + (gridSize * token.data.width) / 2,
-      y: tokenY + (gridSize * token.data.height) / 2,
-    };
-    let inStair;
-    for (let stair of stairs) {
-      if (stair.poly.contains(newTokenCenter.x, newTokenCenter.y)) {
-        if (token.inStair == stair.drawing.id) {
-          inStair = stair.drawing.id;
-        } else {
-          if (stair.drawingMode == 2) {
-            if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
-              if (tokenElev == stair.range[1]) {
-                inStair = stair.drawing.id;
-                newUpdates = { elevation: stair.range[0] };
-              }
-              if (tokenElev == stair.range[0]) {
-                inStair = stair.drawing.id;
-                newUpdates = { elevation: stair.range[1] };
-              }
-            }
-          } else if (stair.drawingMode == 3) {
-            if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
-              _levels.renderElevatorDalog(
-                stair.drawing.document.getFlag(
-                  _levelsModuleName,
-                  "elevatorFloors"
-                ),
-                token
-              );
-              inStair = stair.drawing.id;
-            }
-          }
-        }
-      } else {
-        inStair = inStair || false;
-      }
-    }
-    token.inStair = inStair;
-    if (newUpdates) token.update(newUpdates);
-  }
+  _levels.executeStairs(updates, token);
+  _levels.getTokensState(_levels.levelsTiles);
 });
 
 Hooks.on("renderSceneControls", () => {
@@ -187,3 +116,9 @@ Hooks.on("renderSceneControls", () => {
 Hooks.once("canvasReady", () => {
   //if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
 });
+
+
+
+
+
+

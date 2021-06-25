@@ -70,7 +70,7 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     onChange: (setting) => {
       _levels.fogHiding = setting;
       _levels._onElevationChangeUpdate();
@@ -84,16 +84,6 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-  });
-
-  game.settings.register(_levelsModuleName, "advancedLOS", {
-    name: game.i18n.localize("levels.settings.advancedLOS.name"),
-    hint: game.i18n.localize("levels.settings.advancedLOS.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (setting) => {_levels.advancedLOS=setting}
   });
 
   game.settings.register(_levelsModuleName, "defaultLosHeight", {
@@ -112,7 +102,7 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     onChange: (setting) => {_levels.autoLOSHeight=setting}
   });
 

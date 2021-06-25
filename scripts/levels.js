@@ -27,8 +27,8 @@ class Levels {
       _levelsModuleName,
       "defaultLosHeight"
     );
+    this.advancedLOS = true;
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
-    this.advancedLOS = game.settings.get(_levelsModuleName, "advancedLOS");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
 
@@ -87,6 +87,7 @@ class Levels {
   findAllTiles() {
     let tiles = [];
     for (let tile of canvas.foreground.placeables) {
+      if (tile.data.hidden) continue;
       if (tile.roomPoly) {
         let { rangeBottom, rangeTop, isLevel, showIfAbove } =
           this.getFlagsForObject(tile);
@@ -186,7 +187,7 @@ class Levels {
   }
 
   refreshTokens(overrideToken = undefined, release = false) {
-    if (this.advancedLOS && !release) {
+    if (!release) {
       this.advancedLosTokenRefresh();
       return;
     }
@@ -234,12 +235,12 @@ class Levels {
 
   advancedLosTokenRefresh() {
     this.getHoles();
-    this.getTokensState(this.findAllTiles());
+    this.getTokensState(this.levelsTiles);
   }
 
   advancedLosTestVisibility(sourceToken, token) {
     const gm = game.user.isGM;
-    if(!sourceToken.data.vision) return gm
+    if (!sourceToken.data.vision) return gm;
     const inLOS = !this.checkCollision(sourceToken, token, "sight");
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange && token.data.hidden && gm) return true;
@@ -282,8 +283,8 @@ class Levels {
   }
 
   compute3DCollisionsForToken(sourceToken) {
-    if (!sourceToken || !this.advancedLOS) return;
-    this.advancedLosTokenRefresh();
+    if (!sourceToken) return;
+    //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
       if (token.data.hidden) token.levelsVisible = undefined;
       if (
@@ -298,7 +299,7 @@ class Levels {
       token.levelsVisible = token.visible;
       if (
         (this.levelsTokens[token.id].range[1] == Infinity ||
-        token.data.elevation > sourceToken.data.elevation) &&
+          token.data.elevation > sourceToken.data.elevation) &&
         token.visible &&
         !token.data.hidden
       ) {
@@ -508,50 +509,27 @@ class Levels {
     let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    if (this.advancedLOS) {
-      this.debounce3DRefresh(32);
-      this.computeDoors(cToken);
-      if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-        let ownedTokens = canvas.tokens.placeables.filter(
-          (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-        );
-        let tokenPovs = [];
-        ownedTokens.forEach((t) => {
-          tokenPovs.push(this.refreshTokens(t, true));
-          this.computeDoors(t);
+
+    this.debounce3DRefresh(32);
+    this.computeDoors(cToken);
+    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
+      let ownedTokens = canvas.tokens.placeables.filter(
+        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
+      );
+      let tokenPovs = [];
+      ownedTokens.forEach((t) => {
+        tokenPovs.push(this.refreshTokens(t, true));
+        this.computeDoors(t);
+      });
+      tokenPovs.forEach((povs) => {
+        povs.forEach((pov) => {
+          if (pov.visible) {
+            pov.token.token.visible = true;
+            pov.token.token.icon.alpha = 1;
+          }
         });
-        tokenPovs.forEach((povs) => {
-          povs.forEach((pov) => {
-            if (pov.visible) {
-              pov.token.token.visible = true;
-              pov.token.token.icon.alpha = 1;
-            }
-          });
-        });
-        this.showOwnedTokensForPlayer();
-      }
-    } else {
-      this.refreshTokens(cToken);
-      this.computeDoors(cToken);
-      if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-        let ownedTokens = canvas.tokens.placeables.filter(
-          (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-        );
-        let tokenPovs = [];
-        ownedTokens.forEach((t) => {
-          tokenPovs.push(this.refreshTokens(t));
-          this.computeDoors(t);
-        });
-        tokenPovs.forEach((povs) => {
-          povs.forEach((pov) => {
-            if (pov.visible) {
-              pov.token.token.visible = true;
-              pov.token.token.icon.alpha = 1;
-            }
-          });
-        });
-        this.showOwnedTokensForPlayer();
-      }
+      });
+      this.showOwnedTokensForPlayer();
     }
 
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
@@ -855,6 +833,57 @@ class Levels {
     return holes;
   }
 
+  executeStairs(updates, token) {
+    if ("x" in updates || "y" in updates) {
+      let stairs = _levels.getStairs();
+      let tokenX = updates.x || token.data.x;
+      let tokenY = updates.y || token.data.y;
+      let newUpdates;
+      let tokenElev = updates.elevation || token.data.elevation;
+      let gridSize = canvas.scene.dimensions.size;
+      let newTokenCenter = {
+        x: tokenX + (gridSize * token.data.width) / 2,
+        y: tokenY + (gridSize * token.data.height) / 2,
+      };
+      let inStair;
+      for (let stair of stairs) {
+        if (stair.poly.contains(newTokenCenter.x, newTokenCenter.y)) {
+          if (token.inStair == stair.drawing.id) {
+            inStair = stair.drawing.id;
+          } else {
+            if (stair.drawingMode == 2) {
+              if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
+                if (tokenElev == stair.range[1]) {
+                  inStair = stair.drawing.id;
+                  newUpdates = { elevation: stair.range[0] };
+                }
+                if (tokenElev == stair.range[0]) {
+                  inStair = stair.drawing.id;
+                  newUpdates = { elevation: stair.range[1] };
+                }
+              }
+            } else if (stair.drawingMode == 3) {
+              if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
+                _levels.renderElevatorDalog(
+                  stair.drawing.document.getFlag(
+                    _levelsModuleName,
+                    "elevatorFloors"
+                  ),
+                  token
+                );
+                inStair = stair.drawing.id;
+              }
+            }
+          }
+        } else {
+          inStair = inStair || false;
+        }
+      }
+      token.inStair = inStair;
+      if (newUpdates) token.update(newUpdates);
+    }
+  }
+
   async renderElevatorDalog(levelsFlag) {
     let elevatorFloors = [];
     levelsFlag.split("|").forEach((f) => {
@@ -1069,6 +1098,29 @@ class Levels {
     });
   }
 
+  restoreGMvisibility() {
+    let levelLigths = _levels.getLights();
+    canvas.foreground.placeables.forEach((t) => {
+      t.visible = true;
+      _levels.removeTempTile(t);
+      levelLigths.forEach((light) => {
+        _levels.unoccludeLights(t, light, true);
+      });
+    });
+    _levels.floorContainer.removeChildren();
+    _levels.floorContainer.spriteIndex = {};
+    canvas.tokens.placeables.forEach((t) => {
+      if (t.levelsHidden == true) {
+        t.levelsHidden == false;
+        t.icon.alpha = 1;
+        _levels.removeTempToken(t);
+        _levels.removeTempTokenOverhead(t);
+      }
+    });
+    _levels.clearLights(_levels.getLights());
+    canvas.drawings.placeables.forEach((d) => (d.visible = true));
+  }
+
   /*****************************************************
    * 1: TILE IS ABOVE -1: TILE IS BELOW 0 : SAME LEVEL *
    *****************************************************/
@@ -1195,6 +1247,26 @@ class Levels {
     );
   }
 
+  raycastDebug() {
+    if (_levels.RAYS && canvas.tokens.controlled[0]) {
+      let oldcontainer = canvas.controls.debug.children.find(
+        (c) => (c.name = "levelsRAYS")
+      );
+      if (oldcontainer) oldcontainer.clear();
+      let g = oldcontainer || new PIXI.Graphics();
+      g.name = "levelsRAYS";
+      let ctk = canvas.tokens.controlled[0];
+      canvas.tokens.placeables.forEach((t) => {
+        let isCollision = _levels.checkCollision(ctk, t, "sight");
+        let color = isCollision ? 0xff0000 : 0x00ff08;
+        let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
+        if (ctk != t)
+          g.beginFill(color).lineStyle(1, color).drawPolygon(coords).endFill();
+      });
+      if (!oldcontainer) canvas.controls.debug.addChild(g);
+    }
+  }
+
   /*****************
    * API FUNCTIONS *
    *****************/
@@ -1236,7 +1308,7 @@ class Levels {
       canvas.tokens.controlled[0] &&
       canvas.tokens.controlled[0].data.elevation < 0
     )
-    isLevel=true
+      isLevel = true;
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
     let drawingMode =
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;

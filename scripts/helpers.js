@@ -89,7 +89,7 @@ function _levelsOnMovementFrame(dt, anim, config) {
     sound: config.sound,
     fog: updateFog,
   });
-  if (_levels && _levels.advancedLOS) {
+  if (_levels) {
     _levels.debounce3DRefresh(100);
   }
 }
@@ -297,7 +297,7 @@ function _levelsIsAudible() {
 }
 
 function _levelsTokenIsVisible() {
-  if(!_levels || !_levels.advancedLOS){
+  if(!_levels){
     const gm = game.user.isGM;
     if ( this.data.hidden ) return gm;
     if ( !canvas.sight.tokenVision ) return true;
