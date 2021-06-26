@@ -298,7 +298,7 @@ class Levels {
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (
-        (this.levelsTokens[token.id].range[1] == Infinity ||
+        (//this.levelsTokens[token.id].range[1] == Infinity ||
           token.data.elevation > sourceToken.data.elevation) &&
         token.visible &&
         !token.data.hidden
