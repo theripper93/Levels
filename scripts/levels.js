@@ -1520,7 +1520,7 @@ class Levels {
           (A * (x1 - x0) + B * (y1 - y0) + C * (z1 - z0)); //-(A*x0 + B*y0 + C*z0 + D) / (A*x1 + B*y1 + C*z1)
         const ix = x0 + (x1 - x0) * t;
         const iy = y0 + (y1 - y0) * t;
-        const iz = z0 + (z1 - z0) * t;
+        const iz = Math.round(z0 + (z1 - z0) * t);
 
         //return true if the point is inisde the rectangle
         const isb = isBetween(
@@ -1528,7 +1528,7 @@ class Levels {
           { x: wx2, y: wy2 },
           { x: ix, y: iy }
         );
-        if (isb && iz < wallBotTop[1] && iz >= wallBotTop[0]) return true;
+        if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return true;
       }
       return false;
     }
