@@ -1,4 +1,4 @@
-Hooks.on("ready", () => {
+Hooks.on("init", () => {
   libWrapper.register(
     _levelsModuleName,
     "Token.prototype.refresh",
@@ -39,6 +39,12 @@ Hooks.on("ready", () => {
     _levelsModuleName,
     "AmbientSound.prototype.isAudible",
     _levelsIsAudible,
+    "OVERRIDE"
+  );
+  libWrapper.register(
+    _levelsModuleName,
+    "MeasuredTemplate.prototype.draw",
+    _levelsTemplatedraw,
     "OVERRIDE"
   );
   libWrapper.register(
@@ -93,7 +99,9 @@ Hooks.on("init", () => {
     config: true,
     type: Number,
     default: 6,
-    onChange: (setting) => {_levels.defaultTokenHeight=setting}
+    onChange: (setting) => {
+      _levels.defaultTokenHeight = setting;
+    },
   });
 
   game.settings.register(_levelsModuleName, "autoLOSHeight", {
@@ -103,7 +111,9 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: true,
-    onChange: (setting) => {_levels.autoLOSHeight=setting}
+    onChange: (setting) => {
+      _levels.autoLOSHeight = setting;
+    },
   });
 
   game.settings.register(_levelsModuleName, "enableTooltips", {
@@ -122,9 +132,10 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-    onChange: (setting) => {_levels.RAYS=setting}
+    onChange: (setting) => {
+      _levels.RAYS = setting;
+    },
   });
-
 });
 
 Hooks.on("renderTileConfig", (app, html, data) => {
@@ -137,7 +148,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     heightRangeBottom = -Infinity;
 
   let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
-  let checkedbox = showifbelow ? ` checked=""` : ""
+  let checkedbox = showifbelow ? ` checked=""` : "";
 
   let newHtml = `
   <div class="form-group">
@@ -383,7 +394,11 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
 
   let newHtml = `
 <div class="form-group">
-            <label>${game.i18n.localize("levels.tokenconfig.tokenHeight.name")}<span class="units">${game.i18n.localize("levels.tokenconfig.tokenHeight.unit")}</span></label>
+            <label>${game.i18n.localize(
+              "levels.tokenconfig.tokenHeight.name"
+            )}<span class="units">${game.i18n.localize(
+    "levels.tokenconfig.tokenHeight.unit"
+  )}</span></label>
             <input type="number" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
         </div>
 `;
@@ -430,4 +445,43 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
     $(controlIcons[0]).remove();
   }
+});
+
+Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
+  let elevation = app.object.getFlag(_levelsModuleName, "elevation");
+
+  let newHtml = `
+<div class="form-group">
+<label for="elevation">${game.i18n.localize(
+    "levels.template.elevation.name"
+  )}<span class="units">(${game.i18n.localize(
+    "levels.tilecoonfig.range.unit"
+  )})</span></label>
+<div class="form-fields">
+    <input type="text" name="flags.${_levelsModuleName}.elevation"  data-dtype="Number" value="${elevation}" step="1">
+</div>
+</div>
+
+`;
+  const overh = html.find('input[name="width"]');
+  const formGroup = overh.closest(".form-group");
+  formGroup.after(newHtml);
+  app.setPosition({ height: "auto" });
+});
+
+Hooks.on("preCreateMeasuredTemplate", (template) => {
+  const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+  let elevation;
+  if (_levels.nextTemplateHeight) {
+    elevation = _levels.nextTemplateHeight;
+    _levels.nextTemplateHeight = undefined;
+    _levels.templateElevation = false;
+    _levelsTemplateTool.active = false;
+      $("body")
+        .find(`li[data-tool="setTemplateElevation"]`)
+        .removeClass("active");
+  } else {
+    elevation = cToken?.data?.elevation ?? 0;
+  }
+  template.data.update({ flags: { levels: { elevation: elevation } } });
 });

@@ -546,6 +546,29 @@ class Levels {
     }
   }
 
+  computeTemplates(source) {
+    let tokenpos = {
+      x: source.center.x,
+      y: source.center.y,
+      z: this.getTokenLOSheight(source),
+    };
+    for (let template of canvas.templates.placeables) {
+      let templatepos = {
+        x: template.center.x,
+        y: template.center.y,
+        z: template.document.getFlag(_levelsModuleName, "elevation") ?? 0,
+      };
+      template.visible = !this.testCollision(tokenpos, templatepos, "sight");
+      canvas.grid.getHighlightLayer(`Template.${template.id}`).visible=template.visible;
+    }
+  }
+
+  showTemplatesForGM(){
+    for (let template of canvas.templates.placeables) {
+      template.visible=true
+    }
+  }
+
   updateScales() {
     if (this.elevationScale) {
       canvas.tokens.placeables.forEach((token) => {
@@ -600,6 +623,7 @@ class Levels {
       setTimeout(() => {
         let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
         this.compute3DCollisionsForToken(cToken);
+        this.computeTemplates(cToken);
         this.updateQueued = false;
       }, timeout);
     }
@@ -1118,6 +1142,7 @@ class Levels {
       }
     });
     _levels.clearLights(_levels.getLights());
+    this.showTemplatesForGM()
     canvas.drawings.placeables.forEach((d) => (d.visible = true));
   }
 

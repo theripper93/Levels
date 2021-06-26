@@ -1,3 +1,5 @@
+let _levelsTemplateTool
+
 class LevelsUI {
   constructor() {
     this.range = [];
@@ -5,7 +7,7 @@ class LevelsUI {
     this.definedLevels = [];
     this.currentLevel = 0;
     this.roofEnabled = false;
-    this.placeOverhead = false
+    this.placeOverhead = false;
     this.stairEnabled = true;
   }
 
@@ -437,7 +439,7 @@ class LevelsUI {
 
     for (let light of canvas.lighting.placeables) {
       light.visible = this.computeRangeForDocument(light, range);
-      light.source.skipRender = !light.visible
+      light.source.skipRender = !light.visible;
     }
 
     for (let note of canvas.notes.placeables) {
@@ -460,7 +462,10 @@ class LevelsUI {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
     let entityRange = [rangeBottom, rangeTop];
     if (!isTile) {
-      if ((entityRange[0] >= range[0] && entityRange[0] <= range[1]) || (entityRange[1] >= range[0] && entityRange[1] <= range[1])) {
+      if (
+        (entityRange[0] >= range[0] && entityRange[0] <= range[1]) ||
+        (entityRange[1] >= range[0] && entityRange[1] <= range[1])
+      ) {
         return true;
       } else {
         return false;
@@ -491,7 +496,7 @@ class LevelsUI {
 
     for (let light of canvas.lighting.placeables) {
       light.visible = true;
-      light.source.skipRender = false
+      light.source.skipRender = false;
       light.refresh();
     }
 
@@ -563,6 +568,69 @@ class LevelsUI {
       },
     };
   }
+
+  async elevationDialog(tool) {
+    let content = `
+    <div class="form-group">
+    <label for="elevation">${game.i18n.localize(
+      "levels.template.elevation.name"
+    )}</label>
+    <div class="form-fields">
+        <input type="number" name="templateElevation" data-dtype="Number" value="${
+          canvas.tokens.controlled[0]?.data?.elevation ?? 0
+        }" step="1">
+    </div>
+    </div>
+    <p></p>
+    `;
+    let ignoreClose = false
+    let toolhtml = $("body").find(`li[data-tool="setTemplateElevation"]`);
+    let dialog = new Dialog({
+      title: game.i18n.localize("levels.dialog.elevation.title"),
+      content: content,
+      buttons: {
+        confirm: {
+          label: game.i18n.localize("levels.yesnodialog.yes"),
+          callback: (html) => {
+            _levels.nextTemplateHeight = html.find(
+              `input[name="templateElevation"]`
+            )[0].valueAsNumber;
+            _levels.templateElevation = true;
+            ignoreClose=true
+            tool.active = true;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .addClass("active");
+          },
+        },
+        close: {
+          label: game.i18n.localize("levels.yesnodialog.no"),
+          callback: () => {
+            _levels.nextTemplateHeight = undefined;
+            _levels.templateElevation = false;
+            tool.active = false;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .removeClass("active");
+          },
+        },
+      },
+      default: "confirm",
+      close: () => {
+        if(ignoreClose == true){ ignoreClose=false;return}
+        _levels.nextTemplateHeight = undefined;
+        _levels.templateElevation = false;
+        tool.active = false;
+        if (toolhtml[0])
+          $("body")
+            .find(`li[data-tool="setTemplateElevation"]`)
+            .removeClass("active");
+      },
+    });
+    await dialog._render(true);
+  }
 }
 
 Hooks.on("canvasInit", () => {
@@ -575,26 +643,27 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       controls.find((c) => c.name == "tiles").layer = "foreground";
       controls
         .find((c) => c.name == "tiles")
-        .tools.push({
-          name: "placeRoof",
-          title: game.i18n.localize("levels.controls.levelsroof.name"),
-          icon: "fas fa-archway",
-          toggle: true,
-          active: _levels?.UI?.roofEnabled || false,
-          onClick: (toggle) => {
-            _levels.UI.roofEnabled = toggle;
+        .tools.push(
+          {
+            name: "placeRoof",
+            title: game.i18n.localize("levels.controls.levelsroof.name"),
+            icon: "fas fa-archway",
+            toggle: true,
+            active: _levels?.UI?.roofEnabled || false,
+            onClick: (toggle) => {
+              _levels.UI.roofEnabled = toggle;
+            },
           },
-        },
-        {
-          name: "placeOverhead",
-          title: game.i18n.localize("levels.controls.placeOverhead.name"),
-          icon: "fas fa-tree",
-          toggle: true,
-          active: _levels?.UI?.placeOverhead || false,
-          onClick: (toggle) => {
-            _levels.UI.placeOverhead = toggle;
-          },
-        }
+          {
+            name: "placeOverhead",
+            title: game.i18n.localize("levels.controls.placeOverhead.name"),
+            icon: "fas fa-tree",
+            toggle: true,
+            active: _levels?.UI?.placeOverhead || false,
+            onClick: (toggle) => {
+              _levels.UI.placeOverhead = toggle;
+            },
+          }
         );
 
       controls
@@ -803,4 +872,21 @@ Hooks.on("ready", () => {
       if (_levels.UI.rangeEnabled) _levels.UI.refreshLevels();
     });
   }
+});
+
+Hooks.on("getSceneControlButtons", (controls, b, c) => {
+  let templateTool = {
+    name: "setTemplateElevation",
+    title: game.i18n.localize("levels.controls.setTemplateElevation.name"),
+    icon: "fas fa-sort",
+    toggle: true,
+    active: _levels?.templateElevation || false,
+    onClick: (toggle) => {
+      _levels.templateElevation = toggle;
+      if (toggle) _levels.UI.elevationDialog(templateTool);
+      else _levels.nextTemplateHeight = undefined;
+    },
+  };
+  _levelsTemplateTool = templateTool
+  controls.find((c) => c.name == "token").tools.push(templateTool);
 });

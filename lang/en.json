@@ -32,6 +32,7 @@
     "levels.drawingHud.title": "Toggle Locked State for Stair",
     "levels.tokenconfig.tokenHeight.name": "Token LOS Height",
     "levels.tokenconfig.tokenHeight.unit": "(Distance)",
+    "levels.template.elevation.name": "Elevation",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",
@@ -42,6 +43,7 @@
     "levels.controls.levelshole.name": "Place drawings as Stairs when enabled, place as holes when disabled",
     "levels.controls.levelsclear.name": "Clear Levels",
     "levels.controls.placeOverhead.name": "If enabled place tiles as overhead tiles 'inside' levels",
+    "levels.controls.setTemplateElevation.name":"Set elevation for next placed template",
 
     "levels.dialog.levelsclear.title": "Clear Levels",
     "levels.dialog.levelsclear.content": "Clear all stored levels?",
@@ -49,6 +51,7 @@
     "levels.dialog.define.title": "Define Levels for this Scene",
     "levels.dialog.define.text": "Levels: ",
     "levels.dialog.elevator.title": "Levels - Choose a Floor",
+    "levels.dialog.elevation.title": "Set Elevation for next Template placement",
 
     "levels.yesnodialog.yes": "Confirm",
     "levels.yesnodialog.no": "Cancel",
