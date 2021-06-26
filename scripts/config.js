@@ -470,7 +470,7 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
-  const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+  const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
   let elevation;
   if (_levels.nextTemplateHeight) {
     elevation = _levels.nextTemplateHeight;

@@ -73,12 +73,13 @@ Hooks.on("controlToken", (token, controlled) => {
     if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
     if (_levels && !controlled && token) {
       if (ElevDiff) _levels._onElevationChangeUpdate(token);
-      _levels.lastReleasedToken = token;
+      if(!game.user.isGM)_levels.lastReleasedToken = token;
     }
   }
-  if (_levels && !controlled && token) {_levels.lastReleasedToken = token;}
+  if (_levels && !controlled && token && !game.user.isGM) {_levels.lastReleasedToken = token;}
   if (_levels) _levels.currentElevation = token.data.elevation;
   if (_levels && !controlled) _levels.currentElevation = undefined;
+  if(!controlled) _levels.lastTokenForTemplate = token
 });
 
 Hooks.on("updateTile", (tile, updates) => {

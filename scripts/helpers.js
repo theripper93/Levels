@@ -425,7 +425,7 @@ async function _levelsTemplatedraw() {
       if (_levels?.nextTemplateHeight) {
         tipN = _levels.nextTemplateHeight;
       } else {
-        const cToken = canvas.tokens.controlled[0] || _levels?.lastReleasedToken;
+        const cToken = canvas.tokens.controlled[0] || _levels?.lastTokenForTemplate;
         tipN = cToken?.data?.elevation ?? 0;
       }
     } else {

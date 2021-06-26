@@ -509,7 +509,6 @@ class Levels {
     let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-
     this.debounce3DRefresh(32);
     this.computeDoors(cToken);
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
@@ -547,6 +546,7 @@ class Levels {
   }
 
   computeTemplates(source) {
+    if(!source) return
     let tokenpos = {
       x: source.center.x,
       y: source.center.y,
@@ -1136,6 +1136,7 @@ class Levels {
     canvas.tokens.placeables.forEach((t) => {
       if (t.levelsHidden == true) {
         t.levelsHidden == false;
+        t.levelsVisible == true;
         t.icon.alpha = 1;
         _levels.removeTempToken(t);
         _levels.removeTempTokenOverhead(t);
