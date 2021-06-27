@@ -1273,6 +1273,69 @@ class Levels {
     );
   }
 
+  async elevationDialog(tool) {
+    let content = `
+    <div class="form-group">
+    <label for="elevation">${game.i18n.localize(
+      "levels.template.elevation.name"
+    )}</label>
+    <div class="form-fields">
+        <input type="number" name="templateElevation" data-dtype="Number" value="${
+          canvas.tokens.controlled[0]?.data?.elevation ?? 0
+        }" step="1">
+    </div>
+    </div>
+    <p></p>
+    `;
+    let ignoreClose = false
+    let toolhtml = $("body").find(`li[data-tool="setTemplateElevation"]`);
+    let dialog = new Dialog({
+      title: game.i18n.localize("levels.dialog.elevation.title"),
+      content: content,
+      buttons: {
+        confirm: {
+          label: game.i18n.localize("levels.yesnodialog.yes"),
+          callback: (html) => {
+            _levels.nextTemplateHeight = html.find(
+              `input[name="templateElevation"]`
+            )[0].valueAsNumber;
+            _levels.templateElevation = true;
+            ignoreClose=true
+            tool.active = true;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .addClass("active");
+          },
+        },
+        close: {
+          label: game.i18n.localize("levels.yesnodialog.no"),
+          callback: () => {
+            _levels.nextTemplateHeight = undefined;
+            _levels.templateElevation = false;
+            tool.active = false;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .removeClass("active");
+          },
+        },
+      },
+      default: "confirm",
+      close: () => {
+        if(ignoreClose == true){ ignoreClose=false;return}
+        _levels.nextTemplateHeight = undefined;
+        _levels.templateElevation = false;
+        tool.active = false;
+        if (toolhtml[0])
+          $("body")
+            .find(`li[data-tool="setTemplateElevation"]`)
+            .removeClass("active");
+      },
+    });
+    await dialog._render(true);
+  }
+
   raycastDebug() {
     if (_levels.RAYS && canvas.tokens.controlled[0]) {
       let oldcontainer = canvas.controls.debug.children.find(
