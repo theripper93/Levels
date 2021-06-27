@@ -56,6 +56,35 @@ Hooks.on("init", () => {
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
+Hooks.once('ready', () => {
+  // Module title
+  MODULE_ID= _levelsModuleName;
+  const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
+
+  const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
+  const FALLBACK_MESSAGE = `<large>
+  <p><strong>This module may be very complicated for a first timer, be sure to stop by my <a href="https://discord.gg/F53gBjR97G">Discord</a> for help and support from the wonderfull community as well as many resources</strong></p>
+
+  <p>Thanks to all the patreons supporting the developement of this module making continued updates possible!</p>
+  <p>If you want to support the developement of the module or get customized support in setting up your maps you can do so here : <a href="https://www.patreon.com/theripper93">Patreon</a> </p></large>
+  <p>Special thanks to Baileywiki for the support and feedback and Blair for the amazing UI elements</p>`;
+
+  // Settings key used for the "Don't remind me again" setting
+  const DONT_REMIND_AGAIN_KEY = "popup-dont-remind-again";
+
+  // Dialog code
+  game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, { name: '', default: false, type: Boolean, scope: 'world', config: false });
+  if(game.user.isGM && !game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)) {
+      new Dialog({
+          title: FALLBACK_MESSAGE_TITLE,
+          content: FALLBACK_MESSAGE, buttons: {
+              ok: { icon: '<i class="fas fa-check"></i>', label: 'Understood' },
+              dont_remind: { icon: '<i class="fas fa-times"></i>', label: "Don't remind me again", callback: () => game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true) }
+          }
+      }).render(true);
+  }
+});
+
 Hooks.on("init", () => {
   game.settings.register(_levelsModuleName, "tokenElevScale", {
     name: game.i18n.localize("levels.settings.tokenElevScale.name"),

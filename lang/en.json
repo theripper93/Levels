@@ -72,5 +72,7 @@
     "levels.form.suggestedLevels": "Generate Suggested Levels",
     "levels.form.autoLevels": "Get levels from Scene",
 
-    "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module."
+    "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module.",
+    "levels.firsttime.dialog": ""
+
 }
