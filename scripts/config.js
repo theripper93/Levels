@@ -159,6 +159,11 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
+    let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
+    if (showAboveRange == undefined || showAboveRange == null)
+    showAboveRange = -Infinity;
+
+
   let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
   let checkedbox = showifbelow ? ` checked=""` : "";
   let isBasement = app.object.getFlag(_levelsModuleName, "isBasement");
@@ -196,6 +201,18 @@ Hooks.on("renderTileConfig", (app, html, data) => {
                 <input type="checkbox" name="flags.${_levelsModuleName}.showIfAbove"${checkedbox}>
             </div>
         </div>
+
+
+        <div class="form-group">
+<label for="showAboveRange">${game.i18n.localize(
+    "levels.tilecoonfig.showAboveRange.name"
+  )}<span class="units">(${game.i18n.localize(
+    "levels.tilecoonfig.range.unit"
+  )})</span></label>
+<div class="form-fields">
+    <input type="text" name="flags.${_levelsModuleName}.showAboveRange" data-dtype="Number" value="${showAboveRange}" step="1">
+</div>
+</div>
 
         <div class="form-group">
             <label>${game.i18n.localize(

@@ -90,7 +90,7 @@ class Levels {
     for (let tile of canvas.foreground.placeables) {
       if (tile.data.hidden) continue;
       if (tile.roomPoly) {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement } =
+        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement,showAboveRange } =
           this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -100,9 +100,10 @@ class Levels {
           range: [rangeBottom, rangeTop],
           showIfAbove: showIfAbove,
           isBasement:isBasement,
+          showAboveRange:showAboveRange
         });
       } else {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove } =
+        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement,showAboveRange }  =
           this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -123,6 +124,7 @@ class Levels {
           levelsOverhead: true,
           showIfAbove: showIfAbove,
           isBasement:isBasement,
+          showAboveRange:showAboveRange
         });
       }
     }
@@ -157,7 +159,7 @@ class Levels {
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
-        if (tile.showIfAbove) tile.tile.visible = true;
+        if (tile.showIfAbove && tile.range[0]-cToken.data.elevation <= tile.showAboveRange) tile.tile.visible = true;
         return false;
         break;
       case -1:
@@ -1502,7 +1504,12 @@ class Levels {
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
     let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
     let isBasement = object.document.getFlag(_levelsModuleName, "isBasement");
-    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove,isBasement };
+
+    let showAboveRange = object.document.getFlag(_levelsModuleName, "showAboveRange");
+    if (showAboveRange == undefined || showAboveRange == null)
+    showAboveRange = -Infinity;
+
+    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove,isBasement,showAboveRange };
   }
 
   /**

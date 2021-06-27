@@ -20,6 +20,7 @@
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
     "levels.tilecoonfig.showIfAbove.name": "Show even when below?",
+    "levels.tilecoonfig.showAboveRange.name":"Max Elevation Difference",
     "levels.tilecoonfig.isBasement.name":"is Basement?",
     "levels.tilecoonfig.range.unit": "Elevation",
     "levels.drawingconfig.hb.name": "Height (Bottom)",

@@ -767,21 +767,43 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
-        drawing.data.update({
-          hidden: true,
-          text: _levels.UI.stairEnabled
-            ? `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1] + 1}`
-            : `Levels Hole ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
-          flags: {
-            levels: {
-              drawingMode: _levels.UI.stairEnabled ? 2 : 1,
-              rangeBottom: _levels.UI.range[0],
-              rangeTop: _levels.UI.range[1],
+      let aboverange = _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(_levels.UI.range)+1]
+      if(aboverange){
+        let newTop = aboverange[1]
+        let newBot = aboverange[0]
+        if (_levels.UI.rangeEnabled == true) {
+          drawing.data.update({
+            hidden: true,
+            text: _levels.UI.stairEnabled
+              ? `Levels Stair ${_levels.UI.range[0]}-${newBot}`
+              : `Levels Hole ${_levels.UI.range[0]}-${newTop}`,
+            flags: {
+              levels: {
+                drawingMode: _levels.UI.stairEnabled ? 2 : 1,
+                rangeBottom: _levels.UI.range[0],
+                rangeTop: _levels.UI.stairEnabled ? newBot-1 : newTop,
+              },
             },
-          },
-        });
+          });
+        }
+      }else{
+        if (_levels.UI.rangeEnabled == true) {
+          drawing.data.update({
+            hidden: true,
+            text: _levels.UI.stairEnabled
+              ? `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1] + 1}`
+              : `Levels Hole ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
+            flags: {
+              levels: {
+                drawingMode: _levels.UI.stairEnabled ? 2 : 1,
+                rangeBottom: _levels.UI.range[0],
+                rangeTop: _levels.UI.range[1],
+              },
+            },
+          });
+        }
       }
+
     });
 
     Hooks.on("preCreateWall", (wall, updates) => {
