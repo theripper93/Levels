@@ -829,5 +829,5 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
 });
 
 Hooks.once("canvasReady",()=>{
-  console.log("%cLEVELS","text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 4px 4px 0px rgba(0,0,0,0.6), 6px 6px 0px rgba(0,0,0,0.4);font-size:64px;background: #444; color: #bada55; padding: 2px 8px 2px 2px; border-radius:2px");
+  console.log(`%cLEVELS\n%cWelcome to the 3rd Dimension`,"font-weight: bold;text-shadow: 10px 10px 0px rgba(0,0,0,0.8), 20px 20px 0px rgba(0,0,0,0.6), 30px 30px 0px rgba(0,0,0,0.4);font-size:100px;background: #444; color: #d43f3f; padding: 2px 28px 0 2px; display: inline-block;", "font-weight: bold;text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 4px 4px 0px rgba(0,0,0,0.6), 6px 6px 0px rgba(0,0,0,0.4);font-size:20px;background: #444; color: #d43f3f; padding: 10px 27px; display: inline-block; margin-left: -30px");
 })

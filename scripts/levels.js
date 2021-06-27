@@ -90,7 +90,7 @@ class Levels {
     for (let tile of canvas.foreground.placeables) {
       if (tile.data.hidden) continue;
       if (tile.roomPoly) {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove } =
+        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement } =
           this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -99,6 +99,7 @@ class Levels {
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
           showIfAbove: showIfAbove,
+          isBasement:isBasement,
         });
       } else {
         let { rangeBottom, rangeTop, isLevel, showIfAbove } =
@@ -121,6 +122,7 @@ class Levels {
           range: [rangeBottom, rangeTop],
           levelsOverhead: true,
           showIfAbove: showIfAbove,
+          isBasement:isBasement,
         });
       }
     }
@@ -129,6 +131,7 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
+    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (
       tile.range[1] != Infinity &&
       (!tile.showIfAbove ||
@@ -158,7 +161,13 @@ class Levels {
         return false;
         break;
       case -1:
-        this.mirrorTileInBackground(tile);
+        if(tile.isBasement){
+          if(tile.range[1]<0 && cToken && cToken.data.elevation < 0){
+            this.mirrorTileInBackground(tile);
+          }
+        }else{
+          this.mirrorTileInBackground(tile);
+        }
         return false;
         break;
       case 0:
@@ -1494,7 +1503,8 @@ class Levels {
     let drawingMode =
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
     let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
-    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove };
+    let isBasement = object.document.getFlag(_levelsModuleName, "isBasement");
+    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove,isBasement };
   }
 
   /**

@@ -161,6 +161,9 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 
   let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
   let checkedbox = showifbelow ? ` checked=""` : "";
+  let isBasement = app.object.getFlag(_levelsModuleName, "isBasement");
+  let checkedboxisBasement = isBasement ? ` checked=""` : "";
+
 
   let newHtml = `
   <div class="form-group">
@@ -191,6 +194,15 @@ Hooks.on("renderTileConfig", (app, html, data) => {
             )}</label>
             <div class="form-fields">
                 <input type="checkbox" name="flags.${_levelsModuleName}.showIfAbove"${checkedbox}>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>${game.i18n.localize(
+              "levels.tilecoonfig.isBasement.name"
+            )}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="flags.${_levelsModuleName}.isBasement"${checkedboxisBasement}>
             </div>
         </div>
 
