@@ -161,10 +161,8 @@ class Levels {
         return false;
         break;
       case -1:
-        if(tile.isBasement){
-          if(tile.range[1]<0 && cToken && cToken.data.elevation < 0){
-            this.mirrorTileInBackground(tile);
-          }
+        if(tile.isBasement && tile.range[1]<0 && cToken && cToken.data.elevation >= 0){
+            this.removeTempTile(tile);
         }else{
           this.mirrorTileInBackground(tile);
         }
