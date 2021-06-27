@@ -1684,6 +1684,14 @@ class Levels {
         //don't do anything else if the points are on the same side of the plane
         if (P1 * P2 > 0) continue;
 
+        //Check for directional walls
+
+        if (wall.direction !== null) { // Directional walls where the ray angle is not in the same hemisphere
+          const rayAngle = Math.atan2(y1 - y0, x1 - x0);
+          const angleBounds = [rayAngle - (Math.PI/2), rayAngle + (Math.PI/2)];
+          if (!wall.isDirectionBetweenAngles(...angleBounds)) continue;
+        }
+
         //calculate intersection point
         const t =
           -(A * x0 + B * y0 + C * z0 + D) /
