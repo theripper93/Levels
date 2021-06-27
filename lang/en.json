@@ -14,6 +14,8 @@
     "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore ALL manual settings. ",
     "levels.settings.debugRaycast.name": "DEBUG: Enable ray visualization",
     "levels.settings.debugRaycast.hint": "Show the 3D Sight rays (green visible, red not visible)",
+    "levels.settings.preciseLightOcclusion.name": "Experimental: Precise light occlusion",
+    "levels.settings.preciseLightOcclusion.hint": "Removes light occlusion artefacts at the cost of performance",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",

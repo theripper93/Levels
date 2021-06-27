@@ -28,6 +28,7 @@ class Levels {
       "defaultLosHeight"
     );
     this.advancedLOS = true;
+    this.preciseLightOcclusion = game.settings.get(_levelsModuleName, "preciseLightOcclusion")
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -734,14 +735,107 @@ class Levels {
     let addChild = oldSprite ? false : true;
     let tileImg = tile.children[0];
     if (!tileImg || !tileImg.texture.baseTexture) return;
-    let sprite = this.getTileSprite(oldSprite, tileImg, tile);
-    sprite.tint = 0x000000;
-    let Illumsprite = this.getTileSprite(oldSprite, tileImg, tile);
-    Illumsprite.tint = canvas.lighting.channels.bright.hex;
-    if (addChild) {
-      light.light.source.coloration.addChild(sprite);
-      light.light.source.illumination.addChild(Illumsprite);
+    let sprite,Illumsprite
+    if(this.preciseLightOcclusion){
+      if(!tile._levelsAlphaMap)this._createAlphaMap(tile,{keepPixels:true,keepTexture:true})
+      sprite = this.getLightOcclusionSprite(tile)//this.getTileSprite(undefined, tileImg, tile);
+      sprite.tint = 0x000000;
+      sprite.name=tile.id
+      Illumsprite = this.getLightOcclusionSprite(tile)//this.getTileSprite(undefined, tileImg, tile);
+      Illumsprite.tint = canvas.lighting.channels.background.hex;
+      Illumsprite.name=tile.id
+      if (addChild) {
+        light.light.source.coloration.addChild(sprite);
+        light.light.source.illumination.addChild(Illumsprite);
+      }
+    }else{
+      sprite = this.getTileSprite(undefined, tileImg, tile);
+      sprite.tint = 0x000000;
+      Illumsprite = this.getTileSprite(undefined, tileImg, tile);
+      Illumsprite.tint = canvas.lighting.channels.bright.hex;
+      if (addChild) {
+        light.light.source.coloration.addChild(sprite);
+        light.light.source.illumination.addChild(Illumsprite);
+      }
     }
+
+  }
+
+  getLightOcclusionSprite(tile) {
+    if ( !tile._levelsAlphaMap.texture ) return undefined;
+    const s = new PIXI.Sprite(tile._levelsAlphaMap.texture);
+    const t = tile.tile;
+    s.width = t.width;
+    s.height = t.height;
+    s.anchor.set(0.5, 0.5);
+    s.position.set(tile.data.x + t.position.x, tile.data.y + t.position.y);
+    s.rotation = t.rotation;
+    return s;
+  }
+
+  
+  _createAlphaMap(tile,{keepPixels=false, keepTexture=false}={}) {
+
+    // Destroy the previous texture
+    if ( tile._levelsAlphaMap?.texture ) {
+      tile._levelsAlphaMap.texture.destroy(true);
+      delete tile._levelsAlphaMap.texture;
+    }
+
+    // If no tile texture is present
+    const aw = Math.abs(tile.data.width);
+    const ah = Math.abs(tile.data.height);
+    if ( !tile.texture ) return tile._levelsAlphaMap = { minX: 0, minY: 0, maxX: aw, maxY: ah };
+
+    // Create a temporary Sprite
+    const sprite = new PIXI.Sprite(tile.texture);
+    sprite.width = tile.data.width;
+    sprite.height = tile.data.height;
+    sprite.anchor.set(0.5, 0.5);
+    sprite.position.set(aw/2, ah/2);
+
+    // Color matrix filter the sprite to pure white
+    const cmf = new PIXI.filters.ColorMatrixFilter();
+    cmf.matrix = [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,0]; // Over-multiply alpha to remove transparency
+    sprite.filters = [cmf];
+
+    // Render to a texture and extract pixels
+    const tex = PIXI.RenderTexture.create({ width: aw, height: ah });
+    canvas.app.renderer.render(sprite, tex);
+    const pixels = canvas.app.renderer.extract.pixels(tex);
+
+    // Construct an alpha mapping
+    const map = {
+      pixels: new Uint8Array(pixels.length / 4),
+      texture: undefined,
+      minX: undefined,
+      minY: undefined,
+      maxX: undefined,
+      maxY: undefined
+    }
+
+    // Keep the texture?
+    if ( keepTexture ) map.texture = tex;
+    else tex.destroy(true);
+
+    // Map the alpha pixels
+    for ( let i=0; i<pixels.length; i+=4 ) {
+      const n = i / 4;
+      const a = pixels[i+3];
+      map.pixels[n] = a > 0 ? 1 : 0;
+      if ( a > 0 ) {
+        const x = n % aw;
+        const y = Math.floor(n / aw);
+        if ( (map.minX === undefined) || (x < map.minX) ) map.minX = x;
+        else if ( (map.maxX === undefined) || (x > map.maxX) ) map.maxX = x;
+        if ( (map.minY === undefined) || (y < map.minY) ) map.minY = y;
+        else if ( (map.maxY === undefined) || (y > map.maxY) ) map.maxY = y;
+      }
+    }
+
+    // Maybe discard the raw pixels
+    if ( !keepPixels ) map.pixels = undefined;
+    return tile._levelsAlphaMap = map;
   }
 
   getTileSprite(oldSprite, tileImg, tile) {
@@ -770,8 +864,6 @@ class Levels {
     //if(!sprite) return
     light.light.source.coloration.removeChild(sprite);
     light.light.source.illumination.removeChild(illumSprite);
-    light.light.source.coloration.removeChild(this.occlusionIndex["HideMask"]);
-    //light.light.source.illumination.removeChild(this.occlusionIndex["HideMask"]);
   }
 
   hideLighs(tileIndex, lights) {

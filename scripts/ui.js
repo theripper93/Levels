@@ -827,3 +827,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
   _levelsTemplateTool = templateTool
   controls.find((c) => c.name == "token").tools.push(templateTool);
 });
+
+Hooks.once("canvasReady",()=>{
+  console.log("%cLEVELS","text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 4px 4px 0px rgba(0,0,0,0.6), 6px 6px 0px rgba(0,0,0,0.4);font-size:64px;background: #444; color: #bada55; padding: 2px 8px 2px 2px; border-radius:2px");
+})
