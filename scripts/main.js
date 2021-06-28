@@ -100,7 +100,7 @@ Hooks.on("updateDrawing",()=>{_levels.getHoles();})
 
 
 Hooks.on("updateToken", (token, updates) => {
-  _levels.executeStairs(updates, token);
+  if(canvas.tokens.get(token.id)._controlled)_levels.executeStairs(updates, token);
   _levels.getTokensState(_levels.levelsTiles);
 });
 
