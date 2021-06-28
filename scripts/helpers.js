@@ -109,7 +109,7 @@ function _levelsOnMovementFrame(dt, anim, config) {
     sound: config.sound,
     fog: updateFog,
   });
-  if (_levels) {
+  if (_levels && !this._controlled) {
     _levels.debounce3DRefresh(100);
   }
 }

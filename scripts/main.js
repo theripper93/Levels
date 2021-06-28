@@ -65,7 +65,7 @@ Hooks.on("controlToken", (token, controlled) => {
   if (controlled) {
     token.visible = true;
     token.levelsVisible = true;
-    token.icon.alpha = 1;
+    if(!token.data.hidden)token.icon.alpha = 1;
   }
   if (!controlled && game.user.isGM) {
     _levels.restoreGMvisibility();
@@ -100,7 +100,7 @@ Hooks.on("updateDrawing",()=>{_levels.getHoles();})
 
 
 Hooks.on("updateToken", (token, updates) => {
-  if(canvas.tokens.get(token.id)._controlled)_levels.executeStairs(updates, token);
+  if(canvas.tokens.get(token.id)?._controlled)_levels.executeStairs(updates, token);
   _levels.getTokensState(_levels.levelsTiles);
 });
 
