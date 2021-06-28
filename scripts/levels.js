@@ -136,7 +136,7 @@ class Levels {
     let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     if (
       tile.range[1] != Infinity &&
-      (!tile.showIfAbove ||
+      (!tile.showIfAbove &&
         (canvas.tokens.controlled[0] &&
           tile.range[0] <= canvas.tokens.controlled[0].data.elevation))
     )
@@ -156,10 +156,14 @@ class Levels {
       tile.tile.visible = true;
       tile.tile.isLevel = false;
     }
+    if(tile.showIfAbove && tile.range[1] != Infinity && altitude == 1){
+      tile.tile.visible = true;
+    }else if(tile.showIfAbove && tile.range[1] != Infinity && altitude != 1){
+      tile.tile.visible = false;
+    }
     switch (altitude) {
       case 1:
         this.removeTempTile(tile);
-        if (tile.showIfAbove && tile.range[0]-cToken.data.elevation <= tile.showAboveRange) tile.tile.visible = true;
         return false;
         break;
       case -1:
