@@ -28,7 +28,10 @@ class Levels {
       "defaultLosHeight"
     );
     this.advancedLOS = true;
-    this.preciseLightOcclusion = game.settings.get(_levelsModuleName, "preciseLightOcclusion")
+    this.preciseLightOcclusion = game.settings.get(
+      _levelsModuleName,
+      "preciseLightOcclusion"
+    );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -90,8 +93,14 @@ class Levels {
     for (let tile of canvas.foreground.placeables) {
       if (tile.data.hidden) continue;
       if (tile.roomPoly) {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement,showAboveRange } =
-          this.getFlagsForObject(tile);
+        let {
+          rangeBottom,
+          rangeTop,
+          isLevel,
+          showIfAbove,
+          isBasement,
+          showAboveRange,
+        } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         tiles.push({
@@ -99,12 +108,18 @@ class Levels {
           poly: tile.roomPoly,
           range: [rangeBottom, rangeTop],
           showIfAbove: showIfAbove,
-          isBasement:isBasement,
-          showAboveRange:showAboveRange
+          isBasement: isBasement,
+          showAboveRange: showAboveRange,
         });
       } else {
-        let { rangeBottom, rangeTop, isLevel, showIfAbove, isBasement,showAboveRange }  =
-          this.getFlagsForObject(tile);
+        let {
+          rangeBottom,
+          rangeTop,
+          isLevel,
+          showIfAbove,
+          isBasement,
+          showAboveRange,
+        } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         let tileZZ = {
@@ -123,8 +138,8 @@ class Levels {
           range: [rangeBottom, rangeTop],
           levelsOverhead: true,
           showIfAbove: showIfAbove,
-          isBasement:isBasement,
-          showAboveRange:showAboveRange
+          isBasement: isBasement,
+          showAboveRange: showAboveRange,
         });
       }
     }
@@ -133,48 +148,63 @@ class Levels {
   }
 
   computeTile(tile, altitude, lights) {
-    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    if (
-      tile.range[1] != Infinity &&
-      (!tile.showIfAbove &&
-        (canvas.tokens.controlled[0] &&
-          tile.range[0] <= canvas.tokens.controlled[0].data.elevation))
-    )
+    //Declare constants
+
+    const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+    const cTokenElev = cToken.data.elevation;
+
+    //If a tile is not a roof and it's not set to show if it's above, hide it
+
+    if (tile.range[1] != Infinity && !tile.showIfAbove)
       tile.tile.visible = false;
-    if (
-      tile.range[1] == Infinity &&
-      canvas.tokens.controlled[0] &&
-      canvas.tokens.controlled[0].data.elevation < 0
-    ) {
-      tile.tile.visible = false;
-      tile.tile.isLevel = true;
-    } else if (
-      tile.range[1] == Infinity &&
-      canvas.tokens.controlled[0] &&
-      canvas.tokens.controlled[0].data.elevation >= 0
-    ) {
+
+    //If a tile is a roof, hide it if the token is underground, otherwise show it
+
+    if (tile.range[1] == Infinity) {
+      if (cTokenElev < 0) {
+        tile.tile.visible = false;
+        tile.tile.isLevel = true;
+      }
+    } else {
       tile.tile.visible = true;
       tile.tile.isLevel = false;
     }
-    if(tile.showIfAbove && tile.range[1] != Infinity && altitude == 1){
-      tile.tile.visible = true;
-    }else if(tile.showIfAbove && tile.range[1] != Infinity && altitude != 1){
+
+    //Compute the visibility of show if it's above tiles separately as they are a special case
+
+    if (tile.showIfAbove && tile.range[1] != Infinity && altitude == 1) {
+      if (tile.range[0] - cTokenElev <= tile.showAboveRange) {
+        tile.tile.isLevel = true;
+        tile.tile.visible = true;
+      } else {
+        tile.tile.visible = false;
+        tile.tile.isLevel = true;
+      }
+    } else if (
+      tile.showIfAbove &&
+      tile.range[1] != Infinity &&
+      altitude != 1
+    ) {
       tile.tile.visible = false;
+      tile.tile.isLevel = true;
     }
+
+    //Compute the tile mirroring in the background
+
     switch (altitude) {
-      case 1:
+      case 1: // If the tile is above the token, remove it from the stack
         this.removeTempTile(tile);
         return false;
         break;
-      case -1:
-        if(tile.isBasement && tile.range[1]<0 && cToken && cToken.data.elevation >= 0){
-            this.removeTempTile(tile);
-        }else{
+      case -1: //If a tile is below a token render it in the stack unless the user specified otherwise with isBsement, in wich case add it to the stack only if the token is below ground
+        if (tile.isBasement && cTokenElev >= 0) {
+          this.removeTempTile(tile);
+        } else {
           this.mirrorTileInBackground(tile);
         }
         return false;
         break;
-      case 0:
+      case 0: //If the tile is on the same level as the token, If the tile is set as overhead tile within a level, set it to visible and remove that tile from the stack, otherwise, add it to the stack
         if (!tile.levelsOverhead) {
           this.mirrorTileInBackground(tile, true);
         } else {
@@ -312,8 +342,8 @@ class Levels {
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (
-        (//this.levelsTokens[token.id].range[1] == Infinity ||
-          token.data.elevation > sourceToken.data.elevation) &&
+        //this.levelsTokens[token.id].range[1] == Infinity ||
+        token.data.elevation > sourceToken.data.elevation &&
         token.visible &&
         !token.data.hidden
       ) {
@@ -560,7 +590,7 @@ class Levels {
   }
 
   computeTemplates(source) {
-    if(!source) return
+    if (!source) return;
     let tokenpos = {
       x: source.center.x,
       y: source.center.y,
@@ -573,13 +603,14 @@ class Levels {
         z: template.document.getFlag(_levelsModuleName, "elevation") ?? 0,
       };
       template.visible = !this.testCollision(tokenpos, templatepos, "sight");
-      canvas.grid.getHighlightLayer(`Template.${template.id}`).visible=template.visible;
+      canvas.grid.getHighlightLayer(`Template.${template.id}`).visible =
+        template.visible;
     }
   }
 
-  showTemplatesForGM(){
+  showTemplatesForGM() {
     for (let template of canvas.templates.placeables) {
-      template.visible=true
+      template.visible = true;
     }
   }
 
@@ -748,20 +779,21 @@ class Levels {
     let addChild = oldSprite ? false : true;
     let tileImg = tile.children[0];
     if (!tileImg || !tileImg.texture.baseTexture) return;
-    let sprite,Illumsprite
-    if(this.preciseLightOcclusion){
-      if(!tile._levelsAlphaMap)this._createAlphaMap(tile,{keepPixels:true,keepTexture:true})
-      sprite = this.getLightOcclusionSprite(tile)//this.getTileSprite(undefined, tileImg, tile);
+    let sprite, Illumsprite;
+    if (this.preciseLightOcclusion) {
+      if (!tile._levelsAlphaMap)
+        this._createAlphaMap(tile, { keepPixels: true, keepTexture: true });
+      sprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
       sprite.tint = 0x000000;
-      sprite.name=tile.id
-      Illumsprite = this.getLightOcclusionSprite(tile)//this.getTileSprite(undefined, tileImg, tile);
+      sprite.name = tile.id;
+      Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
       Illumsprite.tint = canvas.lighting.channels.background.hex;
-      Illumsprite.name=tile.id
+      Illumsprite.name = tile.id;
       if (addChild) {
         light.light.source.coloration.addChild(sprite);
         light.light.source.illumination.addChild(Illumsprite);
       }
-    }else{
+    } else {
       sprite = this.getTileSprite(undefined, tileImg, tile);
       sprite.tint = 0x000000;
       Illumsprite = this.getTileSprite(undefined, tileImg, tile);
@@ -771,11 +803,10 @@ class Levels {
         light.light.source.illumination.addChild(Illumsprite);
       }
     }
-
   }
 
   getLightOcclusionSprite(tile) {
-    if ( !tile._levelsAlphaMap.texture ) return undefined;
+    if (!tile._levelsAlphaMap.texture) return undefined;
     const s = new PIXI.Sprite(tile._levelsAlphaMap.texture);
     const t = tile.tile;
     s.width = t.width;
@@ -786,11 +817,9 @@ class Levels {
     return s;
   }
 
-  
-  _createAlphaMap(tile,{keepPixels=false, keepTexture=false}={}) {
-
+  _createAlphaMap(tile, { keepPixels = false, keepTexture = false } = {}) {
     // Destroy the previous texture
-    if ( tile._levelsAlphaMap?.texture ) {
+    if (tile._levelsAlphaMap?.texture) {
       tile._levelsAlphaMap.texture.destroy(true);
       delete tile._levelsAlphaMap.texture;
     }
@@ -798,18 +827,19 @@ class Levels {
     // If no tile texture is present
     const aw = Math.abs(tile.data.width);
     const ah = Math.abs(tile.data.height);
-    if ( !tile.texture ) return tile._levelsAlphaMap = { minX: 0, minY: 0, maxX: aw, maxY: ah };
+    if (!tile.texture)
+      return (tile._levelsAlphaMap = { minX: 0, minY: 0, maxX: aw, maxY: ah });
 
     // Create a temporary Sprite
     const sprite = new PIXI.Sprite(tile.texture);
     sprite.width = tile.data.width;
     sprite.height = tile.data.height;
     sprite.anchor.set(0.5, 0.5);
-    sprite.position.set(aw/2, ah/2);
+    sprite.position.set(aw / 2, ah / 2);
 
     // Color matrix filter the sprite to pure white
     const cmf = new PIXI.filters.ColorMatrixFilter();
-    cmf.matrix = [1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,1, 1,1,1,1,0]; // Over-multiply alpha to remove transparency
+    cmf.matrix = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0]; // Over-multiply alpha to remove transparency
     sprite.filters = [cmf];
 
     // Render to a texture and extract pixels
@@ -824,31 +854,31 @@ class Levels {
       minX: undefined,
       minY: undefined,
       maxX: undefined,
-      maxY: undefined
-    }
+      maxY: undefined,
+    };
 
     // Keep the texture?
-    if ( keepTexture ) map.texture = tex;
+    if (keepTexture) map.texture = tex;
     else tex.destroy(true);
 
     // Map the alpha pixels
-    for ( let i=0; i<pixels.length; i+=4 ) {
+    for (let i = 0; i < pixels.length; i += 4) {
       const n = i / 4;
-      const a = pixels[i+3];
+      const a = pixels[i + 3];
       map.pixels[n] = a > 0 ? 1 : 0;
-      if ( a > 0 ) {
+      if (a > 0) {
         const x = n % aw;
         const y = Math.floor(n / aw);
-        if ( (map.minX === undefined) || (x < map.minX) ) map.minX = x;
-        else if ( (map.maxX === undefined) || (x > map.maxX) ) map.maxX = x;
-        if ( (map.minY === undefined) || (y < map.minY) ) map.minY = y;
-        else if ( (map.maxY === undefined) || (y > map.maxY) ) map.maxY = y;
+        if (map.minX === undefined || x < map.minX) map.minX = x;
+        else if (map.maxX === undefined || x > map.maxX) map.maxX = x;
+        if (map.minY === undefined || y < map.minY) map.minY = y;
+        else if (map.maxY === undefined || y > map.maxY) map.maxY = y;
       }
     }
 
     // Maybe discard the raw pixels
-    if ( !keepPixels ) map.pixels = undefined;
-    return tile._levelsAlphaMap = map;
+    if (!keepPixels) map.pixels = undefined;
+    return (tile._levelsAlphaMap = map);
   }
 
   getTileSprite(oldSprite, tileImg, tile) {
@@ -1248,7 +1278,7 @@ class Levels {
       }
     });
     _levels.clearLights(_levels.getLights());
-    this.showTemplatesForGM()
+    this.showTemplatesForGM();
     canvas.drawings.placeables.forEach((d) => (d.visible = true));
   }
 
@@ -1392,7 +1422,7 @@ class Levels {
     </div>
     <p></p>
     `;
-    let ignoreClose = false
+    let ignoreClose = false;
     let toolhtml = $("body").find(`li[data-tool="setTemplateElevation"]`);
     let dialog = new Dialog({
       title: game.i18n.localize("levels.dialog.elevation.title"),
@@ -1405,7 +1435,7 @@ class Levels {
               `input[name="templateElevation"]`
             )[0].valueAsNumber;
             _levels.templateElevation = true;
-            ignoreClose=true
+            ignoreClose = true;
             tool.active = true;
             if (toolhtml[0])
               $("body")
@@ -1428,7 +1458,10 @@ class Levels {
       },
       default: "confirm",
       close: () => {
-        if(ignoreClose == true){ ignoreClose=false;return}
+        if (ignoreClose == true) {
+          ignoreClose = false;
+          return;
+        }
         _levels.nextTemplateHeight = undefined;
         _levels.templateElevation = false;
         tool.active = false;
@@ -1509,11 +1542,22 @@ class Levels {
     let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
     let isBasement = object.document.getFlag(_levelsModuleName, "isBasement");
 
-    let showAboveRange = object.document.getFlag(_levelsModuleName, "showAboveRange");
+    let showAboveRange = object.document.getFlag(
+      _levelsModuleName,
+      "showAboveRange"
+    );
     if (showAboveRange == undefined || showAboveRange == null)
-    showAboveRange = -Infinity;
+      showAboveRange = -Infinity;
 
-    return { rangeBottom, rangeTop, isLevel, drawingMode, showIfAbove,isBasement,showAboveRange };
+    return {
+      rangeBottom,
+      rangeTop,
+      isLevel,
+      drawingMode,
+      showIfAbove,
+      isBasement,
+      showAboveRange,
+    };
   }
 
   /**
@@ -1690,9 +1734,10 @@ class Levels {
 
         //Check for directional walls
 
-        if (wall.direction !== null) { // Directional walls where the ray angle is not in the same hemisphere
+        if (wall.direction !== null) {
+          // Directional walls where the ray angle is not in the same hemisphere
           const rayAngle = Math.atan2(y1 - y0, x1 - x0);
-          const angleBounds = [rayAngle - (Math.PI/2), rayAngle + (Math.PI/2)];
+          const angleBounds = [rayAngle - Math.PI / 2, rayAngle + Math.PI / 2];
           if (!wall.isDirectionBetweenAngles(...angleBounds)) continue;
         }
 
