@@ -164,11 +164,11 @@ class Levels {
       if (cTokenElev < 0) {
         tile.tile.visible = false;
         tile.tile.isLevel = true;
+      }else {
+        tile.tile.visible = true;
+        tile.tile.isLevel = false;
       }
-    } else {
-      tile.tile.visible = true;
-      tile.tile.isLevel = false;
-    }
+    } 
 
     //Compute the visibility of show if it's above tiles separately as they are a special case
 
