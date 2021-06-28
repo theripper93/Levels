@@ -189,6 +189,10 @@ class Levels {
       tile.tile.isLevel = true;
     }
 
+    //If a tile is set as levelsOveerhead  hide it
+    
+    if(tile.levelsOverhead) tile.tile.visible=false
+
     //Compute the tile mirroring in the background
 
     switch (altitude) {
