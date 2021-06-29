@@ -164,11 +164,16 @@ class Levels {
       if (cTokenElev < 0) {
         tile.tile.visible = false;
         tile.tile.isLevel = true;
-      }else {
-        tile.tile.visible = true;
-        tile.tile.isLevel = false;
+      } else {
+        if (altitude == 1) {
+          tile.tile.visible = true;
+          tile.tile.isLevel = false;
+        } else {
+          tile.tile.visible = false;
+          tile.tile.isLevel = true;
+        }
       }
-    } 
+    }
 
     //Compute the visibility of show if it's above tiles separately as they are a special case
 
@@ -180,18 +185,14 @@ class Levels {
         tile.tile.visible = false;
         tile.tile.isLevel = true;
       }
-    } else if (
-      tile.showIfAbove &&
-      tile.range[1] != Infinity &&
-      altitude != 1
-    ) {
+    } else if (tile.showIfAbove && tile.range[1] != Infinity && altitude != 1) {
       tile.tile.visible = false;
       tile.tile.isLevel = true;
     }
 
     //If a tile is set as levelsOveerhead  hide it
 
-    if(tile.levelsOverhead) tile.tile.visible=false
+    if (tile.levelsOverhead) tile.tile.visible = false;
 
     //Compute the tile mirroring in the background
 
@@ -288,7 +289,7 @@ class Levels {
 
   advancedLosTestVisibility(sourceToken, token) {
     const gm = game.user.isGM;
-    if(sourceToken._controlled) return true
+    if (sourceToken._controlled) return true;
     if (!sourceToken.data.vision) return gm;
     const inLOS = !this.checkCollision(sourceToken, token, "sight");
     const inRange = this.tokenInRange(sourceToken, token);
