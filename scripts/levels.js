@@ -100,6 +100,7 @@ class Levels {
           showIfAbove,
           isBasement,
           showAboveRange,
+          noFogHide,
         } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -110,6 +111,7 @@ class Levels {
           showIfAbove: showIfAbove,
           isBasement: isBasement,
           showAboveRange: showAboveRange,
+          noFogHide:noFogHide,
         });
       } else {
         let {
@@ -119,6 +121,7 @@ class Levels {
           showIfAbove,
           isBasement,
           showAboveRange,
+          noFogHide,
         } = this.getFlagsForObject(tile);
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
@@ -140,6 +143,7 @@ class Levels {
           showIfAbove: showIfAbove,
           isBasement: isBasement,
           showAboveRange: showAboveRange,
+          noFogHide:noFogHide,
         });
       }
     }
@@ -479,6 +483,7 @@ class Levels {
   }
 
   obscureFogForTile(tileIndex) {
+    if(tileIndex.noFogHide===true) return
     let tile = tileIndex.tile;
     let oldSprite = this.fogContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.children[0];
@@ -1547,7 +1552,7 @@ class Levels {
       object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
     let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
     let isBasement = object.document.getFlag(_levelsModuleName, "isBasement");
-
+    let noFogHide = object.document.getFlag(_levelsModuleName, "noFogHide");
     let showAboveRange = object.document.getFlag(
       _levelsModuleName,
       "showAboveRange"
@@ -1563,6 +1568,7 @@ class Levels {
       showIfAbove,
       isBasement,
       showAboveRange,
+      noFogHide,
     };
   }
 

@@ -197,6 +197,8 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   let checkedbox = showifbelow ? ` checked=""` : "";
   let isBasement = app.object.getFlag(_levelsModuleName, "isBasement");
   let checkedboxisBasement = isBasement ? ` checked=""` : "";
+  let noFogHide = app.object.getFlag(_levelsModuleName, "noFogHide");
+  let checkedboxnoFogHide = noFogHide ? ` checked=""` : "";
 
 
   let newHtml = `
@@ -251,6 +253,15 @@ Hooks.on("renderTileConfig", (app, html, data) => {
                 <input type="checkbox" name="flags.${_levelsModuleName}.isBasement"${checkedboxisBasement}>
             </div>
         </div>
+
+        <div class="form-group">
+        <label>${game.i18n.localize(
+          "levels.tilecoonfig.noFogHide.name"
+        )}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="flags.${_levelsModuleName}.noFogHide"${checkedboxnoFogHide}>
+        </div>
+    </div>
 
 `;
   const overh = html.find('input[name="occlusion.alpha"]');

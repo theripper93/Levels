@@ -22,6 +22,7 @@
     "levels.tilecoonfig.showIfAbove.name": "Show even when below?",
     "levels.tilecoonfig.showAboveRange.name":"Max Elevation Difference",
     "levels.tilecoonfig.isBasement.name":"is Basement?",
+    "levels.tilecoonfig.noFogHide.name":"Don't hide this tile in the Fog",
     "levels.tilecoonfig.range.unit": "Elevation",
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
