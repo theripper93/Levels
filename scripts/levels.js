@@ -1558,7 +1558,7 @@ class Levels {
       "showAboveRange"
     );
     if (showAboveRange == undefined || showAboveRange == null)
-      showAboveRange = -Infinity;
+      showAboveRange = Infinity;
 
     return {
       rangeBottom,

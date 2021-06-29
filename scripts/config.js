@@ -190,7 +190,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 
     let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
     if (showAboveRange == undefined || showAboveRange == null)
-    showAboveRange = -Infinity;
+    showAboveRange = Infinity;
 
 
   let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
