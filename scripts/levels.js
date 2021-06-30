@@ -292,6 +292,7 @@ class Levels {
   }
 
   advancedLosTestVisibility(sourceToken, token) {
+    if(canvas.scene.data.tokenVision===false) return true
     const gm = game.user.isGM;
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
