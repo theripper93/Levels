@@ -6,6 +6,7 @@ Create maps with multiple vertical levels
 Other Language: [English](README.md), [Deutsch](README.de.md)
 
 ## [Video Tuorial by Baileywiki](https://youtu.be/ELlweNunn4g)
+## [Video Tuorial by Baileywiki pt2](https://youtu.be/_nynikU9_ao)
 
 *The module is free but if you are selling maps that use my modules you'll need a commercial licence wich is available on my patreon
 
