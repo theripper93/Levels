@@ -6,6 +6,7 @@ Create maps with multiple vertical levels
 Other Language: [English](README.md), [Deutsch](README.de.md)
 
 ## [Video Tuorial by Baileywiki](https://youtu.be/ELlweNunn4g)
+## [Video Tuorial by Baileywiki pt2](https://youtu.be/_nynikU9_ao)
 
 *The module is free but if you are selling maps that use my modules you'll need a commercial licence wich is available on my patreon
 
@@ -34,7 +35,6 @@ Your tokens will change levels by changing their elevation, you can also setup z
 * ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, you might be fine ignoring it but it's not guaranteed
 * ### **Perfect Vision**: Tokens in holes may not appear in black and white, possible other issues present
 * ### **Lichtgeschwindigkeit**: This module messes heavly with sight and while it's a great module it completely breaks vision of walls
-* ### **Monk's Token Bar**: Incorrect token vision for GM only
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
 
 # **API**
