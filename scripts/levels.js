@@ -32,6 +32,7 @@ class Levels {
       _levelsModuleName,
       "preciseLightOcclusion"
     );
+    this.preciseTokenVisibility = game.settings.get(_levelsModuleName, "preciseTokenVisibility")
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -296,13 +297,30 @@ class Levels {
     const gm = game.user.isGM;
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
-    const inLOS = !this.checkCollision(sourceToken, token, "sight");
+    const inLOS = !this.advancedLosTestInLos(sourceToken, token);
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange && token.data.hidden && gm) return true;
     if (inLOS && inRange && !token.data.hidden) return true;
     const inLight = this.advancedLOSCheckInLight(token);
     if (inLOS && inLight && !token.data.hidden) return true;
     return false;
+  }
+
+  advancedLosTestInLos(sourceToken, token){
+    if(this.preciseTokenVisibility===false) return this.checkCollision(sourceToken, token, "sight");
+    const targetLOSH = this.getTokenLOSheight(token)
+    const sourceCenter = {x:sourceToken.center,y:sourceToken.y,z:this.getTokenLOSheight(sourceToken)}
+    const tokenCorners = [
+      {x:token.center.x,y:token.center.y,z:targetLOSH},
+      {x:token.x,y:token.y,z:targetLOSH},
+      {x:token.x+token.w,y:token.y,z:targetLOSH},
+      {x:token.x,y:token.y+token.h,z:targetLOSH},
+      {x:token.x+token.w,y:token.y+token.h,z:targetLOSH},
+    ]
+    for(let point of tokenCorners){
+      const collision = this.testCollision(sourceCenter, point, "sight")
+      if(!collision) return collision
+    }
   }
 
   advancedLOSCheckInLight(token) {
@@ -380,7 +398,7 @@ class Levels {
 
   tokenInRange(sourceToken, token) {
     const dist = this.getUnitTokenDist(sourceToken, token);
-    const range = canvas.scene.data.globalLight
+    const range = canvas.lighting.globalLight
       ? Infinity
       : Math.max(
           sourceToken.data.dimSight,

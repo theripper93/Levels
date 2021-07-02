@@ -456,6 +456,7 @@ class LevelsUI {
 
     canvas.lighting.refresh();
     canvas.lighting.placeables.forEach((l) => l.updateSource());
+
   }
 
   computeRangeForDocument(document, range, isTile = false) {

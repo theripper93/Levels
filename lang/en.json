@@ -16,6 +16,8 @@
     "levels.settings.debugRaycast.hint": "Show the 3D Sight rays (green visible, red not visible)",
     "levels.settings.preciseLightOcclusion.name": "Experimental: Precise light occlusion",
     "levels.settings.preciseLightOcclusion.hint": "Removes light occlusion artefacts at the cost of performance",
+    "levels.settings.preciseTokenVisibility.name": "Precise token visibility",
+    "levels.settings.preciseTokenVisibility.hint": "Enabling this option will check for sight against corners of the token in addition to the center at the cost of some performance",
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",

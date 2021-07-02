@@ -166,6 +166,18 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "preciseTokenVisibility", {
+    name: game.i18n.localize("levels.settings.preciseTokenVisibility.name"),
+    hint: game.i18n.localize("levels.settings.preciseTokenVisibility.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (setting) => {
+      _levels.preciseTokenVisibility = setting;
+    },
+  });
+
   game.settings.register(_levelsModuleName, "debugRaycast", {
     name: game.i18n.localize("levels.settings.debugRaycast.name"),
     hint: game.i18n.localize("levels.settings.debugRaycast.hint"),
