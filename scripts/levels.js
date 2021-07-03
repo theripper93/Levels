@@ -307,20 +307,22 @@ class Levels {
   }
 
   advancedLosTestInLos(sourceToken, token){
+    const tol = 4
     if(this.preciseTokenVisibility===false) return this.checkCollision(sourceToken, token, "sight");
     const targetLOSH = this.getTokenLOSheight(token)
-    const sourceCenter = {x:sourceToken.center,y:sourceToken.y,z:this.getTokenLOSheight(sourceToken)}
+    const sourceCenter = {x:sourceToken.center.x,y:sourceToken.y,z:this.getTokenLOSheight(sourceToken)}
     const tokenCorners = [
       {x:token.center.x,y:token.center.y,z:targetLOSH},
-      {x:token.x,y:token.y,z:targetLOSH},
-      {x:token.x+token.w,y:token.y,z:targetLOSH},
-      {x:token.x,y:token.y+token.h,z:targetLOSH},
-      {x:token.x+token.w,y:token.y+token.h,z:targetLOSH},
+      {x:token.x+tol,y:token.y+tol,z:targetLOSH},
+      {x:token.x+token.w-tol,y:token.y+tol,z:targetLOSH},
+      {x:token.x+tol,y:token.y+token.h-tol,z:targetLOSH},
+      {x:token.x+token.w-tol,y:token.y+token.h-tol,z:targetLOSH},
     ]
     for(let point of tokenCorners){
-      const collision = this.testCollision(sourceCenter, point, "sight")
+      let collision = this.testCollision(sourceCenter, point, "sight")
       if(!collision) return collision
     }
+    return true
   }
 
   advancedLOSCheckInLight(token) {

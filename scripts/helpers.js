@@ -425,7 +425,8 @@ async function _levelsTemplatedraw() {
       if (_levels?.nextTemplateHeight) {
         tipN = _levels.nextTemplateHeight;
       } else {
-        const cToken = canvas.tokens.controlled[0] || _levels?.lastTokenForTemplate;
+        const cToken =
+          canvas.tokens.controlled[0] || _levels?.lastTokenForTemplate;
         tipN = cToken?.data?.elevation ?? 0;
       }
     } else {
@@ -450,4 +451,29 @@ async function _levelsTemplatedraw() {
   // Enable interactivity, only if the Tile has a true ID
   if (this.id) this.activateListeners();
   return this;
+}
+
+function _levelsTokenCheckCollision(destination) {
+  // Create a Ray for the attempted move
+  let origin = this.getCenter(...Object.values(this._validPosition));
+  let ray = new Ray(
+    { x: origin.x, y: origin.y },
+    { x: destination.x, y: destination.y }
+  );
+
+  // Shift the origin point by the prior velocity
+  ray.A.x -= this._velocity.sx;
+  ray.A.y -= this._velocity.sy;
+
+  // Shift the destination point by the requested velocity
+  ray.B.x -= Math.sign(ray.dx);
+  ray.B.y -= Math.sign(ray.dy);
+
+  // Check for a wall collision
+  debugger
+  if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
+    return canvas.walls.checkCollision(ray,{ type : "movement", mode : "any" },this.data.elevation);
+  } else {
+    return canvas.walls.checkCollision(ray);
+  }
 }

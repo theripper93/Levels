@@ -53,6 +53,12 @@ Hooks.on("init", () => {
     _levelsTokenIsVisible,
     "OVERRIDE"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "Token.prototype.checkCollision",
+    _levelsTokenCheckCollision,
+    "OVERRIDE"
+  );
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
@@ -176,6 +182,15 @@ Hooks.on("init", () => {
     onChange: (setting) => {
       _levels.preciseTokenVisibility = setting;
     },
+  });
+
+  game.settings.register(_levelsModuleName, "blockSightMovement", {
+    name: game.i18n.localize("levels.settings.blockSightMovement.name"),
+    hint: game.i18n.localize("levels.settings.blockSightMovement.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
   });
 
   game.settings.register(_levelsModuleName, "debugRaycast", {
