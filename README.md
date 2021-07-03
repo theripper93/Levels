@@ -34,8 +34,9 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 * ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, you might be fine ignoring it but it's not guaranteed
 * ### **Perfect Vision**: Tokens in holes may not appear in black and white, possible other issues present
-* ### **Lichtgeschwindigkeit**: This module messes heavly with sight and while it's a great module it completely breaks vision of walls
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
+* ### **Lights not rendering correctly**: Sometimes, switching between tokens will result in some lights to render using the wrong walls, i haven't found a solution but it's generally a GM only issue
+* ### **Fog Exploration is not Saved in levels**: Due to foundry limitiations and performance concerns among other things, if you use the advanced fog option, fog exploration for a level won't be saved. If you have the option disabled exploring any floor will reveal the same area in all other floors.
 
 # **API**
 
