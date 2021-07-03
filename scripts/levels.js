@@ -32,7 +32,10 @@ class Levels {
       _levelsModuleName,
       "preciseLightOcclusion"
     );
-    this.preciseTokenVisibility = game.settings.get(_levelsModuleName, "preciseTokenVisibility")
+    this.preciseTokenVisibility = game.settings.get(
+      _levelsModuleName,
+      "preciseTokenVisibility"
+    );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -112,7 +115,7 @@ class Levels {
           showIfAbove: showIfAbove,
           isBasement: isBasement,
           showAboveRange: showAboveRange,
-          noFogHide:noFogHide,
+          noFogHide: noFogHide,
         });
       } else {
         let {
@@ -144,7 +147,7 @@ class Levels {
           showIfAbove: showIfAbove,
           isBasement: isBasement,
           showAboveRange: showAboveRange,
-          noFogHide:noFogHide,
+          noFogHide: noFogHide,
         });
       }
     }
@@ -293,7 +296,7 @@ class Levels {
   }
 
   advancedLosTestVisibility(sourceToken, token) {
-    if(canvas.scene.data.tokenVision===false) return true
+    if (canvas.scene.data.tokenVision === false) return true;
     const gm = game.user.isGM;
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
@@ -306,23 +309,28 @@ class Levels {
     return false;
   }
 
-  advancedLosTestInLos(sourceToken, token){
-    const tol = 4
-    if(this.preciseTokenVisibility===false) return this.checkCollision(sourceToken, token, "sight");
-    const targetLOSH = this.getTokenLOSheight(token)
-    const sourceCenter = {x:sourceToken.center.x,y:sourceToken.y,z:this.getTokenLOSheight(sourceToken)}
+  advancedLosTestInLos(sourceToken, token) {
+    const tol = 4;
+    if (this.preciseTokenVisibility === false)
+      return this.checkCollision(sourceToken, token, "sight");
+    const targetLOSH = this.getTokenLOSheight(token);
+    const sourceCenter = {
+      x: sourceToken.center.x,
+      y: sourceToken.center.y,
+      z: this.getTokenLOSheight(sourceToken),
+    };
     const tokenCorners = [
-      {x:token.center.x,y:token.center.y,z:targetLOSH},
-      {x:token.x+tol,y:token.y+tol,z:targetLOSH},
-      {x:token.x+token.w-tol,y:token.y+tol,z:targetLOSH},
-      {x:token.x+tol,y:token.y+token.h-tol,z:targetLOSH},
-      {x:token.x+token.w-tol,y:token.y+token.h-tol,z:targetLOSH},
-    ]
-    for(let point of tokenCorners){
-      let collision = this.testCollision(sourceCenter, point, "sight")
-      if(!collision) return collision
+      { x: token.center.x, y: token.center.y, z: targetLOSH },
+      { x: token.x + tol, y: token.y + tol, z: targetLOSH },
+      { x: token.x + token.w - tol, y: token.y + tol, z: targetLOSH },
+      { x: token.x + tol, y: token.y + token.h - tol, z: targetLOSH },
+      { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
+    ];
+    for (let point of tokenCorners) {
+      let collision = this.testCollision(sourceCenter, point, "sight");
+      if (!collision) return collision;
     }
-    return true
+    return true;
   }
 
   advancedLOSCheckInLight(token) {
@@ -504,7 +512,7 @@ class Levels {
   }
 
   obscureFogForTile(tileIndex) {
-    if(tileIndex.noFogHide===true) return
+    if (tileIndex.noFogHide === true) return;
     let tile = tileIndex.tile;
     let oldSprite = this.fogContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.children[0];
@@ -1516,11 +1524,41 @@ class Levels {
       g.name = "levelsRAYS";
       let ctk = canvas.tokens.controlled[0];
       canvas.tokens.placeables.forEach((t) => {
-        let isCollision = _levels.checkCollision(ctk, t, "sight");
-        let color = isCollision ? 0xff0000 : 0x00ff08;
-        let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
-        if (ctk != t)
-          g.beginFill(color).lineStyle(1, color).drawPolygon(coords).endFill();
+        if (this.preciseTokenVisibility === false) {
+          let isCollision = _levels.checkCollision(ctk, t, "sight");
+          let color = isCollision ? 0xff0000 : 0x00ff08;
+          let coords = [ctk.center.x, ctk.center.y, t.center.x, t.center.y];
+          if (ctk != t)
+            g.beginFill(color)
+              .lineStyle(1, color)
+              .drawPolygon(coords)
+              .endFill();
+        } else {
+          let targetLOSH = this.getTokenLOSheight(t);
+          let tol = 4;
+          let sourceCenter = {
+            x: ctk.center.x,
+            y: ctk.center.y,
+            z: this.getTokenLOSheight(ctk),
+          };
+          let tokenCorners = [
+            { x: t.center.x, y: t.center.y, z: targetLOSH },
+            { x: t.x + tol, y: t.y + tol, z: targetLOSH },
+            { x: t.x + t.w - tol, y: t.y + tol, z: targetLOSH },
+            { x: t.x + tol, y: t.y + t.h - tol, z: targetLOSH },
+            { x: t.x + t.w - tol, y: t.y + t.h - tol, z: targetLOSH },
+          ];
+          for (let point of tokenCorners) {
+            let isCollision = this.testCollision(sourceCenter, point, "sight");
+            let color = isCollision ? 0xff0000 : 0x00ff08;
+            let coords = [ctk.center.x, ctk.center.y, point.x, point.y];
+            if (ctk != t)
+              g.beginFill(color)
+                .lineStyle(1, color)
+                .drawPolygon(coords)
+                .endFill();
+          }
+        }
       });
       if (!oldcontainer) canvas.controls.debug.addChild(g);
     }
@@ -1695,6 +1733,9 @@ class Levels {
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {
+//test
+//return ((a.x<=c.x && c.x<=b.x && a.y<=c.y && c.y<=b.y) || (a.x>=c.x && c.x >=b.x && a.y>=c.y && c.y >=b.y))
+
       const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
       if (dotproduct < 0) return false;
 

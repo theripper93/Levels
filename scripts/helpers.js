@@ -470,7 +470,6 @@ function _levelsTokenCheckCollision(destination) {
   ray.B.y -= Math.sign(ray.dy);
 
   // Check for a wall collision
-  debugger
   if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
     return canvas.walls.checkCollision(ray,{ type : "movement", mode : "any" },this.data.elevation);
   } else {
