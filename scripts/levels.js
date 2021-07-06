@@ -668,30 +668,12 @@ class Levels {
           token.elevationScaleFactor =
             token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1;
         }
-        token.icon.width =
-          token.data.width *
-          canvas.scene.dimensions.size *
-          token.data.scale *
-          token.elevationScaleFactor;
-        token.icon.height =
-          token.data.height *
-          canvas.scene.dimensions.size *
-          token.data.scale *
-          token.elevationScaleFactor;
+        token.refresh();
       });
     } else {
       canvas.tokens.placeables.forEach((token) => {
         token.elevationScaleFactor = 1;
-        token.icon.width =
-          token.data.width *
-          canvas.scene.dimensions.size *
-          token.data.scale *
-          (token.elevationScaleFactor || 1);
-        token.icon.height =
-          token.data.height *
-          canvas.scene.dimensions.size *
-          token.data.scale *
-          (token.elevationScaleFactor || 1);
+        token.refresh();
       });
     }
   }
@@ -1193,29 +1175,43 @@ class Levels {
   }
 
   getTokenIconSprite(token, x, y, rotate) {
-    let oldSprite = this.floorContainer.children.find(
-      (c) => c.name == token.id
-    );
+    let oldSprite = this.floorContainer.spriteIndex[token.id];
     let icon = token.icon;
-    if (
-      token._controlled ||
-      //(oldSprite && !rotate) ||
-      !icon ||
-      !icon.texture.baseTexture
-    )
-      return;
+    if (token._controlled || !icon || !icon.texture.baseTexture) return;
+    let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
+    if (!oldSprite) {
+      this.floorContainer.spriteIndex[token.id] = sprite;
+      this.floorContainer.addChild(sprite);
+    }
+  }
+
+  getSpriteCopy(oldSprite, icon, token, x, y) {
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
-    sprite.width =
-      token.data.width *
-      canvas.scene.dimensions.size *
-      token.data.scale *
+
+    const tex = token.texture;
+    if (tex) {
+      let aspect = tex.width / tex.height;
+      const scale = token.icon.scale;
+      if (aspect >= 1) {
+        sprite.width = token.w * token.data.scale;
+        scale.y = Number(scale.x);
+      } else {
+        sprite.height = token.h * token.data.scale;
+        scale.x = Number(scale.y);
+      }
+    }
+    sprite.scale.x =
+      Math.abs(icon.scale.x) *
+      (token.data.mirrorX ? -1 : 1) *
       (token.elevationScaleFactor || 1);
-    sprite.height =
-      token.data.height *
-      canvas.scene.dimensions.size *
-      token.data.scale *
+    sprite.scale.y =
+      Math.abs(icon.scale.y) *
+      (token.data.mirrorY ? -1 : 1) *
       (token.elevationScaleFactor || 1);
+    sprite.tint = token.data.tint
+      ? foundry.utils.colorStringToHex(token.data.tint)
+      : 0xffffff;
     sprite.position.x = x || token.position.x;
     sprite.position.y = y || token.position.y;
     sprite.position.x += icon.x;
@@ -1225,10 +1221,7 @@ class Levels {
     sprite.alpha = token.visible ? 1 : 0;
     sprite.name = token.id;
     sprite.zIndex = token.data.elevation + 1;
-    if (!oldSprite) {
-      this.floorContainer.spriteIndex[token.id] = sprite;
-      this.floorContainer.addChild(sprite);
-    }
+    return sprite;
   }
 
   removeTempToken(token) {
@@ -1240,27 +1233,7 @@ class Levels {
     let oldSprite = this.overContainer.children.find((c) => c.name == token.id);
     let icon = token.icon;
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
-    let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
-    sprite.isSprite = true;
-    sprite.width =
-      token.data.width *
-      canvas.scene.dimensions.size *
-      token.data.scale *
-      (token.elevationScaleFactor || 1);
-    sprite.height =
-      token.data.height *
-      canvas.scene.dimensions.size *
-      token.data.scale *
-      (token.elevationScaleFactor || 1);
-    sprite.position.x = x || token.position.x;
-    sprite.position.y = y || token.position.y;
-    sprite.position.x += icon.x;
-    sprite.position.y += icon.y;
-    sprite.anchor = icon.anchor;
-    sprite.angle = icon.angle;
-    sprite.alpha = token.data.hidden ? 0 : 1;
-    sprite.name = token.id;
-    sprite.zIndex = token.data.elevation + 1;
+    let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
     if (!oldSprite) {
       this.overContainer.spriteIndex[token.id] = sprite;
       this.overContainer.addChild(sprite);
@@ -1583,7 +1556,7 @@ class Levels {
       });
       return tokensState;
     } else {
-      let tId = token.id || token;
+      let tId = tokenIds.id || tokenIds;
       return this.levelsTokens[tId];
     }
   }
@@ -1733,8 +1706,8 @@ class Levels {
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {
-//test
-//return ((a.x<=c.x && c.x<=b.x && a.y<=c.y && c.y<=b.y) || (a.x>=c.x && c.x >=b.x && a.y>=c.y && c.y >=b.y))
+      //test
+      //return ((a.x<=c.x && c.x<=b.x && a.y<=c.y && c.y<=b.y) || (a.x>=c.x && c.x >=b.x && a.y>=c.y && c.y >=b.y))
 
       const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
       if (dotproduct < 0) return false;
@@ -1843,7 +1816,7 @@ class Levels {
 
   getTokenLOSheight(token) {
     let losDiff;
-    let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1
+    let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
     if (this.autoLOSHeight) {
       losDiff =
         canvas.scene.dimensions.distance *
@@ -1853,7 +1826,7 @@ class Levels {
       losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
     }
 
-    return token.data.elevation + losDiff/divideBy;
+    return token.data.elevation + losDiff / divideBy;
   }
 
   /**

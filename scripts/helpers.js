@@ -50,49 +50,10 @@ function _levelsOnMovementFrame(dt, anim, config) {
   this.data.x = this.x;
   this.data.y = this.y;
   // Update the token copy
-  let tempTokenSprite = _levels.floorContainer.spriteIndex[this.id];
-  let tempTokenSpriteOverhead = _levels.overContainer.spriteIndex[this.id];
-  if (tempTokenSprite) {
-    tempTokenSprite.width =
-      this.data.width *
-      canvas.scene.dimensions.size *
-      this.data.scale *
-      (this.elevationScaleFactor || 1);
-    tempTokenSprite.height =
-      this.data.height *
-      canvas.scene.dimensions.size *
-      this.data.scale *
-      (this.elevationScaleFactor || 1);
-    tempTokenSprite.position.x = this.position.x;
-    tempTokenSprite.position.y = this.position.y;
-    tempTokenSprite.position.x += this.icon.x;
-    tempTokenSprite.position.y += this.icon.y;
-    tempTokenSprite.anchor = this.icon.anchor;
-    tempTokenSprite.angle = this.icon.angle;
-    tempTokenSprite.alpha = this.visible ? 1 : 0;
-    tempTokenSprite.zIndex = this.data.elevation + 1;
-  }
-
-  if (tempTokenSpriteOverhead) {
-    tempTokenSpriteOverhead.width =
-      this.data.width *
-      canvas.scene.dimensions.size *
-      this.data.scale *
-      (this.elevationScaleFactor || 1);
-    tempTokenSpriteOverhead.height =
-      this.data.height *
-      canvas.scene.dimensions.size *
-      this.data.scale *
-      (this.elevationScaleFactor || 1);
-    tempTokenSpriteOverhead.position.x = this.position.x;
-    tempTokenSpriteOverhead.position.y = this.position.y;
-    tempTokenSpriteOverhead.position.x += this.icon.x;
-    tempTokenSpriteOverhead.position.y += this.icon.y;
-    tempTokenSpriteOverhead.anchor = this.icon.anchor;
-    tempTokenSpriteOverhead.angle = this.icon.angle;
-    tempTokenSpriteOverhead.alpha = this.data.hidden ? 0 : 1;
-    tempTokenSpriteOverhead.zIndex = this.data.elevation + 1;
-  }
+  if (_levels.floorContainer.spriteIndex[this.id])
+    _levels.getTokenIconSprite(this);
+  if (_levels.overContainer.spriteIndex[this.id])
+    _levels.getTokenIconSpriteOverhead(this);
   // Animate perception changes
   if (!config.animate || !anim.length) return;
   let updateFog = config.fog;
@@ -471,7 +432,11 @@ function _levelsTokenCheckCollision(destination) {
 
   // Check for a wall collision
   if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
-    return canvas.walls.checkCollision(ray,{ type : "movement", mode : "any" },this.data.elevation);
+    return canvas.walls.checkCollision(
+      ray,
+      { type: "movement", mode: "any" },
+      this.data.elevation
+    );
   } else {
     return canvas.walls.checkCollision(ray);
   }
