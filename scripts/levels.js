@@ -1843,6 +1843,7 @@ class Levels {
 
   getTokenLOSheight(token) {
     let losDiff;
+    let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1
     if (this.autoLOSHeight) {
       losDiff =
         canvas.scene.dimensions.distance *
@@ -1852,7 +1853,7 @@ class Levels {
       losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
     }
 
-    return token.data.elevation + losDiff;
+    return token.data.elevation + losDiff/divideBy;
   }
 
   /**
