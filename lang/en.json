@@ -11,7 +11,7 @@
     "levels.settings.defaultLosHeight.name": "Default Token Height",
     "levels.settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6.",
     "levels.settings.autoLOSHeight.name": "Automatic token height",
-    "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore ALL manual settings. ",
+    "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore default token height but per token settings not set to 0 will have priority over the automatic calculation. ",
     "levels.settings.debugRaycast.name": "DEBUG: Enable ray visualization",
     "levels.settings.debugRaycast.hint": "Show the 3D Sight rays (green visible, red not visible)",
     "levels.settings.preciseLightOcclusion.name": "Experimental: Precise light occlusion",

@@ -1818,7 +1818,7 @@ class Levels {
     let losDiff;
     let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
     if (this.autoLOSHeight) {
-      losDiff =
+      losDiff = token.data.flags.levels?.tokenHeight || 
         canvas.scene.dimensions.distance *
         Math.max(token.data.width, token.data.height) *
         token.data.scale;
