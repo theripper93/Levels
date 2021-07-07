@@ -1175,7 +1175,7 @@ class Levels {
   }
 
   getTokenIconSprite(token, x, y, rotate) {
-    let oldSprite = this.floorContainer.spriteIndex[token.id];
+    let oldSprite = this.floorContainer.children.find((c) => c.name == token.id);//this.floorContainer.spriteIndex[token.id];
     let icon = token.icon;
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
     let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
@@ -1218,7 +1218,7 @@ class Levels {
     sprite.position.y += icon.y;
     sprite.anchor = icon.anchor;
     sprite.angle = icon.angle;
-    sprite.alpha = token.visible ? 1 : 0;
+    sprite.alpha = token.data.hidden ? 0.5 : 1;
     sprite.name = token.id;
     sprite.zIndex = token.data.elevation + 1;
     return sprite;
