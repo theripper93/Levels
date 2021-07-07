@@ -32,7 +32,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 # **KNOWN ISSUES\INCOMPATIBILITES**
 
-* ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, you might be fine ignoring it but it's not guaranteed
+* ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, disable that option to fix the issue
 * ### **Perfect Vision**: Tokens in holes may not appear in black and white, possible other issues present
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
 * ### **Lights not rendering correctly**: Sometimes, switching between tokens will result in some lights to render using the wrong walls, i haven't found a solution but it's generally a GM only issue
