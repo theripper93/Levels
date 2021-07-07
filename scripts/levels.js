@@ -494,7 +494,10 @@ class Levels {
     sprite.position.y += tileImg.y;
     sprite.anchor = tileImg.anchor;
     sprite.angle = tileImg.angle;
-    sprite.alpha = 1;
+    sprite.alpha = tile.data.alpha ?? 1;
+    sprite.tint = tile.data.tint
+      ? foundry.utils.colorStringToHex(tile.data.tint)
+      : 0xffffff;
     sprite.name = tile.id;
     sprite.zIndex = tileIndex.levelsOverhead
       ? tileIndex.range[0] + 2
@@ -1175,7 +1178,9 @@ class Levels {
   }
 
   getTokenIconSprite(token, x, y, rotate) {
-    let oldSprite = this.floorContainer.children.find((c) => c.name == token.id);//this.floorContainer.spriteIndex[token.id];
+    let oldSprite = this.floorContainer.children.find(
+      (c) => c.name == token.id
+    ); //this.floorContainer.spriteIndex[token.id];
     let icon = token.icon;
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
     let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
@@ -1218,7 +1223,7 @@ class Levels {
     sprite.position.y += icon.y;
     sprite.anchor = icon.anchor;
     sprite.angle = icon.angle;
-    sprite.alpha = token.data.hidden ? 0.5 : 1;
+    sprite.alpha = token.visible ? 1 : 0;
     sprite.name = token.id;
     sprite.zIndex = token.data.elevation + 1;
     return sprite;
@@ -1818,10 +1823,11 @@ class Levels {
     let losDiff;
     let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
     if (this.autoLOSHeight) {
-      losDiff = token.data.flags.levels?.tokenHeight || 
+      losDiff =
+        token.data.flags.levels?.tokenHeight ||
         canvas.scene.dimensions.distance *
-        Math.max(token.data.width, token.data.height) *
-        token.data.scale;
+          Math.max(token.data.width, token.data.height) *
+          token.data.scale;
     } else {
       losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
     }
