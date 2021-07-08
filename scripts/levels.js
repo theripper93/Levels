@@ -554,6 +554,7 @@ class Levels {
     this.removeTempToken(cToken);
     let allTiles = this.findAllTiles();
     let holes = this.getHoles();
+    this.getTokensState(allTiles);
     if (this.elevationScale) this.updateScales();
     this.computeSounds(cToken);
     this.computeNotes(cToken);
