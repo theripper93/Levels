@@ -56,7 +56,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
    * @returns {Boolean} - true if in range, false if not
    **/
 
-    isTokenInRange(token,object)
+    _levels.isTokenInRange(token,object)
 ```
 
 **Get the ceiling\floor of one or multiple tokens**
