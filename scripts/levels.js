@@ -1622,6 +1622,19 @@ class Levels {
     return findRoomsTiles(cPoint, this.levelsTiles);
   }
 
+   /**
+   * Find out if a token is in the range of a particular object
+   * @param {Object} token - a token
+   * @param {Object} object - a tile/drawing/light/note
+   * @returns {Boolean} - true if in range, false if not
+   **/
+
+    isTokenInRange(token,object) {
+      const {rangeBottom,rangeTop,} = this.getFlagsForObject(object);
+      const elevation = token.data.elevation
+      return elevation <= rangeTop && elevation >= rangeBottom
+    }
+
   /**
    * Get all the levels a point is in
    * @param {Integer} elevation - an integer representing elevation
