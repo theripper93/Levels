@@ -46,6 +46,19 @@ Your tokens will change levels by changing their elevation, you can also setup z
   checkCollision(ray, options, elevation) → {boolean}
 ```
 
+**Find out if a token is in the range of a particular object**
+
+```js
+ /**
+   * Find out if a token is in the range of a particular object
+   * @param {Object} token - a token
+   * @param {Object} object - a tile/drawing/light/note
+   * @returns {Boolean} - true if in range, false if not
+   **/
+
+    _levels.isTokenInRange(token,object)
+```
+
 **Get the ceiling\floor of one or multiple tokens**
 
 ```js
