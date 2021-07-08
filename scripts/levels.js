@@ -1619,7 +1619,7 @@ class Levels {
 
   getFloorsForPoint(point) {
     let cPoint = { center: { x: point.x, y: point.y } };
-    return findRoomsTiles(cPoint, this.levelsTiles);
+    return this.findRoomsTiles(cPoint, this.levelsTiles);
   }
 
    /**
