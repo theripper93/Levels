@@ -65,7 +65,12 @@ Hooks.on("controlToken", (token, controlled) => {
   if (controlled) {
     token.visible = true;
     token.levelsVisible = true;
-    if(!token.data.hidden)token.icon.alpha = 1;
+    token.icon.alpha = token.data.hidden
+    ? Math.min(token.data.alpha, 0.5)
+    : token.data.alpha;
+    token.levelsHidden = false;
+    _levels.removeTempTokenOverhead(token);
+    _levels.removeTempToken(token);
   }
   if (!controlled && game.user.isGM) {
     _levels.restoreGMvisibility();

@@ -374,33 +374,34 @@ class Levels {
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.actor.testUserPermission(game.user, 2)) ||
-        token.data.hidden
+          token.actor.testUserPermission(game.user, 2)) //||
+        //token.data.hidden
       )
         continue;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
-      if (
-        //this.levelsTokens[token.id].range[1] == Infinity ||
-        token.data.elevation > sourceToken.data.elevation &&
-        token.visible &&
-        !token.data.hidden
-      ) {
+      if (token.data.elevation > sourceToken.data.elevation && token.visible) {
+        token.icon.alpha = 0;
+        token.levelsHidden = true;
         this.getTokenIconSpriteOverhead(token);
-      } else {
-        this.removeTempTokenOverhead(token);
-      }
-      if (
-        token.visible &&
-        !token.data.hidden &&
-        token.data.elevation < sourceToken.data.elevation
+        this.removeTempToken(token);
+      } else if (
+        token.data.elevation < sourceToken.data.elevation &&
+        token.visible
       ) {
         token.icon.alpha = 0;
         token.levelsHidden = true;
+        this.removeTempTokenOverhead(token);
         this.getTokenIconSprite(token);
-      } else {
-        token.icon.alpha = 1;
+      } else if (
+        token.data.elevation == sourceToken.data.elevation &&
+        token.visible || !token.visible
+      ) {
+        token.icon.alpha = token.data.hidden
+          ? Math.min(token.data.alpha, 0.5)
+          : token.data.alpha;
         token.levelsHidden = false;
+        this.removeTempTokenOverhead(token);
         this.removeTempToken(token);
       }
     }
@@ -1181,7 +1182,7 @@ class Levels {
   getTokenIconSprite(token, x, y, rotate) {
     let oldSprite = this.floorContainer.children.find(
       (c) => c.name == token.id
-    ); //this.floorContainer.spriteIndex[token.id];
+    );
     let icon = token.icon;
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
     let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
@@ -1224,15 +1225,23 @@ class Levels {
     sprite.position.y += icon.y;
     sprite.anchor = icon.anchor;
     sprite.angle = icon.angle;
-    sprite.alpha = token.visible ? 1 : 0;
+    if (token.visible) {
+      sprite.alpha = token.data.hidden
+        ? Math.min(token.data.alpha, 0.5)
+        : token.data.alpha;
+    } else {
+      sprite.alpha = 0;
+    }
     sprite.name = token.id;
     sprite.zIndex = token.data.elevation + 1;
     return sprite;
   }
 
   removeTempToken(token) {
+    if (!this.floorContainer.spriteIndex[token.id]) return;
     let sprite = this.floorContainer.children.find((c) => c.name == token.id);
     if (sprite) this.floorContainer.removeChild(sprite);
+    delete this.floorContainer.spriteIndex[token.id];
   }
 
   getTokenIconSpriteOverhead(token, x, y, rotate) {
@@ -1247,8 +1256,10 @@ class Levels {
   }
 
   removeTempTokenOverhead(token) {
+    if (!this.overContainer.spriteIndex[token.id]) return;
     let sprite = this.overContainer.children.find((c) => c.name == token.id);
     if (sprite) this.overContainer.removeChild(sprite);
+    delete this.overContainer.spriteIndex[token.id];
   }
 
   getUnitTokenDist(token1, token2) {
@@ -1287,14 +1298,17 @@ class Levels {
     });
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
-    canvas.tokens.placeables.forEach((t) => {
-      if (t.levelsHidden == true) {
-        t.levelsHidden == false;
-        t.levelsVisible == true;
-        t.icon.alpha = 1;
-        _levels.removeTempToken(t);
-        _levels.removeTempTokenOverhead(t);
-      }
+    canvas.tokens.placeables.forEach((token) => {
+      token.elevationScaleFactor = 1;
+      token.visible = true;
+      token.levelsVisible = true;
+      token.icon.alpha = token.data.hidden
+        ? Math.min(token.data.alpha, 0.5)
+        : token.data.alpha;
+      token.levelsHidden = false;
+      _levels.removeTempTokenOverhead(token);
+      _levels.removeTempToken(token);
+      token.refresh();
     });
     _levels.clearLights(_levels.getLights());
     this.showTemplatesForGM();
@@ -1622,18 +1636,18 @@ class Levels {
     return this.findRoomsTiles(cPoint, this.levelsTiles);
   }
 
-   /**
+  /**
    * Find out if a token is in the range of a particular object
    * @param {Object} token - a token
    * @param {Object} object - a tile/drawing/light/note
    * @returns {Boolean} - true if in range, false if not
    **/
 
-    isTokenInRange(token,object) {
-      const {rangeBottom,rangeTop,} = this.getFlagsForObject(object);
-      const elevation = token.data.elevation
-      return elevation <= rangeTop && elevation >= rangeBottom
-    }
+  isTokenInRange(token, object) {
+    const { rangeBottom, rangeTop } = this.getFlagsForObject(object);
+    const elevation = token.data.elevation;
+    return elevation <= rangeTop && elevation >= rangeBottom;
+  }
 
   /**
    * Get all the levels a point is in
