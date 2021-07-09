@@ -336,12 +336,12 @@ function _levelsTokenIsVisible() {
     });
   } else {
     const gm = game.user.isGM;
-    if (this.data.hidden) return gm;
     if (
       this.levelsVisible === true ||
       (this.levelsVisible === false && canvas.tokens.controlled[0])
     )
       return this.levelsVisible;
+      if (this.data.hidden) return gm;
     this.levelsVisible = undefined;
     if (!canvas.sight.tokenVision) return true;
     if (this._controlled) return true;

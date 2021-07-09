@@ -369,7 +369,7 @@ class Levels {
     if (!sourceToken) return;
     //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      if (token.data.hidden) token.levelsVisible = undefined;
+      
       if (
         token == sourceToken ||
         (!game.user.isGM &&
@@ -378,6 +378,7 @@ class Levels {
         //token.data.hidden
       )
         continue;
+        if (token.data.hidden) token.levelsVisible = undefined;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
@@ -488,10 +489,8 @@ class Levels {
     if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
     Object.defineProperty(sprite, "filters", {
-      get() {
-        return tileImg.filters;
-      },
-    });
+      get() { return tileImg.filters?.filter(f => !(f instanceof InverseOcclusionMaskFilter)); }
+  });
     sprite.isSprite = true;
     sprite.width = tile.data.width;
     sprite.height = tile.data.height;
