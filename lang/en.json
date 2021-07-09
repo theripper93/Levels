@@ -42,6 +42,7 @@
     "levels.tokenconfig.tokenHeight.name": "Token LOS Height",
     "levels.tokenconfig.tokenHeight.unit": "(Distance)",
     "levels.template.elevation.name": "Elevation",
+    "levels.template.special.name": "Special",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",

@@ -580,8 +580,10 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 Hooks.on("preCreateMeasuredTemplate", (template) => {
   const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
   let elevation;
-  if (_levels.nextTemplateHeight) {
+  let special
+  if (_levels.nextTemplateHeight !== undefined) {
     elevation = _levels.nextTemplateHeight;
+    special = _levels.nextTemplateSpecial;
     _levels.nextTemplateHeight = undefined;
     _levels.templateElevation = false;
     _levelsTemplateTool.active = false;
@@ -591,5 +593,5 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
   } else {
     elevation = cToken?.data?.elevation ?? 0;
   }
-  template.data.update({ flags: { levels: { elevation: elevation } } });
+  template.data.update({ flags: { levels: { elevation: elevation,special:special } } });
 });

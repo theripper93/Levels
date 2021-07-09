@@ -394,8 +394,8 @@ class Levels {
         this.removeTempTokenOverhead(token);
         this.getTokenIconSprite(token);
       } else if (
-        token.data.elevation == sourceToken.data.elevation &&
-        token.visible || !token.visible
+        (token.data.elevation == sourceToken.data.elevation && token.visible) ||
+        !token.visible
       ) {
         token.icon.alpha = token.data.hidden
           ? Math.min(token.data.alpha, 0.5)
@@ -487,6 +487,11 @@ class Levels {
     let tileImg = tile.children[0];
     if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
+    Object.defineProperty(sprite, "filters", {
+      get() {
+        return tileImg.filters;
+      },
+    });
     sprite.isSprite = true;
     sprite.width = tile.data.width;
     sprite.height = tile.data.height;
@@ -1195,7 +1200,11 @@ class Levels {
   getSpriteCopy(oldSprite, icon, token, x, y) {
     let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
     sprite.isSprite = true;
-
+    Object.defineProperty(sprite, "filters", {
+      get() {
+        return icon.filters;
+      },
+    });
     const tex = token.texture;
     if (tex) {
       let aspect = tex.width / tex.height;
@@ -1454,6 +1463,15 @@ class Levels {
     </div>
     </div>
     <p></p>
+    <div class="form-group">
+    <label for="special">${game.i18n.localize(
+      "levels.template.special.name"
+    )}</label>
+    <div class="form-fields">
+        <input type="number" name="special" data-dtype="Number" value="0" step="1">
+    </div>
+    </div>
+    <p></p>
     `;
     let ignoreClose = false;
     let toolhtml = $("body").find(`li[data-tool="setTemplateElevation"]`);
@@ -1466,6 +1484,9 @@ class Levels {
           callback: (html) => {
             _levels.nextTemplateHeight = html.find(
               `input[name="templateElevation"]`
+            )[0].valueAsNumber;
+            _levels.nextTemplateSpecial = html.find(
+              `input[name="special"]`
             )[0].valueAsNumber;
             _levels.templateElevation = true;
             ignoreClose = true;
@@ -1480,6 +1501,7 @@ class Levels {
           label: game.i18n.localize("levels.yesnodialog.no"),
           callback: () => {
             _levels.nextTemplateHeight = undefined;
+            _levels.nextTemplateSpecial = undefined;
             _levels.templateElevation = false;
             tool.active = false;
             if (toolhtml[0])
@@ -1496,6 +1518,7 @@ class Levels {
           return;
         }
         _levels.nextTemplateHeight = undefined;
+        _levels.nextTemplateSpecial = undefined;
         _levels.templateElevation = false;
         tool.active = false;
         if (toolhtml[0])
@@ -1728,9 +1751,6 @@ class Levels {
         const hbottom = hole.range[0];
         const htop = hole.range[1];
         if (zz > htop || zz < hbottom) continue;
-        if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
-          return false;
-        }
         if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
           return false;
         }
