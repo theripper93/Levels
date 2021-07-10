@@ -1613,8 +1613,8 @@ class Levels {
   getFlagsForObject(object) {
     let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
     let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
-    if (!rangeTop && rangeTop != 0) rangeTop = Infinity;
-    if (!rangeBottom && rangeBottom != 0) rangeBottom = -Infinity;
+    if (!rangeTop && rangeTop !== 0) rangeTop = Infinity;
+    if (!rangeBottom && rangeBottom !== 0) rangeBottom = -Infinity;
     let isLevel = rangeTop == Infinity ? false : true;
     if (
       rangeTop == Infinity &&
@@ -1667,7 +1667,10 @@ class Levels {
    **/
 
   isTokenInRange(token, object) {
-    const { rangeBottom, rangeTop } = this.getFlagsForObject(object);
+    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
+    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
+    if (!rangeTop && rangeTop !== 0) rangeTop = Infinity;
+    if (!rangeBottom && rangeBottom !== 0) rangeBottom = -Infinity;
     const elevation = token.data.elevation;
     return elevation <= rangeTop && elevation >= rangeBottom;
   }
