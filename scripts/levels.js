@@ -36,6 +36,7 @@ class Levels {
       _levelsModuleName,
       "preciseTokenVisibility"
     );
+    this.tokenElevScaleMultiSett = game.settings.get(_levelsModuleName, "tokenElevScaleMultiSett");
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -673,7 +674,7 @@ class Levels {
           );
           if (HeightDiff === 0) HeightDiff = 1;
           let HeightDiffFactor = Math.sqrt(HeightDiff / 8);
-          elevScaleFactor = 1 / HeightDiffFactor > 1 ? 1 : 1 / HeightDiffFactor;
+          elevScaleFactor = this.tokenElevScaleMultiSett / HeightDiffFactor > 1 ? 1 : this.tokenElevScaleMultiSett / HeightDiffFactor;
           token.elevationScaleFactor =
             token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1;
         }

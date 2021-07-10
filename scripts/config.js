@@ -105,6 +105,18 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "tokenElevScaleMultiSett", {
+    name: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.name"),
+    hint: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.hint"),
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1,
+    onChange: (setting) => {
+      _levels.tokenElevScaleMultiSett = setting;
+    },
+  });
+
   game.settings.register(_levelsModuleName, "fogHiding", {
     name: game.i18n.localize("levels.settings.fogHiding.name"),
     hint: game.i18n.localize("levels.settings.fogHiding.hint"),
@@ -579,6 +591,7 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
   const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
+  const handMode = (typeof LevelsVolumetricTemplates !== 'undefined') && LevelsVolumetricTemplates.tools.handMode && cToken ? Math.round((_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation)*0.8) : 0
   let elevation;
   let special
   if (_levels.nextTemplateHeight !== undefined) {
@@ -591,7 +604,7 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
         .find(`li[data-tool="setTemplateElevation"]`)
         .removeClass("active");
   } else {
-    elevation = cToken?.data?.elevation ?? 0;
+    elevation = cToken?.data?.elevation+handMode ?? 0;
   }
   template.data.update({ flags: { levels: { elevation: elevation,special:special } } });
 });
