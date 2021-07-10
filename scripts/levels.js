@@ -1684,10 +1684,10 @@ class Levels {
    **/
 
   findCurrentFloorForElevation(elevation, floors) {
-    floors.forEach((floor) => {
+    for(let floor of floors){
       if (elevation <= floor.range[1] && elevation >= floor.range[0])
         return floor.range;
-    });
+    };
     return false;
   }
 

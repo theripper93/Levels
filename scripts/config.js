@@ -604,7 +604,7 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
         .find(`li[data-tool="setTemplateElevation"]`)
         .removeClass("active");
   } else {
-    elevation = cToken?.data?.elevation+handMode ?? 0;
+    elevation = cToken?.data?.elevation+handMode || 0;
   }
   template.data.update({ flags: { levels: { elevation: elevation,special:special } } });
 });
