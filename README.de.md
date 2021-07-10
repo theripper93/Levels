@@ -6,6 +6,9 @@ Erstellen von Maps mit mehreren vertikalen Ebenen
 Andere Sprachen: [English](README.md), [Deutsch](README.de.md)
 
 ## [Video Tuorial by Baileywiki](https://youtu.be/ELlweNunn4g)
+## [Video Tuorial by Baileywiki pt2](https://youtu.be/_nynikU9_ao)
+
+*Das Modul ist kostenlos, aber wenn Sie Karten verkaufen, die meine Module verwenden, benötigen Sie eine kommerzielle Lizenz, die auf meinem Patreon erhältlich ist
 
 **Wie man es benutzt:**
 
@@ -27,25 +30,40 @@ Sie können die UI der Ebenen nutzen, um sich die Arbeit zu erleichtern, wählen
 
 Ihre Token ändern die Ebenen, indem sie ihre Höhe ändern, Sie können auch Zonen mit Zeichnungen einrichten, um die Höhe automatisch zu ändern
 
-### **BEKANNTE PROBLEME** UNVERTRÄGLICHKEITEN**
+# **BEKANNTE PROBLEME** UNVERTRÄGLICHKEITEN**
 
-* ### **Weniger Nebel**: Die Berechnung der Token-Sichtbarkeit für Ebenen funktioniert nicht mehr korrekt
-* ### **Perfekte Sicht**: Token in Löchern erscheinen möglicherweise nicht in Schwarz-Weiß, mögliche andere Probleme vorhanden
-### **Licht emittierende Spielsteine**: Token, die Licht emittieren, werden derzeit in Löchern nicht unterstützt, da die Leistung von Lichtquellen, die sich bewegen, beeinträchtigt wird
+* ### **Midi-qol**: Wenn Sie die Option "Players control owned hidden tokens" in Midi aktiviert haben, erhalten Sie einen libwrapper-Fehler, deaktivieren Sie diese Option, um das Problem zu beheben
+* ### **Perfect Vision**: Token in Löchern erscheinen möglicherweise nicht in schwarz-weiß, mögliche andere Probleme vorhanden
+* ### **Licht emittierende Marken**: Token, die Licht ausstrahlen, werden derzeit in Löchern nicht unterstützt, da die Leistung von Lichtquellen, die sich bewegen, beeinträchtigt wird
+* ### **Lichter werden nicht korrekt gerendert**: Manchmal führt das Umschalten zwischen Token dazu, dass einige Lichter mit den falschen Wänden gerendert werden, ich habe keine Lösung gefunden, aber es ist generell ein GM-only Problem
+### **Nebelerkundung wird in Levels nicht gespeichert**: Aufgrund von Foundry-Limitierungen und Performance-Bedenken unter anderem, wenn Sie die erweiterte Nebel-Option verwenden, wird die Nebel-Erkundung für einen Level nicht gespeichert. Wenn Sie die Option deaktiviert haben, wird bei der Erkundung eines Stockwerks derselbe Bereich in allen anderen Stockwerken aufgedeckt.
 
-### **API**
+# **API**
 
-**Patched canvas.walls.checkCollision Methode, um gegen eine bestimmte Höhe zu prüfen**
+**Methode canvas.walls.checkCollision zur Prüfung auf eine bestimmte Höhe gepatcht**
 
 ```js
   checkCollision(ray, options, elevation) → {boolean}
 ```
 
-**Die Deckenhöhe eines oder mehrerer Token ermitteln**
+**Finden Sie heraus, ob ein Token im Bereich eines bestimmten Objekts liegt**
+
+```js
+ /**
+   * Herausfinden, ob ein Token im Bereich eines bestimmten Objekts liegt
+   * @param {Object} Token - ein Token
+   * @param {Object} object - eine Kachel/Zeichnung/Licht/Note
+   * @returns {Boolean} - true wenn im Bereich, false wenn nicht
+   **/
+
+    _levels.isTokenInRange(token,object)
+```
+
+**Ermittelt die Deckenhöhe eines oder mehrerer Token**
 
 ```js
   /**
-   * Holt den Boden und die Decke von einem oder mehreren Token.
+   * Ermittelt den Floor und Ceiling eines oder mehrerer Token.
    * @param {Object|Object[]|String|String[]} tokenIds - Ein Token, ein Array von Token, eine Token-ID oder ein Array von Token-IDs
    * @returns {Object|Object[]} - gibt ein Objekt zurück, das Token als Token-Objekt und range als Array mit 0 = Floor 1 = Ceiling enthält
   **/
@@ -98,3 +116,39 @@ BEISPIEL:
 _levels.findCurrentFloorForElevation(10,_levels.getFloorsForPoint({ x : token.center.x , y : token.center.y }))
 ```
 Gibt zurück, in welchem Stockwerk eines Gebäudes sich eine beliebige Entität (gegeben ein Punkt und eine Höhe) befindet. Gibt False zurück, wenn es sich in keinem befindet
+
+## **3D-KOLLISIONSPRÜFUNG**
+
+```js
+  /**
+   * Führt eine Kollisionsprüfung zwischen 2 TOKEN im 3D-Raum durch
+   * @param {Object} token1 - ein Punkt im 3d-Raum {x:x,y:y,z:z}, wobei z die Höhe ist
+   * @param {Object} token2 - ein Punkt im 3D-Raum {x:x,y:y,z:z}, wobei z die Höhe ist
+   * @param {String} type - "Sicht" oder "Kollision" (Standardwert ist "Sicht")
+   * @returns {Boolean} gibt true zurück, wenn eine Kollision erkannt wird, flase wenn nicht
+  **/
+
+  _levels.checkCollision(token1, token2, type = "sight")
+```
+
+```js
+  /**
+   * Ermittelt die gesamte LOS-Höhe für ein Token
+   * @param {Object} token - ein Token-Objekt
+   * @returns {Integer} liefert die Token-Höhe plus die in den Flags gespeicherte LOS-Höhe
+  **/
+
+  _levels.getTokenLOSheight(token)
+```
+
+```js
+  /**
+   * Durchführen eines Kollisionstests zwischen 2 Punkten im 3D-Raum
+   * @param {Object} p0 - ein Punkt im 3d-Raum {x:x,y:y,z:z} wobei z die Höhe ist
+   * @param {Object} p1 - ein Punkt im 3D-Raum {x:x,y:y,z:z}, wobei z die Höhe ist
+   * @param {String} type - "Sicht" oder "Kollision" (Standardwert ist "Sicht")
+   * @returns {Boolean} gibt true zurück, wenn eine Kollision erkannt wird, flase wenn nicht
+  **/
+
+  _levels.testCollision(p0, p1, type = "sight")
+```
