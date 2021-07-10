@@ -4,6 +4,8 @@
     "levels.settings.enableTooltips.hint": "Tooltips mit Ober- und Unterseite anzeigen, wenn der Mauszeiger über Levels-Objekten schwebt",
     "levels.settings.tokenElevScale.name": "Token-Größe basierend auf der Höhe ändern",
     "levels.settings.tokenElevScale.hint": "Größe der Token basierend auf der Elevation des kontrollierten Tokens ändern",
+    "levels.settings.tokenElevScaleMultiSett.name":"Aufzugsskala benutzerdefinierter Multiplikator",
+    "levels.settings.tokenElevScaleMultiSett.hint":"Multiplizieren Sie die Aufzugsskala mit dieser Zahl. Eine Zahl, die größer als 1 ist, macht Token größer, eine kleinere als 1 macht sie kleiner",
     "levels.settings.fogHiding.name": "Erweiterte Kriegsnebel",
     "levels.settings.fogHiding.hint": "Unerforschte Etagen vor dem erforschten Fog of War verstecken",
     "levels.settings.lockElevation.name": "Sperre Aufzug",
