@@ -36,7 +36,10 @@ class Levels {
       _levelsModuleName,
       "preciseTokenVisibility"
     );
-    this.tokenElevScaleMultiSett = game.settings.get(_levelsModuleName, "tokenElevScaleMultiSett");
+    this.tokenElevScaleMultiSett = game.settings.get(
+      _levelsModuleName,
+      "tokenElevScaleMultiSett"
+    );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
   }
@@ -370,7 +373,6 @@ class Levels {
     if (!sourceToken) return;
     //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      
       if (
         token == sourceToken ||
         (!game.user.isGM &&
@@ -379,7 +381,7 @@ class Levels {
         //token.data.hidden
       )
         continue;
-        if (token.data.hidden) token.levelsVisible = undefined;
+      if (token.data.hidden) token.levelsVisible = undefined;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
@@ -490,8 +492,12 @@ class Levels {
     if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
     Object.defineProperty(sprite, "filters", {
-      get() { return tileImg.filters?.filter(f => !(f instanceof InverseOcclusionMaskFilter)); }
-  });
+      get() {
+        return tileImg.filters?.filter(
+          (f) => !(f instanceof InverseOcclusionMaskFilter)
+        );
+      },
+    });
     sprite.isSprite = true;
     sprite.width = tile.data.width;
     sprite.height = tile.data.height;
@@ -674,7 +680,10 @@ class Levels {
           );
           if (HeightDiff === 0) HeightDiff = 1;
           let HeightDiffFactor = Math.sqrt(HeightDiff / 8);
-          elevScaleFactor = this.tokenElevScaleMultiSett / HeightDiffFactor > 1 ? 1 : this.tokenElevScaleMultiSett / HeightDiffFactor;
+          elevScaleFactor =
+            this.tokenElevScaleMultiSett / HeightDiffFactor > 1
+              ? 1
+              : this.tokenElevScaleMultiSett / HeightDiffFactor;
           token.elevationScaleFactor =
             token.id != canvas.tokens.controlled[0].id ? elevScaleFactor : 1;
         }
@@ -1071,7 +1080,21 @@ class Levels {
         }
       }
       token.inStair = inStair;
-      if (newUpdates) token.update(newUpdates);
+      if (newUpdates) {
+        const s = canvas.dimensions.size;
+        const oldToken = canvas.tokens.get(token.id);
+        const updateX = updates.x || oldToken.x
+        const updateY = updates.y || oldToken.y
+        const dist = Math.sqrt(
+          Math.pow(oldToken.x - updateX, 2) +
+            Math.pow(oldToken.y - updateY, 2)
+        );
+        const speed = s * 10;
+        const duration = (dist * 1000) / speed;
+        setTimeout(function () {
+          token.update(newUpdates);
+        }, duration);
+      }
     }
   }
 
@@ -1684,10 +1707,10 @@ class Levels {
    **/
 
   findCurrentFloorForElevation(elevation, floors) {
-    for(let floor of floors){
+    for (let floor of floors) {
       if (elevation <= floor.range[1] && elevation >= floor.range[0])
         return floor.range;
-    };
+    }
     return false;
   }
 
