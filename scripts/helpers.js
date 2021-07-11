@@ -336,6 +336,7 @@ function _levelsTokenIsVisible() {
     });
   } else {
     const gm = game.user.isGM;
+    if(gm && _levels.UI && _levels.UI.rangeEnabled === true) return this.data.elevation <= _levels.UI.range[1] && this.data.elevation >= _levels.UI.range[0]
     if (
       this.levelsVisible === true ||
       (this.levelsVisible === false && canvas.tokens.controlled[0])
