@@ -49,6 +49,12 @@ Hooks.on("init", () => {
   );
   libWrapper.register(
     _levelsModuleName,
+    "MeasuredTemplate.prototype._refreshRulerText",
+    _levelsRefreshRulerText,
+    "OVERRIDE"
+  );
+  libWrapper.register(
+    _levelsModuleName,
     "Token.prototype.isVisible",
     _levelsTokenIsVisible,
     "OVERRIDE"
@@ -598,6 +604,7 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     elevation = _levels.nextTemplateHeight;
     special = _levels.nextTemplateSpecial;
     _levels.nextTemplateHeight = undefined;
+    _levels.nextTemplateSpecial = undefined
     _levels.templateElevation = false;
     _levelsTemplateTool.active = false;
       $("body")

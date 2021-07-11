@@ -135,7 +135,7 @@ class LevelsUI {
           },
         },
       },
-      default: "close",
+      default: "confirm",
       close: () => {
         this.readLevels();
         this.renderHud(this.rangeEnabled);

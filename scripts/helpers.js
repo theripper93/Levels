@@ -418,6 +418,29 @@ async function _levelsTemplatedraw() {
   return this;
 }
 
+  /**
+   * Update the displayed ruler tooltip text
+   * @private
+   */
+   function _levelsRefreshRulerText() {
+    let special = this.data.flags.levels?.special || _levels?.nextTemplateSpecial
+    let text;
+    let u = canvas.scene.data.gridUnits;
+    if ( this.data.t === "rect" ) {
+      let d = canvas.dimensions;
+      let dx = Math.round(this.ray.dx) * (d.distance / d.size);
+      let dy = Math.round(this.ray.dy) * (d.distance / d.size);
+      let w = Math.round(dx * 10) / 10;
+      let h = Math.round(dy * 10) / 10;
+      text = special ? `${w}${u} x ${h}${u} x ${special}${u}` : `${w}${u} x ${h}${u}`;
+    } else {
+      let d = Math.round(this.data.distance * 10) / 10;
+      text = special ? `${d}${u} x ${special}${u}` : `${d}${u}`;
+    }
+    this.ruler.text = text;
+    this.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
+  }
+
 function _levelsTokenCheckCollision(destination) {
   // Create a Ray for the attempted move
   let origin = this.getCenter(...Object.values(this._validPosition));
