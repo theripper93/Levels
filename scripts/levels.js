@@ -38,6 +38,10 @@ class Levels {
     );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
+    //Module Compatibility
+    this.modules = {};
+    this.modules.PerfectVision = {}
+    this.modules.PerfectVision.Active = game.modules.get("perfect-vision")?.active
   }
 
   /**********************************************
@@ -409,7 +413,7 @@ class Levels {
 
   tokenInRange(sourceToken, token) {
     const dist = this.getUnitTokenDist(sourceToken, token);
-    const range = canvas.lighting.globalLight
+    let range = canvas.lighting.globalLight
       ? Infinity
       : Math.max(
           sourceToken.data.dimSight,
@@ -417,6 +421,10 @@ class Levels {
           sourceToken.data.dimLight,
           sourceToken.data.brightLight
         );
+      if(this.modules.PerfectVision.Active){
+        const pvRange = this.getPerfectVisionVisionRange(sourceToken)
+        if(pvRange) range = Math.min(pvRange,range)
+      }
     return dist <= range;
   }
 
@@ -1645,6 +1653,19 @@ class Levels {
       if (!oldcontainer) canvas.controls.debug.addChild(g);
     }
   }
+
+/**********************************
+ * MODULE COMPATIBILITY FUNCTIONS *
+ **********************************/
+
+getPerfectVisionVisionRange(token) {
+  let sightLimit = parseFloat(token.document.getFlag("perfect-vision", "sightLimit"));
+
+  if (Number.isNaN(sightLimit)) {
+      sightLimit = parseFloat(canvas.scene?.getFlag("perfect-vision", "sightLimit"));
+  }
+  return sightLimit;
+}
 
   /*****************
    * API FUNCTIONS *
