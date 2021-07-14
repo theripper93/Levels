@@ -21,7 +21,7 @@ Hooks.on("betterRoofsReady", () => {
 });
 
 Hooks.on("sightRefresh", () => {
-  if (_levels && canvas.scene.data.tokenVision) {
+  if (_levels && canvas.sight.tokenVision) {
     _levels._levelsOnSightRefresh();
     //Raycast Debug
     _levels.raycastDebug();
@@ -52,7 +52,9 @@ Hooks.on("updateToken", (token, updates) => {
     let nt = canvas.tokens.get(token.id)
     _levels.removeTempTokenOverhead(token);
     _levels.removeTempToken(token);
-    nt.icon.alpha = game.user.isGM ? 0.5 : 1;
+    nt.icon.alpha = token.data.hidden
+    ? Math.min(token.data.alpha, 0.5)
+    : token.data.alpha;
     nt.levelsHidden = false;
     nt.levelsVisible = undefined;
   }

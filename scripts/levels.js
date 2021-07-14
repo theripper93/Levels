@@ -296,8 +296,8 @@ class Levels {
   }
 
   advancedLosTestVisibility(sourceToken, token) {
-    if (canvas.scene.data.tokenVision === false) return true;
     const gm = game.user.isGM;
+    if (canvas.scene.data.tokenVision === false) return (gm || !token.data.hidden);
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
     const inLOS = !this.advancedLosTestInLos(sourceToken, token);
@@ -377,7 +377,7 @@ class Levels {
         //token.data.hidden
       )
         continue;
-      if (token.data.hidden) token.levelsVisible = undefined;
+      //if (token.data.hidden) token.levelsVisible = undefined;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
@@ -553,7 +553,7 @@ class Levels {
   }
 
   _onElevationChangeUpdate(overrideElevation = undefined) {
-    if (!this.init) this._levelsOnSightRefresh();
+    if (!this.init && canvas.sight.tokenVision) this._levelsOnSightRefresh();
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];

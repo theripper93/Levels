@@ -199,6 +199,15 @@ Hooks.on("init", () => {
     default: false,
   });
 
+  game.settings.register(_levelsModuleName, "forceUiRefresh", {
+    name: game.i18n.localize("levels.settings.forceUiRefresh.name"),
+    hint: game.i18n.localize("levels.settings.forceUiRefresh.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
   game.settings.register(_levelsModuleName, "debugRaycast", {
     name: game.i18n.localize("levels.settings.debugRaycast.name"),
     hint: game.i18n.localize("levels.settings.debugRaycast.hint"),

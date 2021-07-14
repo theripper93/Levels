@@ -22,7 +22,9 @@
     "levels.settings.preciseTokenVisibility.hint": "Enabling this option will check for sight against corners of the token in addition to the center at the cost of some performance",
     "levels.settings.blockSightMovement.name":"Fence",
     "levels.settings.blockSightMovement.hint":"When enabled, walls with height that does not restrict vision will still restrict movement",
-    
+    "levels.settings.forceUiRefresh.name":"Force UI refresh",
+    "levels.settings.forceUiRefresh.hint": "Forces more frequent refreshes of the levels UI at the cost of performance, if enabled may cause issues on specific systems (eg. PF2e)",
+
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
     "levels.tilecoonfig.showIfAbove.name": "Show even when below?",

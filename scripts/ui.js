@@ -828,10 +828,15 @@ Hooks.on("ready", () => {
       }
     });
 
-    Hooks.on("renderSceneControls", () => {
-      if (_levels.UI.rangeEnabled) _levels.UI.refreshLevels();
-    });
   }
+});
+
+Hooks.on("renderSceneControls", () => {
+  if (_levels?.UI?.rangeEnabled && !game.settings.get(_levelsModuleName, "forceUiRefresh")) _levels.UI.refreshLevels();
+});
+
+Hooks.on("renderApplication", () => {
+  if (_levels?.UI?.rangeEnabled && game.settings.get(_levelsModuleName, "forceUiRefresh")) _levels.UI.refreshLevels();
 });
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
