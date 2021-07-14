@@ -62,7 +62,7 @@ Hooks.on("updateToken", (token, updates) => {
 Hooks.on("controlToken", (token, controlled) => {
   let ElevDiff;
   if (_levels) ElevDiff = token.data.elevation != _levels.currentElevation;
-  if (controlled) {
+  if (_levels && controlled) {
     token.visible = true;
     token.levelsVisible = true;
     token.icon.alpha = token.data.hidden

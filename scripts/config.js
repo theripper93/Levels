@@ -178,18 +178,6 @@ Hooks.on("init", () => {
     default: true,
   });
 
-  game.settings.register(_levelsModuleName, "preciseLightOcclusion", {
-    name: game.i18n.localize("levels.settings.preciseLightOcclusion.name"),
-    hint: game.i18n.localize("levels.settings.preciseLightOcclusion.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (setting) => {
-      _levels.preciseLightOcclusion = setting;
-    },
-  });
-
   game.settings.register(_levelsModuleName, "preciseTokenVisibility", {
     name: game.i18n.localize("levels.settings.preciseTokenVisibility.name"),
     hint: game.i18n.localize("levels.settings.preciseTokenVisibility.hint"),
