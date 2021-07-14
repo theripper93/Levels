@@ -163,7 +163,7 @@ class Levels {
     //Declare constants
 
     const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    const cTokenElev = cToken.data.elevation;
+    const cTokenElev = cToken ? cToken.data.elevation : this.currentElevation;
 
     //If a tile is not a roof and it's not set to show if it's above, hide it
 
@@ -766,11 +766,11 @@ class Levels {
     }
   }
 
-  debounceElevationChange(timeout) {
+  debounceElevationChange(timeout,token) {
     if (!this.updateQueued) {
       this.elevUpdateQueued = true;
       setTimeout(() => {
-        this._onElevationChangeUpdate();
+        this._onElevationChangeUpdate(token);
         this.elevUpdateQueued = false;
       }, timeout);
     }

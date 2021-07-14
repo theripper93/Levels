@@ -79,7 +79,7 @@ Hooks.on("controlToken", (token, controlled) => {
   } else {
     if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
     if (_levels && !controlled && token) {
-      if (ElevDiff) _levels._onElevationChangeUpdate(token);
+      if(ElevDiff || !game.user.isGM)_levels._onElevationChangeUpdate(token);
       if(!game.user.isGM)_levels.lastReleasedToken = token;
     }
   }
