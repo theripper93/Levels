@@ -28,10 +28,6 @@ class Levels {
       "defaultLosHeight"
     );
     this.advancedLOS = true;
-    this.preciseLightOcclusion = game.settings.get(
-      _levelsModuleName,
-      "preciseLightOcclusion"
-    );
     this.preciseTokenVisibility = game.settings.get(
       _levelsModuleName,
       "preciseTokenVisibility"
@@ -571,9 +567,9 @@ class Levels {
     this.computeSounds(cToken);
     this.computeNotes(cToken);
     this.computeDrawings(cToken);
-    let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
+    //let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     let lights = this.getLights();
-    this.clearLights(lights);
+    //this.clearLights(lights);
     for (let light of lights) {
       this.lightComputeRender(light, cToken.data.elevation, holes, allTiles)
     }
