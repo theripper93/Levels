@@ -423,7 +423,7 @@ class Levels {
         );
       if(this.modules.PerfectVision.Active){
         const pvRange = this.getPerfectVisionVisionRange(sourceToken)
-        if(pvRange) range = Math.min(pvRange,range)
+        if(pvRange || pvRange===0) range = Math.min(pvRange,range)
       }
     return dist <= range;
   }
@@ -776,6 +776,7 @@ class Levels {
     }
   }
 
+  //Remove this
   computeLightsForTile(tile, lights, elevation, holes) {
     let lightsToOcclude = [];
     let lightsToUnocclude = [];
