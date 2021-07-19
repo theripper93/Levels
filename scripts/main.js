@@ -1,5 +1,7 @@
 const _levelsModuleName = "levels";
 let _levels;
+let _levelsListOfPlayers = { ['unknownPlayerId']: '' };
+
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
   _levels.getTokensState(_levels.findAllTiles());

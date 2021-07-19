@@ -95,6 +95,11 @@ Hooks.once('ready', () => {
           }
       }).render(true);
   }
+  
+  // Get Users For Settings
+  game.users.forEach((user) => {
+    _levelsListOfPlayers[user.id] = user.name;
+  });
 });
 
 Hooks.on("init", () => {
@@ -218,6 +223,16 @@ Hooks.on("init", () => {
     onChange: (setting) => {
       _levels.RAYS = setting;
     },
+  });
+  game.settings.register(_levelsModuleName, 'streamUserId', {
+    name: game.i18n.localize('levels.settings.stream-user-id.name'),
+    hint: game.i18n.localize('levels.settings.stream-user-id.hint'),
+    scope: 'world',
+    config: true,
+    restricted: true,
+    choices: _levelsListOfPlayers,
+    default: 'unknownPlayerID',
+    type: String,
   });
 });
 

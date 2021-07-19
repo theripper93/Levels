@@ -23,6 +23,9 @@
     "levels.settings.blockSightMovement.name": "Zaun",
     "levels.settings.blockSightMovement.hint": "Wenn aktiviert, schränken Wände mit einer Höhe, die die Sicht nicht einschränkt, trotzdem die Bewegung ein",
     
+    "levels.settings.stream-user-id.name": "Stream Player ID",
+    "levels.settings.stream-user-id.hint": "Passt die Charakterhöhe an die GM-Höhe an. WARNUNG (Am besten verwendet mit einzelnem GM).",
+
     "levels.tilecoonfig.rangeTop.name": "Höhe (oben)",
     "levels.tilecoonfig.rangeBottom.name": "Höhe (Unten)",
     "levels.tilecoonfig.showIfAbove.name": "Auch anzeigen, wenn unten?",

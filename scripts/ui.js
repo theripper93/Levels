@@ -402,8 +402,24 @@ class LevelsUI {
 
   refreshLevels() {
     this.range = this.definedLevels[this.currentLevel];
+    if (game.settings.get(_levelsModuleName, "streamUserId") != 'unknownPlayerId') {
+      this.setStreamTokenElevation(this.range);
+    }
     this.renderHud(this.rangeEnabled);
     this.computeLevelsVisibility(this.range);
+  }
+
+  setStreamTokenElevation = (range) => {
+    let streamUserToken = canvas.tokens.placeables.filter(token => {
+      return token.actor.data.permission[game.settings.get(_levelsModuleName, "streamUserId")] == 3;
+    });
+    
+    // Check if token was found
+    if (streamUserToken.length > 0) {
+      streamUserToken[0].update({
+        elevation: range[0]
+      });
+    }
   }
 
   computeLevelsVisibility(range) {
