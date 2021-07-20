@@ -1131,6 +1131,9 @@ class Levels {
         }
       }
       token.inStair = inStair;
+      if(!inStair){
+        $("#levels-elevator").closest(".app").find(`a[class="header-button close"]`).click()
+      }
       if (newUpdates) {
         const s = canvas.dimensions.size;
         const oldToken = canvas.tokens.get(token.id);
