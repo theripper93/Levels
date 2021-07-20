@@ -14,6 +14,7 @@ Hooks.on("canvasReady", () => {
       _levels.init = true;
     }
   });
+  Hooks.callAll("levelsReady");
 });
 
 Hooks.on("betterRoofsReady", () => {
