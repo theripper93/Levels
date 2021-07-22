@@ -119,6 +119,11 @@ Hooks.on("renderSceneControls", () => {
     );
 });
 
+Hooks.on("deleteToken", (token) => {
+  _levels.removeTempTokenOverhead(token);
+  _levels.removeTempToken(token);
+})
+
 /*********************
  * DISPATCH WARNINGS *
  *********************/
