@@ -30,7 +30,7 @@ function _levelsTokenRefresh() {
     ? 0
     : Math.toRadians(this.data.rotation);
   this.icon.position.set(this.w / 2, this.h / 2);
-  if (!this.levelsHidden) {
+  if (!this.levelsHidden || this._controlled) {
     this.icon.alpha = this.data.hidden
       ? Math.min(this.data.alpha, 0.5)
       : this.data.alpha;

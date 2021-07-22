@@ -40,8 +40,9 @@ class Levels {
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
     //Module Compatibility
     this.modules = {};
-    this.modules.PerfectVision = {}
-    this.modules.PerfectVision.Active = game.modules.get("perfect-vision")?.active
+    this.modules.PerfectVision = {};
+    this.modules.PerfectVision.Active =
+      game.modules.get("perfect-vision")?.active;
   }
 
   /**********************************************
@@ -164,11 +165,15 @@ class Levels {
 
     const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     const cTokenElev = cToken ? cToken.data.elevation : this.currentElevation;
+    const cTokenLos = cToken
+      ? this.getTokenLOSheight(cToken)
+      : this.currentElevation;
 
     //If a tile is not a roof and it's not set to show if it's above, hide it
 
-    if (tile.range[1] != Infinity && !tile.showIfAbove)
+    if (tile.range[1] != Infinity && !tile.showIfAbove) {
       tile.tile.visible = false;
+    }
 
     //If a tile is a roof, hide it if the token is underground, otherwise show it
 
@@ -185,6 +190,8 @@ class Levels {
           tile.tile.isLevel = true;
         }
       }
+      if (cTokenLos >= tile.range[0]) tile.tile.dontMask = true;
+      else tile.tile.dontMask = false;
     }
 
     //Compute the visibility of show if it's above tiles separately as they are a special case
@@ -301,7 +308,8 @@ class Levels {
 
   advancedLosTestVisibility(sourceToken, token) {
     const gm = game.user.isGM;
-    if (canvas.scene.data.tokenVision === false) return (gm || !token.data.hidden);
+    if (canvas.scene.data.tokenVision === false)
+      return gm || !token.data.hidden;
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
     const inLOS = !this.advancedLosTestInLos(sourceToken, token);
@@ -421,10 +429,10 @@ class Levels {
           sourceToken.data.dimLight,
           sourceToken.data.brightLight
         );
-      if(this.modules.PerfectVision.Active){
-        const pvRange = this.getPerfectVisionVisionRange(sourceToken)
-        if(pvRange || pvRange===0) range = Math.min(pvRange,range)
-      }
+    if (this.modules.PerfectVision.Active) {
+      const pvRange = this.getPerfectVisionVisionRange(sourceToken);
+      if (pvRange || pvRange === 0) range = Math.min(pvRange, range);
+    }
     return dist <= range;
   }
 
@@ -579,7 +587,7 @@ class Levels {
     let lights = this.getLights();
     //this.clearLights(lights);
     for (let light of lights) {
-      this.lightComputeRender(light, cToken.data.elevation, holes, allTiles)
+      this.lightComputeRender(light, cToken.data.elevation, holes, allTiles);
     }
     allTiles.forEach((tile) => {
       this.computeTile(
@@ -588,7 +596,7 @@ class Levels {
         lights
       );
     });
-  /*  allTiles.forEach((tile) => {
+    /*  allTiles.forEach((tile) => {
       this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
       this.computeTile(
         tile,
@@ -621,9 +629,13 @@ class Levels {
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
     this.lightClearOcclusions(lightIndex);
-    lightIndex.light.source.skipRender =
-      !(lightIndex.range[0] <= elevation && lightIndex.range[1] >= elevation);
-    if (lightIndex.range[1] <= elevation && this.lightIluminatesHole(lightIndex, holes, elevation)) {
+    lightIndex.light.source.skipRender = !(
+      lightIndex.range[0] <= elevation && lightIndex.range[1] >= elevation
+    );
+    if (
+      lightIndex.range[1] <= elevation &&
+      this.lightIluminatesHole(lightIndex, holes, elevation)
+    ) {
       lightIndex.light.source.skipRender = false;
       this.lightComputeOcclusion(lightIndex, elevation, allTiles);
     }
@@ -649,7 +661,7 @@ class Levels {
   }
 
   lightClearOcclusions(lightIndex) {
-    if(!lightIndex.light.occlusionTiles) return;
+    if (!lightIndex.light.occlusionTiles) return;
     for (let tile of lightIndex.light.occlusionTiles) {
       this.unoccludeLights(tile, lightIndex);
     }
@@ -766,7 +778,7 @@ class Levels {
     }
   }
 
-  debounceElevationChange(timeout,token) {
+  debounceElevationChange(timeout, token) {
     if (!this.updateQueued) {
       this.elevUpdateQueued = true;
       setTimeout(() => {
@@ -846,15 +858,12 @@ class Levels {
   }
 
   lightIluminatesHole(light, holes, elevation) {
-    if (!light.light.source.fov) return false;
+    if (!light.light.source.fov || !light.light.center) return false;
     for (let hole of holes) {
       if (
         elevation <= hole.range[1] &&
         elevation >= hole.range[0] &&
-        hole.poly.contains(
-          light.light.center.x,
-          light.light.center.y
-        )
+        hole.poly.contains(light.light.center.x, light.light.center.y)
       ) {
         return true;
       }
@@ -883,18 +892,18 @@ class Levels {
     let tileImg = tile.tile;
     if (!tileImg || !tileImg.texture.baseTexture) return;
     let sprite, Illumsprite;
-      if (!tile._levelsAlphaMap)
-        this._createAlphaMap(tile, { keepPixels: true, keepTexture: true });
-      sprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
-      sprite.tint = 0x000000;
-      sprite.name = tile.id;
-      Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
-      Illumsprite.tint = canvas.lighting.channels.background.hex;
-      Illumsprite.name = tile.id;
-      if (addChild) {
-        light.light.source.coloration.addChild(sprite);
-        light.light.source.illumination.addChild(Illumsprite);
-      }
+    if (!tile._levelsAlphaMap)
+      this._createAlphaMap(tile, { keepPixels: true, keepTexture: true });
+    sprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
+    sprite.tint = 0x000000;
+    sprite.name = tile.id;
+    Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
+    Illumsprite.tint = canvas.lighting.channels.background.hex;
+    Illumsprite.name = tile.id;
+    if (addChild) {
+      light.light.source.coloration.addChild(sprite);
+      light.light.source.illumination.addChild(Illumsprite);
+    }
   }
 
   getLightOcclusionSprite(tile) {
@@ -1131,8 +1140,11 @@ class Levels {
         }
       }
       token.inStair = inStair;
-      if(!inStair){
-        $("#levels-elevator").closest(".app").find(`a[class="header-button close"]`).click()
+      if (!inStair) {
+        $("#levels-elevator")
+          .closest(".app")
+          .find(`a[class="header-button close"]`)
+          .click();
       }
       if (newUpdates) {
         const s = canvas.dimensions.size;
@@ -1658,18 +1670,22 @@ class Levels {
     }
   }
 
-/**********************************
- * MODULE COMPATIBILITY FUNCTIONS *
- **********************************/
+  /**********************************
+   * MODULE COMPATIBILITY FUNCTIONS *
+   **********************************/
 
-getPerfectVisionVisionRange(token) {
-  let sightLimit = parseFloat(token.document.getFlag("perfect-vision", "sightLimit"));
+  getPerfectVisionVisionRange(token) {
+    let sightLimit = parseFloat(
+      token.document.getFlag("perfect-vision", "sightLimit")
+    );
 
-  if (Number.isNaN(sightLimit)) {
-      sightLimit = parseFloat(canvas.scene?.getFlag("perfect-vision", "sightLimit"));
+    if (Number.isNaN(sightLimit)) {
+      sightLimit = parseFloat(
+        canvas.scene?.getFlag("perfect-vision", "sightLimit")
+      );
+    }
+    return sightLimit;
   }
-  return sightLimit;
-}
 
   /*****************
    * API FUNCTIONS *
