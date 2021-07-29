@@ -1390,7 +1390,7 @@ class Levels {
     let levelLigths = _levels.getLights();
     canvas.foreground.placeables.forEach((t) => {
       t.visible = true;
-      _levels.removeTempTile(t);
+      _levels.removeTempTile({tile:t});
       levelLigths.forEach((light) => {
         _levels.unoccludeLights(t, light, true);
       });

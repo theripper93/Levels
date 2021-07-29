@@ -1,4 +1,4 @@
-let _levelsTemplateTool
+let _levelsTemplateTool;
 
 class LevelsUI {
   constructor() {
@@ -420,6 +420,12 @@ class LevelsUI {
       } else {
         wall.visible = false;
       }
+      /*if (wall.data.door) {
+        let door = canvas.controls.doors.children.find(
+          (c) => c.wall.id == wall.id
+        );
+        if (door) door.visible = wall.visible;
+      }*/
     }
 
     for (let tile of canvas.foreground.placeables) {
@@ -441,6 +447,8 @@ class LevelsUI {
       light.visible = this.computeRangeForDocument(light, range);
       light.source.skipRender = !light.visible;
     }
+    canvas.lighting.refresh();
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
 
     for (let note of canvas.notes.placeables) {
       note.visible = this.computeRangeForDocument(note, range);
@@ -453,9 +461,6 @@ class LevelsUI {
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = this.computeRangeForDocument(drawing, range);
     }
-
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
 
   }
 
@@ -768,10 +773,13 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
-      let aboverange = _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(_levels.UI.range)+1]
-      if(aboverange){
-        let newTop = aboverange[1]
-        let newBot = aboverange[0]
+      let aboverange =
+        _levels.UI.definedLevels[
+          _levels.UI.definedLevels.indexOf(_levels.UI.range) + 1
+        ];
+      if (aboverange) {
+        let newTop = aboverange[1];
+        let newBot = aboverange[0];
         if (_levels.UI.rangeEnabled == true) {
           drawing.data.update({
             hidden: true,
@@ -782,12 +790,12 @@ Hooks.on("ready", () => {
               levels: {
                 drawingMode: _levels.UI.stairEnabled ? 2 : 1,
                 rangeBottom: _levels.UI.range[0],
-                rangeTop: _levels.UI.stairEnabled ? newBot-1 : newTop,
+                rangeTop: _levels.UI.stairEnabled ? newBot - 1 : newTop,
               },
             },
           });
         }
-      }else{
+      } else {
         if (_levels.UI.rangeEnabled == true) {
           drawing.data.update({
             hidden: true,
@@ -804,7 +812,6 @@ Hooks.on("ready", () => {
           });
         }
       }
-
     });
 
     Hooks.on("preCreateWall", (wall, updates) => {
@@ -827,16 +834,23 @@ Hooks.on("ready", () => {
         });
       }
     });
-
   }
 });
 
 Hooks.on("renderSceneControls", () => {
-  if (_levels?.UI?.rangeEnabled && !game.settings.get(_levelsModuleName, "forceUiRefresh")) _levels.UI.refreshLevels();
+  if (
+    _levels?.UI?.rangeEnabled &&
+    !game.settings.get(_levelsModuleName, "forceUiRefresh")
+  )
+    _levels.UI.refreshLevels();
 });
 
 Hooks.on("renderApplication", () => {
-  if (_levels?.UI?.rangeEnabled && game.settings.get(_levelsModuleName, "forceUiRefresh")) _levels.UI.refreshLevels();
+  if (
+    _levels?.UI?.rangeEnabled &&
+    game.settings.get(_levelsModuleName, "forceUiRefresh")
+  )
+    _levels.UI.refreshLevels();
 });
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
@@ -852,10 +866,14 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       else _levels.nextTemplateHeight = undefined;
     },
   };
-  _levelsTemplateTool = templateTool
+  _levelsTemplateTool = templateTool;
   controls.find((c) => c.name == "token").tools.push(templateTool);
 });
 
-Hooks.once("canvasReady",()=>{
-  console.log(`%cLEVELS\n%cWelcome to the 3rd Dimension`,"font-weight: bold;text-shadow: 10px 10px 0px rgba(0,0,0,0.8), 20px 20px 0px rgba(0,0,0,0.6), 30px 30px 0px rgba(0,0,0,0.4);font-size:100px;background: #444; color: #d43f3f; padding: 2px 28px 0 2px; display: inline-block;", "font-weight: bold;text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 4px 4px 0px rgba(0,0,0,0.6), 6px 6px 0px rgba(0,0,0,0.4);font-size:20px;background: #444; color: #d43f3f; padding: 10px 27px; display: inline-block; margin-left: -30px");
-})
+Hooks.once("canvasReady", () => {
+  console.log(
+    `%cLEVELS\n%cWelcome to the 3rd Dimension`,
+    "font-weight: bold;text-shadow: 10px 10px 0px rgba(0,0,0,0.8), 20px 20px 0px rgba(0,0,0,0.6), 30px 30px 0px rgba(0,0,0,0.4);font-size:100px;background: #444; color: #d43f3f; padding: 2px 28px 0 2px; display: inline-block;",
+    "font-weight: bold;text-shadow: 2px 2px 0px rgba(0,0,0,0.8), 4px 4px 0px rgba(0,0,0,0.6), 6px 6px 0px rgba(0,0,0,0.4);font-size:20px;background: #444; color: #d43f3f; padding: 10px 27px; display: inline-block; margin-left: -30px"
+  );
+});
