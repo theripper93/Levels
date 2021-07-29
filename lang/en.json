@@ -9,11 +9,11 @@
     "levels.settings.fogHiding.name": "Advanced Fog of War",
     "levels.settings.fogHiding.hint": "Hide unexplored floors from the explored fog of war",
     "levels.settings.lockElevation.name": "Lock Elevation",
-    "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config.",
+    "levels.settings.lockElevation.hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config",
     "levels.settings.defaultLosHeight.name": "Default Token Height",
     "levels.settings.defaultLosHeight.hint": "Height of a token (where the eyes of that creature are) in units. Default 6.",
     "levels.settings.autoLOSHeight.name": "Automatic token height",
-    "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore default token height but per token settings not set to 0 will have priority over the automatic calculation. ",
+    "levels.settings.autoLOSHeight.hint": "Automatically calculate token height based on size and scale. Will ignore default token height but per token settings not set to 0 will have priority over the automatic calculation",
     "levels.settings.debugRaycast.name": "DEBUG: Enable ray visualization",
     "levels.settings.debugRaycast.hint": "Show the 3D Sight rays (green visible, red not visible)",
     "levels.settings.preciseLightOcclusion.name": "Experimental: Precise light occlusion",
@@ -82,7 +82,7 @@
     "levels.form.suggestedLevels": "Generate Suggested Levels",
     "levels.form.autoLevels": "Get levels from Scene",
 
-    "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module.",
+    "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
     "levels.firsttime.dialog": ""
 
 }
