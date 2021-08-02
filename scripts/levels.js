@@ -1897,7 +1897,9 @@ class Levels {
     }
     //Compute 3d collision for walls
     function walls3dTest() {
+      let terrainWalls = 0;
       for (let wall of canvas.walls.placeables) {
+        let isTerrain = false
         //continue if we have to ignore the wall
         if (TYPE === 0) {
           //sight
@@ -1906,6 +1908,7 @@ class Levels {
             (wall.data.door != 0 && wall.data.ds === 1)
           )
             continue;
+          if (wall.data.sense === 2) isTerrain = true;
         }
         if (TYPE === 1) {
           //collision
@@ -1966,7 +1969,12 @@ class Levels {
           { x: wx2, y: wy2 },
           { x: ix, y: iy }
         );
+        if (isTerrain && isb && iz <= wallBotTop[1] && iz >= wallBotTop[0] && terrainWalls == 0){
+          terrainWalls++
+          continue;
+        }
         if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return true;
+        
       }
       return false;
     }
