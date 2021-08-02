@@ -24,6 +24,12 @@
     "levels.settings.blockSightMovement.hint":"When enabled, walls with height that does not restrict vision will still restrict movement",
     "levels.settings.forceUiRefresh.name":"Force UI refresh",
     "levels.settings.forceUiRefresh.hint": "Forces more frequent refreshes of the levels UI at the cost of performance, if enabled may cause issues on specific systems (eg. PF2e)",
+    "levels.settings.hideElevation.name": "Hide Elevation",
+    "levels.settings.hideElevation.hint": "Hide elevation from the tokens",
+    "levels.settings.hideElevation.opt0": "Don't Hide",
+    "levels.settings.hideElevation.opt1": "Hide for players",
+    "levels.settings.hideElevation.opt2": "Hide for everyone",
+
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",

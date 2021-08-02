@@ -65,6 +65,12 @@ Hooks.on("init", () => {
     _levelsTokenCheckCollision,
     "OVERRIDE"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "Token.prototype.drawTooltip",
+    _levelsTokendrawTooltip,
+    "MIXED"
+  );
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
@@ -143,6 +149,24 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
+  });
+
+  game.settings.register(_levelsModuleName, "hideElevation", {
+    name: game.i18n.localize("levels.settings.hideElevation.name"),
+    hint: game.i18n.localize("levels.settings.hideElevation.hint"),
+    scope: "world",
+    config: true,
+    type: Number,
+    choices: {
+			0: game.i18n.localize("levels.settings.hideElevation.opt0"),
+			1: game.i18n.localize("levels.settings.hideElevation.opt1"),
+      2: game.i18n.localize("levels.settings.hideElevation.opt2"),
+		},
+    default: 0,
+    onChange: (setting) => {
+      _levels.hideElevation = setting;
+      canvas.tokens.placeables.forEach(t => t.drawTooltip())
+    },
   });
 
   game.settings.register(_levelsModuleName, "defaultLosHeight", {

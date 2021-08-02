@@ -37,6 +37,7 @@ class Levels {
       "tokenElevScaleMultiSett"
     );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
+    this.hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
     //Module Compatibility
     this.modules = {};

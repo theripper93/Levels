@@ -468,3 +468,10 @@ function _levelsTokenCheckCollision(destination) {
     return canvas.walls.checkCollision(ray);
   }
 }
+
+function _levelsTokendrawTooltip(wrapped,...args) {
+  if(!_levels || _levels.hideElevation == 0) return wrapped(...args);
+  if(_levels.hideElevation == 1 && game.user.isGM) return wrapped(...args);
+  this.tooltip.removeChildren().forEach(c => c.destroy());
+  return
+}

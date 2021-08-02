@@ -14,6 +14,7 @@ Hooks.on("canvasReady", () => {
       _levels.init = true;
     }
   });
+  canvas.tokens.placeables.forEach(t => t.drawTooltip())
   Hooks.callAll("levelsReady");
 });
 
