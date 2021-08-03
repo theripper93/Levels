@@ -1384,7 +1384,10 @@ class Levels {
   removeTempTokenOverhead(token) {
     if (!this.overContainer.spriteIndex[token.id]) return;
     let sprite = this.overContainer.children.find((c) => c.name == token.id);
-    if (sprite) this.overContainer.removeChild(sprite);
+    if (sprite) {
+      token.refresh();
+      this.overContainer.removeChild(sprite);
+    }
     delete this.overContainer.spriteIndex[token.id];
   }
 
