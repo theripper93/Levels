@@ -27,6 +27,11 @@
     "levels.settings.blockSightMovement.hint":"Al habilitarlo, los muros con altura que no restringen la visión, seguirán restringiendo el movimiento",
     "levels.settings.forceUiRefresh.name":"Forzar recarga de la UI",
     "levels.settings.forceUiRefresh.hint": "Fuerza que se refresque con mayor frecuenta la UI de niveles a costa de reducir el rendimiento; puede causar problemas en algunos sistemas (p.ej. PF2e)",
+    "levels.settings.hideElevation.name": "Ocultar elevación",
+    "levels.settings.hideElevation.hint": "No mostrar la elevación de los iconos",
+    "levels.settings.hideElevation.opt0": "No ocultar",
+    "levels.settings.hideElevation.opt1": "Ocultar a los jugadores",
+    "levels.settings.hideElevation.opt2": "Ocultar a todo el mundo",
 
     "levels.tilecoonfig.rangeTop.name": "Altura (superior)",
     "levels.tilecoonfig.rangeBottom.name": "Altura (inferior)",
