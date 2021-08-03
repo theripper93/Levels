@@ -69,14 +69,14 @@ Hooks.on("controlToken", (token, controlled) => {
   if (_levels && controlled) {
     token.visible = true;
     token.levelsVisible = true;
-    token.icon.alpha = token.data.hidden
+    /*token.icon.alpha = token.data.hidden
     ? Math.min(token.data.alpha, 0.5)
-    : token.data.alpha;
+    : token.data.alpha;*/
     token.levelsHidden = false;
     _levels.removeTempTokenOverhead(token);
     _levels.removeTempToken(token);
   }
-  if (!controlled && game.user.isGM) {
+  if (!controlled && canvas.tokens.controlled.length == 0 && game.user.isGM) {
     _levels.restoreGMvisibility();
   } else {
     if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
@@ -87,7 +87,8 @@ Hooks.on("controlToken", (token, controlled) => {
   }
   if (_levels && !controlled && token && !game.user.isGM) {_levels.lastReleasedToken = token;}
   if (_levels) _levels.currentElevation = token.data.elevation;
-  if (_levels && !controlled) _levels.currentElevation = undefined;
+  if (_levels && !controlled){
+    _levels.currentElevation = undefined;}
   if(!controlled) _levels.lastTokenForTemplate = token
 });
 

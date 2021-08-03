@@ -313,6 +313,8 @@ class Levels {
       return gm || !token.data.hidden;
     if (token._controlled) return true;
     if (!sourceToken.data.vision) return gm;
+    const angleTest = this.testInAngle(sourceToken, token);
+    if (!angleTest) return false;
     const inLOS = !this.advancedLosTestInLos(sourceToken, token);
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange && token.data.hidden && gm) return true;
@@ -343,6 +345,27 @@ class Levels {
       let collision = this.testCollision(sourceCenter, point, "sight");
       if (!collision) return collision;
     }
+    return true;
+  }
+
+  testInAngle(sourceToken, token) {
+    if (sourceToken.data.sightAngle == 360) return true;
+    //check angled vision
+    const angle =
+      Math.atan2(
+        sourceToken.center.y - token.center.y,
+        sourceToken.center.x - token.center.x
+      ) +
+      Math.PI -
+      Math.PI / 2;
+    const sightAngle = (sourceToken.data.sightAngle * Math.PI) / 180 / 2;
+    const rotation = (sourceToken.data.rotation * Math.PI) / 180;
+    if (
+      (angle > rotation + sightAngle || angle < rotation - sightAngle) &&
+      (angle + 2 * Math.PI > rotation + sightAngle ||
+        angle + 2 * Math.PI < rotation - sightAngle)
+    )
+      return false;
     return true;
   }
 
@@ -394,7 +417,7 @@ class Levels {
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
-        token.icon.alpha = 0;
+        //token.icon.alpha = 0;
         token.levelsHidden = true;
         this.getTokenIconSpriteOverhead(token);
         this.removeTempToken(token);
@@ -402,7 +425,7 @@ class Levels {
         token.data.elevation < sourceToken.data.elevation &&
         token.visible
       ) {
-        token.icon.alpha = 0;
+        //token.icon.alpha = 0;
         token.levelsHidden = true;
         this.removeTempTokenOverhead(token);
         this.getTokenIconSprite(token);
@@ -410,9 +433,9 @@ class Levels {
         (token.data.elevation == sourceToken.data.elevation && token.visible) ||
         !token.visible
       ) {
-        token.icon.alpha = token.data.hidden
+        /*token.icon.alpha = token.data.hidden
           ? Math.min(token.data.alpha, 0.5)
-          : token.data.alpha;
+          : token.data.alpha;*/
         token.levelsHidden = false;
         this.removeTempTokenOverhead(token);
         this.removeTempToken(token);
@@ -1281,6 +1304,7 @@ class Levels {
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
     let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
     if (!oldSprite) {
+      token.refresh();
       this.floorContainer.spriteIndex[token.id] = sprite;
       this.floorContainer.addChild(sprite);
     }
@@ -1338,7 +1362,10 @@ class Levels {
   removeTempToken(token) {
     if (!this.floorContainer.spriteIndex[token.id]) return;
     let sprite = this.floorContainer.children.find((c) => c.name == token.id);
-    if (sprite) this.floorContainer.removeChild(sprite);
+    if (sprite) {
+      token.refresh();
+      this.floorContainer.removeChild(sprite);
+    }
     delete this.floorContainer.spriteIndex[token.id];
   }
 
@@ -1348,6 +1375,7 @@ class Levels {
     if (token._controlled || !icon || !icon.texture.baseTexture) return;
     let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
     if (!oldSprite) {
+      token.refresh();
       this.overContainer.spriteIndex[token.id] = sprite;
       this.overContainer.addChild(sprite);
     }
@@ -1391,7 +1419,7 @@ class Levels {
     let levelLigths = _levels.getLights();
     canvas.foreground.placeables.forEach((t) => {
       t.visible = true;
-      _levels.removeTempTile({tile:t});
+      _levels.removeTempTile({ tile: t });
       levelLigths.forEach((light) => {
         _levels.unoccludeLights(t, light, true);
       });
@@ -1899,7 +1927,7 @@ class Levels {
     function walls3dTest() {
       let terrainWalls = 0;
       for (let wall of canvas.walls.placeables) {
-        let isTerrain = false
+        let isTerrain = false;
         //continue if we have to ignore the wall
         if (TYPE === 0) {
           //sight
@@ -1969,12 +1997,17 @@ class Levels {
           { x: wx2, y: wy2 },
           { x: ix, y: iy }
         );
-        if (isTerrain && isb && iz <= wallBotTop[1] && iz >= wallBotTop[0] && terrainWalls == 0){
-          terrainWalls++
+        if (
+          isTerrain &&
+          isb &&
+          iz <= wallBotTop[1] &&
+          iz >= wallBotTop[0] &&
+          terrainWalls == 0
+        ) {
+          terrainWalls++;
           continue;
         }
         if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return true;
-        
       }
       return false;
     }

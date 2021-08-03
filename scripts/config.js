@@ -3,13 +3,13 @@ Hooks.on("init", () => {
     _levelsModuleName,
     "Token.prototype.refresh",
     _levelsTokenRefresh,
-    "OVERRIDE"
+    "WRAPPER"
   );
   libWrapper.register(
     _levelsModuleName,
     "Token.prototype._onMovementFrame",
     _levelsOnMovementFrame,
-    "OVERRIDE"
+    "WRAPPER"
   );
   libWrapper.register(
     _levelsModuleName,
@@ -45,7 +45,7 @@ Hooks.on("init", () => {
     _levelsModuleName,
     "MeasuredTemplate.prototype.draw",
     _levelsTemplatedraw,
-    "OVERRIDE"
+    "WRAPPER"
   );
   libWrapper.register(
     _levelsModuleName,

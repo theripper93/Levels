@@ -1,21 +1,6 @@
-function _levelsTokenRefresh() {
-  // Token position and visibility
-  if (!this._movement) this.position.set(this.data.x, this.data.y);
-
-  // Size the texture aspect ratio within the token frame
-  const tex = this.texture;
-  if (tex) {
-    let aspect = tex.width / tex.height;
-    const scale = this.icon.scale;
-    if (aspect >= 1) {
-      this.icon.width = this.w * this.data.scale;
-      scale.y = Number(scale.x);
-    } else {
-      this.icon.height = this.h * this.data.scale;
-      scale.x = Number(scale.y);
-    }
-  }
-  // Mirror horizontally or vertically
+function _levelsTokenRefresh(wrapped,...args) {
+  _this = wrapped(...args);
+  // Adjust Scale
   this.icon.scale.x =
     Math.abs(this.icon.scale.x) *
     (this.data.mirrorX ? -1 : 1) *
@@ -24,55 +9,17 @@ function _levelsTokenRefresh() {
     Math.abs(this.icon.scale.y) *
     (this.data.mirrorY ? -1 : 1) *
     (this.elevationScaleFactor || 1);
-
-  // Set rotation, position, and opacity
-  this.icon.rotation = this.data.lockRotation
-    ? 0
-    : Math.toRadians(this.data.rotation);
-  this.icon.position.set(this.w / 2, this.h / 2);
-  if (!this.levelsHidden || this._controlled) {
-    this.icon.alpha = this.data.hidden
-      ? Math.min(this.data.alpha, 0.5)
-      : this.data.alpha;
-  } else {
-    this.icon.alpha = 0;
-  }
-
-  // Refresh Token border and target
-  this._refreshBorder();
-  this._refreshTarget();
-
-  // Refresh nameplate and resource bars
-  this.nameplate.visible = this._canViewMode(this.data.displayName);
-  this.bars.visible = this._canViewMode(this.data.displayBars);
-  return this;
+  this.icon.visible = this._controlled ? true : !this.levelsHidden
+  return _this;
 }
 
-function _levelsOnMovementFrame(dt, anim, config) {
-  // Update the displayed position of the Token
-  this.data.x = this.x;
-  this.data.y = this.y;
+function _levelsOnMovementFrame(wrapped,...args) {
+  wrapped(...args);
   // Update the token copy
   if (_levels.floorContainer.spriteIndex[this.id])
     _levels.getTokenIconSprite(this);
   if (_levels.overContainer.spriteIndex[this.id])
     _levels.getTokenIconSpriteOverhead(this);
-  // Animate perception changes
-  if (!config.animate || !anim.length) return;
-  let updateFog = config.fog;
-  if (config.source) {
-    const dist = Math.hypot(anim[0].done, anim[1]?.done || 0);
-    const n = Math.floor(dist / canvas.dimensions.size);
-    if (n > 0 && anim[0].dist !== n) {
-      updateFog = true;
-      anim[0].dist = n;
-    }
-  }
-  this._animatePerceptionFrame({
-    source: config.source,
-    sound: config.sound,
-    fog: updateFog,
-  });
   if (_levels && !this._controlled) {
     _levels.debounce3DRefresh(100);
   }
@@ -114,7 +61,7 @@ function _lightingRefresh(darkness) {
   for (let sources of [this.sources, canvas.sight.sources]) {
     for (let source of sources) {
       // Check the active state of the light source
-      const isActive = source.skipRender
+      const isActive = source.skipRender //OVERRIDE SKIP RENDER
         ? false
         : darkness.between(source.darkness.min, source.darkness.max);
       if (source.active !== isActive) refreshVision = true;
@@ -203,7 +150,7 @@ function _levelsTestVisibility(point, { tolerance = 2, object = null } = {}) {
     if (points.some((p) => source.fov.contains(p.x, p.y))) return true;
   }
   for (let source of lightSources.values()) {
-    if (source.skipRender) continue;
+    if (source.skipRender) continue; //OVERRIDE SKIP RENDER
     if (points.some((p) => source.fov.contains(p.x, p.y))) return true;
   }
   return false;
@@ -265,7 +212,7 @@ function _levelsGetRayCollisions(
         }
 
         // Test a single wall
-        const x = WallsLayer.testWall(ray, w, roomTest);
+        const x = WallsLayer.testWall(ray, w, roomTest); //OVERRIDE add elevation parameter to testWall
         if (_performance) _performance.tests++;
         if (!x) continue;
         if (isAny) return true;
@@ -303,7 +250,7 @@ function _levelsGetRayCollisions(
   return Object.values(collisions);
 }
 
-function _levelsCheckCollision(
+function _levelsCheckCollision(//OVERRIDE PASS roomtest to the next function
   ray,
   { type = "movement", mode = "any" } = {},
   roomTest = false
@@ -314,7 +261,7 @@ function _levelsCheckCollision(
 }
 
 function _levelsIsAudible() {
-  if (this.levelsInaudible) return false;
+  if (this.levelsInaudible) return false;//OVERRIDE skip sounds on diff levels
   if (this.data.hidden) return false;
   return canvas.lighting.darknessLevel.between(
     this.data.darkness.min ?? 0,
@@ -322,7 +269,7 @@ function _levelsIsAudible() {
   );
 }
 
-function _levelsTokenIsVisible() {
+function _levelsTokenIsVisible() {//OVERRIDE complete override of token visibility
   if (!_levels) {
     const gm = game.user.isGM;
     if (this.data.hidden) return gm;
@@ -355,30 +302,9 @@ function _levelsTokenIsVisible() {
   }
 }
 
-async function _levelsTemplatedraw() {
-  this.clear();
-
-  // Load the texture
-  if (this.data.texture) {
-    this.texture = await loadTexture(this.data.texture, {
-      fallback: "icons/svg/hazard.svg",
-    });
-  } else {
-    this.texture = null;
-  }
-
-  // Template shape
-  this.template = this.addChild(new PIXI.Graphics());
-
-  // Rotation handle
-  this.handle = this.addChild(new PIXI.Graphics());
-
-  // Draw the control icon
-  this.controlIcon = this.addChild(this._drawControlIcon());
-
-  // Draw the ruler measurement
-  this.ruler = this.addChild(this._drawRulerText());
-
+async function _levelsTemplatedraw(wrapped,...args) {
+  await wrapped(...args);
+  if(this.document.getFlag(_levelsModuleName, "elevation")===0) return this;
   this.tooltip = this.addChild(_templateDrawTooltip(this));
 
   function _templateDrawTooltip(template) {
@@ -408,13 +334,6 @@ async function _levelsTemplatedraw() {
     text.anchor.set(0.5, 2);
     return text;
   }
-
-  // Update the shape and highlight grid squares
-  this.refresh();
-  this.highlightGrid();
-
-  // Enable interactivity, only if the Tile has a true ID
-  if (this.id) this.activateListeners();
   return this;
 }
 
