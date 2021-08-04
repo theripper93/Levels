@@ -283,7 +283,7 @@ class Levels {
           let isInHole = this.isTokenInHole(t, holes);
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
-            t.token.icon.alpha = 0;
+            t.token.refresh()
             tokenPov.push({ token: t, visible: t.token.isVisible });
             this.getTokenIconSprite(t.token);
           } else {
@@ -293,7 +293,7 @@ class Levels {
           }
         } else {
           t.token.levelsHidden = false;
-          if (t.token.icon) t.token.icon.alpha = 1;
+          if (t.token.icon) t.token.refresh()
           tokenPov.push({ token: t, visible: t.token.isVisible });
           this.removeTempToken(t.token);
         }
@@ -711,7 +711,8 @@ class Levels {
         povs.forEach((pov) => {
           if (pov.visible) {
             pov.token.token.visible = true;
-            pov.token.token.icon.alpha = 1;
+            pov.token.token.levelsVisible = true
+            pov.token.token.refresh()
           }
         });
       });
@@ -1411,9 +1412,8 @@ class Levels {
     canvas.tokens.placeables.forEach((t) => {
       if (t.actor.testUserPermission(game.user, 2)) {
         t.visible = true;
-        t.icon.alpha = t.data.hidden
-          ? Math.min(t.data.alpha, 0.5)
-          : t.data.alpha;
+        t.levelsVisible = true;
+        t.refresh()
       }
     });
   }
@@ -1433,9 +1433,7 @@ class Levels {
       token.elevationScaleFactor = 1;
       token.visible = true;
       token.levelsVisible = true;
-      token.icon.alpha = token.data.hidden
-        ? Math.min(token.data.alpha, 0.5)
-        : token.data.alpha;
+      token.refresh()
       token.levelsHidden = false;
       _levels.removeTempTokenOverhead(token);
       _levels.removeTempToken(token);

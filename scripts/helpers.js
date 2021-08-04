@@ -1,5 +1,5 @@
 function _levelsTokenRefresh(wrapped,...args) {
-  _this = wrapped(...args);
+  wrapped(...args);
   // Adjust Scale
   this.icon.scale.x =
     Math.abs(this.icon.scale.x) *
@@ -10,7 +10,7 @@ function _levelsTokenRefresh(wrapped,...args) {
     (this.data.mirrorY ? -1 : 1) *
     (this.elevationScaleFactor || 1);
   this.icon.visible = this._controlled ? true : !this.levelsHidden
-  return _this;
+  return this;
 }
 
 function _levelsOnMovementFrame(wrapped,...args) {
