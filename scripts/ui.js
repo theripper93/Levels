@@ -751,6 +751,13 @@ Hooks.on("ready", () => {
     Hooks.on("updateTile", (tile, updates) => {
       if (_levels.UI.rangeEnabled == true) {
         _levels.UI.computeLevelsVisibility();
+        if (
+          game.settings.get(_levelsModuleName, "enableTooltips")
+        ) {
+          canvas.hud.levels.bind(tile.object);
+        } else {
+          canvas.hud.levels.clear();
+        }
       }
     });
 
