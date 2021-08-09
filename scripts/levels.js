@@ -450,7 +450,7 @@ class Levels {
 
   generateFogVisionMask(token){
     if(!this.revealTokenInFog){
-      this.tokenRevealFogContainer.removeChildren(true);
+      this.tokenRevealFogContainer.removeChildren();
       this.tokenRevealFogContainer.spriteIndex = {}
       return;
     }
