@@ -29,6 +29,8 @@
     "levels.settings.hideElevation.opt0": "Don't Hide",
     "levels.settings.hideElevation.opt1": "Hide for players",
     "levels.settings.hideElevation.opt2": "Hide for everyone",
+    "levels.settings.revealTokenInFog.name": "Reveal token in fog",
+    "levels.settings.revealTokenInFog.hint": "If a token is visible, reveal the fog of war around that token",
 
 
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",

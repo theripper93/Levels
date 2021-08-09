@@ -142,6 +142,18 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "revealTokenInFog", {
+    name: game.i18n.localize("levels.settings.revealTokenInFog.name"),
+    hint: game.i18n.localize("levels.settings.revealTokenInFog.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: (setting) => {
+      _levels.revealTokenInFog = setting;
+    },
+  });
+
   game.settings.register(_levelsModuleName, "lockElevation", {
     name: game.i18n.localize("levels.settings.lockElevation.name"),
     hint: game.i18n.localize("levels.settings.lockElevation.hint"),

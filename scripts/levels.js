@@ -13,6 +13,8 @@ class Levels {
     this.overContainer.spriteIndex = {};
     this.fogContainer = new PIXI.Container();
     this.fogContainer.spriteIndex = {};
+    this.tokenRevealFogContainer = new PIXI.Container();
+    this.tokenRevealFogContainer.spriteIndex = {};
     this.occlusionIndex = {};
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
@@ -38,6 +40,7 @@ class Levels {
     );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
+    this.revealTokenInFog = game.settings.get(_levelsModuleName, "revealTokenInFog");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
     //Module Compatibility
     this.modules = {};
@@ -56,6 +59,7 @@ class Levels {
     canvas.background.addChild(Levels._instance.floorContainer);
     canvas.foreground.addChild(Levels._instance.overContainer);
     canvas.sight.explored.addChild(Levels._instance.fogContainer);
+    canvas.sight.explored.addChild(Levels._instance.tokenRevealFogContainer);
     canvas["levelsLayer"] = new CanvasLayer();
     if (this.UI) Levels._instance.UI.readLevels();
     return Levels._instance;
@@ -440,7 +444,35 @@ class Levels {
         this.removeTempTokenOverhead(token);
         this.removeTempToken(token);
       }
+      this.generateFogVisionMask(token)
     }
+  }
+
+  generateFogVisionMask(token){
+    if(!this.revealTokenInFog){
+      this.tokenRevealFogContainer.removeChildren(true);
+      this.tokenRevealFogContainer.spriteIndex = {}
+    }
+    if(this.tokenRevealFogContainer.spriteIndex[token.id]){
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.x = token.center.x
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.y = token.center.y
+      return;}
+    let g = new PIXI.Graphics()
+    g.beginFill(0xffffff,0.5);
+    g.drawCircle(0,0,Math.max(token.h,token.w)/2*token.data.scale)
+    g.endFill()
+    let s = new PIXI.Sprite()
+    s.addChild(g)
+    s.position.x = token.center.x
+    s.position.y = token.center.y
+    Object.defineProperty(s, "visible", {
+      get() {
+        return _levels.revealTokenInFog && token.visible
+      },
+    });
+    s.name = token.id;
+    this.tokenRevealFogContainer.addChild(s);
+    this.tokenRevealFogContainer.spriteIndex[token.id] = s;
   }
 
   tokenInRange(sourceToken, token) {
