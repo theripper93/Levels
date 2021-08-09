@@ -452,6 +452,7 @@ class Levels {
     if(!this.revealTokenInFog){
       this.tokenRevealFogContainer.removeChildren(true);
       this.tokenRevealFogContainer.spriteIndex = {}
+      return;
     }
     if(this.tokenRevealFogContainer.spriteIndex[token.id]){
       this.tokenRevealFogContainer.spriteIndex[token.id].position.x = token.center.x
