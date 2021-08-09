@@ -458,7 +458,7 @@ class Levels {
       this.tokenRevealFogContainer.spriteIndex[token.id].position.y = token.center.y
       return;}
     let g = new PIXI.Graphics()
-    g.beginFill(0xffffff,0.5);
+    g.beginFill(0xffffff,0.75);
     g.drawCircle(0,0,Math.max(token.h,token.w)/2*token.data.scale*Math.SQRT2)
     g.endFill()
     let s = new PIXI.Sprite()
