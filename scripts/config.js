@@ -1,4 +1,11 @@
 Hooks.on("init", () => {
+  
+  Object.defineProperty(Token.prototype, "losHeight", {
+    get: function myProperty() {
+      return _levels.getTokenLOSheight(this);
+    },
+  });
+
   libWrapper.register(
     _levelsModuleName,
     "Token.prototype.refresh",
@@ -74,9 +81,9 @@ Hooks.on("init", () => {
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
-Hooks.once('ready', () => {
+Hooks.once("ready", () => {
   // Module title
-  MODULE_ID= _levelsModuleName;
+  MODULE_ID = _levelsModuleName;
   const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
@@ -91,15 +98,27 @@ Hooks.once('ready', () => {
   const DONT_REMIND_AGAIN_KEY = "popup-dont-remind-again";
 
   // Dialog code
-  game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, { name: '', default: false, type: Boolean, scope: 'world', config: false });
-  if(game.user.isGM && !game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)) {
-      new Dialog({
-          title: FALLBACK_MESSAGE_TITLE,
-          content: FALLBACK_MESSAGE, buttons: {
-              ok: { icon: '<i class="fas fa-check"></i>', label: 'Understood' },
-              dont_remind: { icon: '<i class="fas fa-times"></i>', label: "Don't remind me again", callback: () => game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true) }
-          }
-      }).render(true);
+  game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, {
+    name: "",
+    default: false,
+    type: Boolean,
+    scope: "world",
+    config: false,
+  });
+  if (game.user.isGM && !game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)) {
+    new Dialog({
+      title: FALLBACK_MESSAGE_TITLE,
+      content: FALLBACK_MESSAGE,
+      buttons: {
+        ok: { icon: '<i class="fas fa-check"></i>', label: "Understood" },
+        dont_remind: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Don't remind me again",
+          callback: () =>
+            game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true),
+        },
+      },
+    }).render(true);
   }
 });
 
@@ -170,14 +189,14 @@ Hooks.on("init", () => {
     config: true,
     type: Number,
     choices: {
-			0: game.i18n.localize("levels.settings.hideElevation.opt0"),
-			1: game.i18n.localize("levels.settings.hideElevation.opt1"),
+      0: game.i18n.localize("levels.settings.hideElevation.opt0"),
+      1: game.i18n.localize("levels.settings.hideElevation.opt1"),
       2: game.i18n.localize("levels.settings.hideElevation.opt2"),
-		},
+    },
     default: 0,
     onChange: (setting) => {
       _levels.hideElevation = setting;
-      canvas.tokens.placeables.forEach(t => t.drawTooltip())
+      canvas.tokens.placeables.forEach((t) => t.drawTooltip());
     },
   });
 
@@ -266,10 +285,9 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
-    let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
-    if (showAboveRange == undefined || showAboveRange == null)
+  let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
+  if (showAboveRange == undefined || showAboveRange == null)
     showAboveRange = Infinity;
-
 
   let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
   let checkedbox = showifbelow ? ` checked=""` : "";
@@ -277,7 +295,6 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   let checkedboxisBasement = isBasement ? ` checked=""` : "";
   let noFogHide = app.object.getFlag(_levelsModuleName, "noFogHide");
   let checkedboxnoFogHide = noFogHide ? ` checked=""` : "";
-
 
   let newHtml = `
   <div class="form-group">
@@ -630,21 +647,30 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
   const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
-  const handMode = (typeof LevelsVolumetricTemplates !== 'undefined') && LevelsVolumetricTemplates.tools.handMode && cToken ? Math.round((_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation)*0.8) : 0
+  const handMode =
+    typeof LevelsVolumetricTemplates !== "undefined" &&
+    LevelsVolumetricTemplates.tools.handMode &&
+    cToken
+      ? Math.round(
+          (_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation) * 0.8
+        )
+      : 0;
   let elevation;
-  let special
+  let special;
   if (_levels.nextTemplateHeight !== undefined) {
     elevation = _levels.nextTemplateHeight;
     special = _levels.nextTemplateSpecial;
     _levels.nextTemplateHeight = undefined;
-    _levels.nextTemplateSpecial = undefined
+    _levels.nextTemplateSpecial = undefined;
     _levels.templateElevation = false;
     _levelsTemplateTool.active = false;
-      $("body")
-        .find(`li[data-tool="setTemplateElevation"]`)
-        .removeClass("active");
+    $("body")
+      .find(`li[data-tool="setTemplateElevation"]`)
+      .removeClass("active");
   } else {
-    elevation = cToken?.data?.elevation+handMode || 0;
+    elevation = cToken?.data?.elevation + handMode || 0;
   }
-  template.data.update({ flags: { levels: { elevation: elevation,special:special } } });
+  template.data.update({
+    flags: { levels: { elevation: elevation, special: special } },
+  });
 });
