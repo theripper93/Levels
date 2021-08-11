@@ -169,7 +169,7 @@ class Levels {
     //Declare constants
 
     const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    const cTokenElev = cToken ? cToken.data.elevation : this.currentElevation;
+    const cTokenElev = cToken ? cToken.losHeight : this.currentElevation;
     const cTokenLos = cToken
       ? this.getTokenLOSheight(cToken)
       : this.currentElevation;
@@ -640,33 +640,17 @@ class Levels {
     this.computeSounds(cToken);
     this.computeNotes(cToken);
     this.computeDrawings(cToken);
-    //let tilesIsIn = this.findRoomsTiles(cToken, allTiles);
     let lights = this.getLights();
-    //this.clearLights(lights);
     for (let light of lights) {
-      this.lightComputeRender(light, cToken.data.elevation, holes, allTiles);
+      this.lightComputeRender(light, cToken.losHeight, holes, allTiles);
     }
     allTiles.forEach((tile) => {
       this.computeTile(
         tile,
-        this.getPositionRelativeToTile(cToken.data.elevation, tile),
+        this.getPositionRelativeToTile(cToken.losHeight, tile),
         lights
       );
     });
-    /*  allTiles.forEach((tile) => {
-      this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
-      this.computeTile(
-        tile,
-        this.getPositionRelativeToTile(cToken.data.elevation, tile),
-        lights
-      );
-    });
-    tilesIsIn.forEach((tile) => {
-      this.computeLightsForTile(tile, lights, cToken.data.elevation, holes);
-    });
-    lights.forEach(
-      (lightIndex) => (lightIndex.light.source.skipAlreadyComputed = false)
-    );*/
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
@@ -844,47 +828,6 @@ class Levels {
         this.elevUpdateQueued = false;
       }, timeout);
     }
-  }
-
-  //Remove this
-  computeLightsForTile(tile, lights, elevation, holes) {
-    let lightsToOcclude = [];
-    let lightsToUnocclude = [];
-    lights.forEach((lightIndex) => {
-      let whereIsTheLight = this.getLightPositionRelativeToTile(
-        tile,
-        lightIndex,
-        elevation,
-        holes
-      );
-      switch (whereIsTheLight) {
-        case -1:
-          if (!lightIndex.light.source.skipAlreadyComputed) {
-            lightIndex.light.source.skipRender = false;
-            lightsToOcclude.push(lightIndex);
-          }
-          break;
-        case 0:
-          if (!lightIndex.light.source.skipAlreadyComputed) {
-            lightIndex.light.source.skipRender = false;
-            lightsToUnocclude.push(lightIndex);
-          }
-          break;
-        case 1:
-          lightIndex.light.source.skipAlreadyComputed = true;
-          lightIndex.light.source.skipRender = true;
-          break;
-      }
-    });
-    lights.forEach((light) => {
-      this.unoccludeLights(tile, light);
-    });
-    lightsToOcclude.forEach((light) => {
-      this.occludeLights(tile, light);
-    });
-    lightsToUnocclude.forEach((light) => {
-      this.unoccludeLights(tile, light);
-    });
   }
 
   /*****************************************************
@@ -1509,7 +1452,7 @@ class Levels {
     }
 
     if (!cToken) return;
-    let tElev = cToken.data.elevation;
+    let tElev = cToken.losHeight;
     for (let d of canvas.controls.doors.children) {
       let range = this.getWallHeightRange(d.wall);
       if (!range) continue;
@@ -1521,7 +1464,7 @@ class Levels {
 
   computeNotes(cToken) {
     if (!cToken || !canvas.notes.interactiveChildren) return;
-    let tElev = cToken.data.elevation;
+    let tElev = cToken.losHeight;
     for (let n of canvas.notes.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
       if (!rangeBottom && rangeBottom != 0) continue;
@@ -1543,7 +1486,7 @@ class Levels {
 
   computeDrawings(cToken) {
     if (!cToken) return;
-    let tElev = cToken.data.elevation;
+    let tElev = cToken.losHeight;
     for (let d of canvas.drawings.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;
