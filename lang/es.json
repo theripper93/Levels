@@ -32,6 +32,8 @@
     "levels.settings.hideElevation.opt0": "No ocultar",
     "levels.settings.hideElevation.opt1": "Ocultar a los jugadores",
     "levels.settings.hideElevation.opt2": "Ocultar a todo el mundo",
+    "levels.settings.revealTokenInFog.name": "Revelar niebla en icono",
+    "levels.settings.revealTokenInFog.hint": "Si un icono es visible, revela la niebla de guerra a su alrededor",
 
     "levels.tilecoonfig.rangeTop.name": "Altura (superior)",
     "levels.tilecoonfig.rangeBottom.name": "Altura (inferior)",
