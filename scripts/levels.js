@@ -1486,7 +1486,7 @@ class Levels {
 
   computeDrawings(cToken) {
     if (!cToken) return;
-    let tElev = cToken.losHeight;
+    let tElev = cToken.data.elevation;
     for (let d of canvas.drawings.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;

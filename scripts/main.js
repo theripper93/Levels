@@ -126,6 +126,19 @@ Hooks.on("deleteToken", (token) => {
   _levels.removeTempToken(token);
 })
 
+Hooks.on("preUpdateToken", (token,updates) => {
+  if("elevation" in updates){
+    const elevDiff = token.object.data.elevation - updates.elevation;
+    const p0 = {x:token.object.x,y:token.object.y,z:updates.elevation}
+    const p1 = {x:token.object.x,y:token.object.y,z:token.object.losHeight-elevDiff+0.1}
+    const collision = _levels.testCollision(p0, p1, "collision")
+    if(collision){
+      ui.notifications.error(game.i18n.localize("levels.err.collision"))
+      if(!game.user.isGM) delete updates.elevation
+    }
+  }
+})
+
 /*********************
  * DISPATCH WARNINGS *
  *********************/

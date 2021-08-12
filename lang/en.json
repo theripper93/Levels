@@ -89,6 +89,7 @@
     "levels.form.tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)",
     "levels.form.suggestedLevels": "Generate Suggested Levels",
     "levels.form.autoLevels": "Get levels from Scene",
+    "levels.err.collision": "The attempted movement collides with at least one floor/ceiling",
 
     "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
     "levels.firsttime.dialog": ""
