@@ -91,6 +91,7 @@
     "levels.form.tip": "*Los niveles no se deben solapar (eg. 0,9 / 10,19 / 20,29)",
     "levels.form.suggestedLevels": "Generar niveles sugeridos",
     "levels.form.autoLevels": "Obtener niveles de la escena",
+    "levels.err.collision": "Este movimiento entra en conflicto con al menos un piso/techo",
 
     "levels.err.lessfog": "Niveles: ¡AVISO! Se ha detectado el módulo Less Fog - la visibilidad de los iconos no funcionará adecuadamente, por favor, deshabilite uno de los dos",
     "levels.firsttime.dialog": ""
