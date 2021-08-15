@@ -1,5 +1,4 @@
 Hooks.on("init", () => {
-  
   Object.defineProperty(Token.prototype, "losHeight", {
     get: function myProperty() {
       return _levels.getTokenLOSheight(this);
@@ -18,18 +17,23 @@ Hooks.on("init", () => {
     _levelsOnMovementFrame,
     "WRAPPER"
   );
-  libWrapper.register(
-    _levelsModuleName,
-    "LightingLayer.prototype.refresh",
-    _lightingRefresh,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "SightLayer.prototype.testVisibility",
-    _levelsTestVisibility,
-    "OVERRIDE"
-  );
+  if (
+    !game.modules.get("perfect-vision")?.active ||
+    isNewerVersion("2.8.0", game.modules.get("perfect-vision").data.version)
+  ) {
+    libWrapper.register(
+      _levelsModuleName,
+      "LightingLayer.prototype.refresh",
+      _lightingRefresh,
+      "OVERRIDE"
+    );
+    libWrapper.register(
+      _levelsModuleName,
+      "SightLayer.prototype.testVisibility",
+      _levelsTestVisibility,
+      "OVERRIDE"
+    );
+  }
   libWrapper.register(
     _levelsModuleName,
     "WallsLayer.prototype.getRayCollisions",
