@@ -33,6 +33,12 @@ Hooks.on("init", () => {
       _levelsTestVisibility,
       "OVERRIDE"
     );
+    libWrapper.register(
+      _levelsModuleName,
+      "AmbientSound.prototype.isAudible",
+      _levelsIsAudible,
+      "OVERRIDE"
+    );
   }
   libWrapper.register(
     _levelsModuleName,
@@ -44,12 +50,6 @@ Hooks.on("init", () => {
     _levelsModuleName,
     "WallsLayer.prototype.checkCollision",
     _levelsCheckCollision,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "AmbientSound.prototype.isAudible",
-    _levelsIsAudible,
     "OVERRIDE"
   );
   libWrapper.register(
