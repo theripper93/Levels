@@ -1,6 +1,8 @@
 function _levelsTokenRefresh(wrapped,...args) {
+  if(!this.icon) return this;
   wrapped(...args);
   // Adjust Scale
+  
   this.icon.scale.x =
     Math.abs(this.icon.scale.x) *
     (this.data.mirrorX ? -1 : 1) *

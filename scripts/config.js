@@ -9,7 +9,7 @@ Hooks.on("init", () => {
     _levelsModuleName,
     "Token.prototype.refresh",
     _levelsTokenRefresh,
-    "WRAPPER"
+    "MIXED"
   );
   libWrapper.register(
     _levelsModuleName,
