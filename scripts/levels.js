@@ -1340,7 +1340,7 @@ class Levels {
     if (!this.floorContainer.spriteIndex[token.id]) return;
     let sprite = this.floorContainer.children.find((c) => c.name == token.id);
     if (sprite) {
-      token.refresh();
+      token?.refresh();
       this.floorContainer.removeChild(sprite);
     }
     delete this.floorContainer.spriteIndex[token.id];
@@ -1362,7 +1362,7 @@ class Levels {
     if (!this.overContainer.spriteIndex[token.id]) return;
     let sprite = this.overContainer.children.find((c) => c.name == token.id);
     if (sprite) {
-      token.refresh();
+      token?.refresh();
       this.overContainer.removeChild(sprite);
     }
     delete this.overContainer.spriteIndex[token.id];
