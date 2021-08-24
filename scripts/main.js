@@ -124,6 +124,7 @@ Hooks.on("renderSceneControls", () => {
 Hooks.on("deleteToken", (token) => {
   _levels.removeTempTokenOverhead(token.object);
   _levels.removeTempToken(token.object);
+  canvas.lighting.draw()
 })
 
 Hooks.on("preUpdateToken", (token,updates) => {
