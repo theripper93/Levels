@@ -664,8 +664,7 @@ class Levels {
         holes
       );
     }
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
+    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {

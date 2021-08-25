@@ -447,8 +447,7 @@ class LevelsUI {
       light.visible = this.computeRangeForDocument(light, range);
       light.source.skipRender = !light.visible;
     }
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
+    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
 
     for (let note of canvas.notes.placeables) {
       note.visible = this.computeRangeForDocument(note, range);
