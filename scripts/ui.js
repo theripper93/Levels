@@ -109,6 +109,7 @@ class LevelsUI extends FormApplication {
     this.range = this.definedLevels.find(
       (l) => l[0] == bottom && l[1] == top && l[2] == name
     );
+    game.currentTokenElevation = parseInt(bottom)
     this.computeLevelsVisibility(this.range);
   }
 
@@ -311,7 +312,6 @@ class LevelsUI extends FormApplication {
   }
 
   computeLevelsVisibility(range) {
-    console.log(range);
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
     if (!range) return;
@@ -352,8 +352,7 @@ class LevelsUI extends FormApplication {
       light.visible = this.computeRangeForDocument(light, range);
       light.source.skipRender = !light.visible;
     }
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
+    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
 
     for (let note of canvas.notes.placeables) {
       note.visible = this.computeRangeForDocument(note, range);
