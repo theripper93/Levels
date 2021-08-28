@@ -72,8 +72,14 @@
     "levels.dialog.define.warn": "Define levels as: bottom,top|bottom,top - eg. 0,9|10,19|20,29",
     "levels.dialog.define.title": "Define Levels for this Scene",
     "levels.dialog.define.text": "Levels: ",
+    "levels.dialog.removeLevel.title": "Remove Level",
+    "levels.dialog.removeLevel.content": "Are you sure you want to remove this level?",
+    "levels.dialog.getFromScene.title": "Get Levels from Scene",
+    "levels.dialog.getFromScene.content": "Get Levels from current scene? This will overwrite your current levels",
     "levels.dialog.elevator.title": "Levels - Choose a Floor",
     "levels.dialog.elevation.title": "Set Elevation for next Template placement",
+
+    "levels.ui.title": "Levels - Layer Tool",
 
     "levels.yesnodialog.yes": "Confirm",
     "levels.yesnodialog.no": "Cancel",

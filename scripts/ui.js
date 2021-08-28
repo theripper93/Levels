@@ -1,412 +1,317 @@
 let _levelsTemplateTool;
 
-class LevelsUI {
+class LevelsUI extends FormApplication {
   constructor() {
+    super();
     this.range = [];
     this.rangeEnabled = false;
+    this.isEdit = false;
     this.definedLevels = [];
-    this.currentLevel = 0;
     this.roofEnabled = false;
     this.placeOverhead = false;
     this.stairEnabled = true;
   }
 
-  renderHud(toggle) {
-    this.readLevels(this.currentLevel);
-    $("body").find('div[id="levels-levels"]').remove();
-    if (!toggle) {
-      this.computeLevelsVisibility();
-      this.clearVisibility();
-      return;
-    }
+  static get defaultOptions() {
+    return {
+      ...super.defaultOptions,
+      title: game.i18n.localize("levels.ui.title"),
+      id: "levelsUI",
+      template: `modules/levels/templates/layerTool.hbs`,
+      resizable: true,
+      dragDrop: [{ dragSelector: null, dropSelector: null }],
+    };
+  }
+
+  getData() {
+    return {};
+  }
+
+  async activateListeners(html) {
+    this.rangeEnabled = true;
+    ui.controls.controls.find((c) => c.name == "tiles").layer = "foreground";
+    this.loadLevels();
+    html.on("click", ".level-item", this._onChangeLevel.bind(this));
+    html.on("click", ".level-item .fa-trash", this._onRemoveLevel.bind(this));
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-trash",
+      this._onClearLevels.bind(this)
+    );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-plus",
+      this._onAddLevel.bind(this)
+    );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-edit",
+      this._onToggleEdit.bind(this)
+    );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-map",
+      this._onGetFromScene.bind(this)
+    );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-users",
+      this._onShowPlayerList.bind(this)
+    );
+    html.on("click", ".player-portrait", this._onControlToken.bind(this));
+    html.on("change", ".level-inputs input", this.saveData.bind(this));
+    //make list sortable
+    html.find("#levels-list").sortable({
+      axis: "y",
+      handle: ".fa-arrows-alt",
+      update: this.saveData.bind(this),
+    });
+    const index = this.definedLevels
+      ? this.definedLevels.indexOf(
+          this.definedLevels.find(
+            (l) =>
+              l[0] == this.range[0] &&
+              l[1] == this.range[1] &&
+              l[2] == this.range[2]
+          )
+        )
+      : undefined;
+    if (index === undefined || index === -1) {
+      html.find("#levels-list li:last-child").click();
+    } else html.find("#levels-list li")[index].click();
+    this.updatePlayerList();
+  }
+
+  _onAddLevel(event) {
+    let $li = this.generateLi([0, 0, ""]);
+    $("#levels-list").append($li);
+  }
+  //toggle disabled property of inputs and toggle visibility of trash icon
+  _onToggleEdit(event) {
+    this.isEdit = !this.isEdit;
+    let $inputs = $(".level-inputs input");
+    $inputs.prop("disabled", !$inputs.prop("disabled"));
+    $(".level-item .fa-trash").toggleClass("hidden");
+    $(".level-item .fa-arrows-alt").toggleClass("hidden");
+  }
+
+  _onChangeLevel(event) {
+    let $target = $(event.currentTarget);
+    let $parent = $target.parent();
+    $parent.find(".fa-caret-right").removeClass("active");
+    $parent.find("li").removeClass("active");
+    $target.find(".fa-caret-right").addClass("active");
+    $target.addClass("active");
+    const top = $target.find(".level-top").val();
+    const bottom = $target.find(".level-bottom").val();
+    const name = $target.find(".level-name").val();
+    this.definedLevels = canvas.scene.getFlag(_levelsModuleName, "sceneLevels");
+    this.range = this.definedLevels.find(
+      (l) => l[0] == bottom && l[1] == top && l[2] == name
+    );
     this.computeLevelsVisibility(this.range);
-    let UIHtml = `<div id="levels-levels" class="app">
-    <h3>
-      <i class="fas fa-layer-group"></i>
-      ${game.i18n.localize("levels.widget.title")}
-      <a class="link"><i id="levelDown" class="fas fa-angle-down"></i></a>
-      <a class="link"><i id="levelUp" class="fas fa-angle-up"></i></a>
-      <a class="link"><i id="levelClose" class="fas fa-times"></i></a>
-    </h3>
-    <ol>
-    
-  `;
-    let sortedLevels = this.definedLevels.map((x) => x);
-    sortedLevels.reverse();
-    for (let level of sortedLevels) {
-      let cssClass =
-        this.definedLevels.indexOf(level) == this.currentLevel
-          ? "active"
-          : "inactive";
-      UIHtml += `<li class="level" data-level="${this.definedLevels.indexOf(
-        level
-      )}">
-        <span class="${cssClass}"></span>
-        <a class="link change-level">
-        <span>
-          ${
-            level[2] ||
-            game.i18n.localize("levels.widget.element") +
-              " " +
-              this.definedLevels.indexOf(level)
-          }:
-        </span>
-        <span>
-          [${level[0]} - ${level[1]}]
-        </span>
-      </a>
-      </li>`;
-    }
-
-    UIHtml += "	</ol></div>";
-    let $UIHtml = $(UIHtml);
-    $("body").append($UIHtml);
-
-    $UIHtml.find("a.change-level").click(function () {
-      _levels.UI.currentLevel = $(this).closest("li.level").data("level");
-      _levels.UI.refreshLevels();
-    });
-
-    $UIHtml.find("#levelDown").click(function () {
-      if (_levels.UI.currentLevel > 0) _levels.UI.currentLevel -= 1;
-      _levels.UI.refreshLevels();
-    });
-
-    $UIHtml.find("#levelUp").click(function () {
-      if (_levels.UI.currentLevel < _levels.UI.definedLevels.length - 1)
-        _levels.UI.currentLevel += 1;
-      _levels.UI.refreshLevels();
-    });
-
-    $UIHtml.find("#levelClose").click(function () {
-      _levels.UI.rangeEnabled = false;
-      _levels.UI.renderHud(false);
-      let levelsLayerBTN = $("body").find(
-        `li[data-canvas-layer="levelsLayer"]`
-      );
-      let togglebutton = $("body").find(`li[data-tool="enablerange"]`);
-      if (levelsLayerBTN[0].className == "scene-control active")
-        togglebutton.trigger("click");
-    });
   }
 
-  async defineLevels() {
-    let currentLevels = "";
-    if (!this.definedLevels.length) {
-      currentLevels = "<p>No levels defined. Add one below.</p>";
-    }
-    currentLevels += this.getLevelsHtml(this.definedLevels);
-    let content = this.getLevelsHtmlContent(currentLevels);
-
-    let dialog = new Dialog({
-      title: game.i18n.localize("levels.dialog.define.title"),
-      content: content,
-      buttons: {
-        close: {
-          label: game.i18n.localize("levels.yesnodialog.no"),
-          callback: () => {
-            this.readLevels();
-            this.renderHud(this.rangeEnabled);
-          },
-        },
-        confirm: {
-          label: game.i18n.localize("levels.yesnodialog.yes"),
-          callback: async (dialog) => {
-            let renderedFrom = $("body").find(`div[id="levels-define-window"]`);
-            let flagToSet = [];
-            for (let delBtn of $(renderedFrom).find("a")) {
-              if (delBtn.id == "addLevel") continue;
-              let node =
-                $(delBtn).closest().prevObject[0].parentElement.children;
-              let bottom = $(node).find('input[class="level-bottom"]')[0]
-                .valueAsNumber;
-              let top = $(node).find('input[class="level-top"]')[0]
-                .valueAsNumber;
-              let name = $(node).find('input[class="level-name"]')[0].value;
-              flagToSet.push([bottom, top, name]);
-            }
-            await canvas.scene.setFlag(
-              _levelsModuleName,
-              "sceneLevels",
-              flagToSet
-            );
-            this.readLevels();
-            this.renderHud(this.rangeEnabled);
-          },
-        },
+  _onRemoveLevel(event) {
+    Dialog.confirm({
+      title: game.i18n.localize("levels.dialog.removeLevel.title"),
+      content: game.i18n.localize("levels.dialog.removeLevel.content"),
+      yes: () => {
+        let $target = $(event.currentTarget);
+        $target.remove();
+        this.saveData();
       },
-      default: "confirm",
-      close: () => {
-        this.readLevels();
-        this.renderHud(this.rangeEnabled);
-      },
+      no: () => {},
+      defaultYes: false,
     });
-    await dialog._render(true);
-    let renderedFrom = $("body").find(`div[id="levels-define-window"]`);
-    $($(renderedFrom).find(`div[class="button"]`)[0]).on(
-      "click",
-      autoReadLevels
-    );
-    $($(renderedFrom).find(`div[class="button"]`)[1]).on(
-      "click",
-      suggestedLevels
-    );
-    for (let delBtn of $(renderedFrom).find("a")) {
-      if (delBtn.id == "addLevel") {
-        $(delBtn).on("click", addToDialog);
-      } else {
-        $(delBtn).on("click", refreshDialog);
-      }
-    }
-    async function refreshDialog(add = true) {
-      if (add) _levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
-      let index = add ? this.id.split("-")[1] : undefined;
-      if (index) _levels.UI.definedLevels.splice(index, 1);
-      let currentLevels = "";
-      if (!_levels.UI.definedLevels.length) {
-        currentLevels = "<p>No levels defined. Add one below.</p>";
-      }
-      currentLevels += _levels.UI.getLevelsHtml(_levels.UI.definedLevels);
-      let newcontent = _levels.UI.getLevelsHtmlContent(currentLevels);
-      let oldForm = $("body").find(`div[id="levels-define-window"]`);
-      await oldForm.replaceWith(newcontent);
-      let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
-      $($(newRenderedFrom).find(`div[class="button"]`)[0]).on(
-        "click",
-        autoReadLevels
-      );
-      $($(newRenderedFrom).find(`div[class="button"]`)[1]).on(
-        "click",
-        suggestedLevels
-      );
-      for (let delBtn of $(newRenderedFrom).find("a")) {
-        if (delBtn.id == "addLevel") {
-          $(delBtn).on("click", addToDialog);
-        } else {
-          $(delBtn).on("click", refreshDialog);
-        }
-      }
-    }
-
-    async function addToDialog() {
-      let node = $(this).closest().prevObject[0].parentElement.children;
-      let bottom = $(node).find('input[class="level-bottom"]')[0].valueAsNumber;
-      let top = $(node).find('input[class="level-top"]')[0].valueAsNumber;
-      let name = $(node).find('input[class="level-name"]')[0].value;
-      _levels.UI.definedLevels = _levels.UI.getDialogCurrentLevels();
-      _levels.UI.definedLevels.push([bottom, top, name]);
-      let currentLevels = "";
-      if (!_levels.UI.definedLevels.length) {
-        currentLevels = "<p>No levels defined. Add one below.</p>";
-      }
-      currentLevels += _levels.UI.getLevelsHtml(_levels.UI.definedLevels);
-      let newcontent = _levels.UI.getLevelsHtmlContent(currentLevels);
-      let oldForm = $("body").find(`div[id="levels-define-window"]`);
-      await oldForm.replaceWith(newcontent);
-      let newRenderedFrom = $("body").find(`div[id="levels-define-window"]`);
-      $($(newRenderedFrom).find(`div[class="button"]`)[0]).on(
-        "click",
-        autoReadLevels
-      );
-      $($(newRenderedFrom).find(`div[class="button"]`)[1]).on(
-        "click",
-        suggestedLevels
-      );
-      for (let delBtn of $(newRenderedFrom).find("a")) {
-        if (delBtn.id == "addLevel") {
-          $(delBtn).on("click", addToDialog);
-        } else {
-          $(delBtn).on("click", refreshDialog);
-        }
-      }
-    }
-
-    function autoReadLevels(event) {
-      event.preventDefault();
-      let autoLevels = {};
-      for (let wall of canvas.walls.placeables) {
-        let entityRange = [
-          wall.data.flags.wallHeight?.wallHeightBottom,
-          wall.data.flags.wallHeight?.wallHeightTop,
-        ];
-        if (
-          entityRange[0] != -Infinity &&
-          entityRange[1] != Infinity &&
-          (entityRange[0] || entityRange[0] == 0) &&
-          (entityRange[1] || entityRange[1] == 0)
-        ) {
-          autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
-        }
-      }
-
-      for (let tile of canvas.foreground.placeables) {
-        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
-        if (
-          (rangeBottom || rangeBottom == 0) &&
-          (rangeTop || rangeTop == 0) &&
-          rangeTop != Infinity &&
-          rangeBottom != -Infinity
-        ) {
-          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-        }
-      }
-
-      for (let light of canvas.lighting.placeables) {
-        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(light);
-        if (
-          (rangeBottom || rangeBottom == 0) &&
-          (rangeTop || rangeTop == 0) &&
-          rangeTop != Infinity &&
-          rangeBottom != -Infinity
-        ) {
-          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-        }
-      }
-
-      for (let drawing of canvas.drawings.placeables) {
-        let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
-        if (
-          (rangeBottom || rangeBottom == 0) &&
-          (rangeTop || rangeTop == 0) &&
-          rangeTop != Infinity &&
-          rangeBottom != -Infinity
-        ) {
-          autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-        }
-      }
-      let autoRange = Object.entries(autoLevels)
-        .map((x) => x[1])
-        .sort();
-      if (autoRange.length) _levels.UI.definedLevels = autoRange;
-      refreshDialog(false);
-    }
-
-    function suggestedLevels(event) {
-      event.preventDefault();
-      let suggestedRange = [
-        [0, 9, "Ground Floor"],
-        [10, 19, "First Floor"],
-        [20, 29, "Second Floor"],
-        [30, 39, "Third Floor"],
-      ];
-      _levels.UI.definedLevels = suggestedRange;
-      refreshDialog(false);
-    }
   }
 
-  getDialogCurrentLevels() {
-    let renderedFrom = $("body").find(`div[id="levels-define-window"]`);
-    let newLevels = [];
-    for (let delBtn of $(renderedFrom).find("a")) {
-      if (delBtn.id == "addLevel") continue;
-      let node = $(delBtn).closest().prevObject[0].parentElement.children;
-      let bottom = $(node).find('input[class="level-bottom"]')[0].valueAsNumber;
-      let top = $(node).find('input[class="level-top"]')[0].valueAsNumber;
-      let name = $(node).find('input[class="level-name"]')[0].value;
-      newLevels.push([bottom, top, name]);
-    }
-    return newLevels;
+  _onGetFromScene(event) {
+    Dialog.confirm({
+      title: game.i18n.localize("levels.dialog.getFromScene.title"),
+      content: game.i18n.localize("levels.dialog.getFromScene.content"),
+      yes: async () => {
+        this.getFromScene();
+      },
+      no: () => {},
+      defaultYes: false,
+    });
   }
 
-  getLevelsHtml(levels) {
-    let currLevelsHtml = "";
-    for (let level of levels) {
-      currLevelsHtml += `
-      <div class="form-group" id="currentLevels" index="${levels.indexOf(
-        level
-      )}">
-      <label for="level-bottom">${game.i18n.localize(
-        "levels.form.bottom"
-      )}</label>
-        <div class="form-fields">
-          <input type="number" class="level-bottom" value="${
-            level[0]
-          }" data-dtype="Number">
-        </div>
-        <label for="level-top">${game.i18n.localize("levels.form.top")}</label>
-        <div class="form-fields">
-          <input type="number" class="level-top" value="${
-            level[1]
-          }" data-dtype="Number">
-        </div>
-        <label for="level-name">${game.i18n.localize(
-          "levels.form.name"
-        )}</label>
-        <div class="form-fields">
-          <input type="text" class="level-name" value="${
-            level[2] || ""
-          }" data-dtype="String">
-        </div>
-        <a class="trash" id="deleteLevel-${levels.indexOf(
-          level
-        )}"><i class="fas fa-trash"></i></a>
-      </div>`;
-    }
-    return currLevelsHtml;
+  _onShowPlayerList(event) {
+    this.element.find(".players-on-level").toggleClass("active");
   }
 
-  getLevelsHtmlContent(currentLevels) {
-    return `
-    <div id="levels-define-window">
-  <h2>${game.i18n.localize("levels.form.currentLevel")}</h2>
-  <p class="notes">${game.i18n.localize("levels.form.tip")}</p>
-  <hr>
-    <form id="levels-define" autocomplete="off">
-      <div class="current-levels" style="min-height:200px">
-        ${currentLevels}
-      </div>
-      <hr>
-      <p class="notes">${game.i18n.localize("levels.form.addNew")}</p>
-      <div class="form-group">
-        <label for="level-bottom">${game.i18n.localize(
-          "levels.form.bottom"
-        )}</label>
-        <div class="form-fields">
-          <input type="number" class="level-bottom" data-dtype="Number">
-        </div>
-        <label for="level-top">${game.i18n.localize("levels.form.top")}</label>
-        <div class="form-fields">
-          <input type="number" class="level-top" data-dtype="Number">
-        </div>
-        <label for="level-name">${game.i18n.localize(
-          "levels.form.name"
-        )}</label>
-        <div class="form-fields">
-          <input type="text" class="level-name" data-dtype="String">
-        </div>
-        <a class="trash" id="addLevel"><i class="fas fa-plus"></i></a>
-      </div>
-      <div class="button">
-        <button class="add-level">${game.i18n.localize(
-          "levels.form.autoLevels"
-        )}</button>
-      </div>
-      <div class="button">
-      <button class="add-level">${game.i18n.localize(
-        "levels.form.suggestedLevels"
-      )}</button>
-    </div>
-    </form>
-</div>
-
-      `;
+  _onControlToken(event) {
+    const tokenId = event.currentTarget.dataset.tokenid;
+    const token = canvas.tokens.get(tokenId);
+    token.control();
   }
 
-  readLevels(currentLevel = 0) {
+  saveData() {
+    let data = [];
+    $(this.element)
+      .find("li")
+      .each((index, element) => {
+        let $element = $(element);
+        let name = $element.find(".level-name").val();
+        let top = $element.find(".level-top").val();
+        let bottom = $element.find(".level-bottom").val();
+        data.push([bottom, top, name]);
+      });
+    canvas.scene.setFlag(_levelsModuleName, "sceneLevels", data);
+  }
+
+  async loadLevels() {
+    $("#levels-list").empty();
     let levelsFlag =
       canvas.scene.getFlag(_levelsModuleName, "sceneLevels") || [];
-    this.currentLevel = currentLevel;
     this.definedLevels = levelsFlag;
-    this.range = this.definedLevels[currentLevel];
+    this.range = this.range ?? this.definedLevels[levelsFlag.length - 1];
+    if (levelsFlag) {
+      for (let level of levelsFlag) {
+        this.element.find("#levels-list").append(this.generateLi(level));
+      }
+    }
+  }
+
+  generateLi(data) {
+    //data 0 - top 1- bottom 2- name
+    let $li = $(`
+	<li class="level-item" draggable>
+    <i class="fas fa-arrows-alt"></i>
+    <div class="players-on-level"></div>
+    <i class="fas fa-caret-right"></i>
+    <div class="level-inputs">
+    <input type="text" class="level-name" value="${
+      data[2] ?? ""
+    }" placeholder="${game.i18n.localize("levels.widget.element")}">
+    <i class="fas fa-caret-down"></i>
+    <input type="number" class="level-bottom" value="${data[0]}" placeholder="0">
+    <i class="fas fa-caret-up"></i>
+    <input type="number" class="level-top" value="${
+      data[1]
+    }" placeholder="0">
+    <i class="fas fa-trash"></i>
+    </div>
+	</li>
+	`);
+    $li.find("input").prop("disabled", !this.isEdit);
+    $li.find(".fa-trash").toggleClass("hidden", this.isEdit);
+    $li.find(".fa-arrows-alt").toggleClass("hidden", this.isEdit);
+    return $li;
+  }
+
+  async _onClearLevels() {
+    Dialog.confirm({
+      title: game.i18n.localize("levels.dialog.levelsclear.title"),
+      content: game.i18n.localize("levels.dialog.levelsclear.content"),
+      yes: async () => {
+        await canvas.scene.setFlag(_levelsModuleName, "sceneLevels", []);
+        this.loadLevels();
+      },
+      no: () => {},
+      defaultYes: false,
+    });
+  }
+
+  updatePlayerList(){
+    const playerActors = Array.from(game.users).map( user => user.character?.id)
+    const players = canvas.tokens.placeables.filter( token => playerActors.includes(token.actor?.id))
+    $(this.element)
+    .find("li")
+    .each((index, element) => {
+      let $element = $(element);
+      const top = $element.find(".level-top").val();
+      const bottom = $element.find(".level-bottom").val();
+      const $playerList = $element.find(".players-on-level");
+      $playerList.empty();
+      players.forEach(player => {
+        if(player.data.elevation >= bottom && player.data.elevation <= top){
+          const color = Array.from(game.users).find( user => user.character?.id == player.actor.id)?.border
+          $playerList.append(`<img class="player-portrait" data-tokenid="${player.id}" title="${player.actor.name}" style="border-color: ${color}" src="${player.data.img}">`);
+        }
+      })
+    });
+    this.element.css("height", "auto");
+  }
+
+  close(force=false) {
+    if(!force) this.saveData();
+    this.clearVisibility();
+    this.rangeEnabled = false;
+    ui.controls.controls.find((c) => c.name == "tiles").layer = "background";
+    super.close();
+  }
+
+  async getFromScene() {
+    let autoLevels = {};
+    for (let wall of canvas.walls.placeables) {
+      let entityRange = [
+        wall.data.flags.wallHeight?.wallHeightBottom,
+        wall.data.flags.wallHeight?.wallHeightTop,
+      ];
+      if (
+        entityRange[0] != -Infinity &&
+        entityRange[1] != Infinity &&
+        (entityRange[0] || entityRange[0] == 0) &&
+        (entityRange[1] || entityRange[1] == 0)
+      ) {
+        autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
+      }
+    }
+
+    for (let tile of canvas.foreground.placeables) {
+      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
+      if (
+        (rangeBottom || rangeBottom == 0) &&
+        (rangeTop || rangeTop == 0) &&
+        rangeTop != Infinity &&
+        rangeBottom != -Infinity
+      ) {
+        autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+      }
+    }
+
+    for (let light of canvas.lighting.placeables) {
+      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(light);
+      if (
+        (rangeBottom || rangeBottom == 0) &&
+        (rangeTop || rangeTop == 0) &&
+        rangeTop != Infinity &&
+        rangeBottom != -Infinity
+      ) {
+        autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+      }
+    }
+
+    for (let drawing of canvas.drawings.placeables) {
+      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
+      if (
+        (rangeBottom || rangeBottom == 0) &&
+        (rangeTop || rangeTop == 0) &&
+        rangeTop != Infinity &&
+        rangeBottom != -Infinity
+      ) {
+        autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+      }
+    }
+    let autoRange = Object.entries(autoLevels)
+      .map((x) => x[1])
+      .sort()
+      .reverse();
+    if (autoRange.length) {
+      await canvas.scene.setFlag(_levelsModuleName, "sceneLevels", autoRange);
+      this.loadLevels();
+    }
   }
 
   refreshLevels() {
-    this.range = this.definedLevels[this.currentLevel];
-    this.renderHud(this.rangeEnabled);
     this.computeLevelsVisibility(this.range);
   }
 
   computeLevelsVisibility(range) {
+    console.log(range);
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
     if (!range) return;
@@ -447,7 +352,8 @@ class LevelsUI {
       light.visible = this.computeRangeForDocument(light, range);
       light.source.skipRender = !light.visible;
     }
-    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
+    canvas.lighting.refresh();
+    canvas.lighting.placeables.forEach((l) => l.updateSource());
 
     for (let note of canvas.notes.placeables) {
       note.visible = this.computeRangeForDocument(note, range);
@@ -460,7 +366,11 @@ class LevelsUI {
     for (let drawing of canvas.drawings.placeables) {
       drawing.visible = this.computeRangeForDocument(drawing, range);
     }
-
+    for (let token of canvas.tokens.placeables) {
+      token.levelsVisible =
+        token.data.elevation <= range[1] && token.data.elevation >= range[0];
+      token.visible = token.levelsVisible;
+    }
   }
 
   computeRangeForDocument(document, range, isTile = false) {
@@ -526,46 +436,6 @@ class LevelsUI {
     canvas.lighting.placeables.forEach((l) => l.updateSource());
   }
 
-  async clearLevels() {
-    if (
-      await this.yesNoPrompt(
-        game.i18n.localize("levels.dialog.levelsclear.title"),
-        game.i18n.localize("levels.dialog.levelsclear.content")
-      )
-    ) {
-      await canvas.scene.setFlag(_levelsModuleName, "sceneLevels", []);
-      this.readLevels();
-    }
-  }
-
-  async yesNoPrompt(dTitle, dContent) {
-    let dialog = new Promise((resolve, reject) => {
-      new Dialog({
-        title: `${dTitle}`,
-        content: `<p>${dContent}</p>`,
-        buttons: {
-          one: {
-            icon: '<i class="fas fa-trash"></i>',
-            label: game.i18n.localize("levels.yesnodialog.yes"),
-            callback: () => {
-              resolve(true);
-            },
-          },
-          two: {
-            icon: '<i class="fas fa-times"></i>',
-            label: game.i18n.localize("levels.yesnodialog.no"),
-            callback: () => {
-              resolve(false);
-            },
-          },
-        },
-        default: "two",
-      }).render(true);
-    });
-    let result = await dialog;
-    return result;
-  }
-
   getObjUpdateData(range) {
     return {
       flags: {
@@ -574,10 +444,6 @@ class LevelsUI {
     };
   }
 }
-
-Hooks.on("canvasInit", () => {
-  $("body").find('div[id="levels-levels"]').remove();
-});
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   if (game.user.isGM) {
@@ -627,45 +493,13 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         name: "enablerange",
         title: game.i18n.localize("levels.controls.levelsview.name"),
         icon: "fas fa-layer-group",
-        toggle: true,
-        active: _levels?.UI?.rangeEnabled || false,
-        onClick: (toggle) => {
-          if (toggle)
-            controls.find((c) => c.name == "tiles").layer = "foreground";
-          else controls.find((c) => c.name == "tiles").layer = "background";
-          _levels.UI.rangeEnabled = toggle;
-          _levels.UI.renderHud(toggle);
-        },
-      },
-      {
-        name: "define",
-        title: game.i18n.localize("levels.controls.definelevels.name"),
-        icon: "fas fa-edit",
         button: true,
         onClick: () => {
-          _levels.UI.readLevels();
-          _levels.UI.defineLevels();
-        },
-      },
-      {
-        name: "up",
-        title: game.i18n.localize("levels.controls.levelup.name"),
-        icon: "fas fa-level-up-alt",
-        button: true,
-        onClick: () => {
-          if (_levels.UI.currentLevel < _levels.UI.definedLevels.length - 1)
-            _levels.UI.currentLevel += 1;
-          _levels.UI.refreshLevels();
-        },
-      },
-      {
-        name: "down",
-        title: game.i18n.localize("levels.controls.leveldown.name"),
-        icon: "fas fa-level-down-alt",
-        button: true,
-        onClick: () => {
-          if (_levels.UI.currentLevel > 0) _levels.UI.currentLevel -= 1;
-          _levels.UI.refreshLevels();
+          if (_levels.UI.rendered) {
+            _levels.UI.close();
+          } else {
+            _levels.UI.render(true);
+          }
         },
       },
       {
@@ -716,11 +550,54 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
       tools: levelsTools,
     };
     controls.push(levelsLayerTool);
+
+    $("body")
+      .on("mousedown", `li[data-control="levels"]`, (event) => {
+        if (event.which == 3) {
+          if (_levels.UI.rendered) {
+            _levels.UI.close();
+          } else {
+            _levels.UI.render(true);
+          }
+        }
+      });
   }
 });
 
 Hooks.on("ready", () => {
   if (game.user.isGM) {
+
+    Hooks.on("canvasInit", () => {
+      _levels.UI.close(true);
+    })
+
+    Hooks.on("updateToken", (token,updates)=>{
+      if("elevation" in updates)_levels.UI.updatePlayerList();
+    })
+
+    Hooks.on("createToken", (token,updates)=>{
+      _levels.UI.updatePlayerList();
+    })
+
+    Hooks.on("deleteToken", (token,updates)=>{
+      _levels.UI.updatePlayerList();
+    })
+
+    Hooks.on("renderLevelsUI", (app, html) => {
+
+      if(!app.positionSet){
+        $("#levelsUI").css({
+          top:"2px",
+          left: "unset",
+          right:"310px",
+        })
+        const pos = $("#levelsUI")[0]?.getBoundingClientRect()
+        app.position.left = pos.left
+        app.position.top = pos.top
+        app.positionSet = true
+      }
+    })
+
     Hooks.on("renderSceneControls", () => {
       if (canvas["levelsLayer"]) canvas["levelsLayer"].deactivate();
     });
@@ -750,9 +627,7 @@ Hooks.on("ready", () => {
     Hooks.on("updateTile", (tile, updates) => {
       if (_levels.UI.rangeEnabled == true) {
         _levels.UI.computeLevelsVisibility();
-        if (
-          game.settings.get(_levelsModuleName, "enableTooltips")
-        ) {
+        if (game.settings.get(_levelsModuleName, "enableTooltips")) {
           canvas.hud.levels.bind(tile.object);
         } else {
           canvas.hud.levels.clear();
@@ -781,7 +656,7 @@ Hooks.on("ready", () => {
     Hooks.on("preCreateDrawing", (drawing, updates) => {
       let aboverange =
         _levels.UI.definedLevels[
-          _levels.UI.definedLevels.indexOf(_levels.UI.range) + 1
+          _levels.UI.definedLevels.indexOf(_levels.UI.range) - 1
         ];
       if (aboverange) {
         let newTop = aboverange[1];

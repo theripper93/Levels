@@ -34,7 +34,8 @@
         "./scripts/helpers.js",
         "./scripts/config.js",
         "./scripts/ui.js",
-        "./scripts/tooltip.js"
+        "./scripts/tooltip.js",
+        "./scripts/jquerysortable.js"
     ],
     "styles": [
         "./styles/levels.css"

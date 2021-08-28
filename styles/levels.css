@@ -1,69 +1,185 @@
-#levels-levels {
-    z-index: 1000;
-    position: fixed;
-    right: 310px;
-    border: 1px solid #000;
-    min-width: 150px;
+:root{
+    --levels-text-color: #f0f0e0;
 }
 
-#levels-levels.collapsed {
-    right: 10px;
+#levelsUI{
+    min-width: 100px;
 }
 
-#levels-levels h3 {
-    border-bottom: 2px groove #23221d;
-    margin: 3px;
-    padding: 4px;
+body.dragging, body.dragging * {
+    cursor:-webkit-grabbing !important;
 }
 
-#levels-levels h3 a:last-child {
-    float: right;
+.dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
 }
 
-#levels-levels ol {
+#levelsUI .placeholder {
+    height: 0.3rem;
+    background: var(--levels-text-color);
+  }
+
+#levelsUI .window-content{
+    margin: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.356);
+}
+
+#levelsUI ol{
+    list-style: none;
+    margin: 0;
     padding: 0;
 }
 
-#levels-levels ol li {
-    display: block;
+#levelsUI li{
+    display: flex;
+    border-bottom: 1px solid rgb(0, 0, 0);
+
 }
 
-#levels-levels ol li span.active {
-    background: #cc288f;
-    border: 1px solid #ff50ff;
+#levelsUI li:hover{
+    background: rgba(255, 255, 255, 0.288);
+}
+
+#levelsUI li.active{
+    background: rgba(255, 255, 255, 0.534);
+}
+
+#levelsUI ol{
+    width: 100%;
+}
+
+#levelsUI .form-group{
+    display: flex;
+    flex-direction: column;
+    height: 96%;
+}
+
+#levelsUI input{
+    border-radius: 0px;
+    color: var(--levels-text-color);
+    height: auto !important;
+    border: none;
+    background: transparent;
+    text-shadow: 0 0 5px black;
+}
+
+#levelsUI .level-name{
+    text-overflow: ellipsis;
+}
+
+#levelsUI li .fas{
+    color: var(--levels-text-color);
+    align-self: center;
+    font-size: 10px;
+}   
+
+#levelsUI li .fa-caret-right{
+    color: transparent;
+} 
+
+#levelsUI li .fas.active{
+    margin-left: 0.3rem;
+    color: var(--levels-text-color);
+}
+
+#levelsUI li .fa-trash,.fa-arrows-alt{
+    color: #f94848;
+    margin-right: 0.2rem;
+    margin-left: 0.2rem;
+    display: none;
+}
+
+#levelsUI li .fa-arrows-alt{
+    cursor: -webkit-grab;
+}
+
+#levelsUI li .fa-trash.hidden,.fa-arrows-alt.hidden{
+    display: inline;
+}
+
+#levelsUI li .fa-trash:hover{
+    cursor: pointer;
+    text-shadow: 0 0 5px var(--levels-text-color);
+}
+
+#levelsUI input::placeholder{
+    color: var(--levels-text-color);
+    opacity: 0.5;
+}
+
+#levelsUI input:focus{
+    box-shadow: 0 0 0 rgb(255, 255, 255);
+    background: rgba(255, 255, 255, 0.356);
+}
+
+.level-inputs{
+    display: flex;
+    width: -webkit-fill-available;
+}
+
+.level-name{
+    min-width: 1rem !important;
+}
+
+.level-top{
+    width: 2.5rem !important;
+}
+
+.level-bottom{
+    width: 2.5rem !important;
+}
+
+.level-indicator{
     border-radius: 50%;
-    height: 8px;
-    width: 8px;
-    display: inline-block;
-    margin: 5px 8px 0 0;
+    background-color: blueviolet;
+    align-self: center;
+    width: 0.6rem;
+    height: 0.6rem;    
 }
 
-#levels-levels ol li span.inactive {
-    background: #333333;
-    border: 1px solid #000000;
+#levels-ui-controls{
+    display: flex;
+    color: var(--levels-text-color);
+    align-items: flex-end;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-top: 0.1rem;
+    margin-bottom: 0.5rem;
+}
+
+#levels-ui-controls i:hover{
+    cursor: pointer;
+    text-shadow: 0 0 5px var(--levels-text-color);
+}
+
+#levelsUI .players-on-level{
+    flex-direction: row;
+    overflow: hidden;
+    align-items: center;
+    min-width: fit-content;
+    display: none;
+}
+
+#levelsUI .players-on-level.active{
+    display: flex;
+}
+
+#levelsUI .player-portrait{
+    width: 1.5rem;
+    height: 1.5rem;
     border-radius: 50%;
-    height: 8px;
-    width: 8px;
-    display: inline-block;
-    margin: 5px 8px 0 0;
+    border-width: medium;
+    margin-right: 0.2rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    background-color: var(--levels-text-color);
+    cursor: pointer;
 }
 
-#levels-levels a.change-level span:last-child {
-    float: right;
-    margin-left: 5px;
-}
-
-#levels-levels a:hover {
-    text-shadow: 0 0 10px #ff6400;
-}
-
-#levels-define .form-fields {
-    margin: 0 5px;
-}
-
-#levels-define input.level-name {
-    width: 150px;
-}
+/** Tooltip **/
 
 #levels-tooltip {
     grid-template-columns: 40% 60%;

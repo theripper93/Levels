@@ -285,7 +285,7 @@ function _levelsTokenIsVisible() {//OVERRIDE complete override of token visibili
     });
   } else {
     const gm = game.user.isGM;
-    if(gm && _levels.UI && _levels.UI.rangeEnabled === true) return this.data.elevation <= _levels.UI.range[1] && this.data.elevation >= _levels.UI.range[0]
+    if(gm && _levels.UI && _levels.UI.rangeEnabled === true && _levels.UI.range && !canvas.tokens.controlled[0]) return this.data.elevation <= _levels.UI.range[1] && this.data.elevation >= _levels.UI.range[0]
     if (
       this.levelsVisible === true ||
       (this.levelsVisible === false && canvas.tokens.controlled[0])
