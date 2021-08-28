@@ -111,6 +111,7 @@ class LevelsUI extends FormApplication {
     );
     game.currentTokenElevation = parseInt(bottom)
     this.computeLevelsVisibility(this.range);
+    Hooks.callAll("levelsUiChangeLevel");
   }
 
   _onRemoveLevel(event) {
