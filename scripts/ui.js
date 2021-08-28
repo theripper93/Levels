@@ -374,6 +374,10 @@ class LevelsUI extends FormApplication {
 
   computeRangeForDocument(document, range, isTile = false) {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
+    rangeBottom = parseInt(rangeBottom);
+    rangeTop = parseInt(rangeTop);
+    range[0] = parseInt(range[0]);
+    range[1] = parseInt(range[1]);
     let entityRange = [rangeBottom, rangeTop];
     if (!isTile) {
       if (
