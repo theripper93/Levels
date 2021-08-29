@@ -748,6 +748,24 @@ Hooks.on("renderApplication", () => {
     _levels.UI.refreshLevels();
 });
 
+Hooks.on("sightRefresh", () => {
+  if(canvas.tokens.controlled[0]) return
+  if (
+    _levels?.UI?.rangeEnabled &&
+    game.settings.get(_levelsModuleName, "forceUiRefresh")
+  )
+    _levels.UI.refreshLevels();
+});
+
+Hooks.on("lightingRefresh", () => {
+  if(canvas.tokens.controlled[0]) return
+  if (
+    _levels?.UI?.rangeEnabled &&
+    game.settings.get(_levelsModuleName, "forceUiRefresh")
+  )
+    _levels.UI.refreshLevels();
+});
+
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   let templateTool = {
     name: "setTemplateElevation",
