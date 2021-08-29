@@ -417,7 +417,7 @@ class LevelsUI extends FormApplication {
 
     for (let tile of canvas.foreground.placeables) {
       tile.visible = true;
-      //tile.refresh();
+      if(!canvas.tokens._active)tile.refresh();
     }
 
     for (let light of canvas.lighting.placeables) {
