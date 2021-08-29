@@ -340,9 +340,12 @@ class LevelsUI extends FormApplication {
         range,
         this.roofEnabled
       );
+      if(tile.visible && tile.tileSortHidden){
+        tile.visible = false;
+      }
       let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
       let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
-      if (tile.visible || tileIndex.range[1] <= range[1]) {
+      if (tileIndex.range[1] <= range[0]) {//|| tile.visible
         _levels.mirrorTileInBackground(tileIndex);
       } else {
         _levels.removeTempTile(tileIndex);
