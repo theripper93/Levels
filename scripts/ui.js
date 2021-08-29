@@ -109,6 +109,7 @@ class LevelsUI extends FormApplication {
     this.range = this.definedLevels.find(
       (l) => l[0] == bottom && l[1] == top && l[2] == name
     );
+    if($(event.target).hasClass("player-portrait")) return
     game.currentTokenElevation = parseInt(bottom)
     this.computeLevelsVisibility(this.range);
     Hooks.callAll("levelsUiChangeLevel");
@@ -344,6 +345,7 @@ class LevelsUI extends FormApplication {
         range,
         this.roofEnabled
       );
+      if(tile.visible) tile.tile.alpha = 1
       if(tile.visible && tile.tileSortHidden){
         tile.visible = false;
       }
@@ -419,6 +421,7 @@ class LevelsUI extends FormApplication {
       tile.visible = true;
       if(!canvas.tokens._active)tile.refresh();
     }
+    canvas.foreground.refresh()
 
     for (let light of canvas.lighting.placeables) {
       light.visible = true;
