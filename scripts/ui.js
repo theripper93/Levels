@@ -321,6 +321,10 @@ class LevelsUI extends FormApplication {
         wall.data.flags.wallHeight?.wallHeightBottom,
         wall.data.flags.wallHeight?.wallHeightTop,
       ];
+      if(entityRange[0] === entityRange[1] && (entityRange[0] === null || entityRange[0] === undefined)){
+        wall.visible = true
+        continue
+      }
       if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
         wall.visible = true;
       } else {
@@ -413,7 +417,7 @@ class LevelsUI extends FormApplication {
 
     for (let tile of canvas.foreground.placeables) {
       tile.visible = true;
-      tile.refresh();
+      //tile.refresh();
     }
 
     for (let light of canvas.lighting.placeables) {
