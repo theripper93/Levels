@@ -15,6 +15,13 @@ function _levelsTokenRefresh(wrapped,...args) {
   return this;
 }
 
+function _levelsTileRefresh(wrapped,...args){
+  wrapped(...args);
+  if(this.levelsUIHideen && !canvas.tokens.controlled[0]) {
+    this.visible = false
+  }
+}
+
 function _levelsOnMovementFrame(wrapped,...args) {
   wrapped(...args);
   // Update the token copy

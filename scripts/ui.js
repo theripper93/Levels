@@ -80,6 +80,7 @@ class LevelsUI extends FormApplication {
       html.find("#levels-list li:last-child").click();
     } else html.find("#levels-list li")[index].click();
     this.updatePlayerList();
+    if(canvas.background._active) canvas.foreground.activate()
   }
 
   _onAddLevel(event) {
@@ -351,11 +352,12 @@ class LevelsUI extends FormApplication {
       }
       let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
       let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
-      if (tileIndex.range[1] <= range[0]) {//|| tile.visible
+      if (tileIndex.range[1] <= range[0] || tile.visible) {
         _levels.mirrorTileInBackground(tileIndex);
       } else {
         _levels.removeTempTile(tileIndex);
       }
+      tile.levelsUIHideen = !tile.visible;
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -419,6 +421,7 @@ class LevelsUI extends FormApplication {
 
     for (let tile of canvas.foreground.placeables) {
       tile.visible = true;
+      tile.levelsUIHideen = false;
       if(!canvas.tokens._active)tile.refresh();
     }
     canvas.foreground.refresh()
@@ -740,7 +743,7 @@ Hooks.on("renderSceneControls", () => {
     _levels.UI.refreshLevels();
 });
 
-Hooks.on("renderApplication", () => {
+/*Hooks.on("renderApplication", () => {
   if (
     _levels?.UI?.rangeEnabled &&
     game.settings.get(_levelsModuleName, "forceUiRefresh")
@@ -764,7 +767,7 @@ Hooks.on("lightingRefresh", () => {
     game.settings.get(_levelsModuleName, "forceUiRefresh")
   )
     _levels.UI.refreshLevels();
-});
+});*/
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   let templateTool = {

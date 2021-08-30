@@ -4,12 +4,18 @@ Hooks.on("init", () => {
       return _levels.getTokenLOSheight(this);
     },
   });
-
+  
   libWrapper.register(
     _levelsModuleName,
     "Token.prototype.refresh",
     _levelsTokenRefresh,
     "MIXED"
+  );
+  libWrapper.register(
+    _levelsModuleName,
+    "Tile.prototype.refresh",
+    _levelsTileRefresh,
+    "WRAPPER"
   );
   libWrapper.register(
     _levelsModuleName,
