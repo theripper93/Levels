@@ -122,6 +122,7 @@ Hooks.on("renderSceneControls", () => {
 });
 
 Hooks.on("deleteToken", (token) => {
+  debugger
   _levels.removeTempTokenOverhead({id:token.id});
   _levels.removeTempToken({id:token.id});
 })
