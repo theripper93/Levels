@@ -376,3 +376,53 @@ function _levelsTokendrawTooltip(wrapped,...args) {
   if(_levels.hideElevation == 1 && game.user.isGM) return wrapped(...args);
   this.hud?.tooltip?.destroy();
 }
+
+function _levelsRenderLightTexture() {
+
+  // Determine ideal texture size as the closest power-of-2
+  const s = (this.radius * 2);
+  const p2 = Math.max(64, Math.min(PIXI.utils.nextPow2(s) >> 1, canvas.MAX_TEXTURE_SIZE >> 1 ));
+  const ratio = p2 / s;
+
+  // Create or resize the render texture
+  let rt = this.fovTexture;
+  if ( !this.fovTexture ) {
+    this.fovTexture = rt = PIXI.RenderTexture.create({ width: p2, height: p2, resolution: 1 });
+    this.fovTexture.baseTexture.mipmap = false;
+  }
+  else if ((rt.width !== p2) || (rt.height !== p2)) {
+    rt.resize(p2, p2);
+  }
+
+  // Create the container to render
+  const c = new PIXI.Container();
+  c.scale.set(ratio);
+
+  // Draw the blurred texture with BLUE fill
+  const g = c.addChild(new PIXI.Graphics());
+  g.beginFill(0x0000FF, 1.0).drawShape(this.los).endFill();
+  let gf = LightSource._glowFilter;
+  if ( !gf ) {
+    gf = LightSource._glowFilter = GlowFilter.create({
+      outerStrength: 0,
+      innerStrength: LightSource.BLUR_STRENGTH,
+      glowColor: [0,1,0,1],
+      quality: 0.3
+    });
+  }
+  gf.blendMode = PIXI.BLEND_MODES.ADD;
+  g.filters = [gf];
+
+    // Add light occlusion from tiles
+  if(_levels?.lightOcclusion.spriteIndex[this._lightId]){
+    c.addChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
+  }
+
+  // Render the texture
+  canvas.app.renderer.render(c, {
+    renderTexture: rt,
+    transform: new PIXI.Matrix(1, 0, 0, 1, (-this.x + this.radius) * ratio, (-this.y + this.radius) * ratio)
+  });
+  this._flags.renderFOV = false;
+  return this.fovTexture;
+}

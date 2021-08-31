@@ -82,6 +82,12 @@ Hooks.on("init", () => {
     _levelsTokenCheckCollision,
     "OVERRIDE"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "LightSource.prototype._renderTexture",
+    _levelsRenderLightTexture,
+    "OVERRIDE"
+  );
   /*libWrapper.register(
     _levelsModuleName,
     "Token.prototype._drawTooltip",

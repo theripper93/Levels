@@ -704,8 +704,7 @@ class Levels {
   }
 
   lightClearOcclusions(lightIndex) {
-    this.lightOcclusion[lightIndex.light.id]?.coloration?.removeChildren();
-    this.lightOcclusion[lightIndex.light.id]?.illumination?.removeChildren();
+    this.lightOcclusion.spriteIndex[lightIndex.light.id]?.removeChildren();
   }
 
   _levelsOnSightRefresh() {
@@ -884,33 +883,21 @@ class Levels {
   }
 
   occludeLights(tileIndex, light) {
+    const lightId = light.light.id
+    light.light.source._lightId = lightId;
     let tile = tileIndex.tile;
-    let oldMask = this.lightOcclusion.spriteIndex[light.id]
-    let addChild = oldMask ? false : true;
     let tileImg = tile.tile;
     if (!tileImg || !tileImg.texture.baseTexture) return;
-    let sprite, Illumsprite;
+    let sprite;
     if (!tile._levelsAlphaMap)
       this._createAlphaMap(tile, { keepPixels: true, keepTexture: true });
     sprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
     sprite.tint = 0x000000;
     sprite.name = tile.id;
-    Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
-    Illumsprite.tint = canvas.lighting.channels.background.hex;
-    Illumsprite.name = tile.id;
-    if (addChild) {
-      if(!this.lightOcclusion.spriteIndex[light.id]?.coloration){
-        if(!this.lightOcclusion.spriteIndex[light.id]) this.lightOcclusion.spriteIndex[light.id] = {};
-        this.lightOcclusion.spriteIndex[light.id].coloration = new PIXI.Container();
-        this.lightOcclusion.spriteIndex[light.id].illumination = new PIXI.Container();
-        this.lightOcclusion.addChild(this.lightOcclusion.spriteIndex[light.id].coloration);
-        this.lightOcclusion.addChild(this.lightOcclusion.spriteIndex[light.id].illumination);
+      if(!this.lightOcclusion.spriteIndex[lightId]){
+        this.lightOcclusion.spriteIndex[lightId] = new PIXI.Container();
       }
-      this.lightOcclusion.spriteIndex[light.id].coloration.addChild(sprite);
-      this.lightOcclusion.spriteIndex[light.id].illumination.addChild(Illumsprite);
-      light.light.source.coloration.mask = this.lightOcclusion.spriteIndex[light.id].coloration
-      light.light.source.illumination.mask = this.lightOcclusion.spriteIndex[light.id].illumination;
-    }
+    this.lightOcclusion.spriteIndex[lightId].addChild(sprite);
   }
 
   getLightOcclusionSprite(tile) {
