@@ -14,7 +14,7 @@ Hooks.on("canvasReady", () => {
       _levels.init = true;
     }
   });
-  canvas.tokens.placeables.forEach(t => t.drawTooltip())
+  canvas.tokens.placeables.forEach(t => t.refresh())
   Hooks.callAll("levelsReady");
 });
 
@@ -122,7 +122,6 @@ Hooks.on("renderSceneControls", () => {
 });
 
 Hooks.on("deleteToken", (token) => {
-  debugger
   _levels.removeTempTokenOverhead({id:token.id});
   _levels.removeTempToken({id:token.id});
 })

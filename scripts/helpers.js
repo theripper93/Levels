@@ -36,237 +36,215 @@ function _levelsOnMovementFrame(wrapped,...args) {
 
 function _lightingRefresh(darkness) {
   const priorLevel = this.darknessLevel;
-  const darknessChanged = darkness !== undefined && darkness !== priorLevel;
-  this.darknessLevel = darkness = Math.clamped(
-    darkness ?? this.darknessLevel,
-    0,
-    1
-  );
+  const darknessChanged = (darkness !== undefined) && (darkness !== priorLevel)
+  this.darknessLevel = darkness = Math.clamped(darkness ?? this.darknessLevel, 0, 1);
 
   // Update lighting channels
-  if (darknessChanged || !this.channels)
-    this.channels = this._configureChannels(darkness);
+  if ( darknessChanged || !this.channels ) this.channels = this._configureChannels(darkness);
 
   // Track global illumination
   let refreshVision = false;
   const globalLight = this.hasGlobalIllumination();
-  if (globalLight !== this.globalLight) {
+  if ( globalLight !== this.globalLight ) {
     this.globalLight = globalLight;
-    canvas.perception.schedule({ sight: { initialize: true, refresh: true } });
+    canvas.perception.schedule({sight: {initialize: true, refresh: true}});
   }
 
   // Clear currently rendered sources
+  const msk = this.masks;
+  msk.removeChildren();
+  const bkg = this.background;
+  bkg.removeChildren();
   const ilm = this.illumination;
   ilm.lights.removeChildren();
   const col = this.coloration;
   col.removeChildren();
+  const del = this.delimiter;
+  del.removeChildren();
   this._animatedSources = [];
 
   // Tint the background color
   canvas.app.renderer.backgroundColor = this.channels.canvas.hex;
-  ilm.background.tint = this.channels.background.hex;
+  ilm.background.tint = ilm.sbackground.tint = this.channels.background.hex;
 
   // Render light sources
-  for (let sources of [this.sources, canvas.sight.sources]) {
-    for (let source of sources) {
-      // Check the active state of the light source
-      const isActive = source.skipRender //OVERRIDE SKIP RENDER
-        ? false
-        : darkness.between(source.darkness.min, source.darkness.max);
-      if (source.active !== isActive) refreshVision = true;
-      source.active = isActive;
-      if (!source.active) continue;
+  for ( let source of this.sources ) {
 
-      // Draw the light update
-      const light = source.drawLight();
-      if (light) ilm.lights.addChild(light);
-      const color = source.drawColor();
-      if (color) col.addChild(color);
-      if (source.animation?.type) this._animatedSources.push(source);
+    // Check the active state of the light source
+    const isActive = source.skipRender //OVERRIDE SKIP RENDER
+        ? false
+        : darkness.between(source.data.darkness.min, source.data.darkness.max);
+    if ( source.active !== isActive ) refreshVision = true;
+    source.active = isActive;
+    if ( !source.active ) continue;
+
+    // Add the source mask used by all source meshes
+    if ( source.losMask ) msk.addChild(source.losMask);
+
+    // Draw the light update
+    const meshes = source.drawMeshes();
+    if ( meshes.background ) bkg.addChild(meshes.background);
+    if ( meshes.light ) ilm.lights.addChild(meshes.light);
+    if ( meshes.color ) col.addChild(meshes.color);
+    if ( meshes.delimiter ) del.addChild(meshes.delimiter);
+    if ( source.data.animation?.type ) this._animatedSources.push(source);
+  }
+
+  // Render sight from vision sources if there is a darkness level present
+  if ( this.darknessLevel > 0 ) {
+    for ( let vs of canvas.sight.sources ) {
+      if ( vs.radius <= 0 ) continue;
+      if ( vs.losMask ) msk.addChild(vs.losMask);
+      const sight = vs.drawVision();
+      if ( sight ) ilm.lights.addChild(sight);
     }
   }
 
   // Draw non-occluded roofs that block light
   const displayRoofs = canvas.foreground.displayRoofs;
-  for (let roof of canvas.foreground.roofs) {
-    if (!displayRoofs || roof.occluded) continue;
-    const si = roof.getRoofSprite();
-    if (!si) continue;
+  for ( let roof of canvas.foreground.roofs ) {
+    if ( !displayRoofs || roof.occluded ) continue;
 
     // Block illumination
+    const si = roof.getRoofSprite();
+    if ( !si ) continue;
     si.tint = this.channels.background.hex;
-    this.illumination.lights.addChild(si);
+    this.illumination.lights.addChild(si)
 
     // Block coloration
     const sc = roof.getRoofSprite();
     sc.tint = 0x000000;
     this.coloration.addChild(sc);
+
+    // Block background
+    const sb = roof.getRoofSprite();
+    sb.blendMode = PIXI.BLEND_MODES.ERASE;
+    this.background.addChild(sb);
   }
 
   // Refresh vision if necessary
-  if (refreshVision) canvas.perception.schedule({ sight: { refresh: true } });
+  if ( refreshVision ) canvas.perception.schedule({sight: {refresh: true}});
 
   // Refresh audio if darkness changed
-  if (darknessChanged) {
+  if ( darknessChanged ) {
     this._onDarknessChange(darkness, priorLevel);
     canvas.sounds._onDarknessChange(darkness, priorLevel);
   }
 
-  // Dispatch a hook that modules can use
+  /**
+   * A hook event that fires when the LightingLayer is refreshed.
+   * @function lightingRefresh
+   * @memberof hookEvents
+   * @param {LightingLayer} light The LightingLayer
+   */
   Hooks.callAll("lightingRefresh", this);
 }
 
-function _levelsTestVisibility(point, { tolerance = 2, object = null } = {}) {
+function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
   const visionSources = this.sources;
   const lightSources = canvas.lighting.sources;
-  if (!visionSources.size) return game.user.isGM;
+  if ( !visionSources.size ) return game.user.isGM;
 
   // Determine the array of offset points to test
   const t = tolerance;
-  const offsets =
-    t > 0
-      ? [
-          [0, 0],
-          [-t, 0],
-          [t, 0],
-          [0, -t],
-          [0, t],
-          [-t, -t],
-          [-t, t],
-          [t, t],
-          [t, -t],
-        ]
-      : [[0, 0]];
-  const points = offsets.map(
-    (o) => new PIXI.Point(point.x + o[0], point.y + o[1])
-  );
+  const offsets = t > 0 ? [[0, 0],[-t,0],[t,0],[0,-t],[0,t],[-t,-t],[-t,t],[t,t],[t,-t]] : [[0,0]];
+  const points = offsets.map(o => new PIXI.Point(point.x + o[0], point.y + o[1]));
 
-  // Test that a point falls inside a line-of-sight polygon
-  let inLOS = false;
-  for (let source of visionSources.values()) {
-    if (points.some((p) => source.los.contains(p.x, p.y))) {
-      inLOS = true;
-      break;
+  // We require both LOS and FOV membership for a point to be visible
+  let hasLOS = false;
+  let requireFOV = !canvas.lighting.globalLight;
+  let hasFOV = false;
+
+  // Check vision sources
+  for ( let source of visionSources.values() ) {
+    if ( !hasLOS ) {
+      let l = points.some(p => source.los.contains(p.x, p.y));
+      if ( l ) hasLOS = true;
     }
+    if ( !hasFOV && requireFOV ) {
+      let f = points.some(p => source.los.contains(p.x, p.y));
+      if (f) hasFOV = true;
+    }
+    if ( hasLOS && (!requireFOV || hasFOV) ) return true;
   }
-  if (!inLOS) return false;
 
-  // If global illumination is active, nothing more is required
-  if (canvas.lighting.globalLight) return true;
-
-  // Test that a point is also within some field-of-vision polygon
-  for (let source of visionSources.values()) {
-    if (points.some((p) => source.fov.contains(p.x, p.y))) return true;
-  }
-  for (let source of lightSources.values()) {
+  // Check light sources
+  for ( let source of lightSources.values() ) {
     if (source.skipRender) continue; //OVERRIDE SKIP RENDER
-    if (points.some((p) => source.fov.contains(p.x, p.y))) return true;
+    if ( points.some(p => source.containsPoint(p)) ) {
+      if ( source.data.type !== CONST.SOURCE_TYPES.LOCAL ) hasLOS = true;
+      hasFOV = true;
+    }
+    if (hasLOS && (!requireFOV || hasFOV)) return true;
   }
   return false;
 }
 
-function _levelsGetRayCollisions(
-  ray,
-  { type = "movement", mode = "all", _performance } = {},
-  roomTest
-) {
-  // Define inputs
-  const angleBounds = [ray.angle - Math.PI / 2, ray.angle + Math.PI / 2];
-  const isClosest = mode === "closest";
-  const isAny = mode === "any";
-  const wallType = this.constructor._mapWallCollisionType(type);
+function _levelsGetRayCollisions(ray, {type="move", mode="all", steps=8}={}, roomTest) {
 
-  // Track collisions
-  const collisions = {};
-  let collided = false;
-
-  // Track quadtree nodes and walls which have already been tested
-  const testedNodes = new Set();
+  // Record collision points and tested walls
+  const angleBounds = [ray.angle - (Math.PI / 2), ray.angle + (Math.PI / 2)];
+  const collisionPoints = new Map();
   const testedWalls = new Set();
 
-  // Expand the ray outward from the origin, identifying candidate walls as we go
-  const stages = 4;
-  for (let i = 1; i <= stages; i++) {
-    // Determine and iterate over the (unordered) set of nodes to test at this level of projection
-    const limit = i < stages ? ray.project(i / stages) : ray.B;
-    const bounds = new NormalizedRectangle(
-      ray.A.x,
-      ray.A.y,
-      limit.x - ray.A.x,
-      limit.y - ray.A.y
-    );
-    const nodes = this.quadtree.getLeafNodes(bounds);
-    for (let n of nodes) {
-      if (testedNodes.has(n)) continue;
-      testedNodes.add(n);
-
-      // Iterate over walls in the node to test
-      const objects = n.objects;
-      for (let o of objects) {
-        const w = o.t;
-        const wt = w.data[wallType];
-        if (testedWalls.has(w)) continue;
-        testedWalls.add(w);
-
-        // Skip walls which don't fit the criteria
-        if (wt === CONST.WALL_SENSE_TYPES.NONE) continue;
-        if (
-          w.data.door > CONST.WALL_DOOR_TYPES.NONE &&
-          w.data.ds === CONST.WALL_DOOR_STATES.OPEN
-        )
-          continue;
-        if (w.direction !== null) {
-          // Directional walls where the ray angle is not in the same hemisphere
-          if (!w.isDirectionBetweenAngles(...angleBounds)) continue;
-        }
-
-        // Test a single wall
-        const x = WallsLayer.testWall(ray, w, roomTest); //OVERRIDE add elevation parameter to testWall
-        if (_performance) _performance.tests++;
-        if (!x) continue;
-        if (isAny) return true;
-
-        // Update a known collision point to flag the sense type
-        const pt = `${x.x},${x.y}`;
-        let c = collisions[pt];
-        if (c) {
-          c.type = Math.min(wt, c.type);
-          for (let n of o.n) c.nodes.push(n);
-        } else {
-          x.type = wt;
-          x.nodes = Array.from(o.n);
-          collisions[pt] = x;
-          collided = true;
-        }
+  // Progressively test walls along ray segments
+  let dx = ray.dx / steps;
+  let dy = ray.dy / steps;
+  let pt = ray.A;
+  let step = 0;
+  while (step < steps) {
+    step++;
+    const testRect = new NormalizedRectangle(pt.x, pt.y, dx, dy);
+    let walls = canvas.walls.quadtree.getObjects(testRect);
+    pt = {x: pt.x + dx, y: pt.y + dy};
+    for (let wall of walls) {
+      if(roomTest !== false && roomTest !== undefined){
+        const wallHeightBottom = wall.data?.flags?.wallHeight?.wallHeightBottom ?? -Infinity;
+        const wallHeightTop = wall.data?.flags?.wallHeight?.wallHeightTop ?? Infinity;
+        if(roomTest < wallHeightBottom || roomTest > wallHeightTop) continue
       }
-    }
+      // Don't repeat tests
+      if (testedWalls.has(wall)) continue;
+      testedWalls.add(wall);
+      // Ignore walls of the wrong type or open doors
+      if (!wall.data[type] || wall.isOpen) continue;
 
-    // At this point we may be done if the closest collision has been fully tested
-    if (isClosest && collided) {
-      const closest = this.getClosestCollision(Object.values(collisions));
-      if (closest && closest.nodes.every((n) => testedNodes.has(n))) {
-        return closest;
-      }
+      // Ignore one-way walls which are facing the wrong direction
+      if ((wall.direction !== null) && !wall.isDirectionBetweenAngles(...angleBounds)) continue;
+
+      // Test whether an intersection occurs
+      const i = ray.intersectSegment(wall.data.c);
+      if (!i || (i.t0 <= 0)) continue;
+
+      // We may only need one
+      if ( mode === "any" ) return true;
+
+      // Record the collision point if an intersection occurred
+      const c = new WallEndpoint(i.x, i.y);
+      collisionPoints.set(c.key, c);
     }
+    if (collisionPoints.size && (mode === "closest")) break;
   }
 
-  // Return the collision result
-  if (isAny) return false;
-  if (isClosest) {
-    const closest = this.getClosestCollision(Object.values(collisions));
-    return closest || null;
+  // Return the result based on the test type
+  switch (mode) {
+    case "all":
+      return Array.from(collisionPoints.values());
+    case "any":
+      return collisionPoints.size > 0;
+    case "closest":
+      if (!collisionPoints.size) return null;
+      const sortedPoints = Array.from(collisionPoints.values()).sort((a, b) => a.t0 - b.t0);
+      if (sortedPoints[0].isLimited(type)) sortedPoints.shift();
+      return sortedPoints[0] || null;
   }
-  return Object.values(collisions);
 }
 
-function _levelsCheckCollision(//OVERRIDE PASS roomtest to the next function
-  ray,
-  { type = "movement", mode = "any" } = {},
-  roomTest = false
-) {
-  if (!canvas.grid.hitArea.contains(ray.B.x, ray.B.y)) return true;
-  if (!canvas.scene.data.walls.size) return false;
-  return this.getRayCollisions(ray, { type, mode }, roomTest);
+function _levelsCheckCollision(ray, {type="move", mode="any"}={},
+roomTest = false) {
+  if ( !canvas.grid.hitArea.contains(ray.B.x, ray.B.y) ) return true;
+  if ( !canvas.scene.data.walls.size ) return false;
+  return CONFIG.Canvas.losBackend.getRayCollisions(ray, {type, mode}, roomTest);
 }
 
 function _levelsIsAudible() {
@@ -346,28 +324,24 @@ async function _levelsTemplatedraw(wrapped,...args) {
   return this;
 }
 
-  /**
-   * Update the displayed ruler tooltip text
-   * @private
-   */
-   function _levelsRefreshRulerText() {
-    let special = this.data.flags.levels?.special || _levels?.nextTemplateSpecial
-    let text;
-    let u = canvas.scene.data.gridUnits;
-    if ( this.data.t === "rect" ) {
-      let d = canvas.dimensions;
-      let dx = Math.round(this.ray.dx) * (d.distance / d.size);
-      let dy = Math.round(this.ray.dy) * (d.distance / d.size);
-      let w = Math.round(dx * 10) / 10;
-      let h = Math.round(dy * 10) / 10;
-      text = special ? `${w}${u} x ${h}${u} x ${special}${u}` : `${w}${u} x ${h}${u}`;
-    } else {
-      let d = Math.round(this.data.distance * 10) / 10;
-      text = special ? `${d}${u} x ${special}${u}` : `${d}${u}`;
-    }
-    this.ruler.text = text;
-    this.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
+function _levelsRefreshRulerText() {
+  let special = this.data.flags.levels?.special || _levels?.nextTemplateSpecial
+  let text;
+  let u = canvas.scene.data.gridUnits;
+  if ( this.data.t === "rect" ) {
+    let d = canvas.dimensions;
+    let dx = Math.round(this.ray.dx) * (d.distance / d.size);
+    let dy = Math.round(this.ray.dy) * (d.distance / d.size);
+    let w = Math.round(dx * 10) / 10;
+    let h = Math.round(dy * 10) / 10;
+    text = special ? `${w}${u} x ${h}${u} x ${special}${u}` : `${w}${u} x ${h}${u}`;
+  } else {
+    let d = Math.round(this.data.distance * 10) / 10;
+    text = special ? `${d}${u} x ${special}${u}` : `${d}${u}`;
   }
+  this.hud.ruler.text = text;
+  this.hud.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
+}
 
 function _levelsTokenCheckCollision(destination) {
   // Create a Ray for the attempted move
@@ -389,7 +363,7 @@ function _levelsTokenCheckCollision(destination) {
   if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
     return canvas.walls.checkCollision(
       ray,
-      { type: "movement", mode: "any" },
+      { type: "move", mode: "any" },
       this.data.elevation
     );
   } else {
@@ -400,6 +374,5 @@ function _levelsTokenCheckCollision(destination) {
 function _levelsTokendrawTooltip(wrapped,...args) {
   if(!_levels || _levels.hideElevation == 0) return wrapped(...args);
   if(_levels.hideElevation == 1 && game.user.isGM) return wrapped(...args);
-  this.tooltip.removeChildren().forEach(c => c.destroy());
-  return
+  this.hud?.tooltip?.destroy();
 }

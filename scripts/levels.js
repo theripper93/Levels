@@ -398,7 +398,7 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.fov.contains(token.center.x, token.center.y)) return true;
+          if (source.los.contains(token.center.x, token.center.y)) return true;
         }
       }
     }
@@ -483,8 +483,8 @@ class Levels {
       : Math.max(
           sourceToken.data.dimSight,
           sourceToken.data.brightSight,
-          sourceToken.data.dimLight,
-          sourceToken.data.brightLight
+          sourceToken.data.dimLight ?? 0,
+          sourceToken.data.brightLight ?? 0
         );
     if (this.modules.PerfectVision.Active) {
       const pvRange = this.getPerfectVisionVisionRange(sourceToken);

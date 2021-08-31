@@ -48,7 +48,7 @@ Hooks.on("init", () => {
   }
   libWrapper.register(
     _levelsModuleName,
-    "WallsLayer.prototype.getRayCollisions",
+    "CONFIG.Canvas.losBackend.getRayCollisions",
     _levelsGetRayCollisions,
     "OVERRIDE"
   );
@@ -84,7 +84,7 @@ Hooks.on("init", () => {
   );
   libWrapper.register(
     _levelsModuleName,
-    "Token.prototype.drawTooltip",
+    "Token.prototype._drawTooltip",
     _levelsTokendrawTooltip,
     "MIXED"
   );
@@ -206,7 +206,7 @@ Hooks.on("init", () => {
     default: 0,
     onChange: (setting) => {
       _levels.hideElevation = setting;
-      canvas.tokens.placeables.forEach((t) => t.drawTooltip());
+      canvas.tokens.placeables.forEach((t) => t.refresh());
     },
   });
 
