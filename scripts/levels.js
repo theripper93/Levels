@@ -13,6 +13,8 @@ class Levels {
     this.overContainer.spriteIndex = {};
     this.fogContainer = new PIXI.Container();
     this.fogContainer.spriteIndex = {};
+    this.lightOcclusion = new PIXI.Container();
+    this.lightOcclusion.spriteIndex = {};
     this.tokenRevealFogContainer = new PIXI.Container();
     this.tokenRevealFogContainer.spriteIndex = {};
     this.occlusionIndex = {};
@@ -672,6 +674,7 @@ class Levels {
     lightIndex.light.source.skipRender = !(
       lightIndex.range[0] <= elevation && lightIndex.range[1] >= elevation
     );
+    debugger
     if (
       lightIndex.range[1] <= elevation &&
       this.lightIluminatesHole(lightIndex, holes, elevation)
@@ -701,11 +704,8 @@ class Levels {
   }
 
   lightClearOcclusions(lightIndex) {
-    if (!lightIndex.light.occlusionTiles) return;
-    for (let tile of lightIndex.light.occlusionTiles) {
-      this.unoccludeLights(tile, lightIndex);
-    }
-    lightIndex.light.occlusionTiles = [];
+    this.lightOcclusion[lightIndex.light.id]?.coloration?.removeChildren();
+    this.lightOcclusion[lightIndex.light.id]?.illumination?.removeChildren();
   }
 
   _levelsOnSightRefresh() {
@@ -858,7 +858,7 @@ class Levels {
   }
 
   lightIluminatesHole(light, holes, elevation) {
-    if (!light.light.source.fov || !light.light.center) return false;
+    if (!light.light.source.los || !light.light.center) return false;
     for (let hole of holes) {
       if (
         elevation <= hole.range[1] &&
@@ -867,13 +867,13 @@ class Levels {
       ) {
         return true;
       }
-      for (let i = 0; i < light.light.source.fov.points.length; i += 2) {
+      for (let i = 0; i < light.light.source.los.points.length; i += 2) {
         if (
           elevation <= hole.range[1] &&
           elevation >= hole.range[0] &&
           hole.poly.contains(
-            light.light.source.fov.points[i],
-            light.light.source.fov.points[i + 1]
+            light.light.source.los.points[i],
+            light.light.source.los.points[i + 1]
           )
         ) {
           return true;
@@ -885,10 +885,8 @@ class Levels {
 
   occludeLights(tileIndex, light) {
     let tile = tileIndex.tile;
-    let oldSprite = light.light.source.coloration.children.find(
-      (c) => c.name == tile.id
-    );
-    let addChild = oldSprite ? false : true;
+    let oldMask = this.lightOcclusion.spriteIndex[light.id]
+    let addChild = oldMask ? false : true;
     let tileImg = tile.tile;
     if (!tileImg || !tileImg.texture.baseTexture) return;
     let sprite, Illumsprite;
@@ -901,8 +899,17 @@ class Levels {
     Illumsprite.tint = canvas.lighting.channels.background.hex;
     Illumsprite.name = tile.id;
     if (addChild) {
-      light.light.source.coloration.addChild(sprite);
-      light.light.source.illumination.addChild(Illumsprite);
+      if(!this.lightOcclusion.spriteIndex[light.id]?.coloration){
+        if(!this.lightOcclusion.spriteIndex[light.id]) this.lightOcclusion.spriteIndex[light.id] = {};
+        this.lightOcclusion.spriteIndex[light.id].coloration = new PIXI.Container();
+        this.lightOcclusion.spriteIndex[light.id].illumination = new PIXI.Container();
+        this.lightOcclusion.addChild(this.lightOcclusion.spriteIndex[light.id].coloration);
+        this.lightOcclusion.addChild(this.lightOcclusion.spriteIndex[light.id].illumination);
+      }
+      this.lightOcclusion.spriteIndex[light.id].coloration.addChild(sprite);
+      this.lightOcclusion.spriteIndex[light.id].illumination.addChild(Illumsprite);
+      light.light.source.coloration.mask = this.lightOcclusion.spriteIndex[light.id].coloration
+      light.light.source.illumination.mask = this.lightOcclusion.spriteIndex[light.id].illumination;
     }
   }
 

@@ -82,12 +82,12 @@ Hooks.on("init", () => {
     _levelsTokenCheckCollision,
     "OVERRIDE"
   );
-  libWrapper.register(
+  /*libWrapper.register(
     _levelsModuleName,
     "Token.prototype._drawTooltip",
     _levelsTokendrawTooltip,
     "MIXED"
-  );
+  );*/
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
