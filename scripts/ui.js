@@ -97,6 +97,7 @@ class LevelsUI extends FormApplication {
   }
 
   _onChangeLevel(event) {
+    canvas.tokens.releaseAll()
     let $target = $(event.currentTarget);
     let $parent = $target.parent();
     $parent.find(".fa-caret-right").removeClass("active");
