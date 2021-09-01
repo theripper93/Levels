@@ -381,6 +381,8 @@ class LevelsUI extends FormApplication {
       token.levelsVisible =
         token.data.elevation <= range[1] && token.data.elevation >= range[0];
       token.visible = token.levelsVisible;
+      if(token.visible) _levels.getTokenIconSpriteOverhead(token)
+      else _levels.removeTempTokenOverhead(token)
     }
   }
 
