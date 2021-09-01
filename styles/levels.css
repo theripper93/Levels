@@ -96,7 +96,7 @@ body.dragging, body.dragging * {
     cursor: -webkit-grab;
 }
 
-#levelsUI li .fa-trash.hidden,.fa-arrows-alt.hidden{
+#levelsUI li .fa-trash.hidden,#levelsUI li .fa-arrows-alt.hidden{
     display: inline;
 }
 
