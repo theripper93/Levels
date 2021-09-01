@@ -232,9 +232,9 @@ class LevelsUI extends FormApplication {
       const $playerList = $element.find(".players-on-level");
       $playerList.empty();
       players.forEach(player => {
-        if(player.data.elevation >= bottom && player.data.elevation <= top){
-          const color = Array.from(game.users).find( user => user.character?.id == player.actor.id)?.border
-          $playerList.append(`<img class="player-portrait" data-tokenid="${player.id}" title="${player.actor.name}" style="border-color: ${color}" src="${player.data.img}">`);
+        if(player.data.elevation >= bottom && player.data.elevation <= top && player.id){
+          const color = Array.from(game.users).find( user => user.character?.id == player?.actor?.id)?.border
+          $playerList.append(`<img class="player-portrait" data-tokenid="${player.id}" title="${player.actor?.name}" style="border-color: ${color}" src="${player.data.img}">`);
         }
       })
     });
@@ -311,13 +311,10 @@ class LevelsUI extends FormApplication {
     }
   }
 
-  refreshLevels() {
-    this.computeLevelsVisibility(this.range);
-  }
-
   computeLevelsVisibility(range) {
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
+    if(!range) range = this.range
     if (!range) return;
     for (let wall of canvas.walls.placeables) {
       let entityRange = [
@@ -358,7 +355,7 @@ class LevelsUI extends FormApplication {
       } else {
         _levels.removeTempTile(tileIndex);
       }
-      tile.levelsUIHideen = !tile.visible;
+      //tile.levelsUIHideen = !tile.visible;
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -389,10 +386,10 @@ class LevelsUI extends FormApplication {
 
   computeRangeForDocument(document, range, isTile = false) {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
-    rangeBottom = parseInt(rangeBottom);
-    rangeTop = parseInt(rangeTop);
-    range[0] = parseInt(range[0]);
-    range[1] = parseInt(range[1]);
+    rangeBottom = rangeBottom ?? -Infinity;
+    rangeTop = rangeTop ?? Infinity;
+    range[0] = parseInt(range[0]) ?? -Infinity;
+    range[1] = parseInt(range[1]) ?? Infinity;
     let entityRange = [rangeBottom, rangeTop];
     if (!isTile) {
       if (
@@ -480,6 +477,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
             active: _levels?.UI?.roofEnabled || false,
             onClick: (toggle) => {
               _levels.UI.roofEnabled = toggle;
+              _levels.UI.computeLevelsVisibility();
             },
           },
           {
@@ -540,6 +538,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         active: _levels?.UI?.placeOverhead || false,
         onClick: (toggle) => {
           _levels.UI.placeOverhead = toggle;
+          _levels.UI.computeLevelsVisibility(_levels.UI.range)
         },
       },
       {
@@ -628,8 +627,8 @@ Hooks.on("ready", () => {
           flags: {
             [`${_levelsModuleName}`]: {
               rangeBottom: _levels.UI.roofEnabled
-                ? _levels.UI.range[1] + 1
-                : _levels.UI.range[0],
+                ? parseInt(_levels.UI.range[1]) + 1
+                : parseInt(_levels.UI.range[0]),
               rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
             },
             betterroofs: { brMode: _levels.UI.placeOverhead ? 0 : 2 },
@@ -740,10 +739,9 @@ Hooks.on("ready", () => {
 
 Hooks.on("renderSceneControls", () => {
   if (
-    _levels?.UI?.rangeEnabled &&
-    !game.settings.get(_levelsModuleName, "forceUiRefresh")
+    _levels?.UI?.rangeEnabled // && !game.settings.get(_levelsModuleName, "forceUiRefresh")
   )
-    _levels.UI.refreshLevels();
+    _levels.UI.computeLevelsVisibility();
 });
 
 /*Hooks.on("renderApplication", () => {
