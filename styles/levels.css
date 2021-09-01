@@ -96,10 +96,9 @@ body.dragging, body.dragging * {
     cursor: -webkit-grab;
 }
 
-#levelsUI li .fa-trash.hidden,#levelsUI .fa-arrows-alt.hidden{
+#levelsUI li .fa-trash.hidden,#levelsUI li .fa-arrows-alt.hidden{
     display: inline;
 }
-
 #levelsUI li .fa-trash:hover{
     cursor: pointer;
     text-shadow: 0 0 5px var(--levels-text-color);
