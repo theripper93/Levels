@@ -355,24 +355,28 @@ class Levels {
   }
 
   testInAngle(sourceToken, token) {
+
     if (sourceToken.data.sightAngle == 360) return true;
+
+    //normalize angle
+    function normalizeAngle(angle) {
+      let normalized = angle % (Math.PI*2);
+      if (normalized < 0) normalized += (Math.PI*2);
+      return normalized;
+    }
+
     //check angled vision
-    const angle =
+    const oAngle =
       Math.atan2(
-        sourceToken.center.y - token.center.y,
-        sourceToken.center.x - token.center.x
-      ) +
-      Math.PI -
-      Math.PI / 2;
-    const sightAngle = (sourceToken.data.sightAngle * Math.PI) / 180 / 2;
-    const rotation = (sourceToken.data.rotation * Math.PI) / 180;
-    if (
-      (angle > rotation + sightAngle || angle < rotation - sightAngle) &&
-      (angle + 2 * Math.PI > rotation + sightAngle ||
-        angle + 2 * Math.PI < rotation - sightAngle)
-    )
-      return false;
-    return true;
+        token.center.y - sourceToken.center.y,
+        token.center.x - sourceToken.center.x 
+      );
+    const angle = oAngle < 0 ? oAngle + 2 * Math.PI : oAngle;
+    const rotation = (sourceToken.data.rotation + 90)%360*Math.PI/180;
+    const end = normalizeAngle(rotation + sourceToken.data.sightAngle*Math.PI/180/2);
+    const start = normalizeAngle(rotation - sourceToken.data.sightAngle*Math.PI/180/2);
+    if(start > end) return angle >= start || angle <= end;
+    return angle >= start && angle <= end;
   }
 
   advancedLOSCheckInLight(token) {
