@@ -40,7 +40,10 @@ class Levels {
     );
     this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
-    this.revealTokenInFog = game.settings.get(_levelsModuleName, "revealTokenInFog");
+    this.revealTokenInFog = game.settings.get(
+      _levelsModuleName,
+      "revealTokenInFog"
+    );
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
     //Module Compatibility
     this.modules = {};
@@ -287,7 +290,7 @@ class Levels {
           let isInHole = this.isTokenInHole(t, holes);
           if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
             t.token.levelsHidden = true;
-            t.token.refresh()
+            t.token.refresh();
             tokenPov.push({ token: t, visible: t.token.isVisible });
             this.getTokenIconSprite(t.token);
           } else {
@@ -297,7 +300,7 @@ class Levels {
           }
         } else {
           t.token.levelsHidden = false;
-          if (t.token.icon) t.token.refresh()
+          if (t.token.icon) t.token.refresh();
           tokenPov.push({ token: t, visible: t.token.isVisible });
           this.removeTempToken(t.token);
         }
@@ -353,27 +356,30 @@ class Levels {
   }
 
   testInAngle(sourceToken, token) {
-
     if (sourceToken.data.sightAngle == 360) return true;
 
     //normalize angle
     function normalizeAngle(angle) {
-      let normalized = angle % (Math.PI*2);
-      if (normalized < 0) normalized += (Math.PI*2);
+      let normalized = angle % (Math.PI * 2);
+      if (normalized < 0) normalized += Math.PI * 2;
       return normalized;
     }
-
+    
     //check angled vision
-    const oAngle =
+    const angle = normalizeAngle(
       Math.atan2(
         token.center.y - sourceToken.center.y,
-        token.center.x - sourceToken.center.x 
-      );
-    const angle = oAngle < 0 ? oAngle + 2 * Math.PI : oAngle;
-    const rotation = (sourceToken.data.rotation + 90)%360*Math.PI/180;
-    const end = normalizeAngle(rotation + sourceToken.data.sightAngle*Math.PI/180/2);
-    const start = normalizeAngle(rotation - sourceToken.data.sightAngle*Math.PI/180/2);
-    if(start > end) return angle >= start || angle <= end;
+        token.center.x - sourceToken.center.x
+      )
+    );
+    const rotation = (((sourceToken.data.rotation + 90) % 360) * Math.PI) / 180;
+    const end = normalizeAngle(
+      rotation + (sourceToken.data.sightAngle * Math.PI) / 180 / 2
+    );
+    const start = normalizeAngle(
+      rotation - (sourceToken.data.sightAngle * Math.PI) / 180 / 2
+    );
+    if (start > end) return angle >= start || angle <= end;
     return angle >= start && angle <= end;
   }
 
@@ -448,31 +454,38 @@ class Levels {
         this.removeTempTokenOverhead(token);
         this.removeTempToken(token);
       }
-      this.generateFogVisionMask(token)
+      this.generateFogVisionMask(token);
     }
   }
 
-  generateFogVisionMask(token){
-    if(!this.revealTokenInFog){
+  generateFogVisionMask(token) {
+    if (!this.revealTokenInFog) {
       this.tokenRevealFogContainer.removeChildren();
-      this.tokenRevealFogContainer.spriteIndex = {}
+      this.tokenRevealFogContainer.spriteIndex = {};
       return;
     }
-    if(this.tokenRevealFogContainer.spriteIndex[token.id]){
-      this.tokenRevealFogContainer.spriteIndex[token.id].position.x = token.center.x
-      this.tokenRevealFogContainer.spriteIndex[token.id].position.y = token.center.y
-      return;}
-    let g = new PIXI.Graphics()
-    g.beginFill(0xffffff,0.75);
-    g.drawCircle(0,0,Math.max(token.h,token.w)/2*token.data.scale*Math.SQRT2)
-    g.endFill()
-    let s = new PIXI.Sprite()
-    s.addChild(g)
-    s.position.x = token.center.x
-    s.position.y = token.center.y
+    if (this.tokenRevealFogContainer.spriteIndex[token.id]) {
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.x =
+        token.center.x;
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.y =
+        token.center.y;
+      return;
+    }
+    let g = new PIXI.Graphics();
+    g.beginFill(0xffffff, 0.75);
+    g.drawCircle(
+      0,
+      0,
+      (Math.max(token.h, token.w) / 2) * token.data.scale * Math.SQRT2
+    );
+    g.endFill();
+    let s = new PIXI.Sprite();
+    s.addChild(g);
+    s.position.x = token.center.x;
+    s.position.y = token.center.y;
     Object.defineProperty(s, "visible", {
       get() {
-        return _levels.revealTokenInFog && token.visible
+        return _levels.revealTokenInFog && token.visible;
       },
     });
     s.name = token.id;
@@ -668,7 +681,9 @@ class Levels {
         holes
       );
     }
-    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
+    canvas.perception.schedule({
+      lighting: { initialize: true, refresh: true },
+    });
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
@@ -731,8 +746,8 @@ class Levels {
         povs.forEach((pov) => {
           if (pov.visible) {
             pov.token.token.visible = true;
-            pov.token.token.levelsVisible = true
-            pov.token.token.refresh()
+            pov.token.token.levelsVisible = true;
+            pov.token.token.refresh();
           }
         });
       });
@@ -1392,7 +1407,7 @@ class Levels {
       if (t.actor.testUserPermission(game.user, 2)) {
         t.visible = true;
         t.levelsVisible = true;
-        t.refresh()
+        t.refresh();
       }
     });
   }
@@ -1412,7 +1427,7 @@ class Levels {
       token.elevationScaleFactor = 1;
       token.visible = true;
       token.levelsVisible = true;
-      token.refresh()
+      token.refresh();
       token.levelsHidden = false;
       _levels.removeTempTokenOverhead(token);
       _levels.removeTempToken(token);
