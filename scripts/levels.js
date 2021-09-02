@@ -355,27 +355,30 @@ class Levels {
   }
 
   testInAngle(sourceToken, token) {
-
     if (sourceToken.data.sightAngle == 360) return true;
 
     //normalize angle
     function normalizeAngle(angle) {
-      let normalized = angle % (Math.PI*2);
-      if (normalized < 0) normalized += (Math.PI*2);
+      let normalized = angle % (Math.PI * 2);
+      if (normalized < 0) normalized += Math.PI * 2;
       return normalized;
     }
-
+    
     //check angled vision
-    const oAngle =
+    const angle = normalizeAngle(
       Math.atan2(
         token.center.y - sourceToken.center.y,
-        token.center.x - sourceToken.center.x 
-      );
-    const angle = oAngle < 0 ? oAngle + 2 * Math.PI : oAngle;
-    const rotation = (sourceToken.data.rotation + 90)%360*Math.PI/180;
-    const end = normalizeAngle(rotation + sourceToken.data.sightAngle*Math.PI/180/2);
-    const start = normalizeAngle(rotation - sourceToken.data.sightAngle*Math.PI/180/2);
-    if(start > end) return angle >= start || angle <= end;
+        token.center.x - sourceToken.center.x
+      )
+    );
+    const rotation = (((sourceToken.data.rotation + 90) % 360) * Math.PI) / 180;
+    const end = normalizeAngle(
+      rotation + (sourceToken.data.sightAngle * Math.PI) / 180 / 2
+    );
+    const start = normalizeAngle(
+      rotation - (sourceToken.data.sightAngle * Math.PI) / 180 / 2
+    );
+    if (start > end) return angle >= start || angle <= end;
     return angle >= start && angle <= end;
   }
 
