@@ -74,8 +74,14 @@
     "levels.dialog.define.warn": "Defina los niveles como: inferior,superior|inferior,superior - eg. 0,9|10,19|20,29",
     "levels.dialog.define.title": "Defina los niveles de esta escena",
     "levels.dialog.define.text": "Niveles: ",
+    "levels.dialog.removeLevel.title": "Borrar nivel",
+    "levels.dialog.removeLevel.content": "¿Está seguro que quiere borrar este nivel?",
+    "levels.dialog.getFromScene.title": "Importar niveles de la escena",
+    "levels.dialog.getFromScene.content": "¿Quite importar los niveles de esta escena? Se sobrescribirán los niveles actuales",
     "levels.dialog.elevator.title": "Niveles - Elija una planta",
     "levels.dialog.elevation.title": "Ajuste la elevación para la la próxima plantilla",
+
+    "levels.ui.title": "Niveles - Herramienta de capas",
 
     "levels.yesnodialog.yes": "Confirmar",
     "levels.yesnodialog.no": "Cancelar",
