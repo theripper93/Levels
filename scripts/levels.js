@@ -356,6 +356,7 @@ class Levels {
   }
 
   testInAngle(sourceToken, token) {
+    // Thank fucking god for Supe
     if (sourceToken.data.sightAngle == 360) return true;
 
     //normalize angle
