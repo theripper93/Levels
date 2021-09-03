@@ -682,11 +682,9 @@ class Levels {
         holes
       );
     }
-    /*canvas.perception.schedule({
+    canvas.perception.schedule({
       lighting: { initialize: true, refresh: true },
-    });*/
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
+    });
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
