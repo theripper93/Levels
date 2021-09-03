@@ -449,8 +449,7 @@ class LevelsUI extends FormApplication {
 
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
-    canvas.lighting.refresh();
-    canvas.lighting.placeables.forEach((l) => l.updateSource());
+    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
   }
 
   getObjUpdateData(range) {
