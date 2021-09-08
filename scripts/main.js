@@ -92,7 +92,6 @@ Hooks.on("controlToken", (token, controlled) => {
   if(!controlled) _levels.lastTokenForTemplate = token
   if (!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM){
     setTimeout(() => {canvas.tokens.placeables.forEach(t => t.refresh())},50) 
-    
   }
 });
 
