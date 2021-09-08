@@ -90,6 +90,9 @@ Hooks.on("controlToken", (token, controlled) => {
   if (_levels && !controlled){
     _levels.currentElevation = undefined;}
   if(!controlled) _levels.lastTokenForTemplate = token
+  if (!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM){
+    setTimeout(() => {canvas.tokens.placeables.forEach(t => t.refresh())},50) 
+  }
 });
 
 Hooks.on("updateTile", (tile, updates) => {
