@@ -114,6 +114,9 @@ class LevelsUI extends FormApplication {
     if($(event.target).hasClass("player-portrait")) return
     game.currentTokenElevation = parseInt(bottom)
     this.computeLevelsVisibility(this.range);
+    setTimeout(() => {
+      canvas.tokens.placeables.forEach((t) => {t.refresh()})
+    }, 100)
     Hooks.callAll("levelsUiChangeLevel");
   }
 
@@ -316,6 +319,8 @@ class LevelsUI extends FormApplication {
     _levels.floorContainer.spriteIndex = {};
     if(!range) range = this.range
     if (!range) return;
+    range[0] = parseInt(range[0]);
+    range[1] = parseInt(range[1]);
     for (let wall of canvas.walls.placeables) {
       let entityRange = [
         wall.data.flags.wallHeight?.wallHeightBottom,
