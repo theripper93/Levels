@@ -477,7 +477,15 @@ class Levels {
     s.position.y = token.center.y
     Object.defineProperty(s, "visible", {
       get() {
-        return _levels.revealTokenInFog && token.visible
+        const isVisible = _levels.revealTokenInFog && token.visible && canvas.tokens.controlled[0];
+        if(isVisible){
+          setTimeout(() => {visibleTimeout = true}, 50);
+          return visibleTimeout;
+        }else{
+          visibleTimeout = false;
+          return false;
+        }
+        //return _levels.revealTokenInFog && token.visible && (!token.isOwner || game.user.isGM);
       },
     });
     s.name = token.id;
