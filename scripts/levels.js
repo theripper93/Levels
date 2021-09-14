@@ -725,28 +725,13 @@ class Levels {
   _levelsOnSightRefresh() {
     let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
-    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    this.debounce3DRefresh(32);
-    this.computeDoors(cToken);
+    let cToken = canvas.tokens.controlled[0];
+    if (cToken) {
+      this.debounce3DRefresh(32);
+      this.computeDoors(cToken);
+    }
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      let ownedTokens = canvas.tokens.placeables.filter(
-        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-      );
-      let tokenPovs = [];
-      ownedTokens.forEach((t) => {
-        tokenPovs.push(this.refreshTokens(t, true));
-        this.computeDoors(t);
-      });
-      tokenPovs.forEach((povs) => {
-        povs.forEach((pov) => {
-          if (pov.visible) {
-            pov.token.token.visible = true;
-            pov.token.token.levelsVisible = true
-            pov.token.token.refresh()
-          }
-        });
-      });
-      this.showOwnedTokensForPlayer();
+      this.collateVisions();
     }
 
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
