@@ -170,7 +170,7 @@ class Levels {
 
   computeTile(tile, altitude, lights) {
     //Declare constants
-
+    
     const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     const cTokenElev = cToken ? cToken.losHeight : this.currentElevation;
     const cTokenLos = cToken
@@ -1712,6 +1712,12 @@ class Levels {
       });
       if (!oldcontainer) canvas.controls.debug.addChild(g);
     }
+  }
+
+  wait(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   /**********************************
