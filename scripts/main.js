@@ -63,11 +63,14 @@ Hooks.on("updateToken", (token, updates) => {
   _levels.debounce3DRefresh(100);
 });
 
-Hooks.on("controlToken", (token, controlled) => {
+Hooks.on("controlToken", async (token, controlled) => {
   if(!_levels) return;
+  if(!controlled && canvas.tokens.controlled.length == 0){
+    await _levels.wait(100);
+    if(canvas.tokens.controlled.length != 0) return;
+  }
 
-  let ElevDiff = token.data.elevation != _levels.currentElevation && _levels.currentElevation !== undefined;
-  console.log("ElevDiff", ElevDiff);
+  let ElevDiff = token.data.elevation != _levels.currentElevation;
   _levels.currentElevation = token.data.elevation;
   //Remove clones and set token to visible if controlled
   if (controlled) {
