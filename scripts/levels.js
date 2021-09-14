@@ -414,6 +414,26 @@ class Levels {
     return false;
   }
 
+  collateVisions() {
+    const ownedTokens = canvas.tokens.placeables.filter(
+      (token) => token.isOwner
+    );
+    for (let token of canvas.tokens.placeables) {
+      if (token.isOwner || token.data.hidden) continue;
+
+      let tokenVisible = false;
+      for (let ownedToken of ownedTokens) {
+        if (this.advancedLosTestVisibility(ownedToken, token))
+          tokenVisible = true;
+      }
+      token.visible = tokenVisible;
+      token.levelsVisible = token.visible;
+    }
+    for (let t of ownedTokens) {
+      this.computeDoors(t);
+    }
+  }
+
   compute3DCollisionsForToken(sourceToken) {
     if (!sourceToken) return;
     //this.advancedLosTokenRefresh();
