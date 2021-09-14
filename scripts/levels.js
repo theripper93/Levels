@@ -365,7 +365,7 @@ class Levels {
       if (normalized < 0) normalized += Math.PI * 2;
       return normalized;
     }
-    
+
     //check angled vision
     const angle = normalizeAngle(
       Math.atan2(
@@ -414,6 +414,26 @@ class Levels {
       }
     }
     return false;
+  }
+
+  collateVisions() {
+    const ownedTokens = canvas.tokens.placeables.filter(
+      (token) => token.isOwner
+    );
+    for (let token of canvas.tokens.placeables) {
+      if (token.isOwner || token.data.hidden) continue;
+
+      let tokenVisible = false;
+      for (let ownedToken of ownedTokens) {
+        if (this.advancedLosTestVisibility(ownedToken, token))
+          tokenVisible = true;
+      }
+      token.visible = tokenVisible;
+      token.levelsVisible = token.visible;
+    }
+    for (let t of ownedTokens) {
+      this.computeDoors(t);
+    }
   }
 
   compute3DCollisionsForToken(sourceToken) {
@@ -487,11 +507,16 @@ class Levels {
     let visibleTimeout = false;
     Object.defineProperty(s, "visible", {
       get() {
-        const isVisible = _levels.revealTokenInFog && token.visible && canvas.tokens.controlled[0];
-        if(isVisible){
-          setTimeout(() => {visibleTimeout = true}, 50);
+        const isVisible =
+          _levels.revealTokenInFog &&
+          token.visible &&
+          canvas.tokens.controlled[0];
+        if (isVisible) {
+          setTimeout(() => {
+            visibleTimeout = true;
+          }, 50);
           return visibleTimeout;
-        }else{
+        } else {
           visibleTimeout = false;
           return false;
         }
@@ -740,28 +765,13 @@ class Levels {
   _levelsOnSightRefresh() {
     let perfStart, perfEnd;
     if (this.DEBUG) perfStart = performance.now();
-    let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-    this.debounce3DRefresh(32);
-    this.computeDoors(cToken);
+    let cToken = canvas.tokens.controlled[0];
+    if (cToken) {
+      this.debounce3DRefresh(32);
+      this.computeDoors(cToken);
+    }
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      let ownedTokens = canvas.tokens.placeables.filter(
-        (t) => t.actor && t.actor.testUserPermission(game.user, 2)
-      );
-      let tokenPovs = [];
-      ownedTokens.forEach((t) => {
-        tokenPovs.push(this.refreshTokens(t, true));
-        this.computeDoors(t);
-      });
-      tokenPovs.forEach((povs) => {
-        povs.forEach((pov) => {
-          if (pov.visible) {
-            pov.token.token.visible = true;
-            pov.token.token.levelsVisible = true;
-            pov.token.token.refresh();
-          }
-        });
-      });
-      this.showOwnedTokensForPlayer();
+      this.collateVisions();
     }
 
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
@@ -840,7 +850,7 @@ class Levels {
     if (!this.updateQueued) {
       this.updateQueued = true;
       setTimeout(() => {
-        let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
+        let cToken = canvas.tokens.controlled[0];
         this.compute3DCollisionsForToken(cToken);
         this.computeTemplates(cToken);
         this.updateQueued = false;

@@ -64,35 +64,39 @@ Hooks.on("updateToken", (token, updates) => {
 });
 
 Hooks.on("controlToken", (token, controlled) => {
-  let ElevDiff;
-  if (_levels) ElevDiff = token.data.elevation != _levels.currentElevation;
-  if (_levels && controlled) {
+  if(!_levels) return;
+
+  let ElevDiff = token.data.elevation != _levels.currentElevation && _levels.currentElevation !== undefined;
+  console.log("ElevDiff", ElevDiff);
+  _levels.currentElevation = token.data.elevation;
+  //Remove clones and set token to visible if controlled
+  if (controlled) {
     token.visible = true;
     token.levelsVisible = true;
-    /*token.icon.alpha = token.data.hidden
-    ? Math.min(token.data.alpha, 0.5)
-    : token.data.alpha;*/
     token.levelsHidden = false;
     _levels.removeTempTokenOverhead(token);
     _levels.removeTempToken(token);
+  }else{
+    _levels.currentElevation = undefined;
+    _levels.lastTokenForTemplate = token
   }
+  //Reveal and cleanup all tokens for gm if no token is controlled
   if (!controlled && canvas.tokens.controlled.length == 0 && game.user.isGM) {
     _levels.restoreGMvisibility();
-  } else {
-    if (_levels && controlled && ElevDiff) _levels._onElevationChangeUpdate();
-    if (_levels && !controlled && token) {
-      if(ElevDiff || !game.user.isGM)_levels._onElevationChangeUpdate(token);
-      if(!game.user.isGM)_levels.lastReleasedToken = token;
-    }
   }
-  if (_levels && !controlled && token && !game.user.isGM) {_levels.lastReleasedToken = token;}
-  if (_levels) _levels.currentElevation = token.data.elevation;
-  if (_levels && !controlled){
-    _levels.currentElevation = undefined;}
-  if(!controlled) _levels.lastTokenForTemplate = token
+  if (controlled && ElevDiff) _levels._onElevationChangeUpdate();
+  //Handle players  
+  if (!controlled && token) {
+    _levels.lastReleasedToken = token;
+  }
+
   if (!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM){
-    setTimeout(() => {canvas.tokens.placeables.forEach(t => t.refresh())},50) 
+    _levels.collateVisions()
+    setTimeout(() => {
+      canvas.tokens.placeables.forEach(t => t.refresh())
+    },50) 
   }
+
 });
 
 Hooks.on("updateTile", (tile, updates) => {
