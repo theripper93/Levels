@@ -457,31 +457,44 @@ class Levels {
     }
   }
 
-  generateFogVisionMask(token){
-    if(!this.revealTokenInFog){
+  generateFogVisionMask(token) {
+    if (!this.revealTokenInFog) {
       this.tokenRevealFogContainer.removeChildren();
-      this.tokenRevealFogContainer.spriteIndex = {}
+      this.tokenRevealFogContainer.spriteIndex = {};
       return;
     }
-    if(this.tokenRevealFogContainer.spriteIndex[token.id]){
-      this.tokenRevealFogContainer.spriteIndex[token.id].position.x = token.center.x
-      this.tokenRevealFogContainer.spriteIndex[token.id].position.y = token.center.y
-      return;}
-    let g = new PIXI.Graphics()
-    g.beginFill(0xffffff,0.75);
-    g.drawCircle(0,0,Math.max(token.h,token.w)/2*token.data.scale*Math.SQRT2)
-    g.endFill()
-    let s = new PIXI.Sprite()
-    s.addChild(g)
-    s.position.x = token.center.x
-    s.position.y = token.center.y
+    if (this.tokenRevealFogContainer.spriteIndex[token.id]) {
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.x =
+        token.center.x;
+      this.tokenRevealFogContainer.spriteIndex[token.id].position.y =
+        token.center.y;
+      return;
+    }
+    let g = new PIXI.Graphics();
+    g.beginFill(0xffffff, 0.75);
+    g.drawCircle(
+      0,
+      0,
+      (Math.max(token.h, token.w) / 2) * token.data.scale * Math.SQRT2
+    );
+    g.endFill();
+    let s = new PIXI.Sprite();
+    s.addChild(g);
+    s.position.x = token.center.x;
+    s.position.y = token.center.y;
+    let visibleTimeout = false;
     Object.defineProperty(s, "visible", {
       get() {
-        const isVisible = _levels.revealTokenInFog && token.visible && canvas.tokens.controlled[0];
-        if(isVisible){
-          setTimeout(() => {visibleTimeout = true}, 50);
+        const isVisible =
+          _levels.revealTokenInFog &&
+          token.visible &&
+          canvas.tokens.controlled[0];
+        if (isVisible) {
+          setTimeout(() => {
+            visibleTimeout = true;
+          }, 50);
           return visibleTimeout;
-        }else{
+        } else {
           visibleTimeout = false;
           return false;
         }
