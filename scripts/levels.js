@@ -432,6 +432,8 @@ class Levels {
       token.levelsVisible = token.visible;
     }
     for (let t of ownedTokens) {
+      t.visible = tokenVisible;
+      t.levelsVisible = token.visible;
       this.computeDoors(t);
     }
   }
@@ -772,10 +774,6 @@ class Levels {
     }
     if (!canvas.tokens.controlled[0] && !game.user.isGM) {
       this.collateVisions();
-    }
-
-    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      this.showOwnedTokensForPlayer();
     }
 
     if (this.DEBUG) {
@@ -1420,16 +1418,6 @@ class Levels {
         Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
       ) / unitsToPixel;
     return d;
-  }
-
-  showOwnedTokensForPlayer() {
-    canvas.tokens.placeables.forEach((t) => {
-      if (t.actor.testUserPermission(game.user, 2)) {
-        t.visible = true;
-        t.levelsVisible = true;
-        t.refresh();
-      }
-    });
   }
 
   restoreGMvisibility() {
