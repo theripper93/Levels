@@ -430,6 +430,8 @@ class Levels {
       token.levelsVisible = token.visible;
     }
     for (let t of ownedTokens) {
+      t.visible = true;
+      t.levelsVisible = true;
       this.computeDoors(t);
     }
   }
