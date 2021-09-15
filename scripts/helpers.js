@@ -21,6 +21,11 @@ function _levelsTileRefresh(wrapped,...args){
   if(this.levelsUIHideen && !canvas.tokens.controlled[0]) {
     this.visible = false
   }
+  if(!game.user.isGM){
+    if(_levels?.floorContainer?.spriteIndex[this.id]?.visible){
+      this.visible = false
+    }
+  }
 }
 
 function _levelsOnMovementFrame(wrapped,...args) {
