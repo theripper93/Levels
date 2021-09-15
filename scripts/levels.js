@@ -529,14 +529,16 @@ class Levels {
   }
 
   tokenInRange(sourceToken, token) {
-    const dist = this.getUnitTokenDist(sourceToken, token);
+    const tokensSizeAdjust = Math.min(token.data?.width, token.data?.height) || 0;
+    const dist = this.getUnitTokenDist(sourceToken, token) - tokensSizeAdjust * Math.SQRT2 * canvas.scene.dimensions.distance / 2;
+    console.log(dist, tokensSizeAdjust);
     let range = canvas.lighting.globalLight
       ? Infinity
       : Math.max(
           sourceToken.data.dimSight,
           sourceToken.data.brightSight,
-          sourceToken.data.dimLight ?? 0,
-          sourceToken.data.brightLight ?? 0
+          sourceToken.data.dimLight,
+          sourceToken.data.brightLight
         );
     if (this.modules.PerfectVision.Active) {
       const pvRange = this.getPerfectVisionVisionRange(sourceToken);
