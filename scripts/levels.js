@@ -531,7 +531,9 @@ class Levels {
   }
 
   tokenInRange(sourceToken, token) {
-    const dist = this.getUnitTokenDist(sourceToken, token);
+    const tokensSizeAdjust = Math.min(token.data?.width, token.data?.height) || 0;
+    const dist = this.getUnitTokenDist(sourceToken, token) - tokensSizeAdjust * Math.SQRT2 * canvas.scene.dimensions.distance / 2;
+    console.log(dist, tokensSizeAdjust);
     let range = canvas.lighting.globalLight
       ? Infinity
       : Math.max(
