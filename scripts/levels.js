@@ -246,6 +246,7 @@ class Levels {
         return tile;
         break;
     }
+    tile.tile.isLevelsVisible = tile.tile.visible;
   }
 
   checkTile(tile, altitude) {

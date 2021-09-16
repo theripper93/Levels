@@ -94,6 +94,7 @@ Hooks.on("controlToken", async (token, controlled) => {
   }
 
   if (!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM){
+    _levels._onElevationChangeUpdate( _levels.lastReleasedToken)
     _levels.collateVisions()
     setTimeout(() => {
       canvas.tokens.placeables.forEach(t => t.refresh())

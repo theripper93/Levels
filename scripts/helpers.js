@@ -25,6 +25,7 @@ function _levelsTileRefresh(wrapped,...args){
     if(_levels?.floorContainer?.spriteIndex[this.id]?.visible){
       this.visible = false
     }
+    this.visible = this.isLevelsVisible
   }
 }
 
