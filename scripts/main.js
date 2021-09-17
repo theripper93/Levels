@@ -100,9 +100,7 @@ Hooks.on("controlToken", async (token, controlled) => {
     _levels._onElevationChangeUpdate( _levels.lastReleasedToken)
     _levels.collateVisions()
     setTimeout(() => {
-      //if(!token.data.vision)_levels.collateVisions()
       canvas.tokens.placeables.forEach(t => t.refresh())
-
     },50) 
   }
 
