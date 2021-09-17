@@ -24,7 +24,11 @@ Hooks.on("betterRoofsReady", () => {
 
 Hooks.on("sightRefresh", () => {
   if (_levels && canvas.sight.tokenVision) {
-    _levels._levelsOnSightRefresh();
+    if(!canvas.tokens.controlled[0]?.data?.vision || canvas.tokens.controlled.length !== 1) {
+      _levels.collateVisions();
+    }else{
+      _levels._levelsOnSightRefresh();
+    }
     //Raycast Debug
     _levels.raycastDebug();
   }
@@ -69,7 +73,6 @@ Hooks.on("controlToken", async (token, controlled) => {
     await _levels.wait(100);
     if(canvas.tokens.controlled.length != 0) return;
   }
-
   let ElevDiff = token.data.elevation != _levels.currentElevation;
   _levels.currentElevation = token.data.elevation;
   //Remove clones and set token to visible if controlled
@@ -93,11 +96,13 @@ Hooks.on("controlToken", async (token, controlled) => {
     _levels.lastReleasedToken = token;
   }
 
-  if (!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM){
+  if ((!controlled && canvas.tokens.controlled.length == 0 && !game.user.isGM) || !token.data.vision){
     _levels._onElevationChangeUpdate( _levels.lastReleasedToken)
     _levels.collateVisions()
     setTimeout(() => {
+      //if(!token.data.vision)_levels.collateVisions()
       canvas.tokens.placeables.forEach(t => t.refresh())
+
     },50) 
   }
 

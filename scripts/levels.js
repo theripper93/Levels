@@ -262,54 +262,6 @@ class Levels {
         break;
     }
   }
-
-  refreshTokens(overrideToken = undefined, release = false) {
-    if (!release) {
-      this.advancedLosTokenRefresh();
-      return;
-    }
-    let cToken = overrideToken || canvas.tokens.controlled[0];
-    if (!cToken) return;
-    let allTiles = this.findAllTiles();
-    let holes = this.getHoles();
-    let tokensState = this.getTokensState(allTiles);
-    let tokenPov = this.computeTokens(
-      tokensState,
-      cToken.data.elevation,
-      holes,
-      cToken.data.elevation,
-      cToken.id
-    );
-    return tokenPov;
-  }
-
-  computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
-    let tokenPov = [];
-    tokens.forEach((t) => {
-      if (t.token.id != ctokenId && !t.token.data.hidden) {
-        if (!(t.range[1] >= elevation && t.range[0] <= elevation)) {
-          let isInHole = this.isTokenInHole(t, holes);
-          if (!this.isInsideHoleRange(isInHole, t, cTokenElev)) {
-            t.token.levelsHidden = true;
-            t.token.refresh();
-            tokenPov.push({ token: t, visible: t.token.isVisible });
-            this.getTokenIconSprite(t.token);
-          } else {
-            t.token.visible = false;
-            tokenPov.push({ token: t, visible: false });
-            this.removeTempToken(t.token);
-          }
-        } else {
-          t.token.levelsHidden = false;
-          if (t.token.icon) t.token.refresh();
-          tokenPov.push({ token: t, visible: t.token.isVisible });
-          this.removeTempToken(t.token);
-        }
-      }
-    });
-    return tokenPov;
-  }
-
   advancedLosTokenRefresh() {
     this.getHoles();
     this.getTokensState(this.levelsTiles);
@@ -774,9 +726,6 @@ class Levels {
       this.debounce3DRefresh(32);
       this.computeDoors(cToken);
     }
-    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      this.collateVisions();
-    }
 
     if (this.DEBUG) {
       perfEnd = performance.now();
@@ -851,7 +800,11 @@ class Levels {
       this.updateQueued = true;
       setTimeout(() => {
         let cToken = canvas.tokens.controlled[0];
-        this.compute3DCollisionsForToken(cToken);
+        if (!canvas.tokens.controlled[0] && !game.user.isGM || (!canvas.tokens.controlled[0]?.data?.vision || canvas.tokens.controlled.length !== 1)) {
+          this.collateVisions();
+        }else{
+          this.compute3DCollisionsForToken(cToken);
+        }
         this.computeTemplates(cToken);
         this.updateQueued = false;
       }, timeout);
