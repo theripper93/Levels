@@ -24,11 +24,7 @@ Hooks.on("betterRoofsReady", () => {
 
 Hooks.on("sightRefresh", () => {
   if (_levels && canvas.sight.tokenVision) {
-    if(!canvas.tokens.controlled[0]?.data?.vision || canvas.tokens.controlled.length !== 1) {
-      _levels.collateVisions();
-    }else{
-      _levels._levelsOnSightRefresh();
-    }
+    _levels._levelsOnSightRefresh();
     //Raycast Debug
     _levels.raycastDebug();
   }
