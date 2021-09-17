@@ -768,9 +768,6 @@ class Levels {
       this.debounce3DRefresh(32);
       this.computeDoors(cToken);
     }
-    if (!canvas.tokens.controlled[0] && !game.user.isGM) {
-      this.collateVisions();
-    }
 
     if (this.DEBUG) {
       perfEnd = performance.now();
@@ -844,8 +841,12 @@ class Levels {
     if (!this.updateQueued) {
       this.updateQueued = true;
       setTimeout(() => {
-        let cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
-        this.compute3DCollisionsForToken(cToken);
+        let cToken = canvas.tokens.controlled[0];
+        if (!canvas.tokens.controlled[0] && !game.user.isGM || (!canvas.tokens.controlled[0]?.data?.vision || canvas.tokens.controlled.length !== 1)) {
+          this.collateVisions();
+        }else{
+          this.compute3DCollisionsForToken(cToken);
+        }
         this.computeTemplates(cToken);
         this.updateQueued = false;
       }, timeout);
