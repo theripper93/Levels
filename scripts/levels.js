@@ -222,7 +222,7 @@ class Levels {
     if (tile.levelsOverhead) tile.tile.visible = false;
 
     //Compute the tile mirroring in the background
-
+    tile.tile.isLevelsVisible = tile.tile.visible;
     switch (altitude) {
       case 1: // If the tile is above the token, remove it from the stack
         this.removeTempTile(tile);
@@ -241,12 +241,12 @@ class Levels {
           this.mirrorTileInBackground(tile, true);
         } else {
           tile.tile.visible = true;
+          tile.tile.isLevelsVisible = tile.tile.visible;
           this.removeTempTile(tile);
         }
         return tile;
         break;
     }
-    tile.tile.isLevelsVisible = tile.tile.visible;
   }
 
   checkTile(tile, altitude) {

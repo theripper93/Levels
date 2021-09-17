@@ -25,7 +25,14 @@ function _levelsTileRefresh(wrapped,...args){
     if(_levels?.floorContainer?.spriteIndex[this.id]?.visible){
       this.visible = false
     }
-    if(this.isLevelsVisible !== undefined) this.visible = this.isLevelsVisible
+    if(this.isLevelsVisible !== undefined) {
+      if(this.data.hidden){
+        this.visible = false;
+      }else{
+        this.visible = this.isLevelsVisible
+      }
+      
+    }
   }
 }
 
