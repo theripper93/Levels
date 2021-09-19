@@ -399,7 +399,7 @@ class Levels {
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.actor.testUserPermission(game.user, 2)) //||
+          token.isOwner) //||
         //token.data.hidden
       )
         continue;
@@ -1286,6 +1286,7 @@ class Levels {
       get() {
         return icon.filters;
       },
+      set: () => {},
     });
     const tex = token.texture;
     if (tex) {
