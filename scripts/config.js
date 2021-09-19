@@ -576,7 +576,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 });
 
 Hooks.on("renderTokenConfig", (app, html, data) => {
-  let tokenHeight = app.object.getFlag(_levelsModuleName, "tokenHeight") || 0;
+  let tokenHeight = app.token.getFlag(_levelsModuleName, "tokenHeight") || 0;
 
   let newHtml = `
 <div class="form-group">
