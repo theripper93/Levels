@@ -87,11 +87,11 @@ class LevelsUI extends FormApplication {
     let $li = this.generateLi([0, 0, ""]);
     $("#levels-list").append($li);
   }
-  //toggle disabled property of inputs and toggle visibility of trash icon
+  //toggle readonly property of inputs and toggle visibility of trash icon
   _onToggleEdit(event) {
     this.isEdit = !this.isEdit;
     let $inputs = $(".level-inputs input");
-    $inputs.prop("disabled", !$inputs.prop("disabled"));
+    $inputs.prop("readonly", !$inputs.prop("readonly"));
     $(".level-item .fa-trash").toggleClass("hidden");
     $(".level-item .fa-arrows-alt").toggleClass("hidden");
   }
@@ -204,7 +204,7 @@ class LevelsUI extends FormApplication {
     </div>
 	</li>
 	`);
-    $li.find("input").prop("disabled", !this.isEdit);
+    $li.find("input").prop("readonly", !this.isEdit);
     $li.find(".fa-trash").toggleClass("hidden", this.isEdit);
     $li.find(".fa-arrows-alt").toggleClass("hidden", this.isEdit);
     return $li;
