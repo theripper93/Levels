@@ -107,7 +107,6 @@ Hooks.on("updateTile", (tile, updates) => {
     if (_levels) {
       let tileIndex = { tile: tile.object };
       _levels.removeTempTile(tileIndex);
-      _levels.refreshTokens();
       _levels.computeDoors(canvas.tokens.controlled[0]);
       _levels._onElevationChangeUpdate();
     }
