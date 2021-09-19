@@ -574,6 +574,7 @@ class Levels {
           (f) => !(f instanceof InverseOcclusionMaskFilter)
         );
       },
+      set: () => {},
     });
     sprite.isSprite = true;
     sprite.width = tile.data.width;
