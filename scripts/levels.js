@@ -1323,6 +1323,7 @@ class Levels {
       get() {
         return icon.filters;
       },
+      set: () => {},
     });
     const tex = token.texture;
     if (tex) {
