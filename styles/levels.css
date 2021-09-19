@@ -114,6 +114,12 @@ body.dragging, body.dragging * {
     background: rgba(255, 255, 255, 0.356);
 }
 
+#levelsUI input:read-only{
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    background: rgba(255, 255, 255, 0);
+    cursor: pointer;
+}
+
 .level-inputs{
     display: flex;
     width: -webkit-fill-available;
