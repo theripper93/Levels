@@ -155,9 +155,3 @@ Hooks.on("preUpdateToken", (token,updates) => {
 Hooks.once("canvasReady", () => {
   //if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
 });
-
-
-
-
-
-
