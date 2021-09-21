@@ -585,7 +585,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
             )}<span class="units">${game.i18n.localize(
     "levels.tokenconfig.tokenHeight.unit"
   )}</span></label>
-            <input type="number" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
+            <input type="number" step="any" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
         </div>
 `;
   const overh = html.find('input[name="elevation"]');
