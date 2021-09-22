@@ -416,8 +416,11 @@ class Levels {
   }
 
   collateVisions() {
-    const ownedTokens = canvas.tokens.placeables.filter(
+    let ownedTokens = canvas.tokens.placeables.filter(
       (token) => token.isOwner
+    );
+    if(ownedTokens.length === 0 || !canvas.tokens.controlled[0]) ownedTokens = canvas.tokens.placeables.filter(
+      (token) => token.observer || token.isOwner
     );
     for (let token of canvas.tokens.placeables) {
       if (token.isOwner || token.data.hidden) continue;
