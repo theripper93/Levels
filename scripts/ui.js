@@ -97,7 +97,7 @@ class LevelsUI extends FormApplication {
   }
 
   _onChangeLevel(event) {
-    canvas.tokens.releaseAll()
+    if(!$(event.target).hasClass("player-portrait")) canvas.tokens.releaseAll();
     let $target = $(event.currentTarget);
     let $parent = $target.parent();
     $parent.find(".fa-caret-right").removeClass("active");
@@ -151,6 +151,7 @@ class LevelsUI extends FormApplication {
   }
 
   _onControlToken(event) {
+    canvas.tokens.releaseAll()
     const tokenId = event.currentTarget.dataset.tokenid;
     const token = canvas.tokens.get(tokenId);
     token.control();
