@@ -628,6 +628,7 @@ Hooks.on("ready", () => {
     Hooks.on("preCreateTile", (tile, updates) => {
       if (_levels.UI.rangeEnabled == true) {
         tile.data.update({
+          overhead: true,
           flags: {
             [`${_levelsModuleName}`]: {
               rangeBottom: _levels.UI.roofEnabled
