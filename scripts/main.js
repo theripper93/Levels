@@ -133,6 +133,7 @@ Hooks.on("renderSceneControls", () => {
 Hooks.on("deleteToken", (token) => {
   _levels.removeTempTokenOverhead({id:token.id});
   _levels.removeTempToken({id:token.id});
+  _levels.tokenRevealFogContainer?.spriteIndex[token.id]?.destroy();
 })
 
 Hooks.on("preUpdateToken", (token,updates) => {
