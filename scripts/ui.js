@@ -112,7 +112,7 @@ class LevelsUI extends FormApplication {
       (l) => l[0] == bottom && l[1] == top && l[2] == name
     );
     if($(event.target).hasClass("player-portrait")) return
-    game.currentTokenElevation = parseInt(bottom)
+    game.currentTokenElevation = parseFloat(bottom)
     this.computeLevelsVisibility(this.range);
     setTimeout(() => {
       canvas.tokens.placeables.forEach((t) => {t.refresh()})
@@ -320,8 +320,8 @@ class LevelsUI extends FormApplication {
     _levels.floorContainer.spriteIndex = {};
     if(!range) range = this.range
     if (!range) return;
-    range[0] = parseInt(range[0]);
-    range[1] = parseInt(range[1]);
+    range[0] = parseFloat(range[0]);
+    range[1] = parseFloat(range[1]);
     for (let wall of canvas.walls.placeables) {
       let entityRange = [
         wall.data.flags.wallHeight?.wallHeightBottom,
@@ -394,8 +394,8 @@ class LevelsUI extends FormApplication {
     let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
     rangeBottom = rangeBottom ?? -Infinity;
     rangeTop = rangeTop ?? Infinity;
-    range[0] = parseInt(range[0]) ?? -Infinity;
-    range[1] = parseInt(range[1]) ?? Infinity;
+    range[0] = parseFloat(range[0]) ?? -Infinity;
+    range[1] = parseFloat(range[1]) ?? Infinity;
     let entityRange = [rangeBottom, rangeTop];
     if (!isTile) {
       if (
@@ -633,8 +633,8 @@ Hooks.on("ready", () => {
           flags: {
             [`${_levelsModuleName}`]: {
               rangeBottom: _levels.UI.roofEnabled
-                ? parseInt(_levels.UI.range[1]) + 1
-                : parseInt(_levels.UI.range[0]),
+                ? parseFloat(_levels.UI.range[1]) + 1
+                : parseFloat(_levels.UI.range[0]),
               rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
             },
             betterroofs: { brMode: _levels.UI.placeOverhead ? 0 : 2 },
