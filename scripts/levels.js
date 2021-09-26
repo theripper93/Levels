@@ -1192,7 +1192,7 @@ class Levels {
       $(btn).on("click", updateElev);
     }
     function updateElev(event) {
-      let newElev = parseInt(event.target.id);
+      let newElev = parseFloat(event.target.id);
       if (newElev || newElev == 0)
         canvas.tokens.controlled[0].update({ elevation: newElev });
     }
@@ -1505,11 +1505,11 @@ class Levels {
         await object.unsetFlag(_levelsModuleName, "heightRange");
         return;
       }
-      let range0 = parseInt(splitFlag[0]);
+      let range0 = parseFloat(splitFlag[0]);
       let range1 =
         splitFlag[1].toLowerCase() == "infinity"
           ? Infinity
-          : parseInt(splitFlag[1]);
+          : parseFloat(splitFlag[1]);
       await object.setFlag(_levelsModuleName, "rangeBottom", range0);
       await object.setFlag(_levelsModuleName, "rangeTop", range1);
       await object.unsetFlag(_levelsModuleName, "heightRange");
