@@ -66,6 +66,7 @@
     "levels.controls.levelsclear.name": "Clear Levels",
     "levels.controls.placeOverhead.name": "If enabled place tiles as overhead tiles 'inside' levels",
     "levels.controls.setTemplateElevation.name":"Set elevation for next placed template",
+    "levels.controls.suppressBrmode.name":"Suppress Better Roofs mode application",
 
     "levels.dialog.levelsclear.title": "Clear Levels",
     "levels.dialog.levelsclear.content": "Clear all stored levels?",

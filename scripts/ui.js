@@ -557,6 +557,16 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         },
       },
       {
+        name: "suppressBrmode",
+        title: game.i18n.localize("levels.controls.suppressBrmode.name"),
+        icon: "fas fa-not-equal",
+        toggle: true,
+        active: _levels?.UI?.suppressBr || false,
+        onClick: (toggle) => {
+          _levels.UI.suppressBr = toggle;
+        },
+      },
+      {
         name: "clear",
         title: game.i18n.localize("levels.controls.levelsclear.name"),
         icon: "fas fa-trash",
@@ -636,10 +646,21 @@ Hooks.on("ready", () => {
                 ? parseFloat(_levels.UI.range[1]) + 1
                 : parseFloat(_levels.UI.range[0]),
               rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
-            },
-            betterroofs: { brMode: _levels.UI.placeOverhead ? 0 : 2 },
+            }
           },
         });
+        if(!_levels?.UI?.suppressBr){
+          let brmode = 2
+          if(_levels.UI.roofEnabled) brmode = 1
+          if(_levels.UI.placeOverhead) brmode = 0
+          tile.data.update({
+            flags: {
+              betterroofs: { 
+                brMode: brmode
+              },
+            }
+          })
+        }
       }
     });
 

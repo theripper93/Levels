@@ -893,7 +893,7 @@ class Levels {
     sprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
     sprite.tint = 0x000000;
     sprite.name = tile.id;
-    Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile);
+    Illumsprite = this.getLightOcclusionSprite(tile); //this.getTileSprite(undefined, tileImg, tile); 
     Illumsprite.tint = canvas.lighting.channels.background.hex;
     Illumsprite.name = tile.id;
     if (addChild) {
