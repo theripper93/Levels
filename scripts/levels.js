@@ -723,6 +723,7 @@ class Levels {
         holes
       );
     }
+    canvas.foreground.updateOcclusion();
     canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
   }
 
