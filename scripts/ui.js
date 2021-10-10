@@ -557,6 +557,16 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         },
       },
       {
+        name: "suppressBrmode",
+        title: game.i18n.localize("levels.controls.suppressBrmode.name"),
+        icon: "fas fa-not-equal",
+        toggle: true,
+        active: _levels?.UI?.suppressBr || false,
+        onClick: (toggle) => {
+          _levels.UI.suppressBr = toggle;
+        },
+      },
+      {
         name: "clear",
         title: game.i18n.localize("levels.controls.levelsclear.name"),
         icon: "fas fa-trash",
