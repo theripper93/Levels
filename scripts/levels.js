@@ -568,6 +568,7 @@ class Levels {
     let tile = tileIndex.tile;
     let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.tile;
+    if (hideFog && this.fogHiding) this.obscureFogForTile(tileIndex);
     if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
     let sprite = new PIXI.Sprite.from(tileImg.texture);
     Object.defineProperty(sprite, "filters", {
@@ -596,7 +597,6 @@ class Levels {
       : tileIndex.range[0];
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
-    if (hideFog && this.fogHiding) this.obscureFogForTile(tileIndex);
   }
 
   removeTempTile(tileIndex) {
