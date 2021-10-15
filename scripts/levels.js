@@ -642,6 +642,7 @@ class Levels {
     sprite.zIndex = tileIndex.levelsOverhead
       ? tileIndex.range[0] + 2
       : tileIndex.range[0];
+    sprite.zIndex += tile.data.z/1000000;
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
     if (hideFog && this.fogHiding) this.obscureFogForTile(tileIndex);
