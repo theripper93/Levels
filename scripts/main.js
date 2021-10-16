@@ -69,7 +69,7 @@ Hooks.on("controlToken", async (token, controlled) => {
     await _levels.wait(100);
     if(canvas.tokens.controlled.length != 0) return;
   }
-  let ElevDiff = token.data.elevation != _levels.currentElevation;
+  let ElevDiff = true//token.data.elevation != _levels.currentElevation; Disabled this, check if it's needed
   _levels.currentElevation = token.data.elevation;
   //Remove clones and set token to visible if controlled
   if (controlled) {
