@@ -88,11 +88,7 @@ Hooks.on("controlToken", async (token, controlled) => {
   }
   if (controlled && ElevDiff) {
     //Debounce to prevent multiple triggers on multiple token selection
-    if(_levels.debounceElevationChange !== true) _levels._onElevationChangeUpdate();
-    _levels.debounceElevationChange = true;
-    setTimeout(() => {
-      _levels.debounceElevationChange = false;
-    }, 10);
+    _levels.debouncedElevationChange()
   };
   //Handle players  
   if (!controlled && token) {

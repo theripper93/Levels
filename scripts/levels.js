@@ -50,6 +50,7 @@ class Levels {
     this.modules.PerfectVision = {};
     this.modules.PerfectVision.Active =
       game.modules.get("perfect-vision")?.active;
+    this.debouncedElevationChange = debounce( this._onElevationChangeUpdate, 10);
   }
 
   /**********************************************
