@@ -86,7 +86,14 @@ Hooks.on("controlToken", async (token, controlled) => {
   if (!controlled && canvas.tokens.controlled.length == 0 && game.user.isGM) {
     _levels.restoreGMvisibility();
   }
-  if (controlled && ElevDiff) _levels._onElevationChangeUpdate();
+  if (controlled && ElevDiff) {
+    //Debounce to prevent multiple triggers on multiple token selection
+    if(_levels.debounceElevationChange !== true) _levels._onElevationChangeUpdate();
+    _levels.debounceElevationChange = true;
+    setTimeout(() => {
+      _levels.debounceElevationChange = false;
+    }, 10);
+  };
   //Handle players  
   if (!controlled && token) {
     _levels.lastReleasedToken = token;
