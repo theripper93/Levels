@@ -48,18 +48,6 @@ Hooks.on("init", () => {
   }
   libWrapper.register(
     _levelsModuleName,
-    "CONFIG.Canvas.losBackend.getRayCollisions",
-    _levelsGetRayCollisions,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "WallsLayer.prototype.checkCollision",
-    _levelsCheckCollision,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
     "MeasuredTemplate.prototype.draw",
     _levelsTemplatedraw,
     "WRAPPER"

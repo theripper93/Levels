@@ -194,73 +194,6 @@ function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
   return false;
 }
 
-function _levelsGetRayCollisions(ray, {type="move", mode="all", steps=8}={}, roomTest) {
-
-  // Record collision points and tested walls
-  const angleBounds = [ray.angle - (Math.PI / 2), ray.angle + (Math.PI / 2)];
-  const collisionPoints = new Map();
-  const testedWalls = new Set();
-
-  // Progressively test walls along ray segments
-  let dx = ray.dx / steps;
-  let dy = ray.dy / steps;
-  let pt = ray.A;
-  let step = 0;
-  while (step < steps) {
-    step++;
-    const testRect = new NormalizedRectangle(pt.x, pt.y, dx, dy);
-    let walls = canvas.walls.quadtree.getObjects(testRect);
-    pt = {x: pt.x + dx, y: pt.y + dy};
-    for (let wall of walls) {
-      if(roomTest !== false && roomTest !== undefined){
-        const wallHeightBottom = wall.data?.flags?.wallHeight?.wallHeightBottom ?? -Infinity;
-        const wallHeightTop = wall.data?.flags?.wallHeight?.wallHeightTop ?? Infinity;
-        if(roomTest < wallHeightBottom || roomTest > wallHeightTop) continue
-      }
-      // Don't repeat tests
-      if (testedWalls.has(wall)) continue;
-      testedWalls.add(wall);
-      // Ignore walls of the wrong type or open doors
-      if (!wall.data[type] || wall.isOpen) continue;
-
-      // Ignore one-way walls which are facing the wrong direction
-      if ((wall.direction !== null) && !wall.isDirectionBetweenAngles(...angleBounds)) continue;
-
-      // Test whether an intersection occurs
-      const i = ray.intersectSegment(wall.data.c);
-      if (!i || (i.t0 <= 0)) continue;
-
-      // We may only need one
-      if ( mode === "any" ) return true;
-
-      // Record the collision point if an intersection occurred
-      const c = new WallEndpoint(i.x, i.y);
-      collisionPoints.set(c.key, c);
-    }
-    if (collisionPoints.size && (mode === "closest")) break;
-  }
-
-  // Return the result based on the test type
-  switch (mode) {
-    case "all":
-      return Array.from(collisionPoints.values());
-    case "any":
-      return collisionPoints.size > 0;
-    case "closest":
-      if (!collisionPoints.size) return null;
-      const sortedPoints = Array.from(collisionPoints.values()).sort((a, b) => a.t0 - b.t0);
-      if (sortedPoints[0].isLimited(type)) sortedPoints.shift();
-      return sortedPoints[0] || null;
-  }
-}
-
-function _levelsCheckCollision(ray, {type="move", mode="any"}={},
-roomTest = false) {
-  if ( !canvas.grid.hitArea.contains(ray.B.x, ray.B.y) ) return true;
-  if ( !canvas.scene.data.walls.size ) return false;
-  return CONFIG.Canvas.losBackend.getRayCollisions(ray, {type, mode}, roomTest);
-}
-
 function _levelsIsAudible() {
   if (this.levelsInaudible) return false;//OVERRIDE skip sounds on diff levels
   if (this.data.hidden) return false;
@@ -375,10 +308,18 @@ function _levelsTokenCheckCollision(destination) {
 
   // Check for a wall collision
   if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
-    return canvas.walls.checkCollision(
-      ray,
-      { type: "move", mode: "any" },
-      this.data.elevation
+    return _levels.testCollision(
+      {
+        x: ray.A.x,
+        y: ray.A.y,
+        z: this.data.elevation,
+      },
+      {
+        x: ray.B.x,
+        y: ray.B.y,
+        z: this.data.elevation,
+      },
+      "collision"
     );
   } else {
     return canvas.walls.checkCollision(ray);
