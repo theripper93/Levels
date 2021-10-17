@@ -165,6 +165,9 @@ Hooks.once("ready", () => {
     ui.notifications.error(game.i18n.localize("levels.err.tokenheight"))
     game.settings.set("wall-height", "enableTokenHeight", false)
   }
+  if(game.modules.get("betterroofs").data.version < "1.1"){
+    ui.notifications.error("Better Roofs version 1.1 or above is required! Please update Better Roofs")
+  }
 })
 
 
