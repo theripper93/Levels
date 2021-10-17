@@ -99,6 +99,7 @@
     "levels.err.collision": "The attempted movement collides with at least one floor/ceiling",
 
     "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
+    "levels.err.tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!",
     "levels.firsttime.dialog": ""
 
 }
