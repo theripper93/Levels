@@ -20,6 +20,7 @@ Hooks.on("canvasReady", () => {
 
 Hooks.on("betterRoofsReady", () => {
   if (_levels) _levels.getTokensState(_levels.findAllTiles());
+  canvas.foreground.refresh();
 });
 
 Hooks.on("sightRefresh", () => {
