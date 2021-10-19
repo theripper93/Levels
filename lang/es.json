@@ -68,6 +68,7 @@
     "levels.controls.levelsclear.name": "Borrar niveles",
     "levels.controls.placeOverhead.name": "Si se habilita, colocará baldosas superpuestas 'dentro' de los niveles",
     "levels.controls.setTemplateElevation.name":"Ajuste la elevación para la la próxima plantilla",
+    "levels.controls.suppressBrmode.name":"Suprimir aplicación del modo Better Roofs",
 
     "levels.dialog.levelsclear.title": "Borrar niveles",
     "levels.dialog.levelsclear.content": "¿Eliminar todos los niveles almacenados?",
@@ -100,6 +101,7 @@
     "levels.err.collision": "Este movimiento entra en conflicto con al menos un piso/techo",
 
     "levels.err.lessfog": "Niveles: ¡AVISO! Se ha detectado el módulo Less Fog - la visibilidad de los iconos no funcionará adecuadamente, por favor, deshabilite uno de los dos",
+    "levels.err.tokenheight": "Niveles: ¡AVISO! Se ha detectado que ha habilitado la opción 'Habilitar altura de muros' en el módulo Wall Height - ¡esta opción es incompatible con Levels y ha sido deshabilitada!",
     "levels.firsttime.dialog": ""
 
 }
