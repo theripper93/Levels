@@ -68,6 +68,7 @@
     "levels.controls.levelsclear.name": "Borrar niveles",
     "levels.controls.placeOverhead.name": "Si se habilita, colocará baldosas superpuestas 'dentro' de los niveles",
     "levels.controls.setTemplateElevation.name":"Ajuste la elevación para la la próxima plantilla",
+    "levels.controls.suppressBrmode.name":"Suprimir aplicación del modo Better Roofs",
 
     "levels.dialog.levelsclear.title": "Borrar niveles",
     "levels.dialog.levelsclear.content": "¿Eliminar todos los niveles almacenados?",
