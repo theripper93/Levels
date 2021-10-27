@@ -418,14 +418,13 @@ class Levels {
 
   collateVisions() {
     let ownedTokens = canvas.tokens.placeables.filter(
-      (token) => token.isOwner
+      (token) => token.isOwner && !token.data.hidden
     );
     if(ownedTokens.length === 0 || !canvas.tokens.controlled[0]) ownedTokens = canvas.tokens.placeables.filter(
-      (token) => token.observer || token.isOwner
+      (token) => (token.observer || token.isOwner) && !token.data.hidden
     );
     for (let token of canvas.tokens.placeables) {
       if (token.isOwner || token.data.hidden) continue;
-
       let tokenVisible = false;
       for (let ownedToken of ownedTokens) {
         if (this.advancedLosTestVisibility(ownedToken, token))
@@ -449,8 +448,8 @@ class Levels {
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.actor.testUserPermission(game.user, 2)) //||
-        //token.data.hidden
+          token.actor.testUserPermission(game.user, 2)) ||
+          token.data.hidden
       )
         continue;
       //if (token.data.hidden) token.levelsVisible = undefined;
