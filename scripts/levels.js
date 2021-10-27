@@ -372,10 +372,10 @@ class Levels {
 
   collateVisions() {
     let ownedTokens = canvas.tokens.placeables.filter(
-      (token) => token.isOwner
+      (token) => token.isOwner && !token.data.hidden
     );
     if(ownedTokens.length === 0 || !canvas.tokens.controlled[0]) ownedTokens = canvas.tokens.placeables.filter(
-      (token) => token.observer || token.isOwner
+      (token) => (token.observer || token.isOwner) && !token.data.hidden
     );
     for (let token of canvas.tokens.placeables) {
       if (token.isOwner || token.data.hidden) continue;
@@ -398,12 +398,12 @@ class Levels {
     if (!sourceToken) return;
     //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      if (
+      if (//MIRROR CHANGE
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.isOwner) //||
-        //token.data.hidden
+          token.isOwner) ||
+        token.data.hidden
       )
         continue;
       //if (token.data.hidden) token.levelsVisible = undefined;
