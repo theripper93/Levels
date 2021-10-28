@@ -403,8 +403,8 @@ class Levels {
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.isOwner) ||
-        token.data.hidden
+          token.isOwner) //||
+       // token.data.hidden
       )
         continue;
       //if (token.data.hidden) token.levelsVisible = undefined;
