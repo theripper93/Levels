@@ -320,6 +320,7 @@ class Levels {
     if (canvas.scene.data.tokenVision === false)
       return gm || !token.data.hidden;
     if (token._controlled) return true;
+    if (token.data.hidden && !gm) return false;
     if (!sourceToken.data.vision) return gm;
     const angleTest = this.testInAngle(sourceToken, token);
     if (!angleTest) return false;
