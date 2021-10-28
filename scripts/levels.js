@@ -449,8 +449,8 @@ class Levels {
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
-          token.actor.testUserPermission(game.user, 2)) ||
-          token.data.hidden
+          token.actor.testUserPermission(game.user, 2)) //||
+          //token.data.hidden
       )
         continue;
       //if (token.data.hidden) token.levelsVisible = undefined;
