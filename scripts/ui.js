@@ -109,7 +109,7 @@ class LevelsUI extends FormApplication {
     const name = $target.find(".level-name").val();
     this.definedLevels = canvas.scene.getFlag(_levelsModuleName, "sceneLevels");
     this.range = this.definedLevels.find(
-      (l) => l[0] == bottom && l[1] == top && l[2] == name
+      (l) => l[0] == bottom && l[1] == top
     );
     if($(event.target).hasClass("player-portrait")) return
     game.currentTokenElevation = parseFloat(bottom)
@@ -176,7 +176,7 @@ class LevelsUI extends FormApplication {
     let levelsFlag =
       canvas.scene.getFlag(_levelsModuleName, "sceneLevels") || [];
     this.definedLevels = levelsFlag;
-    this.range = this.range ?? this.definedLevels[levelsFlag.length - 1];
+    this.range = this.range?.length ? this.range : this.definedLevels[levelsFlag.length - 1];
     if (levelsFlag) {
       for (let level of levelsFlag) {
         this.element.find("#levels-list").append(this.generateLi(level));
@@ -318,7 +318,7 @@ class LevelsUI extends FormApplication {
   computeLevelsVisibility(range) {
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
-    if(!range) range = this.range
+    if(!range) range = this.range?.length ? this.range : this.definedLevels[this.definedLevels.length - 1];
     if (!range) return;
     range[0] = parseFloat(range[0]);
     range[1] = parseFloat(range[1]);
