@@ -109,7 +109,7 @@ class LevelsUI extends FormApplication {
     const name = $target.find(".level-name").val();
     this.definedLevels = canvas.scene.getFlag(_levelsModuleName, "sceneLevels");
     this.range = this.definedLevels.find(
-      (l) => l[0] == bottom && l[1] == top && l[2] == name
+      (l) => l[0] == bottom && l[1] == top
     );
     if($(event.target).hasClass("player-portrait")) return
     game.currentTokenElevation = parseFloat(bottom)
