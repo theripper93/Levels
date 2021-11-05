@@ -10,7 +10,7 @@ Other Language: [English](README.md), [Deutsch](README.de.md)
 
 *The module is free but if you are selling maps that use my modules you'll need a commercial licence wich is available on my patreon
 
-## Perfect Vision: Levels is not currently compatible with perfect vision and you will esperience erratic behaviour, use at your own risk
+## Perfect Vision: Levels is not currently compatible with perfect vision and you will experience erratic behaviour, use at your own risk
 
 **How to use:**
 
