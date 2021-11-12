@@ -495,8 +495,8 @@ class Levels {
       : Math.max(
           sourceToken.data.dimSight,
           sourceToken.data.brightSight,
-          sourceToken.data.dimLight,
-          sourceToken.data.brightLight
+          //sourceToken.data.dimLight,
+          //sourceToken.data.brightLight
         );
     if (this.modules.PerfectVision.Active) {
       const pvRange = this.getPerfectVisionVisionRange(sourceToken);
