@@ -400,7 +400,7 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.fov.contains(token.center.x, token.center.y)) return true;
+          if (source.fov?.contains(token.center.x, token.center.y)) return true;
         }
       } else {
         const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity;

@@ -48,13 +48,19 @@ function _levelsOnMovementFrame(wrapped,...args) {
   }
 }
 
-function _lightingRefresh(darkness) {
+function _lightingRefresh({darkness, backgroundColor}={}) {
   const priorLevel = this.darknessLevel;
-  const darknessChanged = (darkness !== undefined) && (darkness !== priorLevel)
+  const darknessChanged = (darkness !== undefined) && (darkness !== priorLevel);
+  const bgChanged = backgroundColor !== undefined;
   this.darknessLevel = darkness = Math.clamped(darkness ?? this.darknessLevel, 0, 1);
 
   // Update lighting channels
-  if ( darknessChanged || !this.channels ) this.channels = this._configureChannels(darkness);
+  if ( darknessChanged || bgChanged || !this.channels ) {
+    this.channels = this._configureChannels({
+      backgroundColor: foundry.utils.colorStringToHex(backgroundColor),
+      darkness
+    });
+  }
 
   // Track global illumination
   let refreshVision = false;
@@ -83,6 +89,7 @@ function _lightingRefresh(darkness) {
 
   // Render light sources
   for ( let source of this.sources ) {
+
     // Check the active state of the light source
     const isActive = source.skipRender //OVERRIDE SKIP RENDER
         ? false
@@ -103,14 +110,12 @@ function _lightingRefresh(darkness) {
     if ( source.data.animation?.type ) this._animatedSources.push(source);
   }
 
-  // Render sight from vision sources if there is a darkness level present
-  if ( this.darknessLevel > 0 ) {
-    for ( let vs of canvas.sight.sources ) {
-      if ( vs.radius <= 0 ) continue;
-      if ( vs.losMask ) msk.addChild(vs.losMask);
-      const sight = vs.drawVision();
-      if ( sight ) ilm.lights.addChild(sight);
-    }
+  // Render sight from vision sources
+  for ( let vs of canvas.sight.sources ) {
+    if ( vs.radius <= 0 ) continue;
+    if ( vs.losMask ) msk.addChild(vs.losMask);
+    const sight = vs.drawVision();
+    if ( sight ) ilm.lights.addChild(sight);
   }
 
   // Draw non-occluded roofs that block light
@@ -156,12 +161,16 @@ function _lightingRefresh(darkness) {
 function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
   const visionSources = this.sources;
   const lightSources = canvas.lighting.sources;
+  const d = canvas.dimensions;
   if ( !visionSources.size ) return game.user.isGM;
 
   // Determine the array of offset points to test
   const t = tolerance;
   const offsets = t > 0 ? [[0, 0],[-t,0],[t,0],[0,-t],[0,t],[-t,-t],[-t,t],[t,t],[t,-t]] : [[0,0]];
   const points = offsets.map(o => new PIXI.Point(point.x + o[0], point.y + o[1]));
+
+  // If the point is inside the buffer region, it may be hidden from view
+  if ( !this._inBuffer && !points.some(p => d.sceneRect.contains(p.x, p.y)) ) return false;
 
   // We require both LOS and FOV membership for a point to be visible
   let hasLOS = false;
@@ -170,12 +179,13 @@ function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
 
   // Check vision sources
   for ( let source of visionSources.values() ) {
+    if ( !source.active ) continue;   // The source may be currently inactive
     if ( !hasLOS ) {
       let l = points.some(p => source.los.contains(p.x, p.y));
       if ( l ) hasLOS = true;
     }
     if ( !hasFOV && requireFOV ) {
-      let f = points.some(p => source.los.contains(p.x, p.y));
+      let f = points.some(p => source.fov.contains(p.x, p.y));
       if (f) hasFOV = true;
     }
     if ( hasLOS && (!requireFOV || hasFOV) ) return true;
@@ -184,8 +194,9 @@ function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
   // Check light sources
   for ( let source of lightSources.values() ) {
     if (source.skipRender) continue; //OVERRIDE SKIP RENDER
+    if ( !source.active ) continue;   // The source may be currently inactive
     if ( points.some(p => source.containsPoint(p)) ) {
-      if ( source.data.type !== CONST.SOURCE_TYPES.LOCAL ) hasLOS = true;
+      if ( source.object.data.vision ) hasLOS = true;
       hasFOV = true;
     }
     if (hasLOS && (!requireFOV || hasFOV)) return true;
