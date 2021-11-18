@@ -83,7 +83,6 @@ function _lightingRefresh(darkness) {
 
   // Render light sources
   for ( let source of this.sources ) {
-
     // Check the active state of the light source
     const isActive = source.skipRender //OVERRIDE SKIP RENDER
         ? false
@@ -327,9 +326,10 @@ function _levelsTokenCheckCollision(destination) {
 }
 
 function _levelsTokendrawTooltip(wrapped,...args) {
-  if(!_levels || _levels.hideElevation == 0) return wrapped(...args);
-  if(_levels.hideElevation == 1 && game.user.isGM) return wrapped(...args);
-  this.hud?.tooltip?.destroy();
+  let hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
+  if(hideElevation == 0) return wrapped(...args);
+  if(hideElevation == 1 && game.user.isGM) return wrapped(...args);
+  return new PIXI.Sprite()
 }
 
 function _levelsRenderLightTexture() {

@@ -390,12 +390,12 @@ class Levels {
       if (source.skipRender) continue;
       if (source.object.document.documentName === "Token") {
         const lightRadius = Math.max(
-          source.object.data.dimLight,
-          source.object.data.brightLight
+          source.object.data.light.dim,
+          source.object.data.light.bright
         );
-        const lightTop = source.object.data.elevation + lightRadius ?? Infinity;
+        const lightTop = source.object.data.elevation + (lightRadius ?? Infinity);
         const lightBottom =
-          source.object.data.elevation - lightRadius ?? -Infinity;
+          source.object.data.elevation - (lightRadius ?? -Infinity);
         if (
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
@@ -726,6 +726,9 @@ class Levels {
     }
     canvas.foreground.updateOcclusion();
     canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
+    setTimeout(() => {
+      canvas.tokens.placeables.forEach(t => t.updateSource()) //Find a better way to do this
+    },100)
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
@@ -733,7 +736,6 @@ class Levels {
     lightIndex.light.source.skipRender = !(
       lightIndex.range[0] <= elevation && lightIndex.range[1] >= elevation
     );
-    debugger
     if (
       lightIndex.range[1] <= elevation &&
       this.lightIluminatesHole(lightIndex, holes, elevation)
@@ -1250,7 +1252,7 @@ class Levels {
     });
     canvas.tokens.placeables.forEach((token) => {
       if (
-        (token.light.dim || token.light.bright) &&
+        (token.light.data.dim || token.light.data.bright) &&
         this.levelsTokens[token.id]
       ) {
         lights.push({
@@ -1701,7 +1703,11 @@ class Levels {
     }
   }
 
-
+  wait(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
 
   /**********************************
    * MODULE COMPATIBILITY FUNCTIONS *

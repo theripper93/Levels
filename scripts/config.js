@@ -76,12 +76,12 @@ Hooks.on("init", () => {
     _levelsRenderLightTexture,
     "OVERRIDE"
   );
-  /*libWrapper.register(
+  libWrapper.register(
     _levelsModuleName,
     "Token.prototype._drawTooltip",
     _levelsTokendrawTooltip,
     "MIXED"
-  );*/
+  );
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
@@ -369,7 +369,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   app.setPosition({ height: "auto" });
 });
 
-Hooks.on("renderLightConfig", (app, html, data) => {
+Hooks.on("renderAmbientLightConfig", (app, html, data) => {
   let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
@@ -402,9 +402,9 @@ Hooks.on("renderLightConfig", (app, html, data) => {
 </div>
 
 `;
-  const overh = html.find('input[name="angle"]');
+  const overh = html.find('input[name="config.angle"]');
   const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
+  formGroup.before(newHtml);
   app.setPosition({ height: "auto" });
 });
 
