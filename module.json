@@ -60,8 +60,8 @@
             "entity": "Scene"
         }
     ],
-    "minimumCoreVersion": "0.8.6",
-    "compatibleCoreVersion": "0.8.9",
+    "minimumCoreVersion": "9",
+    "compatibleCoreVersion": "9.2",
     "url": "https://github.com/theripper93/Levels",
     "manifest": "https://github.com/theripper93/Levels/releases/latest/download/module.json",
     "download": "https://github.com/theripper93/Levels/releases/download/0.9.7.3/module.zip",
