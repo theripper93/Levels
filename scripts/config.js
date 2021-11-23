@@ -650,7 +650,7 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
-  const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
+  /*const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
   const handMode =
     typeof LevelsVolumetricTemplates !== "undefined" &&
     LevelsVolumetricTemplates.tools.handMode &&
@@ -673,8 +673,9 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
       .removeClass("active");
   } else {
     elevation = cToken?.data?.elevation + handMode || 0;
-  }
+  }*/
+  const templateData = _levels.getTemplateData();
   template.data.update({
-    flags: { levels: { elevation: elevation, special: special } },
+    flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });

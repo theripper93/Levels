@@ -400,7 +400,7 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.fov?.contains(token.center.x, token.center.y)) return true;
+          if (source.los?.contains(token.center.x, token.center.y)) return true;
         }
       } else {
         const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity;
@@ -1651,6 +1651,34 @@ class Levels {
       },
     });
     await dialog._render(true);
+  }
+
+  getTemplateData(){
+    const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
+  const handMode =
+    typeof LevelsVolumetricTemplates !== "undefined" &&
+    LevelsVolumetricTemplates.tools.handMode &&
+    cToken
+      ? Math.round(
+          (_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation) * 0.8
+        )
+      : 0;
+  let elevation;
+  let special;
+  if (_levels.nextTemplateHeight !== undefined) {
+    elevation = _levels.nextTemplateHeight;
+    special = _levels.nextTemplateSpecial;
+    _levels.nextTemplateHeight = undefined;
+    _levels.nextTemplateSpecial = undefined;
+    _levels.templateElevation = false;
+    _levelsTemplateTool.active = false;
+    $("body")
+      .find(`li[data-tool="setTemplateElevation"]`)
+      .removeClass("active");
+  } else {
+    elevation = cToken?.data?.elevation + handMode || 0;
+  }
+  return { elevation, special };
   }
 
   raycastDebug() {
