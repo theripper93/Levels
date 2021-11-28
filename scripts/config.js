@@ -675,6 +675,7 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     elevation = cToken?.data?.elevation + handMode || 0;
   }*/
   const templateData = _levels.getTemplateData();
+  if(template.data.flags?.levels?.elevation) return;
   template.data.update({
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });

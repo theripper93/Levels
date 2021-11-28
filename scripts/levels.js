@@ -724,11 +724,11 @@ class Levels {
         holes
       );
     }
-    canvas.foreground.updateOcclusion();
-    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
-    setTimeout(() => {
-      canvas.tokens.placeables.forEach(t => t.updateSource()) //Find a better way to do this
-    },100)
+    canvas.perception.schedule({
+      lighting: { initialize: true /* calls updateSource on each light source */, refresh: true },
+      sight: { initialize: true /* calls updateSource on each token */, refresh: true /* you probably to refesh sight as well */, forceUpdateFog: true /* not sure if you need this */ },
+      foreground: { refresh: true /* calls updateOcclusion */}
+    });
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
