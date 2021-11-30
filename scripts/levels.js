@@ -750,10 +750,11 @@ class Levels {
     for (let tile of allTiles) {
       if (
         tile.range[0] <= elevation &&
-        !(
+        tile.range[0] >= lightIndex.range[1]
+        /*!(
           lightIndex.range[0] >= tile.range[0] &&
           lightIndex.range[1] <= tile.range[1]
-        )
+        )*/
       ) {
         occlusionTiles.push(tile);
       }
@@ -1445,6 +1446,10 @@ class Levels {
     _levels.clearLights(_levels.getLights());
     this.showTemplatesForGM();
     canvas.drawings.placeables.forEach((d) => (d.visible = true));
+    canvas.perception.schedule({
+      lighting: { refresh: true },
+      sight: { refresh: true }
+    });
   }
 
   /*****************************************************
