@@ -700,10 +700,12 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
-      let aboverange =
-        _levels.UI.definedLevels[
+      debugger
+      let aboverange = _levels.UI.definedLevels.find(l => _levels.UI.range[0] === l[0] && _levels.UI.range[1] === l[1])
+      aboverange = _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(aboverange) - 1]
+        /*_levels.UI.definedLevels[
           _levels.UI.definedLevels.indexOf(_levels.UI.range) - 1
-        ];
+        ];*/
       if (aboverange) {
         let newTop = aboverange[1];
         let newBot = aboverange[0];
