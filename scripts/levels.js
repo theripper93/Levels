@@ -802,8 +802,8 @@ class Levels {
         z: template.document.getFlag(_levelsModuleName, "elevation") ?? 0,
       };
       template.visible = !this.testCollision(tokenpos, templatepos, "sight");
-      canvas.grid.getHighlightLayer(`Template.${template.id}`).visible =
-        template.visible;
+      const highlight = canvas.grid.getHighlightLayer(`Template.${template.id}`)
+      if(highlight)highlight.visible = template.visible;
     }
   }
 
@@ -1195,7 +1195,7 @@ class Levels {
         const speed = s * 10;
         const duration = (dist * 1000) / speed;
         setTimeout(function () {
-          token?.document?.update(newUpdates);
+          token?.update(newUpdates);
         }, duration);
       }
     }
