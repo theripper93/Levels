@@ -1195,7 +1195,7 @@ class Levels {
         const speed = s * 10;
         const duration = (dist * 1000) / speed;
         setTimeout(function () {
-          token.update(newUpdates);
+          token?.document?.update(newUpdates);
         }, duration);
       }
     }
@@ -1236,7 +1236,7 @@ class Levels {
     function updateElev(event) {
       let newElev = parseFloat(event.target.id);
       if (newElev || newElev == 0)
-        canvas.tokens.controlled[0].update({ elevation: newElev });
+        canvas.tokens.controlled[0]?.document?.update({ elevation: newElev });
     }
   }
 
