@@ -1975,11 +1975,11 @@ class Levels {
         if (TYPE === 0) {
           //sight
           if (
-            wall.data.sense === 0 ||
+            wall.data.sight === 0 ||
             (wall.data.door != 0 && wall.data.ds === 1)
           )
             continue;
-          if (wall.data.sense === 2) isTerrain = true;
+          if (wall.data.sight === 10) isTerrain = true;
         }
         if (TYPE === 1) {
           //collision
