@@ -317,23 +317,20 @@ function _levelsTokenCheckCollision(destination) {
   ray.B.y -= Math.sign(ray.dy);
 
   // Check for a wall collision
-  if (game.settings.get(_levelsModuleName, "blockSightMovement")) {
+  const blockSightMovement = game.settings.get(_levelsModuleName, "blockSightMovement");
     return _levels.testCollision(
       {
         x: ray.A.x,
         y: ray.A.y,
-        z: this.data.elevation,
+        z: blockSightMovement ? this.data.elevation : this.losHeight,
       },
       {
         x: ray.B.x,
         y: ray.B.y,
-        z: this.data.elevation,
+        z: blockSightMovement ? this.data.elevation : this.losHeight,
       },
       "collision"
     );
-  } else {
-    return canvas.walls.checkCollision(ray);
-  }
 }
 
 function _levelsTokendrawTooltip(wrapped,...args) {
