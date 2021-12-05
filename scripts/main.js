@@ -167,3 +167,7 @@ Hooks.once("ready", () => {
     game.settings.set("wall-height", "enableTokenHeight", false)
   }
 })
+
+Hooks.once("controlToken", () => {
+  canvas.tokens.placeables.forEach(t => t.updateSource())
+})
