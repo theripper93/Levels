@@ -1975,16 +1975,16 @@ class Levels {
         if (TYPE === 0) {
           //sight
           if (
-            wall.data.sight === 0 ||
+            wall.data.sight === CONST.WALL_SENSE_TYPES.NONE ||
             (wall.data.door != 0 && wall.data.ds === 1)
           )
             continue;
-          if (wall.data.sight === 10) isTerrain = true;
+          if (wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED) isTerrain = true;
         }
         if (TYPE === 1) {
           //collision
           if (
-            wall.data.move === 0 ||
+            wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE ||
             (wall.data.door != 0 && wall.data.ds === 1)
           )
             continue;
