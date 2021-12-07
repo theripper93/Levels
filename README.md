@@ -32,6 +32,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 # **KNOWN ISSUES\INCOMPATIBILITES**
 
+* ### **Perfect Vision**: If you are on foundry 0.8.9 Levels and PV will produce weird beehaviours together, in V9 The two modules work correctly together
 * ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, disable that option to fix the issue. Use Your Token Visible instead for the same functionality
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
 * ### **Lights not rendering correctly**: Sometimes, switching between tokens will result in some lights to render using the wrong walls, i haven't found a solution but it's generally a GM only issue
