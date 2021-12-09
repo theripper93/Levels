@@ -79,8 +79,6 @@ function _lightingRefresh({darkness, backgroundColor}={}) {
   ilm.lights.removeChildren();
   const col = this.coloration;
   col.removeChildren();
-  const del = this.delimiter;
-  del.removeChildren();
   this._animatedSources = [];
 
   // Tint the background color
@@ -92,8 +90,8 @@ function _lightingRefresh({darkness, backgroundColor}={}) {
 
     // Check the active state of the light source
     const isActive = source.skipRender //OVERRIDE SKIP RENDER
-        ? false
-        : darkness.between(source.data.darkness.min, source.data.darkness.max);
+    ? false
+    : darkness.between(source.data.darkness.min, source.data.darkness.max);
     if ( source.active !== isActive ) refreshVision = true;
     source.active = isActive;
     if ( !source.active ) continue;
@@ -106,7 +104,6 @@ function _lightingRefresh({darkness, backgroundColor}={}) {
     if ( meshes.background ) bkg.addChild(meshes.background);
     if ( meshes.light ) ilm.lights.addChild(meshes.light);
     if ( meshes.color ) col.addChild(meshes.color);
-    if ( meshes.delimiter ) del.addChild(meshes.delimiter);
     if ( source.data.animation?.type ) this._animatedSources.push(source);
   }
 
