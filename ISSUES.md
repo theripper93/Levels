@@ -10,15 +10,19 @@ Whether you are posting the issue here or on the discord follow the bug report t
 
 ## Before Reporting:
 
-> • Make sure the issue happens with only the module in question (plus it's dependencies if any)
-> • Try to isolate the issue as much as possible (try to reproduce it on a new scene with minimal amount of factors)
-> • Provide a list of steps to take to reproduce the issue
-> • Once you have this informations use the `Bug Report Template`
+* Make sure the issue happens with only the module in question (plus it's dependencies if any)
+* Try to isolate the issue as much as possible (try to reproduce it on a new scene with minimal amount of factors)
+* Provide a list of steps to take to reproduce the issue
+* Once you have this informations use the `Bug Report Template`
 
 **BUG REPORT TEMPLATE**
-```**ALL OTHER MODULES DISABLED?** (true/false)
-**Module**:
+```
+**ALL OTHER MODULES DISABLED?** (true/false)
+**Module:** (name and version)
+**Conflicting Module (if applicable)**: 
+**Foundry and System version**: eg. Foundry 0.8.9 DnD5e 1.5.5
 **OS, Hosting, Browser (if applicable)**:
 **Short Description of bug**:
 **Simple steps to reproduce the bug**:
-**Screenshots and/or console errors**:```
+**Screenshots and/or console errors**:
+```
