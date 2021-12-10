@@ -12,6 +12,7 @@ Whether you are posting the issue here or on the discord follow the bug report t
 ## Before Reporting:
 
 * Make sure the issue happens with only the module in question (plus it's dependencies if any)
+* Check the module repository for known or alredy fixed issues in future versions (this is located in the readme of the repo if present)
 * Try to isolate the issue as much as possible (try to reproduce it on a new scene with minimal amount of factors)
 * Provide a list of steps to take to reproduce the issue
 * Once you have this informations use the `Bug Report Template`
