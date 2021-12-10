@@ -1,4 +1,5 @@
 # Before Posting an issue:
+(This document is stored in the Levels repository but it's valid for all my repos)
 
 ## Feature requests/Enhancements
 Post your feature request on discord, the issue traker here is just used to track bugs.
