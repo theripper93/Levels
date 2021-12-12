@@ -15,9 +15,9 @@ Use the `#feature-requests-public` channel or the higher priority `#feature-requ
 
 ## Bugs:
 You can post bugs in the issues of the repo or on the discord. Generally the discord is preferred since it allows for faster interactions and troubleshooting.
-Whether you are posting the issue here or on the discord follow the bug report template or your issue will be closed.
-If you have clear steps to reproduce the issue report the bug here or in the `#bug-report` channel on discord.
-If you don't have clear steps to reproduce use the `#troubleshooting` discord channel
+Whether you are posting the issue here or on discord follow the bug report template or your issue will be closed.
+If you have clear steps to reproduce the issue report the bug `in the github issues` or in the `#bug-report` channel on discord.
+If you don't have clear steps to reproduce use the `#troubleshooting` discord channel instead
 
 ## Before Reporting:
 
