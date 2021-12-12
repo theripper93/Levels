@@ -1,13 +1,20 @@
-# Before Posting an issue:
+# Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
+
+## Help/Troubleshooting
+
+If you have issues setting up one of my modules or using one or more of it's features use the `#troubleshooting` discord channel, help/setup request in the github issues will be ignored and closed.
 
 ## Feature requests/Enhancements
 Post your feature request on discord, the issue traker here is just used to track bugs.
 If you post a feature request it will be automatically closed - you can join the discord here https://theripper93.com/
+Use the `#feature-requests-public` channel or the higher priority `#feature-requests` channel (if you are a Patreon)
 
 ## Bugs:
 You can post bugs in the issues of the repo or on the discord (https://theripper93.com/). Generally the discord is preferred since it allows for faster interactions and troubleshooting.
 Whether you are posting the issue here or on the discord follow the bug report template or your issue will be closed.
+If you have clear steps to reproduce the issue report the bug here or in the `#bug-report` channel on discord.
+If you don't have clear steps to reproduce use the `#troubleshooting` discord channel
 
 ## Before Reporting:
 
@@ -28,3 +35,10 @@ Whether you are posting the issue here or on the discord follow the bug report t
 **Simple steps to reproduce the bug**:
 **Screenshots and/or console errors**:
 ```
+
+
+
+//IGNORE - Message Template
+
+Hello! It seems you haven't read the **Before Posting an issue** as indicated at the top of the Repository Readme (https://github.com/theripper93/Levels/blob/v9/ISSUES.md)
+**The Issue has been closed.**
