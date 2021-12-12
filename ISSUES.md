@@ -1,5 +1,6 @@
 # Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
+
 This is not to discurage bug reports or feature requests, it's for my own organization and faster troubleshooting and bug fixes.
 
 ## Discord
