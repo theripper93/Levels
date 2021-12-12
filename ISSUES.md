@@ -1,17 +1,20 @@
 # Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
 
+## Discord
+You can join the discord here: https://theripper93.com/
+
 ## Help/Troubleshooting
 
 If you have issues setting up one of my modules or using one or more of it's features use the `#troubleshooting` discord channel, help/setup request in the github issues will be ignored and closed.
 
 ## Feature requests/Enhancements
 Post your feature request on discord, the issue traker here is just used to track bugs.
-If you post a feature request it will be automatically closed - you can join the discord here https://theripper93.com/
+If you post a feature request it will be automatically closed.
 Use the `#feature-requests-public` channel or the higher priority `#feature-requests` channel (if you are a Patreon)
 
 ## Bugs:
-You can post bugs in the issues of the repo or on the discord (https://theripper93.com/). Generally the discord is preferred since it allows for faster interactions and troubleshooting.
+You can post bugs in the issues of the repo or on the discord. Generally the discord is preferred since it allows for faster interactions and troubleshooting.
 Whether you are posting the issue here or on the discord follow the bug report template or your issue will be closed.
 If you have clear steps to reproduce the issue report the bug here or in the `#bug-report` channel on discord.
 If you don't have clear steps to reproduce use the `#troubleshooting` discord channel
