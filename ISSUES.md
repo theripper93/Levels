@@ -1,7 +1,7 @@
 # Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
 
-This is not to discurage bug reports or feature requests, it's for my own organization and faster troubleshooting and bug fixes.
+This is not to discurage bug reports or feature requests, it's for my own organization and faster troubleshooting and bug fixes (Keeping track of 40ish modules is not easy, please be understanding :) ).
 
 ## Discord
 You can join the discord here: https://theripper93.com/
