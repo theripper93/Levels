@@ -700,7 +700,6 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
-      debugger
       let aboverange = _levels.UI.definedLevels.find(l => _levels.UI.range[0] === l[0] && _levels.UI.range[1] === l[1])
       aboverange = _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(aboverange) - 1]
         /*_levels.UI.definedLevels[
