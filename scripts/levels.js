@@ -316,6 +316,8 @@ class Levels {
   }
 
   advancedLosTestVisibility(sourceToken, token) {
+    const visibilityOverride = this.overrideVisibilityTest(sourceToken, token);
+    if(typeof visibilityOverride === 'boolean') return visibilityOverride;
     const gm = game.user.isGM;
     if (canvas.scene.data.tokenVision === false)
       return gm || !token.data.hidden;
@@ -329,9 +331,13 @@ class Levels {
     if (inLOS && inRange && token.data.hidden && gm) return true;
     if (inLOS && inRange && !token.data.hidden) return true;
     const inLight = this.advancedLOSCheckInLight(token);
+    if(inLight === 2 && !token.data.hidden) return true;
     if (inLOS && inLight && !token.data.hidden) return true;
     return false;
   }
+
+  //Method for modules to override the levels visibility test
+  overrideVisibilityTest(sourceToken, token) {}
 
   advancedLosTestInLos(sourceToken, token) {
     const tol = 4;
@@ -410,7 +416,9 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.los.contains(token.center.x, token.center.y)) return true;
+          if (source.los.contains(token.center.x, token.center.y)) {
+            return source.object?.data?.vision ? 2 : true; 
+          }
         }
       }
     }
@@ -548,7 +556,7 @@ class Levels {
       const pvRange = this.getPerfectVisionVisionRange(sourceToken);
       if (pvRange || pvRange === 0) range = Math.min(pvRange, range);
     }
-    return dist <= range;
+    return dist <= range ? dist+0.001 : false;
   }
 
   isInsideHoleRange(isInHole, t, cTokenElev) {
