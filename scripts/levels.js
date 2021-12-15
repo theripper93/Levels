@@ -316,13 +316,13 @@ class Levels {
   }
 
   advancedLosTestVisibility(sourceToken, token) {
-    const visibilityOverride = this.overrideVisibilityTest(sourceToken, token);
-    if(typeof visibilityOverride === 'boolean') return visibilityOverride;
     const gm = game.user.isGM;
     if (canvas.scene.data.tokenVision === false)
       return gm || !token.data.hidden;
     if (token._controlled) return true;
     if (token.data.hidden && !gm) return false;
+    const visibilityOverride = this.overrideVisibilityTest(sourceToken, token);
+    if(typeof visibilityOverride === 'boolean') return visibilityOverride;
     if (!sourceToken.data.vision) return gm;
     const angleTest = this.testInAngle(sourceToken, token);
     if (!angleTest) return false;
@@ -542,21 +542,13 @@ class Levels {
   }
 
   tokenInRange(sourceToken, token) {
-    const tokensSizeAdjust = Math.min(token.data?.width, token.data?.height) || 0;
-    const dist = this.getUnitTokenDist(sourceToken, token) - tokensSizeAdjust * Math.SQRT2 * canvas.scene.dimensions.distance / 2;
-    let range = canvas.lighting.globalLight
+    const range = canvas.lighting.globalLight
       ? Infinity
-      : Math.max(
-          sourceToken.data.dimSight,
-          sourceToken.data.brightSight,
-          //sourceToken.data.dimLight,
-          //sourceToken.data.brightLight
-        );
-    if (this.modules.PerfectVision.Active) {
-      const pvRange = this.getPerfectVisionVisionRange(sourceToken);
-      if (pvRange || pvRange === 0) range = Math.min(pvRange, range);
-    }
-    return dist <= range ? dist+0.001 : false;
+      : sourceToken.vision.radius;
+    if (range === 0) return false;
+    if (range === Infinity) return true;
+    const dist = this.getUnitTokenDist(sourceToken, token) * canvas.dimensions.size / canvas.dimensions.distance;
+    return dist <= range;
   }
 
   isInsideHoleRange(isInHole, t, cTokenElev) {
