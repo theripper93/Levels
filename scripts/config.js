@@ -92,14 +92,19 @@ Hooks.once("ready", () => {
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
   const FALLBACK_MESSAGE = `<large>
-  <p><strong>This module may be very complicated for a first timer, be sure to stop by my <a href="https://discord.gg/F53gBjR97G">Discord</a> for help and support from the wonderful community as well as many resources</strong></p>
+  <p><strong>This module may be very complicated for a first timer, be sure to stop by my <a href="https://theripper93.com/">Discord</a> for help and support from the wonderful community as well as many resources</strong></p>
 
   <p>Thanks to all the patreons supporting the development of this module making continued updates possible!</p>
   <p>If you want to support the development of the module or get customized support in setting up your maps you can do so here : <a href="https://www.patreon.com/theripper93">Patreon</a> </p></large>
+  <p><strong>Patreons</strong> get also access to <strong>15+ premium modules</strong></p>
+  <p>Is Levels not enough? Go Full 3D</p>
+  <h1>3D Canvas</h1>
+  <iframe width="385" height="225" src="https://www.youtube.com/embed/hC1QGZFUhcU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <p>Check 3D Canvas and all my other <strong>15+ premium modules <a href="https://theripper93.com/">Here</a></strong></p>
   <p>Special thanks to Baileywiki for the support and feedback and Blair for the amazing UI elements</p>`;
 
   // Settings key used for the "Don't remind me again" setting
-  const DONT_REMIND_AGAIN_KEY = "popup-dont-remind-again";
+  const DONT_REMIND_AGAIN_KEY = "popup-dont-remind-again-2";
 
   // Dialog code
   game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, {
