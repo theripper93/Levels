@@ -35,10 +35,10 @@ Your tokens will change levels by changing their elevation, you can also setup z
 
 * ### **Perfect Vision**: If you are on foundry 0.8.9 Levels and PV will produce weird beehaviours together, in V9 The two modules work correctly together
 * ### **Emitted light disappearing**: In the 0.8.9 version of levels, light emitted by tokens can randomly turn off, this problem is resolved in the V9 Version (Levels 2.0 or above)
-* ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, disable that option to fix the issue. Use Your Token Visible instead for the same functionality
+* ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, disable that option to fix the issue.
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
 * ### **Lights not rendering correctly**: Sometimes, switching between tokens will result in some lights to render using the wrong walls, i haven't found a solution but it's generally a GM only issue
-* ### **Fog Exploration is not Saved in levels**: Due to foundry limitiations and performance concerns among other things, if you use the advanced fog option, fog exploration for a level won't be saved. If you have the option disabled exploring any floor will reveal the same area in all other floors.
+* ### **Fog Exploration is not Saved in levels**: Due to foundry limitiations (Fog was really not build for this) and performance concerns among other things, if you use the advanced fog option, fog exploration for a level won't be saved. If you have the option disabled exploring any floor will reveal the same area in all other floors.
 
 # **API**
 
