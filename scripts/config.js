@@ -689,5 +689,5 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
 //Incompatibility Warnings
 
 Hooks.once('libChangelogsReady', function() {
-  libChangelogs.registerConflict("levels", "midi-qol",game.i18n.localize("levels.conflicts.midiqol.tokenvis"),"major")
+  if(game.modules.get("midi-qol")?.active && game.settings.get("midi-qol","playerControlsInvisibleTokens"))libChangelogs.registerConflict("levels", "midi-qol",game.i18n.localize("levels.conflicts.midiqol.tokenvis"),"major")
 })
