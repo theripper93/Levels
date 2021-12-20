@@ -547,7 +547,8 @@ class Levels {
       : sourceToken.vision.radius;
     if (range === 0) return false;
     if (range === Infinity) return true;
-    const dist = this.getUnitTokenDist(sourceToken, token) * canvas.dimensions.size / canvas.dimensions.distance;
+    const tokensSizeAdjust = (Math.min(token.w, token.h) || 0)/Math.SQRT2;
+    const dist = this.getUnitTokenDist(sourceToken, token) * canvas.dimensions.size / canvas.dimensions.distance - tokensSizeAdjust;
     return dist <= range;
   }
 

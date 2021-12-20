@@ -685,3 +685,9 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });
+
+//Incompatibility Warnings
+
+Hooks.once('libChangelogsReady', function() {
+  libChangelogs.registerConflict("levels", "midi-qol",game.i18n.localize("levels.conflicts.midiqol.tokenvis"),"major")
+})
