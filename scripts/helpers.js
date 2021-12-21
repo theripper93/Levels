@@ -1,5 +1,5 @@
 function _levelsTokenRefresh(wrapped,...args) {
-  if(!this.icon) return this;
+  if(!this.icon || this._destroyed) return this;
   wrapped(...args);
   // Adjust Scale
   
