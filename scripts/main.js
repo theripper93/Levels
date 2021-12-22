@@ -18,6 +18,14 @@ Hooks.on("canvasReady", () => {
   Hooks.callAll("levelsReady");
 });
 
+Hooks.on("canvasReady", () => {
+  Hooks.once("controlToken", (token, contorlled) => {
+    if (contorlled) {
+      token.updateSource();
+    }
+  });
+})
+
 Hooks.on("betterRoofsReady", () => {
   if (_levels) _levels.getTokensState(_levels.findAllTiles());
   canvas.foreground.refresh();
