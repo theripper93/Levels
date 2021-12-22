@@ -19,11 +19,15 @@ Hooks.on("canvasReady", () => {
 });
 
 Hooks.on("canvasReady", () => {
-  Hooks.once("controlToken", (token, contorlled) => {
-    if (contorlled) {
+  canvas.tokens.controlled.forEach(t => t.updateSource());
+  Hooks.once("controlToken", (token, controlled) => {
+    if (controlled) {
       token.updateSource();
     }
   });
+  Hooks.once("sightRefresh", () => {
+    canvas.tokens.controlled.forEach(t => t.updateSource());
+  })
 })
 
 Hooks.on("betterRoofsReady", () => {
