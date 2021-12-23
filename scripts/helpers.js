@@ -341,7 +341,7 @@ function _levelsRenderLightTexture() {
 
   // Determine ideal texture size as the closest power-of-2
   const s = (this.radius * 2);
-  const p2 = Math.max(64, Math.min(PIXI.utils.nextPow2(s) >> 1, canvas.MAX_TEXTURE_SIZE >> 1 ));
+  const p2 = this.getPowerOf2Size();
   const ratio = p2 / s;
 
   // Create or resize the render texture
@@ -354,13 +354,9 @@ function _levelsRenderLightTexture() {
     rt.resize(p2, p2);
   }
 
-  // Create the container to render
-  const c = new PIXI.Container();
+  // Create container to render
+  const c = this._drawRenderTextureContainer()
   c.scale.set(ratio);
-
-  // Draw the blurred texture with BLUE fill
-  const g = c.addChild(new PIXI.Graphics());
-  g.beginFill(0x0000FF, 1.0).drawShape(this.los).endFill();
   let gf = LightSource._glowFilter;
   if ( !gf ) {
     gf = LightSource._glowFilter = GlowFilter.create({
@@ -371,18 +367,21 @@ function _levelsRenderLightTexture() {
     });
   }
   gf.blendMode = PIXI.BLEND_MODES.ADD;
-  g.filters = [gf];
+  c.filters = [gf];
 
-    // Add light occlusion from tiles
+  // Add light occlusion from tiles
   if(_levels?.lightOcclusion.spriteIndex[this._lightId]){
     c.addChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
   }
 
-  // Render the texture
+  // Render the container to texture
   canvas.app.renderer.render(c, {
     renderTexture: rt,
     transform: new PIXI.Matrix(1, 0, 0, 1, (-this.x + this.radius) * ratio, (-this.y + this.radius) * ratio)
   });
+  c.destroy({children: true});
+
+  // Store the rendered texture to the source
   this._flags.renderFOV = false;
   return this.fovTexture;
 }
