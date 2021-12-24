@@ -25,6 +25,7 @@ If you don't have clear steps to reproduce use the `#troubleshooting` discord ch
 
 * Make sure the issue happens with only the module in question (plus it's dependencies if any)
 * Check the module repository for known or alredy fixed issues in future versions (this is located in the readme of the repo if present)
+* Check the module readme - your issue might be a common issue with provided workaround or the readme might contain steps to solve your issue.
 * Try to isolate the issue as much as possible (try to reproduce it on a new scene with minimal amount of factors)
 * Provide a list of steps to take to reproduce the issue
 * Once you have this informations use the `Bug Report Template`
