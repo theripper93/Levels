@@ -68,14 +68,21 @@
     "levels.controls.levelsclear.name": "Borrar niveles",
     "levels.controls.placeOverhead.name": "Si se habilita, colocará baldosas superpuestas 'dentro' de los niveles",
     "levels.controls.setTemplateElevation.name":"Ajuste la elevación para la la próxima plantilla",
+    "levels.controls.suppressBrmode.name":"Suprimir aplicación de modo Better Roofs",
 
     "levels.dialog.levelsclear.title": "Borrar niveles",
     "levels.dialog.levelsclear.content": "¿Eliminar todos los niveles almacenados?",
     "levels.dialog.define.warn": "Defina los niveles como: inferior,superior|inferior,superior - eg. 0,9|10,19|20,29",
     "levels.dialog.define.title": "Defina los niveles de esta escena",
     "levels.dialog.define.text": "Niveles: ",
+    "levels.dialog.removeLevel.title": "Borrar nivel",
+    "levels.dialog.removeLevel.content": "¿Está seguro de que quiere borrar este nivel?",
+    "levels.dialog.getFromScene.title": "Tomar niveles de la escena",
+    "levels.dialog.getFromScene.content": "¿Desea tomar los niveles de la escena actual? Esto sobrescribirá los niveles actuales",
     "levels.dialog.elevator.title": "Niveles - Elija una planta",
     "levels.dialog.elevation.title": "Ajuste la elevación para la la próxima plantilla",
+
+    "levels.ui.title": "Levels (Niveles) - Herramienta de capas",
 
     "levels.yesnodialog.yes": "Confirmar",
     "levels.yesnodialog.no": "Cancelar",
@@ -94,6 +101,10 @@
     "levels.err.collision": "Este movimiento entra en conflicto con al menos un piso/techo",
 
     "levels.err.lessfog": "Niveles: ¡AVISO! Se ha detectado el módulo Less Fog - la visibilidad de los iconos no funcionará adecuadamente, por favor, deshabilite uno de los dos",
-    "levels.firsttime.dialog": ""
+    "levels.err.tokenheight": "Niveles: ¡AVISO! Se ha detectado que tiene habilitada la opción de Wall Height 'Habilitar altura de iconos' - ¡este ajuste es incompatible con Levels y se ha deshabilitado!",
+    "levels.firsttime.dialog": "",
+
+
+    "levels.conflicts.midiqol.tokenvis": "Habilitar la opción de MidiQOL 'Permitir a los jugadores controlar sus iconos ocultos' producirá problemas con la visibilidad de los iconos. Por favor, deshabilite esa opción"
 
 }
