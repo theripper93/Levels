@@ -370,7 +370,8 @@ function _levelsRenderLightTexture() {
   c.filters = [gf];
 
   // Add light occlusion from tiles
-  if(_levels?.lightOcclusion.spriteIndex[this._lightId]){
+  const occlusionSprite = _levels?.lightOcclusion.spriteIndex[this._lightId];
+  if(occlusionSprite && !occlusionSprite._destroyed){
     c.addChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
   }
 
@@ -379,6 +380,9 @@ function _levelsRenderLightTexture() {
     renderTexture: rt,
     transform: new PIXI.Matrix(1, 0, 0, 1, (-this.x + this.radius) * ratio, (-this.y + this.radius) * ratio)
   });
+  if(occlusionSprite && !occlusionSprite._destroyed){
+    c.removeChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
+  }
   c.destroy({children: true});
 
   // Store the rendered texture to the source
