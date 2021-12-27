@@ -406,7 +406,7 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.los?.contains(token.center.x, token.center.y)) return true;
+          if (this.checkInLightCorners(source.los,token)) return true;
         }
       } else {
         const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity;
@@ -416,13 +416,32 @@ class Levels {
           token.data.elevation >= lightBottom &&
           token.data.elevation <= lightTop
         ) {
-          if (source.los.contains(token.center.x, token.center.y)) {
+          if (this.checkInLightCorners(source.los,token)) {
             return source.object?.data?.vision ? 2 : true; 
           }
         }
       }
     }
     return false;
+  }
+
+  checkInLightCorners(los, token) {
+    if(!los) return false;
+      const tol = 4;
+      if (this.preciseTokenVisibility === false)
+        return los.contains(token.center.x, token.center.y);
+      const tokenCorners = [
+        { x: token.center.x, y: token.center.y },
+        { x: token.x + tol, y: token.y + tol },
+        { x: token.x + token.w - tol, y: token.y + tol },
+        { x: token.x + tol, y: token.y + token.h - tol },
+        { x: token.x + token.w - tol, y: token.y + token.h - tol},
+      ];
+      for (let point of tokenCorners) {
+        let inLos = los.contains(point.x, point.y);
+        if (inLos) return inLos;
+      }
+      return false;
   }
 
   collateVisions() {
