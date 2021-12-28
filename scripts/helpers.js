@@ -389,3 +389,15 @@ function _levelsRenderLightTexture() {
   this._flags.renderFOV = false;
   return this.fovTexture;
 }
+
+function _levelsDoorVisible(wrapped,...args){
+  if(!_levels) return wrapped(...args);
+  const isGm = game.user.isGM;
+  const token = canvas.tokens.controlled[0] ?? _levels.lastReleasedToken;
+  if(!token || isGm) return wrapped(...args);
+  const elevation = token.data.elevation ?? 0;
+  const wall = this.wall;
+  const wallRange = _levels.getWallHeightRange(wall);
+  if(elevation > wallRange[1] || elevation < wallRange[0]) return false;
+  return wrapped(...args);
+}

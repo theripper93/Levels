@@ -82,6 +82,15 @@ Hooks.on("init", () => {
     _levelsTokendrawTooltip,
     "MIXED"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "DoorControl.prototype.isVisible",
+    _levelsDoorVisible,
+    "MIXED"
+  );
+
+
+  
   if (_betterRoofs) _betterRoofs.initializeRoofs();
 });
 
