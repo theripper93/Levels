@@ -1112,7 +1112,8 @@ class Levels {
 
   getHoles() {
     let holes = [];
-    canvas.drawings.placeables.forEach((drawing) => {
+    canvas.scene.drawings.forEach((d) => {
+      const drawing = d.object;
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
       if (drawingMode == 1 && (rangeBottom || rangeBottom == 0)) {
@@ -1129,7 +1130,8 @@ class Levels {
 
   getStairs() {
     let holes = [];
-    canvas.drawings.placeables.forEach((drawing) => {
+    canvas.scene.drawings.forEach((d) => {
+      const drawing = d.object;
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
       let isLocked = drawing.document.getFlag(_levelsModuleName, "stairLocked");
@@ -1465,7 +1467,7 @@ class Levels {
     });
     _levels.clearLights(_levels.getLights());
     this.showTemplatesForGM();
-    canvas.drawings.placeables.forEach((d) => (d.visible = true));
+    canvas.scene.drawings.forEach((d) => (d.object.visible = true));
     canvas.perception.schedule({
       lighting: { refresh: true },
       sight: { refresh: true }
@@ -1539,7 +1541,8 @@ class Levels {
   computeDrawings(cToken) {
     if (!cToken) return;
     let tElev = cToken.data.elevation;
-    for (let d of canvas.drawings.placeables) {
+    for (let drawing of canvas.scene.drawings) {
+      const d = drawing.object;
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
@@ -1551,7 +1554,8 @@ class Levels {
   }
 
   hideDrawings() {
-    for (let d of canvas.drawings.placeables) {
+    for (let drawing of canvas.scene.drawings) {
+      const d = drawing.object
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;
       d.visible = false;

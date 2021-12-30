@@ -294,7 +294,8 @@ class LevelsUI extends FormApplication {
       }
     }
 
-    for (let drawing of canvas.drawings.placeables) {
+    canvas.scene.drawings.forEach((d) => {
+      const drawing = d.object;
       let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
       if (
         (rangeBottom || rangeBottom == 0) &&
@@ -304,7 +305,7 @@ class LevelsUI extends FormApplication {
       ) {
         autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
       }
-    }
+    });
     let autoRange = Object.entries(autoLevels)
       .map((x) => x[1])
       .sort()
@@ -378,9 +379,10 @@ class LevelsUI extends FormApplication {
       sound.visible = this.computeRangeForDocument(sound, range);
     }
 
-    for (let drawing of canvas.drawings.placeables) {
+    canvas.scene.drawings.forEach((d) => {
+      const drawing = d.object;
       drawing.visible = this.computeRangeForDocument(drawing, range);
-    }
+    });
     for (let token of canvas.tokens.placeables) {
       token.levelsVisible =
         token.data.elevation <= range[1] && token.data.elevation >= range[0];
@@ -438,10 +440,11 @@ class LevelsUI extends FormApplication {
       light.refresh();
     }
 
-    for (let drawing of canvas.drawings.placeables) {
+    canvas.scene.drawings.forEach((d) => {
+      const drawing = d.object;
       drawing.visible = true;
       drawing.refresh();
-    }
+    });
 
     for (let sound of canvas.sounds.placeables) {
       sound.visible = true;
