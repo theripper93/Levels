@@ -247,7 +247,7 @@ class LevelsUI extends FormApplication {
 
   close(force=false) {
     if(!force) this.saveData();
-    this.clearVisibility();
+    if(!force) this.clearVisibility();
     this.rangeEnabled = false;
     ui.controls.controls.find((c) => c.name == "tiles").layer = "background";
     super.close();
