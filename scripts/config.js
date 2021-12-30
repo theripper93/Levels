@@ -74,7 +74,7 @@ Hooks.on("init", () => {
     _levelsModuleName,
     "WallsLayer.prototype.checkCollision",
     _levelsWallCheckCollision,
-    "OVERRIDE"
+    "MIXED"
   );
   libWrapper.register(
     _levelsModuleName,

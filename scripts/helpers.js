@@ -330,7 +330,9 @@ function _levelsTokenCheckCollision(destination) {
     );
 }
 
-function _levelsWallCheckCollision(ray, {type="move", mode="any"}={}){
+function _levelsWallCheckCollision(wrapped,...args){
+  if(!_levels) return wrapped(...args);
+  const ray = args[0];
   const token = canvas.tokens.controlled[0];
   if(!token) return true;
   if ( !canvas.scene.data.walls.size ) return false;
