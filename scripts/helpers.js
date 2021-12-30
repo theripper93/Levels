@@ -330,6 +330,26 @@ function _levelsTokenCheckCollision(destination) {
     );
 }
 
+function _levelsWallCheckCollision(ray, {type="move", mode="any"}={}){
+  const token = canvas.tokens.controlled[0];
+  if(!token) return true;
+  if ( !canvas.scene.data.walls.size ) return false;
+  const blockSightMovement = game.settings.get(_levelsModuleName, "blockSightMovement");
+  return _levels.testCollision(
+    {
+      x: ray.A.x,
+      y: ray.A.y,
+      z: blockSightMovement ? token.data.elevation : token.losHeight,
+    },
+    {
+      x: ray.B.x,
+      y: ray.B.y,
+      z: blockSightMovement ? token.data.elevation : token.losHeight,
+    },
+    "collision"
+  );
+}
+
 function _levelsTokendrawTooltip(wrapped,...args) {
   let hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
   if(hideElevation == 0) return wrapped(...args);
