@@ -331,9 +331,9 @@ function _levelsTokenCheckCollision(destination) {
 }
 
 function _levelsWallCheckCollision(wrapped,...args){
-  if(!_levels) return wrapped(...args);
-  const ray = args[0];
   const token = canvas.tokens.controlled[0];
+  if(!_levels || !token) return wrapped(...args);
+  const ray = args[0];
   if(!token) return true;
   if ( !canvas.scene.data.walls.size ) return false;
   const blockSightMovement = game.settings.get(_levelsModuleName, "blockSightMovement");
