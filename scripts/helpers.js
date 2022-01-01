@@ -12,7 +12,7 @@ function _levelsTokenRefresh(wrapped,...args) {
     (this.data.mirrorY ? -1 : 1) *
     (this.elevationScaleFactor || 1);
   this.icon.visible = this._controlled ? true : !this.levelsHidden
-  if(this.levelsVisible !== undefined) this.visible = this.levelsVisible;
+  if(this.levelsVisible !== undefined && !this.data.hidden) this.visible = this.levelsVisible;
   return this;
 }
 

@@ -63,7 +63,7 @@ Hooks.on("updateToken", (token, updates) => {
   if ("elevation" in updates && rToken._controlled) {
     _levels._onElevationChangeUpdate();
   }
-  if ("hidden" in updates && updates.hidden==true) {
+  /*if ("hidden" in updates && updates.hidden==true) {
     let nt = canvas.tokens.get(token.id)
     _levels.removeTempTokenOverhead(token);
     _levels.removeTempToken(token);
@@ -72,7 +72,7 @@ Hooks.on("updateToken", (token, updates) => {
     : token.data.alpha;
     nt.levelsHidden = false;
     nt.levelsVisible = undefined;
-  }
+  }*/
   _levels.debounce3DRefresh(100);
 });
 

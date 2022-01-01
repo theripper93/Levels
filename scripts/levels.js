@@ -315,6 +315,7 @@ class Levels {
     this.getTokensState(this.levelsTiles);
   }
 
+  
   advancedLosTestVisibility(sourceToken, token) {
     const gm = game.user.isGM;
     if (canvas.scene.data.tokenVision === false)
@@ -452,7 +453,7 @@ class Levels {
       (token) => (token.observer || token.isOwner) && !token.data.hidden
     );
     for (let token of canvas.tokens.placeables) {
-      if (token.isOwner || token.data.hidden) continue;
+      if (ownedTokens.includes(token)) continue;
       let tokenVisible = false;
       for (let ownedToken of ownedTokens) {
         if (this.advancedLosTestVisibility(ownedToken, token))
@@ -462,8 +463,8 @@ class Levels {
       token.levelsVisible = token.visible;
     }
     for (let t of ownedTokens) {
-      t.visible = true;
-      t.levelsVisible = true;
+      t.visible = !t.data.hidden;
+      t.levelsVisible = !t.data.hidden;
       this.computeDoors(t);
     }
   }
@@ -472,14 +473,15 @@ class Levels {
     if (!sourceToken) return;
     //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      if (
+      /*if (
         token == sourceToken ||
         (!game.user.isGM &&
           token.actor &&
           token.actor.testUserPermission(game.user, 2)) //||
           //token.data.hidden
       )
-        continue;
+        continue;*/
+        if(token._controlled) continue;
       //if (token.data.hidden) token.levelsVisible = undefined;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
@@ -866,8 +868,8 @@ class Levels {
     });
   }
 
-  debounce3DRefresh(timeout) {
-    if (!this.updateQueued) {
+  debounce3DRefresh(timeout, force = false) {
+    if (!this.updateQueued || force) {
       this.updateQueued = true;
       setTimeout(() => {
         let cToken = canvas.tokens.controlled[0];
