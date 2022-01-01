@@ -31,6 +31,11 @@
             "lang": "es",
             "name": "Español",
             "path": "lang/es.json"
+        },
+        {
+          "lang": "ja",
+          "name": "日本語",
+          "path": "languages/ja.json"
         }
     ],
     "scripts": [
