@@ -448,7 +448,7 @@ class Levels {
   collateVisions() {
     const gm = game.user.isGM;
     let ownedTokens = canvas.tokens.placeables.filter(
-      (token) => token.isOwner && !token.data.hidden
+      (token) => token.isOwner && (!token.data.hidden || gm)
     );
     if(ownedTokens.length === 0 || !canvas.tokens.controlled[0]) ownedTokens = canvas.tokens.placeables.filter(
       (token) => (token.observer || token.isOwner) && !token.data.hidden
@@ -464,8 +464,8 @@ class Levels {
       token.levelsVisible = token.visible;
     }
     for (let t of ownedTokens) {
-      t.visible = !t.data.hidden;
-      t.levelsVisible = !t.data.hidden;
+      t.visible = !t.data.hidden || gm;
+      t.levelsVisible = !t.data.hidden || gm;
       this.computeDoors(t);
     }
   }
@@ -1115,8 +1115,7 @@ class Levels {
 
   getHoles() {
     let holes = [];
-    canvas.scene.drawings.forEach((d) => {
-      const drawing = d.object;
+    for(let drawing of canvas.drawings.placeables){
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
       if (drawingMode == 1 && (rangeBottom || rangeBottom == 0)) {
@@ -1126,15 +1125,14 @@ class Levels {
           range: [rangeBottom, rangeTop],
         });
       }
-    });
+    };
     this.levelsHoles = holes;
     return holes;
   }
 
   getStairs() {
     let holes = [];
-    canvas.scene.drawings.forEach((d) => {
-      const drawing = d.object;
+    for(let drawing of canvas.drawings.placeables){
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
       let isLocked = drawing.document.getFlag(_levelsModuleName, "stairLocked");
@@ -1152,7 +1150,7 @@ class Levels {
           drawingMode: drawingMode,
         });
       }
-    });
+    };
     return holes;
   }
 
@@ -1470,9 +1468,9 @@ class Levels {
     });
     _levels.clearLights(_levels.getLights());
     this.showTemplatesForGM();
-    canvas.scene.drawings.forEach((d) => {
-      if(d.object) d.object.visible = true
-    });
+    for(let d of canvas.drawings.placeables){
+      d.visible = true
+    };
     canvas.perception.schedule({
       lighting: { refresh: true },
       sight: { refresh: true }
@@ -1559,8 +1557,7 @@ class Levels {
   }
 
   hideDrawings() {
-    for (let drawing of canvas.scene.drawings) {
-      const d = drawing.object
+    for(let d of canvas.drawings.placeables){
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;
       d.visible = false;
