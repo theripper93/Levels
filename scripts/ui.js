@@ -440,11 +440,10 @@ class LevelsUI extends FormApplication {
       light.refresh();
     }
 
-    canvas.scene.drawings.forEach((d) => {
-      const drawing = d.object;
+    for(let drawing of canvas.drawings.placeables){
       drawing.visible = true;
       drawing.refresh();
-    });
+    };
 
     for (let sound of canvas.sounds.placeables) {
       sound.visible = true;
