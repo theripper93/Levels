@@ -446,6 +446,7 @@ class Levels {
   }
 
   collateVisions() {
+    const gm = game.user.isGM;
     let ownedTokens = canvas.tokens.placeables.filter(
       (token) => token.isOwner && !token.data.hidden
     );
@@ -454,7 +455,7 @@ class Levels {
     );
     for (let token of canvas.tokens.placeables) {
       if (ownedTokens.includes(token)) continue;
-      let tokenVisible = false;
+      let tokenVisible = canvas.scene.data.tokenVision ? false : gm || !token.data.hidden
       for (let ownedToken of ownedTokens) {
         if (this.advancedLosTestVisibility(ownedToken, token))
           tokenVisible = true;
@@ -1469,7 +1470,9 @@ class Levels {
     });
     _levels.clearLights(_levels.getLights());
     this.showTemplatesForGM();
-    canvas.scene.drawings.forEach((d) => (d.object.visible = true));
+    canvas.scene.drawings.forEach((d) => {
+      if(d.object) d.object.visible = true
+    });
     canvas.perception.schedule({
       lighting: { refresh: true },
       sight: { refresh: true }
