@@ -451,7 +451,7 @@ class Levels {
       (token) => token.isOwner && (!token.data.hidden || gm)
     );
     if(ownedTokens.length === 0 || !canvas.tokens.controlled[0]) ownedTokens = canvas.tokens.placeables.filter(
-      (token) => (token.observer || token.isOwner) && !token.data.hidden
+      (token) => (token.observer || token.isOwner) && (!token.data.hidden || gm)
     );
     for (let token of canvas.tokens.placeables) {
       if (ownedTokens.includes(token)) continue;
@@ -713,7 +713,7 @@ class Levels {
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
-    if (!cToken) return;
+    if (!cToken || (!canvas.tokens.controlled[0] && game.user.isGM)) return;
     this.removeTempTokenOverhead(cToken);
     this.removeTempToken(cToken);
     let allTiles = this.findAllTiles();
