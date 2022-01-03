@@ -1276,14 +1276,13 @@ class Levels {
     });
     canvas.tokens.placeables.forEach((token) => {
       if (
-        (token.light.data.dim || token.light.data.bright) &&
-        this.levelsTokens[token.id]
+        (token.light.data.dim || token.light.data.bright)
       ) {
         lights.push({
           light: { source: token.light },
           range: [
-            this.levelsTokens[token.id].range[0],
-            this.levelsTokens[token.id].range[1],
+            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: -1000000000})?.z ?? -Infinity,
+            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: 1000000000})?.z ?? Infinity,
           ],
         });
       }
@@ -1931,7 +1930,7 @@ class Levels {
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          if (checkForHole(zIntersectionPoint, bottom)) return true;
+          if (checkForHole(zIntersectionPoint, bottom)) return {x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: bottom};
         }
       }
       if ((top && top != Infinity) || top == 0) {
@@ -1940,7 +1939,7 @@ class Levels {
           ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
           tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          if (checkForHole(zIntersectionPoint, top)) return true;
+          if (checkForHole(zIntersectionPoint, top)) return {x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: top};
         }
       }
     }
@@ -2078,7 +2077,7 @@ class Levels {
           terrainWalls++;
           continue;
         }
-        if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return true;
+        if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return {x:ix,y:iy,z:iz};
       }
       return false;
     }
