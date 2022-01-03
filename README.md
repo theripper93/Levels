@@ -34,6 +34,7 @@ Your tokens will change levels by changing their elevation, you can also setup z
 # **KNOWN ISSUES\INCOMPATIBILITES**
 
 * ### **Perfect Vision**: If you are on foundry 0.8.9 Levels and PV will produce weird beehaviours together, in V9 The two modules work correctly together
+* ### **PF2E**: If the "Shared Party Vision" option in pf2e is enabled, sight will not work as expected. if you have levles enabled, consider disabling for that sepcific session where you need the shared vision.
 * ### **Emitted light disappearing**: In the 0.8.9 version of levels, light emitted by tokens can randomly turn off, this problem is resolved in the V9 Version (Levels 2.0 or above)
 * ### **Midi-qol**: If you have "Players control owned hidden tokens" option enabled in Midi you will get a libwrapper error, disable that option to fix the issue.
 * ### **Tokens Emitting light**: Tokens emitting light are currently not supported in holes due to performance concerns of light sources moving
