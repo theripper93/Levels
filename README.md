@@ -128,7 +128,7 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
   **/
 
   _levels.checkCollision(token1, token2, type = "sight")
@@ -150,7 +150,7 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
   **/
 
   _levels.testCollision(p0, p1, type = "sight")
