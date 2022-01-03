@@ -1520,6 +1520,7 @@ class Levels {
   }
 
   computeNotes(cToken) {
+    return
     if (!cToken || !canvas.notes.interactiveChildren) return;
     let tElev = cToken.losHeight;
     for (let n of canvas.notes.placeables) {
@@ -1534,6 +1535,7 @@ class Levels {
   }
 
   hideNotes() {
+    return
     for (let n of canvas.notes.placeables) {
       let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
       if (!rangeBottom && rangeBottom != 0) continue;

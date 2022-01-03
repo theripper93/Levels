@@ -64,6 +64,12 @@ Hooks.on("init", () => {
     _levelsTokenIsVisible,
     "OVERRIDE"
   );
+  libWrapper.register(
+    _levelsModuleName,
+    "Note.prototype.isVisible",
+    _levelsNoteIsVisible,
+    "WRAPPER"
+  );
   /*libWrapper.register(
     _levelsModuleName,
     "Token.prototype.checkCollision",

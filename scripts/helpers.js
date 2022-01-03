@@ -243,6 +243,23 @@ function _levelsTokenIsVisible() {//OVERRIDE complete override of token visibili
   }
 }
 
+function _levelsNoteIsVisible(wrapped,...args){
+  if(!_levels) return wrapped(...args);
+  const visible = wrapped(...args);
+  if(!visible) return visible;
+  let { rangeBottom, rangeTop } = _levels.getFlagsForObject(this);
+  if (!rangeBottom && rangeBottom != 0) return visible;
+  let cToken = canvas.tokens.controlled[0] ?? _levels.lastReleasedToken;
+  if(!cToken) return visible;
+  const tElev = cToken.data.elevation;
+      if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
+        return false;
+      } else {
+        return visible;
+      }
+
+}
+
 async function _levelsTemplatedraw(wrapped,...args) {
   await wrapped(...args);
   if(this.document.getFlag(_levelsModuleName, "elevation")===0) return this;
