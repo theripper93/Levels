@@ -21,7 +21,6 @@ class Levels {
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
     this.levelsHoles = [];
-    this.levelsTokens = {};
     this.fogHiding = game.settings.get(_levelsModuleName, "fogHiding");
     this.elevationScale = game.settings.get(
       _levelsModuleName,
@@ -263,26 +262,6 @@ class Levels {
     }
   }
 
-  refreshTokens(overrideToken = undefined, release = false) {
-    if (!release) {
-      this.advancedLosTokenRefresh();
-      return;
-    }
-    let cToken = overrideToken || canvas.tokens.controlled[0];
-    if (!cToken) return;
-    let allTiles = this.findAllTiles();
-    let holes = this.getHoles();
-    let tokensState = this.getTokensState(allTiles);
-    let tokenPov = this.computeTokens(
-      tokensState,
-      cToken.data.elevation,
-      holes,
-      cToken.data.elevation,
-      cToken.id
-    );
-    return tokenPov;
-  }
-
   computeTokens(tokens, elevation, holes, cTokenElev, ctokenId) {
     let tokenPov = [];
     tokens.forEach((t) => {
@@ -312,7 +291,6 @@ class Levels {
 
   advancedLosTokenRefresh() {
     this.getHoles();
-    this.getTokensState(this.levelsTiles);
   }
 
   
@@ -602,17 +580,6 @@ class Levels {
     return false;
   }
 
-  getTokensState(allTiles) {
-    let tokensState = [];
-    this.levelsTokens = {};
-    for (let token of canvas.tokens.placeables) {
-      let tokenstate = this.getTokenState(token, allTiles);
-      tokensState.push(tokenstate);
-      this.levelsTokens[token.id] = tokenstate;
-    }
-    return tokensState;
-  }
-
   getTokenState(token, allTiles) {
     let elevation = token.data.elevation;
     let tilesIsIn = this.findRoomsTiles(token, allTiles);
@@ -718,7 +685,6 @@ class Levels {
     this.removeTempToken(cToken);
     let allTiles = this.findAllTiles();
     let holes = this.getHoles();
-    this.getTokensState(allTiles);
     if (this.elevationScale) this.updateScales();
     this.computeSounds(cToken);
     this.computeNotes(cToken);
@@ -1797,17 +1763,8 @@ class Levels {
    **/
 
   getTokens(tokenIds) {
-    if (Array.isArray(tokenIds)) {
-      let tokensState = {};
-      tokenIds.forEach((token) => {
-        let tId = token.id || token;
-        tokensState[tId] = this.levelsTokens[tokenIds];
-      });
-      return tokensState;
-    } else {
-      let tId = tokenIds.id || tokenIds;
-      return this.levelsTokens[tId];
-    }
+    console.error("_levels.getTokens has been deprecated.");
+    return {}
   }
 
   /**
@@ -1902,7 +1859,7 @@ class Levels {
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
   testCollision(p0, p1, type = "sight") {
@@ -2110,7 +2067,7 @@ class Levels {
    * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns true if a collision is detected, flase if it's not
+   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
   checkCollision(token1, token2, type = "sight") {

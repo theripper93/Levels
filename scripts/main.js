@@ -2,7 +2,6 @@ const _levelsModuleName = "levels";
 let _levels;
 Hooks.on("canvasReady", () => {
   _levels = Levels.get();
-  _levels.getTokensState(_levels.findAllTiles());
   _levels.hideNotes();
   _levels.hideDrawings();
   if (canvas.tokens.controlled[0]) {
@@ -31,7 +30,6 @@ Hooks.on("canvasReady", () => {
 })
 
 Hooks.on("betterRoofsReady", () => {
-  if (_levels) _levels.getTokensState(_levels.findAllTiles());
   canvas.foreground.refresh();
 });
 
@@ -136,7 +134,6 @@ Hooks.on("updateDrawing",()=>{_levels.getHoles();})
 
 Hooks.on("updateToken", (token, updates) => {
   if(canvas.tokens.get(token.id)?._controlled)_levels.executeStairs(updates, token);
-  _levels.getTokensState(_levels.levelsTiles);
 });
 
 Hooks.on("renderSceneControls", () => {
