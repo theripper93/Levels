@@ -18,21 +18,28 @@ function _levelsTokenRefresh(wrapped,...args) {
 
 function _levelsTileRefresh(wrapped,...args){
   wrapped(...args);
+  const originalVisible = this.visible;
+  if(!game.user.isGM) this.visible = false;
   if(this.levelsUIHideen && !canvas.tokens.controlled[0]) {
     this.visible = false
   }
   if(!game.user.isGM || canvas?.tokens?.controlled[0]){
+    let visibilityChanged = false;
     if(_levels?.floorContainer?.spriteIndex[this.id]?.visible){
       this.visible = false
+      visibilityChanged = true
     }
     if(this.isLevelsVisible !== undefined) {
       if(this.data.hidden){
         this.visible = false;
+        visibilityChanged = true
       }else{
         this.visible = this.isLevelsVisible
+        visibilityChanged = true
       }
       
     }
+    if(!visibilityChanged) this.visible = originalVisible;
   }
 }
 
