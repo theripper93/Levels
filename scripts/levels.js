@@ -69,14 +69,14 @@ class Levels {
 
   getTileBoundingBox(tile) {
     let tileZZ = {
-      x: tile.center.x - tile.width / 2,
-      y: tile.center.y - tile.height / 2,
+      x: tile.center.x - tile.data.width / 2,
+      y: tile.center.y - tile.data.height / 2,
     };
     let tileCorners = [
       { x: tileZZ.x, y: tileZZ.y }, //tl
-      { x: tileZZ.x + tile.width, y: tileZZ.y }, //tr
-      { x: tileZZ.x + tile.width, y: tileZZ.y + tile.height }, //br
-      { x: tileZZ.x, y: tileZZ.y + tile.height }, //bl
+      { x: tileZZ.x + tile.data.width, y: tileZZ.y }, //tr
+      { x: tileZZ.x + tile.data.width, y: tileZZ.y + tile.data.height }, //br
+      { x: tileZZ.x, y: tileZZ.y + tile.data.height }, //bl
     ];
     return new PIXI.Polygon(tileCorners);
   }
@@ -142,14 +142,14 @@ class Levels {
         if (!rangeBottom && rangeBottom != 0) continue;
         tile.isLevel = isLevel;
         let tileZZ = {
-          x: tile.center.x - tile.width / 2,
-          y: tile.center.y - tile.height / 2,
+          x: tile.center.x - tile.data.width / 2,
+          y: tile.center.y - tile.data.height / 2,
         };
         let tileCorners = [
           { x: tileZZ.x, y: tileZZ.y }, //tl
-          { x: tileZZ.x + tile.width, y: tileZZ.y }, //tr
-          { x: tileZZ.x + tile.width, y: tileZZ.y + tile.height }, //br
-          { x: tileZZ.x, y: tileZZ.y + tile.height }, //bl
+          { x: tileZZ.x + tile.data.width, y: tileZZ.y }, //tr
+          { x: tileZZ.x + tile.data.width, y: tileZZ.y + tile.data.height }, //br
+          { x: tileZZ.x, y: tileZZ.y + tile.data.height }, //bl
         ];
         tiles.push({
           tile: tile,
