@@ -350,7 +350,7 @@ class LevelsUI extends FormApplication {
         range,
         this.roofEnabled
       );
-      if(tile.visible) tile.tile.alpha = 1
+      if(tile.visible && tile.tile) tile.tile.alpha = 1
       if(tile.visible && tile.tileSortHidden || !canvas.foreground._active){
         tile.visible = false;
       }
