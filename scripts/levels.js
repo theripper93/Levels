@@ -1480,6 +1480,8 @@ class Levels {
       if (!range) continue;
       if (!(tElev >= range[0] && tElev < range[1])) {
         d.visible = false;
+      }else{
+        d.visible = d.isVisible
       }
     }
   }
