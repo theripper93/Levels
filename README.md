@@ -149,3 +149,6 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
 
   _levels.testCollision(p0, p1, type = "sight")
 ```
+
+credits
+included maps use assets from forgotten adventures https://www.forgotten-adventures.net/
