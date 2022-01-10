@@ -671,6 +671,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("updateTile", (tile, updates) => {
+      if(canvas.tokens.controlled[0]) return
       if (_levels.UI.rangeEnabled == true) {
         _levels.UI.computeLevelsVisibility();
         if (game.settings.get(_levelsModuleName, "enableTooltips")) {
