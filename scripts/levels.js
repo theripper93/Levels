@@ -1857,6 +1857,20 @@ class Levels {
   }
 
   /**
+   * Check whether the given wall should be tested for collisions, based on the collision type and wall configuration
+   * @param {Object} wall - The wall being checked
+   * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement
+   * @returns {boolean} Whether the wall should be ignored
+   */
+  shouldIgnoreWall(wall, collisionType) {
+    if (collisionType === 0) {
+      return wall.data.sight === CONST.WALL_SENSE_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
+    } else if (collisionType === 1) {
+      return wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
+    }
+  }
+
+  /**
    * Perform a collision test between 2 point in 3D space
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
@@ -1956,25 +1970,10 @@ class Levels {
     function walls3dTest() {
       let terrainWalls = 0;
       for (let wall of canvas.walls.placeables) {
-        let isTerrain = false;
-        //continue if we have to ignore the wall
-        if (TYPE === 0) {
-          //sight
-          if (
-            wall.data.sight === CONST.WALL_SENSE_TYPES.NONE ||
-            (wall.data.door != 0 && wall.data.ds === 1)
-          )
-            continue;
-          if (wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED) isTerrain = true;
-        }
-        if (TYPE === 1) {
-          //collision
-          if (
-            wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE ||
-            (wall.data.door != 0 && wall.data.ds === 1)
-          )
-            continue;
-        }
+        if (_levels.shouldIgnoreWall(wall, TYPE)) continue;
+
+        let isTerrain = TYPE === 0 && wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED;
+
         //declare points in 3d space of the rectangle created by the wall
         const wallBotTop = getWallHeightRange3Dcollision(wall);
         const wx1 = wall.data.c[0];
