@@ -336,7 +336,7 @@ class Levels {
       { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
     ];
     for (let point of tokenCorners) {
-      let collision = this.testCollision(sourceCenter, point, "sight");
+      let collision = this.testCollision(sourceCenter, point, "sight",sourceToken);
       if (!collision) return collision;
     }
     return true;
@@ -790,7 +790,7 @@ class Levels {
         y: template.center.y,
         z: template.document.getFlag(_levelsModuleName, "elevation") ?? 0,
       };
-      template.visible = !this.testCollision(tokenpos, templatepos, "sight");
+      template.visible = !this.testCollision(tokenpos, templatepos, "sight", source);
       const highlight = canvas.grid.getHighlightLayer(`Template.${template.id}`)
       if(highlight)highlight.visible = template.visible;
     }
@@ -1716,7 +1716,7 @@ class Levels {
             { x: t.x + t.w - tol, y: t.y + t.h - tol, z: targetLOSH },
           ];
           for (let point of tokenCorners) {
-            let isCollision = this.testCollision(sourceCenter, point, "sight");
+            let isCollision = this.testCollision(sourceCenter, point, "sight",t);
             let color = isCollision ? 0xff0000 : 0x00ff08;
             let coords = [ctk.center.x, ctk.center.y, point.x, point.y];
             if (ctk != t)
