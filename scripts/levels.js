@@ -1247,8 +1247,8 @@ class Levels {
         lights.push({
           light: { source: token.light },
           range: [
-            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: -1000000000})?.z ?? -Infinity,
-            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: 1000000000})?.z ?? Infinity,
+            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: -1000000000}, "collision")?.z ?? -Infinity,
+            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: 1000000000}, "collision")?.z ?? Infinity,
           ],
         });
       }
@@ -2084,6 +2084,6 @@ class Levels {
       y: token2.center.y,
       z: token2LosH,
     };
-    return this.testCollision(p0, p1, type);
+    return this.testCollision(p0, p1, type, token1);
   }
 }
