@@ -1972,7 +1972,7 @@ class Levels {
       for (let wall of canvas.walls.placeables) {
         if (_levels.shouldIgnoreWall(wall, TYPE)) continue;
 
-        let isTerrain = wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED;
+        let isTerrain = TYPE === 0 && wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED;
 
         //declare points in 3d space of the rectangle created by the wall
         const wallBotTop = getWallHeightRange3Dcollision(wall);
