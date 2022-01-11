@@ -1857,13 +1857,16 @@ class Levels {
   }
 
   /**
-  * Check whether the given wall should be tested for collisions
-  */
-   shouldIgnoreWall(wall, collisionType) {
+   * Check whether the given wall should be tested for collisions, based on the collision type and wall configuration
+   * @param {Object} wall - The wall being checked
+   * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement
+   * @returns {boolean} Whether the wall should be ignored
+   */
+  shouldIgnoreWall(wall, collisionType) {
     if (collisionType === 0) {
       return wall.data.sight === CONST.WALL_SENSE_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
     } else if (collisionType === 1) {
-      return wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE ||(wall.data.door != 0 && wall.data.ds === 1)
+      return wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
     }
   }
 
