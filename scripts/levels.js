@@ -1520,7 +1520,7 @@ class Levels {
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
         d.visible = false;
       } else {
-        d.visible = !d.data.hidden;
+        d.visible = game.user.isGM || !d.data.hidden;
       }
     }
   }
