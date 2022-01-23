@@ -1246,14 +1246,30 @@ class Levels {
       ) {
         lights.push({
           light: { source: token.light },
-          range: [
-            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: -1000000000}, "collision")?.z ?? -Infinity,
-            this.testCollision({x: token.center.x, y: token.center.y, z: token.losHeight}, {x: token.center.x, y: token.center.y, z: 1000000000}, "collision")?.z ?? Infinity,
-          ],
+          range: this.getTokenLightRange(token),
         });
       }
     });
     return lights;
+  }
+
+  getTokenLightRange(token){
+    const losHeight = token.losHeight;
+    let rangeDiff = Infinity
+    let result = [-Infinity, Infinity]
+    for(let tile of this.levelsTiles){
+      const rangeTop = tile.range[1]
+      const rangeBottom = tile.range[0]
+      if(losHeight < rangeBottom || losHeight > rangeTop) continue;
+      if(tile.poly.contains(token.center.x,token.center.y)){
+        const diff = Math.abs(rangeTop - rangeBottom);
+        if(diff < rangeDiff){
+          rangeDiff = diff;
+          result = [rangeBottom, rangeTop]
+        }
+      }
+    }
+    return result;
   }
 
   computeSounds(cToken) {

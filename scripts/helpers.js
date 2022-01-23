@@ -1,5 +1,11 @@
 function _levelsTokenRefresh(wrapped,...args) {
   if(!this.icon || this._destroyed) return this;
+  let scale
+  try{
+    scale = this.icon.scale
+  }catch(e){
+    return this;  
+  }
   wrapped(...args);
   // Adjust Scale
   
