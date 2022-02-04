@@ -261,6 +261,11 @@ function _levelsNoteIsVisible(wrapped,...args){
   const visible = wrapped(...args);
   if(!visible) return visible;
   let { rangeBottom, rangeTop } = _levels.getFlagsForObject(this);
+  if(game.user.isGM && _levels.UI?.rangeEnabled){
+    const range = _levels.UI.range;
+    if(range && rangeTop <= range[1] && rangeBottom >= range[0]) return true;
+    else return false;
+  }
   if (!rangeBottom && rangeBottom != 0) return visible;
   let cToken = canvas.tokens.controlled[0] ?? _levels.lastReleasedToken;
   if(!cToken) return visible;
