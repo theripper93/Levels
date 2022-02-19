@@ -1255,6 +1255,29 @@ class Levels {
 
   getTokenLightRange(token){
     const losHeight = token.losHeight;
+    const tilesIsIn = this.levelsTiles.filter(tile => tile.poly.contains(token.center.x,token.center.y));
+    let above = [Infinity];
+    let below = [-Infinity];
+    for(let tile of tilesIsIn){
+      const rangeTop = tile.range[1]
+      const rangeBottom = tile.range[0]
+      if(rangeTop > losHeight){
+        above.push(rangeTop)
+      }else{
+        below.push(rangeBottom)
+      }
+      if(rangeBottom > losHeight){
+        above.push(rangeBottom)
+      }else{
+        below.push(rangeTop)
+      }
+    }
+    const top = Math.min(...above)
+    const bottom = Math.max(...below)
+    return [bottom,top]
+
+
+    return
     let rangeDiff = Infinity
     let result = [-Infinity, Infinity]
     for(let tile of this.levelsTiles){
@@ -1529,8 +1552,8 @@ class Levels {
   computeDrawings(cToken) {
     if (!cToken) return;
     let tElev = cToken.data.elevation;
-    for (let drawing of canvas.scene.drawings) {
-      const d = drawing.object;
+    for (let drawing of canvas.drawings.placeables) {
+      const d = drawing;
       let { rangeBottom, rangeTop } = this.getFlagsForObject(d);
       if (!rangeBottom && rangeBottom != 0) continue;
       if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
