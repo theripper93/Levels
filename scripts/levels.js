@@ -1250,6 +1250,7 @@ class Levels {
         });
       }
     });
+    debugger
     return lights;
   }
 
@@ -1261,16 +1262,10 @@ class Levels {
     for(let tile of tilesIsIn){
       const rangeTop = tile.range[1]
       const rangeBottom = tile.range[0]
-      if(rangeTop > losHeight){
-        above.push(rangeTop)
-      }else{
-        below.push(rangeBottom)
-      }
-      if(rangeBottom > losHeight){
-        above.push(rangeBottom)
-      }else{
-        below.push(rangeTop)
-      }
+      if(rangeTop > losHeight) above.push(rangeTop)
+      if(rangeTop < losHeight) below.push(rangeTop)
+      if(rangeBottom > losHeight) above.push(rangeBottom)
+      if(rangeBottom < losHeight) below.push(rangeBottom)
     }
     const top = Math.min(...above)
     const bottom = Math.max(...below)
