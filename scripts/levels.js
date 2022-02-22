@@ -1250,7 +1250,6 @@ class Levels {
         });
       }
     });
-    debugger
     return lights;
   }
 
