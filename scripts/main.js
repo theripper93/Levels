@@ -180,3 +180,7 @@ Hooks.once("ready", () => {
 Hooks.once("controlToken", () => {
   canvas.tokens.placeables.forEach(t => t.updateSource())
 })
+
+Hooks.once('libChangelogsReady', function() {
+  libChangelogs.registerConflict("levels", "parallaxia","Having Parallaxia Enabled will cause Levels to not function!","critical")
+})
