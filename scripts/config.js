@@ -307,6 +307,8 @@ Hooks.on("init", () => {
 });
 
 Hooks.on("renderTileConfig", (app, html, data) => {
+  const isInjected = html.find(`input[name="flags.${_levelsModuleName}.rangeTop"]`).length > 0;
+  if(isInjected) return;
   let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
