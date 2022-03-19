@@ -611,7 +611,7 @@ class Levels {
     Object.defineProperty(sprite, "filters", {
       get() {
         return tileImg.filters?.filter(
-          (f) => !(f instanceof InverseOcclusionMaskFilter)
+          (f) => f !== tile.occlusionFilter
         );
       },
       set: () => {},
