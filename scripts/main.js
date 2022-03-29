@@ -170,13 +170,6 @@ Hooks.once("canvasReady", () => {
   //if(game.modules.get("lessfog")?.active) ui.notifications.error(game.i18n.localize("levels.err.lessfog"))
 });
 
-Hooks.once("ready", () => {
-  if(game.settings.get("wall-height", "enableTokenHeight")){
-    ui.notifications.error(game.i18n.localize("levels.err.tokenheight"))
-    game.settings.set("wall-height", "enableTokenHeight", false)
-  }
-})
-
 Hooks.once("controlToken", () => {
   canvas.tokens.placeables.forEach(t => t.updateSource())
 })

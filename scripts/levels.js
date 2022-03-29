@@ -1486,14 +1486,8 @@ class Levels {
   }
 
   getWallHeightRange(wall) {
-    let wallRange = [
-      wall.data.flags.wallHeight?.wallHeightBottom,
-      wall.data.flags.wallHeight?.wallHeightTop,
-    ];
-    if (wallRange[0] === undefined || wallRange[0] === null)
-      wallRange[0] = -Infinity;
-    if (wallRange[1] === undefined || wallRange[1] === null)
-      wallRange[1] = Infinity;
+    const {top, bottom} = WallHeight.getWallBounds(wall);
+    let wallRange = [bottom, top];
     if (!wallRange[0] && !wallRange[1]) return false;
     else return wallRange;
   }
@@ -1988,14 +1982,10 @@ class Levels {
     }
     //Get wall heights flags, avoid infinity, use arbitrary large number instead
     function getWallHeightRange3Dcollision(wall) {
-      let wallRange = [
-        wall.data.flags.wallHeight?.wallHeightBottom,
-        wall.data.flags.wallHeight?.wallHeightTop,
-      ];
-      if (wallRange[0] === undefined || wallRange[0] === null)
-        wallRange[0] = -1000000000000;
-      if (wallRange[1] === undefined || wallRange[1] === null)
-        wallRange[1] = 1000000000000;
+      let {top, bottom} = WallHeight.getWallBounds(wall);
+      if(bottom == -Infinity) bottom = -1e9;
+      if(top == Infinity) top = 1e9;
+      let wallRange = [bottom, top];
       if (!wallRange[0] && !wallRange[1]) return false;
       else return wallRange;
     }

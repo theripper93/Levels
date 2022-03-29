@@ -256,10 +256,8 @@ class LevelsUI extends FormApplication {
   async getFromScene() {
     let autoLevels = {};
     for (let wall of canvas.walls.placeables) {
-      let entityRange = [
-        wall.data.flags.wallHeight?.wallHeightBottom,
-        wall.data.flags.wallHeight?.wallHeightTop,
-      ];
+      const {top, bottom} = WallHeight.getWallBounds(wall);
+      let entityRange = [bottom, top];
       if (
         entityRange[0] != -Infinity &&
         entityRange[1] != Infinity &&
@@ -323,10 +321,8 @@ class LevelsUI extends FormApplication {
     range[0] = parseFloat(range[0]);
     range[1] = parseFloat(range[1]);
     for (let wall of canvas.walls.placeables) {
-      let entityRange = [
-        wall.data.flags.wallHeight?.wallHeightBottom,
-        wall.data.flags.wallHeight?.wallHeightTop,
-      ];
+      const {top, bottom} = WallHeight.getWallBounds(wall);
+      let entityRange = [bottom, top];
       if(entityRange[0] === entityRange[1] && (entityRange[0] === null || entityRange[0] === undefined)){
         wall.visible = true
         continue
@@ -747,9 +743,9 @@ Hooks.on("ready", () => {
       if (_levels.UI.rangeEnabled == true) {
         wall.data.update({
           flags: {
-            wallHeight: {
-              wallHeightBottom: _levels.UI.range[0],
-              wallHeightTop: _levels.UI.range[1],
+            "wall-height": {
+              bottom: _levels.UI.range[0],
+              top: _levels.UI.range[1],
             },
           },
         });
