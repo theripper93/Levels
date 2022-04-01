@@ -94,6 +94,7 @@ class LevelsUI extends FormApplication {
     $inputs.prop("readonly", !$inputs.prop("readonly"));
     $(".level-item .fa-trash").toggleClass("hidden");
     $(".level-item .fa-arrows-alt").toggleClass("hidden");
+    this.saveData();
   }
 
   _onChangeLevel(event) {
@@ -112,7 +113,7 @@ class LevelsUI extends FormApplication {
       (l) => l[0] == bottom && l[1] == top
     );
     if($(event.target).hasClass("player-portrait")) return
-    game.currentTokenElevation = parseFloat(bottom)
+    WallHeight.currentTokenElevation = parseFloat(bottom)
     this.computeLevelsVisibility(this.range);
     setTimeout(() => {
       canvas.tokens.placeables.forEach((t) => {t.refresh()})
@@ -698,7 +699,7 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
       let aboverange = _levels.UI.definedLevels.find(l => _levels.UI.range[0] === l[0] && _levels.UI.range[1] === l[1])
-      aboverange = _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(aboverange) - 1]
+      aboverange = _levels.UI.definedLevels.indexOf(aboverange) === 0 ? undefined : _levels.UI.definedLevels[_levels.UI.definedLevels.indexOf(aboverange) - 1]
         /*_levels.UI.definedLevels[
           _levels.UI.definedLevels.indexOf(_levels.UI.range) - 1
         ];*/
