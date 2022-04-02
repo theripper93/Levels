@@ -1489,15 +1489,6 @@ class Levels {
     else return wallRange;
   }
 
-  hideNotes() {
-    return
-    for (let n of canvas.notes.placeables) {
-      let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
-      if (!rangeBottom && rangeBottom != 0) continue;
-      n.visible = false;
-    }
-  }
-
   computeDrawings(cToken) {
     if (!cToken) return;
     let tElev = cToken.data.elevation;
