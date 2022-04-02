@@ -444,7 +444,6 @@ class Levels {
     for (let t of ownedTokens) {
       t.visible = !t.data.hidden || gm;
       t.levelsVisible = !t.data.hidden || gm;
-      this.computeDoors(t);
     }
   }
 
@@ -764,7 +763,6 @@ class Levels {
     let cToken = canvas.tokens.controlled[0];
     if (cToken) {
       this.debounce3DRefresh(32);
-      this.computeDoors(cToken);
     }
 
     if (this.DEBUG) {
@@ -1490,27 +1488,6 @@ class Levels {
     let wallRange = [bottom, top];
     if (!wallRange[0] && !wallRange[1]) return false;
     else return wallRange;
-  }
-
-  computeDoors(cToken) {
-    if (!cToken && !game.user.isGM) {
-      for (let d of canvas.controls.doors.children) {
-        d.visible = false;
-      }
-      return;
-    }
-
-    if (!cToken) return;
-    let tElev = cToken.losHeight;
-    for (let d of canvas.controls.doors.children) {
-      let range = this.getWallHeightRange(d.wall);
-      if (!range) continue;
-      if (!(tElev >= range[0] && tElev < range[1])) {
-        d.visible = false;
-      }else{
-        d.visible = d.isVisible
-      }
-    }
   }
 
   computeNotes(cToken) {
