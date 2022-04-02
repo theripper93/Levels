@@ -686,7 +686,6 @@ class Levels {
     let holes = this.getHoles();
     if (this.elevationScale) this.updateScales();
     this.computeSounds(cToken);
-    this.computeNotes(cToken);
     this.computeDrawings(cToken);
     let lights = this.getLights();
     for (let light of lights) {
@@ -1488,21 +1487,6 @@ class Levels {
     let wallRange = [bottom, top];
     if (!wallRange[0] && !wallRange[1]) return false;
     else return wallRange;
-  }
-
-  computeNotes(cToken) {
-    return
-    if (!cToken || !canvas.notes.interactiveChildren) return;
-    let tElev = cToken.losHeight;
-    for (let n of canvas.notes.placeables) {
-      let { rangeBottom, rangeTop } = this.getFlagsForObject(n);
-      if (!rangeBottom && rangeBottom != 0) continue;
-      if (!(tElev >= rangeBottom && tElev <= rangeTop)) {
-        n.visible = false;
-      } else {
-        n.visible = n.document.testUserPermission(game.user, 2);
-      }
-    }
   }
 
   hideNotes() {
