@@ -165,6 +165,12 @@ Hooks.once("controlToken", () => {
   canvas.tokens.placeables.forEach(t => t.updateSource())
 })
 
+Hooks.once("ready", () => {
+  if(!isNewerVersion(game.modules.get("wall-height").data.version,"3.6.0.3")){
+    ui.notifications.error(game.i18n.localize("levels.err.wallheight"))
+  }
+})
+
 /*Hooks.once('libChangelogsReady', function() {
   libChangelogs.registerConflict("levels", "parallaxia","Having Parallaxia Enabled will cause Levels to not function!","critical")
 })*/
