@@ -166,7 +166,7 @@ Hooks.once("controlToken", () => {
 })
 
 Hooks.once("ready", () => {
-  if(!isNewerVersion(game.modules.get("wall-height").data.version,"3.6.0.3")){
+  if(!isNewerVersion(game.modules.get("wall-height").data.version,"4.0.5")){
     ui.notifications.error(game.i18n.localize("levels.err.wallheight"))
   }
 })
