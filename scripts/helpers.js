@@ -332,39 +332,6 @@ function _levelsRefreshRulerText() {
   this.hud.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
 }
 
-function _levelsTokenCheckCollision(destination) {
-  // Create a Ray for the attempted move
-  let origin = this.getCenter(...Object.values(this._validPosition));
-  let ray = new Ray(
-    { x: origin.x, y: origin.y },
-    { x: destination.x, y: destination.y }
-  );
-
-  // Shift the origin point by the prior velocity
-  ray.A.x -= this._velocity.sx;
-  ray.A.y -= this._velocity.sy;
-
-  // Shift the destination point by the requested velocity
-  ray.B.x -= Math.sign(ray.dx);
-  ray.B.y -= Math.sign(ray.dy);
-
-  // Check for a wall collision
-  const blockSightMovement = game.settings.get(_levelsModuleName, "blockSightMovement");
-    return _levels.testCollision(
-      {
-        x: ray.A.x,
-        y: ray.A.y,
-        z: blockSightMovement ? this.data.elevation : this.losHeight,
-      },
-      {
-        x: ray.B.x,
-        y: ray.B.y,
-        z: blockSightMovement ? this.data.elevation : this.losHeight,
-      },
-      "collision"
-    );
-}
-
 function _levelsWallCheckCollision(wrapped,...args){
   const token = canvas.tokens.controlled[0];
   if(!_levels || !token) return wrapped(...args);

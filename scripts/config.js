@@ -65,18 +65,6 @@ Hooks.on("init", () => {
     _levelsNoteIsVisible,
     "WRAPPER"
   );
-  /*libWrapper.register(
-    _levelsModuleName,
-    "Token.prototype.checkCollision",
-    _levelsTokenCheckCollision,
-    "OVERRIDE"
-  );*/
-  libWrapper.register(
-    _levelsModuleName,
-    "WallsLayer.prototype.checkCollision",
-    _levelsWallCheckCollision,
-    "MIXED"
-  );
   libWrapper.register(
     _levelsModuleName,
     "LightSource.prototype._renderTexture",
@@ -238,15 +226,6 @@ Hooks.on("init", () => {
     onChange: (setting) => {
       _levels.preciseTokenVisibility = setting;
     },
-  });
-
-  game.settings.register(_levelsModuleName, "blockSightMovement", {
-    name: game.i18n.localize("levels.settings.blockSightMovement.name"),
-    hint: game.i18n.localize("levels.settings.blockSightMovement.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
   });
 
   game.settings.register(_levelsModuleName, "forceUiRefresh", {
