@@ -26,10 +26,6 @@ class Levels {
       _levelsModuleName,
       "tokenElevScale"
     );
-    this.defaultTokenHeight = game.settings.get(
-      _levelsModuleName,
-      "defaultLosHeight"
-    );
     this.advancedLOS = true;
     this.preciseTokenVisibility = game.settings.get(
       _levelsModuleName,
@@ -39,7 +35,6 @@ class Levels {
       _levelsModuleName,
       "tokenElevScaleMultiSett"
     );
-    this.autoLOSHeight = game.settings.get(_levelsModuleName, "autoLOSHeight");
     this.hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
     this.revealTokenInFog = game.settings.get(_levelsModuleName, "revealTokenInFog");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
@@ -173,7 +168,7 @@ class Levels {
     const cToken = canvas.tokens.controlled[0] || _levels.lastReleasedToken;
     const cTokenElev = cToken ? cToken.losHeight : this.currentElevation;
     const cTokenLos = cToken
-      ? this.getTokenLOSheight(cToken)
+      ? cToken.losHeight
       : this.currentElevation;
 
     //If a tile is not a roof and it's not set to show if it's above, hide it
@@ -322,11 +317,11 @@ class Levels {
     const tol = 4;
     if (this.preciseTokenVisibility === false)
       return this.checkCollision(sourceToken, token, "sight");
-    const targetLOSH = this.getTokenLOSheight(token);
+    const targetLOSH = token.losHeight;
     const sourceCenter = {
       x: sourceToken.center.x,
       y: sourceToken.center.y,
-      z: this.getTokenLOSheight(sourceToken),
+      z: sourceToken.losHeight,
     };
     const tokenCorners = [
       { x: token.center.x, y: token.center.y, z: targetLOSH },
@@ -779,7 +774,7 @@ class Levels {
     let tokenpos = {
       x: source.center.x,
       y: source.center.y,
-      z: this.getTokenLOSheight(source),
+      z: source.losHeight,
     };
     for (let template of canvas.templates.placeables) {
       let templatepos = {
@@ -1428,10 +1423,10 @@ class Levels {
     const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
     const x1 = token1.center.x;
     const y1 = token1.center.y;
-    const z1 = this.getTokenLOSheight(token1) * unitsToPixel;
+    const z1 = token1.losHeight * unitsToPixel;
     const x2 = token2.center.x;
     const y2 = token2.center.y;
-    const z2 = this.getTokenLOSheight(token2) * unitsToPixel;
+    const z2 = token2.losHeight * unitsToPixel;
 
     const d =
       Math.sqrt(
@@ -1639,7 +1634,7 @@ class Levels {
     LevelsVolumetricTemplates.tools.handMode &&
     cToken
       ? Math.round(
-          (_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation) * 0.8
+          (cToken.losHeight - cToken?.data?.elevation) * 0.8
         )
       : 0;
   let elevation;
@@ -1680,12 +1675,12 @@ class Levels {
               .drawPolygon(coords)
               .endFill();
         } else {
-          let targetLOSH = this.getTokenLOSheight(t);
+          let targetLOSH = t.losHeight;
           let tol = 4;
           let sourceCenter = {
             x: ctk.center.x,
             y: ctk.center.y,
-            z: this.getTokenLOSheight(ctk),
+            z: ctk.losHeight,
           };
           let tokenCorners = [
             { x: t.center.x, y: t.center.y, z: targetLOSH },
@@ -2017,12 +2012,14 @@ class Levels {
   }
 
   /**
+   * **DEPRECATED**
    * Get the total LOS height for a token
    * @param {Object} token - a token object
    * @returns {Integer} returns token elevation plus the LOS height stored in the flags
    **/
 
   getTokenLOSheight(token) {
+    return token.losHeight;
     let losDiff;
     let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
     if (this.autoLOSHeight) {
@@ -2047,8 +2044,8 @@ class Levels {
    **/
 
   checkCollision(token1, token2, type = "sight") {
-    const token1LosH = this.getTokenLOSheight(token1);
-    const token2LosH = this.getTokenLOSheight(token2);
+    const token1LosH = token1.losHeight;
+    const token2LosH = token2.losHeight;
     const p0 = {
       x: token1.center.x,
       y: token1.center.y,

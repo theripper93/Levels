@@ -1,9 +1,4 @@
 Hooks.on("init", () => {
-  Object.defineProperty(Token.prototype, "losHeight", {
-    get: function myProperty() {
-      return _levels.getTokenLOSheight(this);
-    },
-  });
   
   libWrapper.register(
     _levelsModuleName,
@@ -221,30 +216,6 @@ Hooks.on("init", () => {
     onChange: (setting) => {
       _levels.hideElevation = setting;
       canvas.tokens.placeables.forEach((t) => t.refresh());
-    },
-  });
-
-  game.settings.register(_levelsModuleName, "defaultLosHeight", {
-    name: game.i18n.localize("levels.settings.defaultLosHeight.name"),
-    hint: game.i18n.localize("levels.settings.defaultLosHeight.hint"),
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 6,
-    onChange: (setting) => {
-      _levels.defaultTokenHeight = setting;
-    },
-  });
-
-  game.settings.register(_levelsModuleName, "autoLOSHeight", {
-    name: game.i18n.localize("levels.settings.autoLOSHeight.name"),
-    hint: game.i18n.localize("levels.settings.autoLOSHeight.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (setting) => {
-      _levels.autoLOSHeight = setting;
     },
   });
 
@@ -591,7 +562,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
   app.setPosition({ height: "auto" });
 });
 
-Hooks.on("renderTokenConfig", (app, html, data) => {
+/*Hooks.on("renderTokenConfig", (app, html, data) => {
   let tokenHeight = app.token.getFlag(_levelsModuleName, "tokenHeight") || 0;
 
   let newHtml = `
@@ -608,7 +579,7 @@ Hooks.on("renderTokenConfig", (app, html, data) => {
   const formGroup = overh.closest(".form-group");
   formGroup.after(newHtml);
   app.setPosition({ height: "auto" });
-});
+});*/
 
 Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
   let drawing = data.object.document;
@@ -672,30 +643,6 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
-  /*const cToken = canvas.tokens.controlled[0] || _levels.lastTokenForTemplate;
-  const handMode =
-    typeof LevelsVolumetricTemplates !== "undefined" &&
-    LevelsVolumetricTemplates.tools.handMode &&
-    cToken
-      ? Math.round(
-          (_levels.getTokenLOSheight(cToken) - cToken?.data?.elevation) * 0.8
-        )
-      : 0;
-  let elevation;
-  let special;
-  if (_levels.nextTemplateHeight !== undefined) {
-    elevation = _levels.nextTemplateHeight;
-    special = _levels.nextTemplateSpecial;
-    _levels.nextTemplateHeight = undefined;
-    _levels.nextTemplateSpecial = undefined;
-    _levels.templateElevation = false;
-    _levelsTemplateTool.active = false;
-    $("body")
-      .find(`li[data-tool="setTemplateElevation"]`)
-      .removeClass("active");
-  } else {
-    elevation = cToken?.data?.elevation + handMode || 0;
-  }*/
   const templateData = _levels.getTemplateData();
   if(template.data.flags?.levels?.elevation) return;
   template.data.update({
