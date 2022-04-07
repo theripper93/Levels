@@ -629,14 +629,26 @@ class Levels {
     sprite.zIndex += tile.data.z/1000000;
     this.floorContainer.spriteIndex[tile.id] = sprite;
     this.floorContainer.addChild(sprite);
-    if (hideFog && this.fogHiding) this.obscureFogForTile(tileIndex);
   }
 
   removeTempTile(tileIndex) {
     let tile = tileIndex.tile;
     let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
     if (sprite) this.floorContainer.removeChild(sprite);
-    this.clearFogForTile(tileIndex);
+  }
+
+  computeFog(tiles){
+    for(const tileIndex of tiles){
+      if(!this.fogHiding) {
+        this.obscureFogForTile(tileIndex);
+        continue;
+      }
+      if(!this.floorContainer.spriteIndex[tileIndex.tile.id]){
+        this.clearFogForTile(tileIndex);
+      }else{
+        this.obscureFogForTile(tileIndex);
+      }
+    }
   }
 
   obscureFogForTile(tileIndex) {
@@ -693,6 +705,7 @@ class Levels {
         lights
       );
     });
+    this.computeFog(allTiles);
     if (_levels.DEBUG) {
       perfEnd = performance.now();
       console.log(
