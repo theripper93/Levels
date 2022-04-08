@@ -444,22 +444,11 @@ class Levels {
 
   compute3DCollisionsForToken(sourceToken) {
     if (!sourceToken) return;
-    //this.advancedLosTokenRefresh();
     for (let token of canvas.tokens.placeables) {
-      /*if (
-        token == sourceToken ||
-        (!game.user.isGM &&
-          token.actor &&
-          token.actor.testUserPermission(game.user, 2)) //||
-          //token.data.hidden
-      )
-        continue;*/
         if(token._controlled) continue;
-      //if (token.data.hidden) token.levelsVisible = undefined;
       token.visible = this.advancedLosTestVisibility(sourceToken, token);
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
-        //token.icon.alpha = 0;
         token.levelsHidden = true;
         this.getTokenIconSpriteOverhead(token);
         this.removeTempToken(token);
@@ -467,7 +456,6 @@ class Levels {
         token.data.elevation < sourceToken.data.elevation &&
         token.visible
       ) {
-        //token.icon.alpha = 0;
         token.levelsHidden = true;
         this.removeTempTokenOverhead(token);
         this.getTokenIconSprite(token);
@@ -475,9 +463,6 @@ class Levels {
         (token.data.elevation == sourceToken.data.elevation && token.visible) ||
         !token.visible
       ) {
-        /*token.icon.alpha = token.data.hidden
-          ? Math.min(token.data.alpha, 0.5)
-          : token.data.alpha;*/
         token.levelsHidden = false;
         this.removeTempTokenOverhead(token);
         this.removeTempToken(token);
