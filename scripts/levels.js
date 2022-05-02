@@ -628,7 +628,7 @@ class Levels {
         this.obscureFogForTile(tileIndex);
         continue;
       }
-      if(!this.floorContainer.spriteIndex[tileIndex.tile.id]){
+      if(!this.floorContainer.spriteIndex[tileIndex.tile.id]?.parent){
         this.clearFogForTile(tileIndex);
       }else{
         this.obscureFogForTile(tileIndex);
