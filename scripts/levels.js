@@ -709,6 +709,7 @@ class Levels {
       sight: { initialize: true /* calls updateSource on each token */, refresh: true /* you probably to refesh sight as well */, forceUpdateFog: true /* not sure if you need this */ },
       foreground: { refresh: true /* calls updateOcclusion */}
     });
+    Hooks.callAll("levelsOnElevationChangeUpdate", this, cToken);
   }
 
   lightComputeRender(lightIndex, elevation, holes, allTiles) {
