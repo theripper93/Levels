@@ -16,6 +16,9 @@ class LevelsToolTip extends BasePlaceableHUD {
     if (!this.object) return;
     let posleft = this.object.center.x - this.object.width / 2;
     let postop = this.object.center.y - this.object.height / 2;
+    if(this.object instanceof Note){
+      postop -= this.object.height / 2;
+    }
     const position = {
       width: canvas.grid.size * 1.2,
       height: canvas.grid.size * 0.8,

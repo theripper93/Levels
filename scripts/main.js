@@ -169,6 +169,10 @@ Hooks.once("ready", () => {
   if(!isNewerVersion(game.modules.get("wall-height").data.version,"4.0.5")){
     ui.notifications.error(game.i18n.localize("levels.err.wallheight"))
   }
+  if(!game.settings.get("betterroofs", "roomPreview")){
+    game.settings.set("betterroofs", "roomPreview", true)
+    ui.notifications.info(game.i18n.localize("levels.info.advancedMode"))
+  }
 })
 
 /*Hooks.once('libChangelogsReady', function() {

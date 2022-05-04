@@ -101,6 +101,7 @@
     "levels.err.wallheight": "WARNING! Levels requires Wall Height to be version 4.1.0 or higher to work correctly.",
     "levels.err.lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
     "levels.err.tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!",
+    "levels.info.advancedMode": "Levels: Advanced Mode option in Better Roofs has been enabled.",
     "levels.firsttime.dialog": "",
 
 
