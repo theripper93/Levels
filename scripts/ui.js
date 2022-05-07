@@ -58,6 +58,11 @@ class LevelsUI extends FormApplication {
       "#levels-ui-controls .fa-users",
       this._onShowPlayerList.bind(this)
     );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-bug",
+      this._onCheckScene.bind(this)
+    );
     html.on("click", ".player-portrait", this._onControlToken.bind(this));
     html.on("change", ".level-inputs input", this.saveData.bind(this));
     //make list sortable
@@ -81,6 +86,10 @@ class LevelsUI extends FormApplication {
     } else html.find("#levels-list li")[index].click();
     this.updatePlayerList();
     if(canvas.background._active) canvas.foreground.activate()
+    const brokenTiles = this._onCheckScene(undefined, false)
+    if(brokenTiles) {
+      html.find("#levels-ui-controls .fa-bug").addClass("broken")
+    }
   }
 
   _onAddLevel(event) {
@@ -145,6 +154,29 @@ class LevelsUI extends FormApplication {
       no: () => {},
       defaultYes: false,
     });
+  }
+
+  _onCheckScene(event, showDialog = true) {
+    const brokenTiles = canvas.foreground.placeables.filter((t) => _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
+    if(brokenTiles.length > 0 && showDialog) {
+      const dContent = `<h3 style="font-weight: 500;">${game.i18n.localize("levels.dialog.checkScene.content")}</h3><hr>
+      <ul>
+      ${brokenTiles.map((t) => `<li data-tileid=${t.id}><a>${t.data.img}</a></li>`).join("")}
+      </ul>`;
+      Dialog.prompt({
+        title: game.i18n.localize("levels.dialog.checkScene.title"),
+        content: dContent,
+        render: (html) => {
+          html.on("click", "li", (e) => {
+            const $target = $(e.currentTarget);
+            const tileId = $target.data("tileid");
+            const tile = brokenTiles.find((t) => t.id == tileId);
+            if(tile) tile.sheet.render(true);
+          })
+        },
+      })
+    }
+    return brokenTiles.length > 0;
   }
 
   _onShowPlayerList(event) {

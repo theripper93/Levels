@@ -184,6 +184,10 @@ body.dragging, body.dragging * {
     cursor: pointer;
 }
 
+#levelsUI #levels-ui-controls .fa-bug.broken{
+    color: #f94848;
+}
+
 /** Tooltip **/
 
 #levels-tooltip {

@@ -109,6 +109,15 @@
     "levels.info.advancedMode": "Levels: Advanced Mode option in Better Roofs has been enabled.",
     "levels.firsttime.dialog": "",
 
+    "levels.dialog.checkScene.title": "Levels - Scene Checker",
+    "levels.dialog.checkScene.content": "Detected tiles with polygons that were possibly not autodetected or defined correctly, please doublecheck the following tiles:",
+
+    "levels.ui.players": "Show Players in the UI",
+    "levels.ui.addLevel": "Add a new level",
+    "levels.ui.editLevels": "Edit Levels",
+    "levels.ui.getFromScene": "Get Levels from Scene",
+    "levels.ui.clearLevels": "Clear Levels",
+    "levels.ui.debugScene": "Debug Scene (Red means issues detected)",
 
     "levels.conflicts.midiqol.tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."
 
