@@ -174,6 +174,7 @@ class LevelsUI extends FormApplication {
             if(tile) tile.sheet.render(true);
           })
         },
+        callback: () => {},
       })
     }
     return brokenTiles.length > 0;
