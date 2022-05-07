@@ -45,6 +45,8 @@
     "levels.tilecoonfig.noFogHide.name":"Don't hide this tile in the Fog",
     "levels.tilecoonfig.noFogHide.hint": "Exclude this tile from Level's 'Advanced Fog of War'.",
     "levels.tilecoonfig.range.unit": "Elevation",
+    "levels.tilecoonfig.excludeFromChecker.name": "Exclude from Scene Checker",
+
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
     "levels.drawingconfig.range.name": "Hole Range",
@@ -111,6 +113,9 @@
 
     "levels.dialog.checkScene.title": "Levels - Scene Checker",
     "levels.dialog.checkScene.content": "Detected tiles with polygons that were possibly not autodetected or defined correctly, please doublecheck the following tiles:",
+    "levels.dialog.checkScene.learnMore": "Don't Know what the Polygon is? Having other issues? Check out the Levels page, it includes a video dedicated to the Polygon!",
+    "levels.dialog.checkScene.noIssues": "No Issues Detected!",
+    "levels.dialog.checkScene.excluded": "Excluded from Check",
 
     "levels.ui.players": "Show Players in the UI",
     "levels.ui.addLevel": "Add a new level",
@@ -118,6 +123,7 @@
     "levels.ui.getFromScene": "Get Levels from Scene",
     "levels.ui.clearLevels": "Clear Levels",
     "levels.ui.debugScene": "Debug Scene (Red means issues detected)",
+
 
     "levels.conflicts.midiqol.tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."
 

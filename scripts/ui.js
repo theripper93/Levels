@@ -157,14 +157,20 @@ class LevelsUI extends FormApplication {
   }
 
   _onCheckScene(event, showDialog = true) {
-    const brokenTiles = canvas.foreground.placeables.filter((t) => _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
-    if(brokenTiles.length > 0 && showDialog) {
-      const dContent = `<h3 style="font-weight: 500;">${game.i18n.localize("levels.dialog.checkScene.content")}</h3><hr>
+    const brokenTiles = canvas.foreground.placeables.filter((t) =>  !t.document.getFlag("levels", "excludeFromChecker")  && _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
+    const excludedTiles = canvas.foreground.placeables.filter((t) => t.document.getFlag("levels", "excludeFromChecker")).length;
+    if(showDialog) {
+      const dContent = `
+      <p><a href="https://theripper93.com/#/module/levels" target="_blank"><h6 style="margin: 0;">${game.i18n.localize("levels.dialog.checkScene.learnMore")}</h6></a></p>
+      <h3 style="font-weight: 500;">${game.i18n.localize("levels.dialog.checkScene.content")}</h3>
+      <hr>
       <ul>
       ${brokenTiles.map((t) => `<li data-tileid=${t.id}><a>${t.data.img}</a></li>`).join("")}
-      </ul>`;
+      </ul>
+      <h4>${brokenTiles.length === 0 ? game.i18n.localize("levels.dialog.checkScene.noIssues") : "" }</h4>
+      `;
       Dialog.prompt({
-        title: game.i18n.localize("levels.dialog.checkScene.title"),
+        title: excludedTiles > 0 ? game.i18n.localize("levels.dialog.checkScene.title") + " | " + game.i18n.localize("levels.dialog.checkScene.excluded") + ` (${excludedTiles})` : game.i18n.localize("levels.dialog.checkScene.title"),
         content: dContent,
         render: (html) => {
           html.on("click", "li", (e) => {

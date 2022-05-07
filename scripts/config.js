@@ -303,7 +303,11 @@ Hooks.on("renderTileConfig", (app, html, data) => {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.noFogHide.name"),
           notes: game.i18n.localize("levels.tilecoonfig.noFogHide.hint"),
-        }
+        },
+        "excludeFromChecker": {
+          type: "checkbox",
+          label: game.i18n.localize("levels.tilecoonfig.excludeFromChecker.name"),
+        },
   });
   html.on("change", "input", (e) => {
     const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
