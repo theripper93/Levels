@@ -1,3 +1,5 @@
+import { injectConfig } from "./injectConfig.js";
+
 Hooks.on("init", () => {
   
   libWrapper.register(
@@ -85,7 +87,7 @@ Hooks.on("init", () => {
 
 Hooks.once("ready", () => {
   // Module title
-  MODULE_ID = _levelsModuleName;
+  const MODULE_ID = _levelsModuleName;
   const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
@@ -253,312 +255,182 @@ Hooks.on("init", () => {
 Hooks.on("renderTileConfig", (app, html, data) => {
   const isInjected = html.find(`input[name="flags.${_levelsModuleName}.rangeTop"]`).length > 0;
   if(isInjected) return;
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
-  if (heightRangeTop == undefined || heightRangeTop == null)
-    heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
-  if (heightRangeBottom == undefined || heightRangeBottom == null)
-    heightRangeBottom = -Infinity;
-
-  let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
-  if (showAboveRange == undefined || showAboveRange == null)
-    showAboveRange = Infinity;
-
-  let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
-  let checkedbox = showifbelow ? ` checked=""` : "";
-  let isBasement = app.object.getFlag(_levelsModuleName, "isBasement");
-  let checkedboxisBasement = isBasement ? ` checked=""` : "";
-  let noFogHide = app.object.getFlag(_levelsModuleName, "noFogHide");
-  let checkedboxnoFogHide = noFogHide ? ` checked=""` : "";
-
-  let newHtml = `
-  <div class="form-group">
-  <label for="rangeTop">${game.i18n.localize(
-    "levels.tilecoonfig.rangeTop.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-  <div class="form-fields">
-      <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
-  </div>
-</div>
-
-<div class="form-group">
-<label for="rangeBottom">${game.i18n.localize(
-    "levels.tilecoonfig.rangeBottom.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
-</div>
-</div>
-
-<div class="form-group">
-            <label>${game.i18n.localize(
-              "levels.tilecoonfig.showIfAbove.name"
-            )}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="flags.${_levelsModuleName}.showIfAbove"${checkedbox}>
-            </div>
-        </div>
-
-
-        <div class="form-group">
-<label for="showAboveRange">${game.i18n.localize(
-    "levels.tilecoonfig.showAboveRange.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.showAboveRange" data-dtype="Number" value="${showAboveRange}" step="1">
-</div>
-</div>
-
-        <div class="form-group">
-            <label>${game.i18n.localize(
-              "levels.tilecoonfig.isBasement.name"
-            )}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="flags.${_levelsModuleName}.isBasement"${checkedboxisBasement}>
-            </div>
-        </div>
-
-        <div class="form-group">
-        <label>${game.i18n.localize(
-          "levels.tilecoonfig.noFogHide.name"
-        )}</label>
-        <div class="form-fields">
-            <input type="checkbox" name="flags.${_levelsModuleName}.noFogHide"${checkedboxnoFogHide}>
-        </div>
-    </div>
-
-`;
-  const overh = html.find('input[name="occlusion.alpha"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "tab" : {
+            "name": "levels",
+            "label": "Levels",
+            "icon": "fas fa-layer-group",
+        },
+        "noOverheadWarning": {
+          type: "custom",
+          html: `<p class="notes" id="no-overhead-warning" style="color: red;">${game.i18n.localize("levels.tilecoonfig.noOverhead")}</p>`,
+        },
+        "rangeTop": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "rangeBottom": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: -Infinity,
+        },
+        "showIfAbove": {
+          type: "checkbox",
+          label: game.i18n.localize("levels.tilecoonfig.showIfAbove.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.showIfAbove.hint"),
+        },
+        "showAboveRange": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.showAboveRange.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.showAboveRange.hint"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "isBasement": {
+          type: "checkbox",
+          label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
+        },
+        "noFogHide": {
+          type: "checkbox",
+          label: game.i18n.localize("levels.tilecoonfig.noFogHide.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.noFogHide.hint"),
+        }
+  });
+  html.on("change", "input", (e) => {
+    const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
+    const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");
+    injHtml.find("input").prop("disabled", !isOverhead);
+    injHtml.find("input[name='flags.levels.showAboveRange']").closest(".form-group").toggle(isShowIfAbove);
+    html.find("#no-overhead-warning").toggle(!isOverhead);
+    app.setPosition({ height: "auto" });
+  })
+  html.find(`input[name="overhead"]`).trigger("change");
   app.setPosition({ height: "auto" });
 });
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
-  if (heightRangeTop == undefined || heightRangeTop == null)
-    heightRangeTop = Infinity;
-
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
-  if (heightRangeBottom == undefined || heightRangeBottom == null)
-    heightRangeBottom = -Infinity;
-
-  let newHtml = `
-<div class="form-group">
-<label for="rangeTop">${game.i18n.localize(
-    "levels.tilecoonfig.rangeTop.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
-</div>
-</div>
-
-<div class="form-group">
-<label for="rangeBottom">${game.i18n.localize(
-    "levels.tilecoonfig.rangeBottom.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
-</div>
-</div>
-
-`;
-  const overh = html.find('input[name="config.angle"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.before(newHtml);
-  app.setPosition({ height: "auto" });
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'input[name="config.dim"]',
+        "rangeTop": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "rangeBottom": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: -Infinity,
+        },
+  });
 });
 
 Hooks.on("renderNoteConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
-  if (heightRangeTop == undefined || heightRangeTop == null)
-    heightRangeTop = Infinity;
-
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
-  if (heightRangeBottom == undefined || heightRangeBottom == null)
-    heightRangeBottom = -Infinity;
-
-  let newHtml = `
-<div class="form-group">
-<label for="rangeTop">${game.i18n.localize(
-    "levels.tilecoonfig.rangeTop.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
-</div>
-</div>
-
-<div class="form-group">
-<label for="rangeBottom">${game.i18n.localize(
-    "levels.tilecoonfig.rangeBottom.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
-</div>
-</div>
-
-`;
-  const overh = html.find('select[name="textAnchor"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
-  app.setPosition({ height: "auto" });
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'select[name="textAnchor"]',
+        "rangeTop": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "rangeBottom": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: -Infinity,
+        },
+  });
 });
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
-  if (heightRangeTop == undefined || heightRangeTop == null)
-    heightRangeTop = Infinity;
-
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
-  if (heightRangeBottom == undefined || heightRangeBottom == null)
-    heightRangeBottom = -Infinity;
-
-  let newHtml = `
-<div class="form-group">
-<label for="rangeTop">${game.i18n.localize(
-    "levels.tilecoonfig.rangeTop.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
-</div>
-</div>
-
-<div class="form-group">
-<label for="rangeBottom">${game.i18n.localize(
-    "levels.tilecoonfig.rangeBottom.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
-</div>
-</div>
-
-`;
-  const overh = html
-    .find('p[class="hint"]')
-    .eq(html.find('p[class="hint"]').length - 1);
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
-  app.setPosition({ height: "auto" });
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'input[name="radius"]',
+        "rangeTop": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "rangeBottom": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: -Infinity,
+        },
+  });
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
-  if (heightRangeTop == undefined || heightRangeTop == null)
-    heightRangeTop = Infinity;
-
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
-  if (heightRangeBottom == undefined || heightRangeBottom == null)
-    heightRangeBottom = -Infinity;
-
-  let drawingMode = app.object.getFlag(_levelsModuleName, "drawingMode") || 0;
-  let opt0 = drawingMode == 0 ? `selected=""` : ``;
-  let opt1 = drawingMode == 1 ? `selected=""` : ``;
-  let opt2 = drawingMode == 2 ? `selected=""` : ``;
-  let opt3 = drawingMode == 3 ? `selected=""` : ``;
-
-  let elevatorFloors =
-    app.object.getFlag(_levelsModuleName, "elevatorFloors") || "";
-
-  const newHtml = `
-
-<div class="form-group">
-            <label>${game.i18n.localize(
-              "levels.drawingconfig.isHole.name"
-            )}</label>
-            <div class="form-fields">
-                <select name="flags.${_levelsModuleName}.drawingMode" data-dtype="Number">
-                    <option value="0" ${opt0}>${game.i18n.localize(
-    "levels.drawingconfig.isHole.opt0"
-  )}</option><option value="1" ${opt1}>${game.i18n.localize(
-    "levels.drawingconfig.isHole.opt1"
-  )}</option><option value="2" ${opt2}>${game.i18n.localize(
-    "levels.drawingconfig.isHole.opt2"
-  )}</option><option value="3" ${opt3}>${game.i18n.localize(
-    "levels.drawingconfig.isHole.opt3"
-  )}</option>
-                </select>
-            </div>
-        </div>
-
-<div class="form-group">
-<p class="notes">${game.i18n.localize(
-    "levels.drawingconfig.elevatorFloors.hint"
-  )}.</p>
-<label for="elevatorFloors">${game.i18n.localize(
-    "levels.drawingconfig.elevatorFloors.name"
-  )}</label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.elevatorFloors" value="${elevatorFloors}">
-</div>
-</div>
-
-
-<div class="form-group">
-<label for="rangeTop">${game.i18n.localize(
-    "levels.drawingconfig.ht.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
-</div>
-</div>
-
-<div class="form-group">
-<label for="rangeBottom">${game.i18n.localize(
-    "levels.drawingconfig.hb.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
-</div>
-</div>
-
-`;
-  const overh = html.find('input[name="z"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
-  app.setPosition({ height: "auto" });
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'input[name="z"]',
+        "drawingMode": {
+          type: "select",
+          label: game.i18n.localize("levels.drawingconfig.isHole.name"),
+          default: 0,
+          dType: "Number",
+          options: {
+            0 : game.i18n.localize("levels.drawingconfig.isHole.opt0"),
+            1 : game.i18n.localize("levels.drawingconfig.isHole.opt1"),
+            2 : game.i18n.localize("levels.drawingconfig.isHole.opt2"),
+            3 : game.i18n.localize("levels.drawingconfig.isHole.opt3"),
+          }
+        },
+        "elevatorFloors": {
+          type: "text",
+          label: game.i18n.localize("levels.drawingconfig.elevatorFloors.name"),
+          notes: game.i18n.localize("levels.drawingconfig.elevatorFloors.hint"),
+        },
+        "rangeTop": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+        "rangeBottom": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: -Infinity,
+        },
+  });
 });
 
-/*Hooks.on("renderTokenConfig", (app, html, data) => {
-  let tokenHeight = app.token.getFlag(_levelsModuleName, "tokenHeight") || 0;
-
-  let newHtml = `
-<div class="form-group">
-            <label>${game.i18n.localize(
-              "levels.tokenconfig.tokenHeight.name"
-            )}<span class="units">${game.i18n.localize(
-    "levels.tokenconfig.tokenHeight.unit"
-  )}</span></label>
-            <input type="number" step="any" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
-        </div>
-`;
-  const overh = html.find('input[name="elevation"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
-  app.setPosition({ height: "auto" });
-});*/
+Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
+  const injHtml = injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'input[name="width"]',
+        "elevation": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.template.elevation.name"),
+          units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+          default: Infinity,
+        },
+  });
+});
 
 Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
   let drawing = data.object.document;
@@ -597,28 +469,6 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
     $(controlIcons[0]).remove();
   }
-});
-
-Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
-  let elevation = app.object.getFlag(_levelsModuleName, "elevation");
-
-  let newHtml = `
-<div class="form-group">
-<label for="elevation">${game.i18n.localize(
-    "levels.template.elevation.name"
-  )}<span class="units">(${game.i18n.localize(
-    "levels.tilecoonfig.range.unit"
-  )})</span></label>
-<div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.elevation"  data-dtype="Number" value="${elevation}" step="1">
-</div>
-</div>
-
-`;
-  const overh = html.find('input[name="width"]');
-  const formGroup = overh.closest(".form-group");
-  formGroup.after(newHtml);
-  app.setPosition({ height: "auto" });
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
