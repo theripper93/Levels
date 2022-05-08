@@ -22,6 +22,7 @@ class Levels {
     this.levelsTiles = [];
     this.levelsHoles = [];
     this.fogHiding = game.settings.get(_levelsModuleName, "fogHiding");
+    this.useCollision3D = game.modules.get("levels-3d-preview")?.active && canvas.scene.getFlag("levels-3d-preview","object3dSight");
     this.elevationScale = game.settings.get(
       _levelsModuleName,
       "tokenElevScale"
@@ -1852,6 +1853,10 @@ class Levels {
    **/
 
   testCollision(p0, p1, type = "sight") {
+    if(this.useCollision3D) {
+      if(!game.Levels3DPreview?._active) return true;
+      return game.Levels3DPreview.interactionManager.computeSightCollision(p0,p1)
+    }
     //Declare points adjusted with token height to use in the loop
     const x0 = p0.x;
     const y0 = p0.y;
