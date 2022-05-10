@@ -385,6 +385,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
+
   const injHtml = injectConfig.inject(app, html, {
     "moduleId": "levels",
         "inject": 'input[name="z"]',

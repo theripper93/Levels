@@ -47,7 +47,7 @@ export var injectConfig = {
                         <label for="${k}">${v.label || ""}</label>
                             <select name="${flag}" ${elemData.dType ? `data-dtype="${elemData.dType}"` : ""}>`;
                     for(const [i,j] of Object.entries(v.options)){
-                        injectHtml += `<option value="${i}" ${flagValue === i ? "selected" : ""}>${j}</option>`;
+                        injectHtml += `<option value="${i}" ${flagValue == i ? "selected" : ""}>${j}</option>`;
                     }
                     injectHtml += `</select>${notes}
                     </div>`;
@@ -98,7 +98,7 @@ export var injectConfig = {
             return injectHtml;
         }
         injectPoint.after(injectHtml);
-        if(app)app?.setPosition({"height" : "auto", "width" : data.tab ? app.options.width + tabSize : "auto"});
+        if(app)app?.setPosition({"height" : "auto", "width" : data.tab ? app.options.width + tabSize : null});
         return injectHtml;
 
         function createTab(name,label,icon){
