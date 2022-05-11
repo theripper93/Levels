@@ -230,6 +230,18 @@ Hooks.on("init", () => {
     },
   });
 
+  game.settings.register(_levelsModuleName, "exactTokenVisibility", {
+    name: game.i18n.localize("levels.settings.exactTokenVisibility.name"),
+    hint: game.i18n.localize("levels.settings.exactTokenVisibility.hint"),
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (setting) => {
+      _levels.exactTokenVisibility = setting;
+    },
+  });
+
   game.settings.register(_levelsModuleName, "forceUiRefresh", {
     name: game.i18n.localize("levels.settings.forceUiRefresh.name"),
     hint: game.i18n.localize("levels.settings.forceUiRefresh.hint"),

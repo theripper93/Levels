@@ -20,6 +20,8 @@
     "levels.settings.preciseLightOcclusion.hint": "Removes light occlusion artefacts at the cost of performance",
     "levels.settings.preciseTokenVisibility.name": "Precise token visibility",
     "levels.settings.preciseTokenVisibility.hint": "Enabling this option will check for sight against corners of the token in addition to the center at the cost of some performance",
+    "levels.settings.exactTokenVisibility.name": "Exact token visibility",
+    "levels.settings.exactTokenVisibility.hint": "Precise token visibility must be enabled for this option to work. This option will do an 11 point check against the token's corners. Suggested if you are using 3D Canvas",
     "levels.settings.blockSightMovement.name":"Fence",
     "levels.settings.blockSightMovement.hint":"When enabled, walls with height that does not restrict vision will still restrict movement",
     "levels.settings.forceUiRefresh.name":"Force UI refresh",

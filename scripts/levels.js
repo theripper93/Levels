@@ -32,6 +32,10 @@ class Levels {
       _levelsModuleName,
       "preciseTokenVisibility"
     );
+    this.exactTokenVisibility = game.settings.get(
+      _levelsModuleName,
+      "exactTokenVisibility"
+    );
     this.tokenElevScaleMultiSett = game.settings.get(
       _levelsModuleName,
       "tokenElevScaleMultiSett"
@@ -319,6 +323,7 @@ class Levels {
     if (this.preciseTokenVisibility === false)
       return this.checkCollision(sourceToken, token, "sight");
     const targetLOSH = token.losHeight;
+    const targetElevation = token.data.elevation+(targetLOSH-token.data.elevation)*0.1;
     const sourceCenter = {
       x: sourceToken.center.x,
       y: sourceToken.center.y,
@@ -331,6 +336,17 @@ class Levels {
       { x: token.x + tol, y: token.y + token.h - tol, z: targetLOSH },
       { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
     ];
+    if(this.exactTokenVisibility){
+      const exactPoints = [
+        { x: token.center.x, y: token.center.y, z: targetElevation+(targetLOSH-targetElevation)/2 },
+      { x: token.center.x, y: token.center.y, z: targetElevation },
+      { x: token.x + tol, y: token.y + tol, z: targetElevation },
+      { x: token.x + token.w - tol, y: token.y + tol, z: targetElevation },
+      { x: token.x + tol, y: token.y + token.h - tol, z: targetElevation },
+      { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetElevation },
+      ]
+      tokenCorners.push(...exactPoints);
+    }
     for (let point of tokenCorners) {
       let collision = this.testCollision(sourceCenter, point, "sight",sourceToken);
       if (!collision) return collision;
