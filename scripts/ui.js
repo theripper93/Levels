@@ -397,7 +397,7 @@ class LevelsUI extends FormApplication {
       } else {
         _levels.removeTempTile(tileIndex);
       }
-      //tile.levelsUIHideen = !tile.visible;
+      tile.levelsUIHideen = !tile.visible;
     }
 
     for (let light of canvas.lighting.placeables) {
@@ -712,7 +712,7 @@ Hooks.on("ready", () => {
 
     Hooks.on("updateTile", (tile, updates) => {
       if(canvas.tokens.controlled[0]) return
-      if (_levels.UI.rangeEnabled == true) {
+      if (_levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
         _levels.UI.computeLevelsVisibility();
         if (game.settings.get(_levelsModuleName, "enableTooltips")) {
           canvas.hud.levels.bind(tile.object);
