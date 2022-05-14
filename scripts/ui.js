@@ -489,6 +489,12 @@ class LevelsUI extends FormApplication {
       note.refresh();
     }
 
+    for( let token of canvas.tokens.placeables){
+      token.visible = true;
+      token.levelsVisible = true;
+      token.refresh();
+    }
+
     _levels.floorContainer.removeChildren();
     _levels.floorContainer.spriteIndex = {};
     canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });

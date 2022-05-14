@@ -46,7 +46,7 @@ Hooks.on("hoverTile", (object, hovered) => {
   if (
     hovered &&
     object.data.overhead &&
-    game.settings.get(_levelsModuleName, "enableTooltips")
+    game.settings.get(_levelsModuleName, "enableTooltips") && !game.Levels3DPreview?._active
   ) {
     canvas.hud.levels.bind(object);
   } else {
@@ -55,7 +55,7 @@ Hooks.on("hoverTile", (object, hovered) => {
 });
 
 Hooks.on("hoverDrawing", (object, hovered) => {
-  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
+  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips") && !game.Levels3DPreview?._active) {
     canvas.hud.levels.bind(object);
   } else {
     canvas.hud.levels.clear();
@@ -63,7 +63,7 @@ Hooks.on("hoverDrawing", (object, hovered) => {
 });
 
 Hooks.on("hoverAmbientLight", (object, hovered) => {
-  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
+  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips") && !game.Levels3DPreview?._active) {
     canvas.hud.levels.bind(object);
   } else {
     canvas.hud.levels.clear();
@@ -71,7 +71,7 @@ Hooks.on("hoverAmbientLight", (object, hovered) => {
 });
 
 Hooks.on("hoverNote", (object, hovered) => {
-  if (game.user.isGM && hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
+  if (game.user.isGM && hovered && game.settings.get(_levelsModuleName, "enableTooltips") && !game.Levels3DPreview?._active) {
     canvas.hud.levels.bind(object);
   } else {
     canvas.hud.levels.clear();
@@ -79,7 +79,7 @@ Hooks.on("hoverNote", (object, hovered) => {
 });
 
 Hooks.on("hoverAmbientSound", (object, hovered) => {
-  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips")) {
+  if (hovered && game.settings.get(_levelsModuleName, "enableTooltips") && !game.Levels3DPreview?._active) {
     canvas.hud.levels.bind(object);
   } else {
     canvas.hud.levels.clear();
