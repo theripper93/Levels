@@ -688,6 +688,14 @@ Hooks.on("ready", () => {
               }
             }
           });
+        }else{
+          tile.data.update({
+            flags: {
+              [`${_levelsModuleName}`]: {
+                rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
+              }
+            }
+          });
         }
         if(!_levels?.UI?.suppressBr){
           let brmode = 2
