@@ -676,15 +676,19 @@ Hooks.on("ready", () => {
       if (_levels.UI.rangeEnabled == true) {
         tile.data.update({
           overhead: true,
-          flags: {
-            [`${_levelsModuleName}`]: {
-              rangeBottom: _levels.UI.roofEnabled
-                ? parseFloat(_levels.UI.range[1]) + 1
-                : parseFloat(_levels.UI.range[0]),
-              rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
-            }
-          },
         });
+        if(!game.Levels3DPreview?._active){
+          tile.data.update({
+            flags: {
+              [`${_levelsModuleName}`]: {
+                rangeBottom: _levels.UI.roofEnabled
+                  ? parseFloat(_levels.UI.range[1]) + 1
+                  : parseFloat(_levels.UI.range[0]),
+                rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
+              }
+            }
+          });
+        }
         if(!_levels?.UI?.suppressBr){
           let brmode = 2
           if(_levels.UI.roofEnabled) brmode = 1
@@ -719,7 +723,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateAmbientLight", (light, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
+      if (_levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
         light.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
       }
     });
