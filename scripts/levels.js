@@ -385,6 +385,7 @@ class Levels {
   advancedLOSCheckInLight(token) {
     for (let source of canvas.lighting.sources) {
       if (source.skipRender && source.object.document.documentName !== "Token") continue;
+      if (!source.active) continue;
       if (source.object.document.documentName === "Token") {
         const lightRadius = Math.max(
           source.object.data.light.dim,
