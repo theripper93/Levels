@@ -520,7 +520,8 @@ class Levels {
         const isVisible =
           _levels.revealTokenInFog &&
           token.visible &&
-          canvas.tokens.controlled[0];
+          canvas.tokens.controlled[0] &&
+          !token._controlled;
         if (isVisible) {
           setTimeout(() => {
             visibleTimeout = true;
