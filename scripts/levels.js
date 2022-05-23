@@ -656,7 +656,8 @@ class Levels {
   }
 
   obscureFogForTile(tileIndex) {
-    if (tileIndex.noFogHide === true) return;
+    if (tileIndex.noFogHide === true) return this.clearFogForTile(tileIndex);
+    if(!this.fogHiding) return;
     let tile = tileIndex.tile;
     let oldSprite = this.fogContainer.children.find((c) => c.name == tile.id);
     let tileImg = tile.tile;
