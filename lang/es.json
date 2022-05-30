@@ -23,6 +23,8 @@
     "levels.settings.preciseLightOcclusion.hint": "Elimina artefactos de obstrucción del haz de luz, a coste de reducir el rendimiento",
     "levels.settings.preciseTokenVisibility.name": "Visibilidad precisa de icono",
     "levels.settings.preciseTokenVisibility.hint": "Al habilitar esta opción, se comprobará la visión desde las esquinas del icono, ademas de la habitual desde el centro, a coste de reducir el rendimiento",
+    "levels.settings.exactTokenVisibility.name": "Visibilidad exacta de icono",
+    "levels.settings.exactTokenVisibility.hint": "Se debe habilitar visibilidad precisa de icono para que esta opción funcione. Hará que se haga una comprobación de las esquinas de los iconos. Se sugiere usar esta opción si se está usando 3D Canvas",
     "levels.settings.blockSightMovement.name":"Obstáculos",
     "levels.settings.blockSightMovement.hint":"Al habilitarlo, los muros con altura que no restringen la visión, seguirán restringiendo el movimiento",
     "levels.settings.forceUiRefresh.name":"Forzar recarga de la UI",
@@ -35,13 +37,21 @@
     "levels.settings.revealTokenInFog.name": "Revelar niebla en icono",
     "levels.settings.revealTokenInFog.hint": "Si un icono es visible, revela la niebla de guerra a su alrededor",
 
+
+    "levels.tilecoonfig.noOverhead": "Esto no es una baldosa superior, esta baldosa será ignorada por niveles y se generará desde el final de la pila",
     "levels.tilecoonfig.rangeTop.name": "Altura (superior)",
     "levels.tilecoonfig.rangeBottom.name": "Altura (inferior)",
     "levels.tilecoonfig.showIfAbove.name": "¿Mostrar incluso cuando se esté por debajo?",
+    "levels.tilecoonfig.showIfAbove.hint": "Si se habilita, la baldosa se mostrará incluso si el icono está por debajo del rango de altura inferior (por ejemplo, se puede usar en balcones)",
     "levels.tilecoonfig.showAboveRange.name":"Diferencia máxima de elevación",
+    "levels.tilecoonfig.showAboveRange.hint": "Cuando se habilita '¿Mostrar incluso cuando esté por debajo?', esta será la máxima diferencia de elevación entre el icono y la baldosa, por encima de este valor, la baldosa no se mostrará",
     "levels.tilecoonfig.isBasement.name":"¿Se trata del sótano?",
+    "levels.tilecoonfig.isBasement.hint": "Si se habilita, la baldosa solo se mostrará si el icono está dentro del rango de la baldosa, esto significa que un icono por encima del rango superior no verá la baldosa",
     "levels.tilecoonfig.noFogHide.name":"No ocultar esta baldosa en la niebla",
+    "levels.tilecoonfig.noFogHide.hint": "Excluir esta baldosa del modo 'Niebla de guerra avanzada' de Levels",
     "levels.tilecoonfig.range.unit": "Elevación",
+    "levels.tilecoonfig.excludeFromChecker.name": "Excluir del depurador de escenas",
+	
     "levels.drawingconfig.hb.name": "Altura (inferior)",
     "levels.drawingconfig.ht.name": "Altura (superior)",
     "levels.drawingconfig.range.name": "Rango",
@@ -100,9 +110,24 @@
     "levels.form.autoLevels": "Obtener niveles de la escena",
     "levels.err.collision": "Este movimiento entra en conflicto con al menos un piso/techo",
 
+    "levels.err.wallheight": "¡AVISO! Levels necesita la versión 4.1.0 de Wall Height para funcionar correctamente",
     "levels.err.lessfog": "Niveles: ¡AVISO! Se ha detectado el módulo Less Fog - la visibilidad de los iconos no funcionará adecuadamente, por favor, deshabilite uno de los dos",
     "levels.err.tokenheight": "Niveles: ¡AVISO! Se ha detectado que tiene habilitada la opción de Wall Height 'Habilitar altura de iconos' - ¡este ajuste es incompatible con Levels y se ha deshabilitado!",
+    "levels.info.advancedMode": "Niveles: El modo avanzado de Better Roofs ha sido habilitado",
     "levels.firsttime.dialog": "",
+
+    "levels.dialog.checkScene.title": "Niveles - Depuración de escenas",
+    "levels.dialog.checkScene.content": "Se han detectado baldosas con polígonos que o bien no han sido autodetectados o bien no han sido definidos correctamente, por favor, compruebe las baldosas siguientes:",
+    "levels.dialog.checkScene.learnMore": "¿No sabe lo que es Polígono? ¿Tiene cualquier otro problema? Acude a la página de Levels, encontrará un vídeo dedicado exclusivamente a Polígono",
+    "levels.dialog.checkScene.noIssues": "¡No se ha detectado ningún problema!",
+    "levels.dialog.checkScene.excluded": "Excluidas de la depuración",
+
+    "levels.ui.players": "Mostrar a los jugadores en la IU",
+    "levels.ui.addLevel": "Añadir nuevo nivel",
+    "levels.ui.editLevels": "Editar niveles",
+    "levels.ui.getFromScene": "Importar los niveles de la escena",
+    "levels.ui.clearLevels": "Borrar niveles",
+    "levels.ui.debugScene": "Depurar escena (en rojo significa que se han detectado problemas)",
 
 
     "levels.conflicts.midiqol.tokenvis": "Habilitar la opción de MidiQOL 'Permitir a los jugadores controlar sus iconos ocultos' producirá problemas con la visibilidad de los iconos. Por favor, deshabilite esa opción"
