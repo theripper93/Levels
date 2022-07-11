@@ -1,3 +1,6 @@
+# "k is not defined" error
+This error will pop up because V9 does nit recognize V10 only manifests. It just means a V10 ready version of the module is ready but you can't imstall it since you are on V9, you can ignore this error.
+
 # Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
 
