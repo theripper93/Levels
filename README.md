@@ -150,7 +150,7 @@ Returns in wich floor of a building any entity (given a point and an elevation) 
   _levels.testCollision(p0, p1, type = "sight")
 ```
 
-## ***Token Visibility Override*
+## **Token Visibility Override**
 Levels will override Token.isVisible, if you wish to perform custom token visibility checks while levels is enabled, you will need to wrap the specific overrideVisibilityTest function
 
 ```js
