@@ -39,15 +39,14 @@
         }
     ],
     "scripts": [
-        "./scripts/main.js",
         "./scripts/levels.js",
-        "./scripts/helpers.js",
         "./scripts/ui.js",
         "./scripts/tooltip.js",
-        "./scripts/jquerysortable.js"
+        "./scripts/lib/jquerysortable.js"
     ],
     "esmodules": [
-        "./scripts/config.js"
+        "./scripts/config.js",
+        "./scripts/main.js"
     ],
     "styles": [
         "./styles/levels.css"

@@ -3,19 +3,19 @@ import { injectConfig } from "./injectConfig.js";
 Hooks.on("init", () => {
   
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Token.prototype.refresh",
     _levelsTokenRefresh,
     "MIXED"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Tile.prototype.refresh",
     _levelsTileRefresh,
     "WRAPPER"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Token.prototype._onMovementFrame",
     _levelsOnMovementFrame,
     "WRAPPER"
@@ -25,56 +25,56 @@ Hooks.on("init", () => {
     isNewerVersion("2.8.0", game.modules.get("perfect-vision").data.version)
   ) {
     libWrapper.register(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "LightingLayer.prototype.refresh",
       _lightingRefresh,
       "OVERRIDE"
     );
     libWrapper.register(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "SightLayer.prototype.testVisibility",
       _levelsTestVisibility,
       "OVERRIDE"
     );
     libWrapper.register(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "AmbientSound.prototype.isAudible",
       _levelsIsAudible,
       "OVERRIDE"
     );
   }
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "MeasuredTemplate.prototype.draw",
     _levelsTemplatedraw,
     "WRAPPER"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "MeasuredTemplate.prototype._refreshRulerText",
     _levelsRefreshRulerText,
     "OVERRIDE"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Token.prototype.isVisible",
     _levelsTokenIsVisible,
     "OVERRIDE"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Note.prototype.isVisible",
     _levelsNoteIsVisible,
     "WRAPPER"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "LightSource.prototype._renderTexture",
     _levelsRenderLightTexture,
     "OVERRIDE"
   );
   libWrapper.register(
-    _levelsModuleName,
+    CONFIG.Levels.MODULE_ID,
     "Token.prototype._drawTooltip",
     _levelsTokendrawTooltip,
     "MIXED"
@@ -87,7 +87,7 @@ Hooks.on("init", () => {
 
 Hooks.once("ready", () => {
   // Module title
-  const MODULE_ID = _levelsModuleName;
+  const MODULE_ID = CONFIG.Levels.MODULE_ID;
   const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
@@ -132,7 +132,7 @@ Hooks.once("ready", () => {
 });
 
 Hooks.on("init", () => {
-  game.settings.register(_levelsModuleName, "tokenElevScale", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "tokenElevScale", {
     name: game.i18n.localize("levels.settings.tokenElevScale.name"),
     hint: game.i18n.localize("levels.settings.tokenElevScale.name"),
     scope: "world",
@@ -145,7 +145,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "tokenElevScaleMultiSett", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "tokenElevScaleMultiSett", {
     name: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.name"),
     hint: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.hint"),
     scope: "world",
@@ -157,7 +157,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "fogHiding", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "fogHiding", {
     name: game.i18n.localize("levels.settings.fogHiding.name"),
     hint: game.i18n.localize("levels.settings.fogHiding.hint"),
     scope: "world",
@@ -170,7 +170,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "revealTokenInFog", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "revealTokenInFog", {
     name: game.i18n.localize("levels.settings.revealTokenInFog.name"),
     hint: game.i18n.localize("levels.settings.revealTokenInFog.hint"),
     scope: "world",
@@ -182,7 +182,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "lockElevation", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "lockElevation", {
     name: game.i18n.localize("levels.settings.lockElevation.name"),
     hint: game.i18n.localize("levels.settings.lockElevation.hint"),
     scope: "world",
@@ -191,7 +191,7 @@ Hooks.on("init", () => {
     default: false,
   });
 
-  game.settings.register(_levelsModuleName, "hideElevation", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "hideElevation", {
     name: game.i18n.localize("levels.settings.hideElevation.name"),
     hint: game.i18n.localize("levels.settings.hideElevation.hint"),
     scope: "world",
@@ -209,7 +209,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "enableTooltips", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),
     hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
     scope: "world",
@@ -218,7 +218,7 @@ Hooks.on("init", () => {
     default: true,
   });
 
-  game.settings.register(_levelsModuleName, "preciseTokenVisibility", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "preciseTokenVisibility", {
     name: game.i18n.localize("levels.settings.preciseTokenVisibility.name"),
     hint: game.i18n.localize("levels.settings.preciseTokenVisibility.hint"),
     scope: "world",
@@ -230,7 +230,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "forceUiRefresh", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "forceUiRefresh", {
     name: game.i18n.localize("levels.settings.forceUiRefresh.name"),
     hint: game.i18n.localize("levels.settings.forceUiRefresh.hint"),
     scope: "world",
@@ -239,7 +239,7 @@ Hooks.on("init", () => {
     default: true,
   });
 
-  game.settings.register(_levelsModuleName, "debugRaycast", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "debugRaycast", {
     name: game.i18n.localize("levels.settings.debugRaycast.name"),
     hint: game.i18n.localize("levels.settings.debugRaycast.hint"),
     scope: "world",
@@ -253,25 +253,25 @@ Hooks.on("init", () => {
 });
 
 Hooks.on("renderTileConfig", (app, html, data) => {
-  const isInjected = html.find(`input[name="flags.${_levelsModuleName}.rangeTop"]`).length > 0;
+  const isInjected = html.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).length > 0;
   if(isInjected) return;
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
-  let showAboveRange = app.object.getFlag(_levelsModuleName, "showAboveRange");
+  let showAboveRange = app.object.getFlag(CONFIG.Levels.MODULE_ID, "showAboveRange");
   if (showAboveRange == undefined || showAboveRange == null)
     showAboveRange = Infinity;
 
-  let showifbelow = app.object.getFlag(_levelsModuleName, "showIfAbove");
+  let showifbelow = app.object.getFlag(CONFIG.Levels.MODULE_ID, "showIfAbove");
   let checkedbox = showifbelow ? ` checked=""` : "";
-  let isBasement = app.object.getFlag(_levelsModuleName, "isBasement");
+  let isBasement = app.object.getFlag(CONFIG.Levels.MODULE_ID, "isBasement");
   let checkedboxisBasement = isBasement ? ` checked=""` : "";
-  let noFogHide = app.object.getFlag(_levelsModuleName, "noFogHide");
+  let noFogHide = app.object.getFlag(CONFIG.Levels.MODULE_ID, "noFogHide");
   let checkedboxnoFogHide = noFogHide ? ` checked=""` : "";
 
   const injHtml = injectConfig.inject(app, html, {
@@ -330,7 +330,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
   <div class="form-fields">
-      <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+      <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
   </div>
 </div>
 
@@ -341,7 +341,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeBottom" data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 
@@ -350,7 +350,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
               "levels.tilecoonfig.showIfAbove.name"
             )}</label>
             <div class="form-fields">
-                <input type="checkbox" name="flags.${_levelsModuleName}.showIfAbove"${checkedbox}>
+                <input type="checkbox" name="flags.${CONFIG.Levels.MODULE_ID}.showIfAbove"${checkedbox}>
             </div>
         </div>
 
@@ -362,7 +362,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.showAboveRange" data-dtype="Number" value="${showAboveRange}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.showAboveRange" data-dtype="Number" value="${showAboveRange}" step="1">
 </div>
 </div>
 
@@ -371,7 +371,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
               "levels.tilecoonfig.isBasement.name"
             )}</label>
             <div class="form-fields">
-                <input type="checkbox" name="flags.${_levelsModuleName}.isBasement"${checkedboxisBasement}>
+                <input type="checkbox" name="flags.${CONFIG.Levels.MODULE_ID}.isBasement"${checkedboxisBasement}>
             </div>
         </div>
 
@@ -380,7 +380,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
           "levels.tilecoonfig.noFogHide.name"
         )}</label>
         <div class="form-fields">
-            <input type="checkbox" name="flags.${_levelsModuleName}.noFogHide"${checkedboxnoFogHide}>
+            <input type="checkbox" name="flags.${CONFIG.Levels.MODULE_ID}.noFogHide"${checkedboxnoFogHide}>
         </div>
     </div>
 
@@ -392,11 +392,11 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
@@ -408,7 +408,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
 
@@ -419,7 +419,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+  <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 
@@ -431,11 +431,11 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
 });
 
 Hooks.on("renderNoteConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
@@ -447,7 +447,7 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
 
@@ -458,7 +458,7 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+  <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 
@@ -470,11 +470,11 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
@@ -486,7 +486,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
 
@@ -497,7 +497,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+  <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 
@@ -511,22 +511,22 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
-  let heightRangeTop = app.object.getFlag(_levelsModuleName, "rangeTop");
+  let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
   if (heightRangeTop == undefined || heightRangeTop == null)
     heightRangeTop = Infinity;
 
-  let heightRangeBottom = app.object.getFlag(_levelsModuleName, "rangeBottom");
+  let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
   if (heightRangeBottom == undefined || heightRangeBottom == null)
     heightRangeBottom = -Infinity;
 
-  let drawingMode = app.object.getFlag(_levelsModuleName, "drawingMode") || 0;
+  let drawingMode = app.object.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode") || 0;
   let opt0 = drawingMode == 0 ? `selected=""` : ``;
   let opt1 = drawingMode == 1 ? `selected=""` : ``;
   let opt2 = drawingMode == 2 ? `selected=""` : ``;
   let opt3 = drawingMode == 3 ? `selected=""` : ``;
 
   let elevatorFloors =
-    app.object.getFlag(_levelsModuleName, "elevatorFloors") || "";
+    app.object.getFlag(CONFIG.Levels.MODULE_ID, "elevatorFloors") || "";
 
   const newHtml = `
 
@@ -535,7 +535,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
               "levels.drawingconfig.isHole.name"
             )}</label>
             <div class="form-fields">
-                <select name="flags.${_levelsModuleName}.drawingMode" data-dtype="Number">
+                <select name="flags.${CONFIG.Levels.MODULE_ID}.drawingMode" data-dtype="Number">
                     <option value="0" ${opt0}>${game.i18n.localize(
     "levels.drawingconfig.isHole.opt0"
   )}</option><option value="1" ${opt1}>${game.i18n.localize(
@@ -557,7 +557,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
     "levels.drawingconfig.elevatorFloors.name"
   )}</label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.elevatorFloors" value="${elevatorFloors}">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.elevatorFloors" value="${elevatorFloors}">
 </div>
 </div>
 
@@ -569,7 +569,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"  data-dtype="Number" value="${heightRangeTop}" step="1">
 </div>
 </div>
 
@@ -580,7 +580,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-  <input type="text" name="flags.${_levelsModuleName}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
+  <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.rangeBottom"  data-dtype="Number" value="${heightRangeBottom}" step="1">
 </div>
 </div>
 
@@ -592,7 +592,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 });
 
 /*Hooks.on("renderTokenConfig", (app, html, data) => {
-  let tokenHeight = app.token.getFlag(_levelsModuleName, "tokenHeight") || 0;
+  let tokenHeight = app.token.getFlag(CONFIG.Levels.MODULE_ID, "tokenHeight") || 0;
 
   let newHtml = `
 <div class="form-group">
@@ -601,7 +601,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
             )}<span class="units">${game.i18n.localize(
     "levels.tokenconfig.tokenHeight.unit"
   )}</span></label>
-            <input type="number" step="any" name="flags.${_levelsModuleName}.tokenHeight" placeholder="units" value="${tokenHeight}">
+            <input type="number" step="any" name="flags.${CONFIG.Levels.MODULE_ID}.tokenHeight" placeholder="units" value="${tokenHeight}">
         </div>
 `;
   const overh = html.find('input[name="elevation"]');
@@ -612,8 +612,8 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 
 Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
   let drawing = data.object.document;
-  if (drawing.getFlag(_levelsModuleName, "drawingMode")) {
-    let active = drawing.getFlag(_levelsModuleName, "stairLocked") || false;
+  if (drawing.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode")) {
+    let active = drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false;
     let toggleStairbtn = `<div class="control-icon${
       active ? " active" : ""
     }" id="toggleStair">
@@ -628,9 +628,9 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
       console.log("test");
       active = !active;
       drawing.setFlag(
-        _levelsModuleName,
+        CONFIG.Levels.MODULE_ID,
         "stairLocked",
-        !(drawing.getFlag(_levelsModuleName, "stairLocked") || false)
+        !(drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false)
       );
       let hudbtn = hud.find(`div[id="toggleStair"]`);
       if (active) hudbtn.addClass("active");
@@ -641,7 +641,7 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
   if (
-    game.settings.get(_levelsModuleName, "lockElevation") &&
+    game.settings.get(CONFIG.Levels.MODULE_ID, "lockElevation") &&
     !game.user.isGM
   ) {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
@@ -650,7 +650,7 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
 });
 
 Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
-  let elevation = app.object.getFlag(_levelsModuleName, "elevation");
+  let elevation = app.object.getFlag(CONFIG.Levels.MODULE_ID, "elevation");
 
   let newHtml = `
 <div class="form-group">
@@ -660,7 +660,7 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
     "levels.tilecoonfig.range.unit"
   )})</span></label>
 <div class="form-fields">
-    <input type="text" name="flags.${_levelsModuleName}.elevation"  data-dtype="Number" value="${elevation}" step="1">
+    <input type="text" name="flags.${CONFIG.Levels.MODULE_ID}.elevation"  data-dtype="Number" value="${elevation}" step="1">
 </div>
 </div>
 

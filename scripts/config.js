@@ -1,93 +1,38 @@
-import { injectConfig } from "./injectConfig.js";
+import { injectConfig } from "./lib/injectConfig.js";
+import { TileHandler } from './handlers/tileHandler.js';
+import { RefreshHandler } from './handlers/refreshHandler.js';
+import { StairHandler } from "./handlers/stairHandler.js";
+import { BasicHandler } from "./handlers/basicHandler.js";
+import { SightHandler } from "./handlers/sightHandler.js";
+import { registerWrappers } from './wrappers.js';
+
+Object.defineProperty(TileDocument.prototype, "elevation", {
+  get: function () {
+    return this.flags?.levels?.rangeBottom ?? Infinity;
+  }
+});
 
 Hooks.on("init", () => {
-  
-  libWrapper.register(
-    _levelsModuleName,
-    "Token.prototype.refresh",
-    _levelsTokenRefresh,
-    "MIXED"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "Tile.prototype.refresh",
-    _levelsTileRefresh,
-    "WRAPPER"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "Token.prototype._onMovementFrame",
-    _levelsOnMovementFrame,
-    "WRAPPER"
-  );
-  if (
-    !game.modules.get("perfect-vision")?.active ||
-    isNewerVersion("2.8.0", game.modules.get("perfect-vision").data.version)
-  ) {
-    libWrapper.register(
-      _levelsModuleName,
-      "LightingLayer.prototype.refresh",
-      _lightingRefresh,
-      "OVERRIDE"
-    );
-    libWrapper.register(
-      _levelsModuleName,
-      "SightLayer.prototype.testVisibility",
-      _levelsTestVisibility,
-      "OVERRIDE"
-    );
-    libWrapper.register(
-      _levelsModuleName,
-      "AmbientSound.prototype.isAudible",
-      _levelsIsAudible,
-      "OVERRIDE"
-    );
+  CONFIG.Levels = {
+    MODULE_ID: "levels"
   }
-  libWrapper.register(
-    _levelsModuleName,
-    "MeasuredTemplate.prototype.draw",
-    _levelsTemplatedraw,
-    "WRAPPER"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "MeasuredTemplate.prototype._refreshRulerText",
-    _levelsRefreshRulerText,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "Token.prototype.isVisible",
-    _levelsTokenIsVisible,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "Note.prototype.isVisible",
-    _levelsNoteIsVisible,
-    "WRAPPER"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "LightSource.prototype._renderTexture",
-    _levelsRenderLightTexture,
-    "OVERRIDE"
-  );
-  libWrapper.register(
-    _levelsModuleName,
-    "Token.prototype._drawTooltip",
-    _levelsTokendrawTooltip,
-    "MIXED"
-  );
+  CONFIG.Levels.handlers = {
+      TileHandler,
+      RefreshHandler,
+      StairHandler,
+      BasicHandler,
+      SightHandler
+  }
 
+  Hooks.callAll("levelsConfigReady", CONFIG.Levels);
 
-  
-  if (_betterRoofs) _betterRoofs.initializeRoofs();
-});
+  registerWrappers();
+
+})
 
 Hooks.once("ready", () => {
   // Module title
-  const MODULE_ID = _levelsModuleName;
+  const MODULE_ID = CONFIG.Levels.MODULE_ID;
   const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
@@ -132,7 +77,7 @@ Hooks.once("ready", () => {
 });
 
 Hooks.on("init", () => {
-  game.settings.register(_levelsModuleName, "tokenElevScale", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "tokenElevScale", {
     name: game.i18n.localize("levels.settings.tokenElevScale.name"),
     hint: game.i18n.localize("levels.settings.tokenElevScale.name"),
     scope: "world",
@@ -145,7 +90,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "tokenElevScaleMultiSett", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "tokenElevScaleMultiSett", {
     name: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.name"),
     hint: game.i18n.localize("levels.settings.tokenElevScaleMultiSett.hint"),
     scope: "world",
@@ -157,7 +102,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "fogHiding", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "fogHiding", {
     name: game.i18n.localize("levels.settings.fogHiding.name"),
     hint: game.i18n.localize("levels.settings.fogHiding.hint"),
     scope: "world",
@@ -170,7 +115,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "revealTokenInFog", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "revealTokenInFog", {
     name: game.i18n.localize("levels.settings.revealTokenInFog.name"),
     hint: game.i18n.localize("levels.settings.revealTokenInFog.hint"),
     scope: "world",
@@ -182,7 +127,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "lockElevation", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "lockElevation", {
     name: game.i18n.localize("levels.settings.lockElevation.name"),
     hint: game.i18n.localize("levels.settings.lockElevation.hint"),
     scope: "world",
@@ -191,7 +136,7 @@ Hooks.on("init", () => {
     default: false,
   });
 
-  game.settings.register(_levelsModuleName, "hideElevation", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "hideElevation", {
     name: game.i18n.localize("levels.settings.hideElevation.name"),
     hint: game.i18n.localize("levels.settings.hideElevation.hint"),
     scope: "world",
@@ -209,7 +154,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "enableTooltips", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "enableTooltips", {
     name: game.i18n.localize("levels.settings.enableTooltips.name"),
     hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
     scope: "world",
@@ -218,7 +163,7 @@ Hooks.on("init", () => {
     default: true,
   });
 
-  game.settings.register(_levelsModuleName, "preciseTokenVisibility", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "preciseTokenVisibility", {
     name: game.i18n.localize("levels.settings.preciseTokenVisibility.name"),
     hint: game.i18n.localize("levels.settings.preciseTokenVisibility.hint"),
     scope: "world",
@@ -230,7 +175,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "exactTokenVisibility", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "exactTokenVisibility", {
     name: game.i18n.localize("levels.settings.exactTokenVisibility.name"),
     hint: game.i18n.localize("levels.settings.exactTokenVisibility.hint"),
     scope: "world",
@@ -242,7 +187,7 @@ Hooks.on("init", () => {
     },
   });
 
-  game.settings.register(_levelsModuleName, "forceUiRefresh", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "forceUiRefresh", {
     name: game.i18n.localize("levels.settings.forceUiRefresh.name"),
     hint: game.i18n.localize("levels.settings.forceUiRefresh.hint"),
     scope: "world",
@@ -251,7 +196,7 @@ Hooks.on("init", () => {
     default: true,
   });
 
-  game.settings.register(_levelsModuleName, "debugRaycast", {
+  game.settings.register(CONFIG.Levels.MODULE_ID, "debugRaycast", {
     name: game.i18n.localize("levels.settings.debugRaycast.name"),
     hint: game.i18n.localize("levels.settings.debugRaycast.hint"),
     scope: "world",
@@ -265,7 +210,7 @@ Hooks.on("init", () => {
 });
 
 Hooks.on("renderTileConfig", (app, html, data) => {
-  const isInjected = html.find(`input[name="flags.${_levelsModuleName}.rangeTop"]`).length > 0;
+  const isInjected = html.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).length > 0;
   if(isInjected) return;
 
   const injHtml = injectConfig.inject(app, html, {
@@ -451,8 +396,8 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 
 Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
   let drawing = data.object.document;
-  if (drawing.getFlag(_levelsModuleName, "drawingMode")) {
-    let active = drawing.getFlag(_levelsModuleName, "stairLocked") || false;
+  if (drawing.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode")) {
+    let active = drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false;
     let toggleStairbtn = `<div class="control-icon${
       active ? " active" : ""
     }" id="toggleStair">
@@ -467,9 +412,9 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
       console.log("test");
       active = !active;
       drawing.setFlag(
-        _levelsModuleName,
+        CONFIG.Levels.MODULE_ID,
         "stairLocked",
-        !(drawing.getFlag(_levelsModuleName, "stairLocked") || false)
+        !(drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false)
       );
       let hudbtn = hud.find(`div[id="toggleStair"]`);
       if (active) hudbtn.addClass("active");
@@ -480,7 +425,7 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
   if (
-    game.settings.get(_levelsModuleName, "lockElevation") &&
+    game.settings.get(CONFIG.Levels.MODULE_ID, "lockElevation") &&
     !game.user.isGM
   ) {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
@@ -495,9 +440,3 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });
-
-//Incompatibility Warnings
-
-Hooks.once('libChangelogsReady', function() {
-  if(game.modules.get("midi-qol")?.active && game.settings.get("midi-qol","playerControlsInvisibleTokens"))libChangelogs.registerConflict("levels", "midi-qol",game.i18n.localize("levels.conflicts.midiqol.tokenvis"),"major")
-})

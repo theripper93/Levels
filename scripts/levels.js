@@ -1,7 +1,9 @@
+let _levels;
+
 class Levels {
   constructor() {
     this.DEBUG = false;
-    this.RAYS = game.settings.get(_levelsModuleName, "debugRaycast");
+    this.RAYS = game.settings.get(CONFIG.Levels.MODULE_ID, "debugRaycast");
     this.CONSTS = {};
     this.CONSTS.COLLISIONTYPE = {
       sight: 0,
@@ -21,27 +23,27 @@ class Levels {
     this.lastReleasedToken = undefined;
     this.levelsTiles = [];
     this.levelsHoles = [];
-    this.fogHiding = game.settings.get(_levelsModuleName, "fogHiding");
+    this.fogHiding = game.settings.get(CONFIG.Levels.MODULE_ID, "fogHiding");
     this.useCollision3D = game.modules.get("levels-3d-preview")?.active && canvas.scene.getFlag("levels-3d-preview","object3dSight");
     this.elevationScale = game.settings.get(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "tokenElevScale"
     );
     this.advancedLOS = true;
     this.preciseTokenVisibility = game.settings.get(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "preciseTokenVisibility"
     );
     this.exactTokenVisibility = game.settings.get(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "exactTokenVisibility"
     );
     this.tokenElevScaleMultiSett = game.settings.get(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "tokenElevScaleMultiSett"
     );
-    this.hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
-    this.revealTokenInFog = game.settings.get(_levelsModuleName, "revealTokenInFog");
+    this.hideElevation = game.settings.get(CONFIG.Levels.MODULE_ID, "hideElevation");
+    this.revealTokenInFog = game.settings.get(CONFIG.Levels.MODULE_ID, "revealTokenInFog");
     this.UI = game.user.isGM ? new LevelsUI() : undefined;
     //Module Compatibility
     this.modules = {};
@@ -58,55 +60,16 @@ class Levels {
   static get() {
     Levels._instance = new Levels();
     Levels._instance.floorContainer.sortableChildren = true;
-    canvas.background.addChild(Levels._instance.floorContainer);
-    canvas.foreground.addChild(Levels._instance.overContainer);
-    canvas.sight.explored.addChild(Levels._instance.fogContainer);
-    canvas.sight.explored.addChild(Levels._instance.tokenRevealFogContainer);
+    //canvas.sight.explored.addChild(Levels._instance.fogContainer);
+    //canvas.sight.explored.addChild(Levels._instance.tokenRevealFogContainer);
     canvas["levelsLayer"] = new CanvasLayer();
     if (this.UI) Levels._instance.UI.readLevels();
     return Levels._instance;
   }
 
-  getTileBoundingBox(tile) {
-    let tileZZ = {
-      x: tile.center.x - tile.data.width / 2,
-      y: tile.center.y - tile.data.height / 2,
-    };
-    let tileCorners = [
-      { x: tileZZ.x, y: tileZZ.y }, //tl
-      { x: tileZZ.x + tile.data.width, y: tileZZ.y }, //tr
-      { x: tileZZ.x + tile.data.width, y: tileZZ.y + tile.data.height }, //br
-      { x: tileZZ.x, y: tileZZ.y + tile.data.height }, //bl
-    ];
-    return new PIXI.Polygon(tileCorners);
-  }
-
-  findRoomsTiles(token, allTiles) {
-    let tiles = [];
-    for (let tile of allTiles) {
-      if (tile.poly && tile.poly.contains(token.center.x, token.center.y)) {
-        let range = tile.range;
-        tiles.push({
-          tile: tile.tile,
-          poly: tile.roomPoly,
-          range: range,
-        });
-      }
-    }
-    return tiles;
-  }
-
-  findCurrentFloorForElevation(elevation, floors) {
-    floors.forEach((floor) => {
-      if (elevation <= floor.range[1] && elevation >= floor.range[0])
-        return floor.range;
-    });
-    return false;
-  }
-
   findAllTiles() {
     let tiles = [];
-    for (let tile of canvas.foreground.placeables) {
+    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
       if (tile.data.hidden) continue;
       if (tile.roomPoly) {
         let {
@@ -224,23 +187,14 @@ class Levels {
 
     switch (altitude) {
       case 1: // If the tile is above the token, remove it from the stack
-        this.removeTempTile(tile);
         return false;
         break;
       case -1: //If a tile is below a token render it in the stack unless the user specified otherwise with isBsement, in wich case add it to the stack only if the token is below ground
-        if (tile.isBasement && cTokenElev >= 0) {
-          this.removeTempTile(tile);
-        } else {
-          this.mirrorTileInBackground(tile);
-        }
         return false;
         break;
       case 0: //If the tile is on the same level as the token, If the tile is set as overhead tile within a level, set it to visible and remove that tile from the stack, otherwise, add it to the stack
-        if (!tile.levelsOverhead) {
-          this.mirrorTileInBackground(tile, true);
-        } else {
+        if (tile.levelsOverhead) {
           tile.tile.visible = true;
-          this.removeTempTile(tile);
         }
         return tile;
         break;
@@ -272,17 +226,14 @@ class Levels {
             t.token.levelsHidden = true;
             t.token.refresh()
             tokenPov.push({ token: t, visible: t.token.isVisible });
-            this.getTokenIconSprite(t.token);
           } else {
             t.token.visible = false;
             tokenPov.push({ token: t, visible: false });
-            this.removeTempToken(t.token);
           }
         } else {
           t.token.levelsHidden = false;
           if (t.token.icon) t.token.refresh()
-          tokenPov.push({ token: t, visible: t.token.isVisible });
-          this.removeTempToken(t.token);
+          tokenPov.push({ token: t, visible: t.token.isVisible }); 
         }
       }
     });
@@ -294,147 +245,7 @@ class Levels {
   }
 
   
-  advancedLosTestVisibility(sourceToken, token) {
-    const gm = game.user.isGM;
-    if (canvas.scene.data.tokenVision === false)
-      return gm || !token.data.hidden;
-    if (token._controlled) return true;
-    if (token.data.hidden && !gm) return false;
-    const visibilityOverride = this.overrideVisibilityTest(sourceToken, token);
-    if(typeof visibilityOverride === 'boolean') return visibilityOverride;
-    if (!sourceToken.data.vision) return gm;
-    const angleTest = this.testInAngle(sourceToken, token);
-    if (!angleTest) return false;
-    const inLOS = !this.advancedLosTestInLos(sourceToken, token);
-    const inRange = this.tokenInRange(sourceToken, token);
-    if (inLOS && inRange && token.data.hidden && gm) return true;
-    if (inLOS && inRange && !token.data.hidden) return true;
-    const inLight = this.advancedLOSCheckInLight(token);
-    if(inLight === 2 && !token.data.hidden) return true;
-    if (inLOS && inLight && !token.data.hidden) return true;
-    return false;
-  }
 
-  //Method for modules to override the levels visibility test
-  overrideVisibilityTest(sourceToken, token) {}
-
-  advancedLosTestInLos(sourceToken, token) {
-    const tol = 4;
-    if (this.preciseTokenVisibility === false)
-      return this.checkCollision(sourceToken, token, "sight");
-    const targetLOSH = token.losHeight;
-    const targetElevation = token.data.elevation+(targetLOSH-token.data.elevation)*0.1;
-    const sourceCenter = {
-      x: sourceToken.center.x,
-      y: sourceToken.center.y,
-      z: sourceToken.losHeight,
-    };
-    const tokenCorners = [
-      { x: token.center.x, y: token.center.y, z: targetLOSH },
-      { x: token.x + tol, y: token.y + tol, z: targetLOSH },
-      { x: token.x + token.w - tol, y: token.y + tol, z: targetLOSH },
-      { x: token.x + tol, y: token.y + token.h - tol, z: targetLOSH },
-      { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
-    ];
-    if(this.exactTokenVisibility){
-      const exactPoints = [
-        { x: token.center.x, y: token.center.y, z: targetElevation+(targetLOSH-targetElevation)/2 },
-      { x: token.center.x, y: token.center.y, z: targetElevation },
-      { x: token.x + tol, y: token.y + tol, z: targetElevation },
-      { x: token.x + token.w - tol, y: token.y + tol, z: targetElevation },
-      { x: token.x + tol, y: token.y + token.h - tol, z: targetElevation },
-      { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetElevation },
-      ]
-      tokenCorners.push(...exactPoints);
-    }
-    for (let point of tokenCorners) {
-      let collision = this.testCollision(sourceCenter, point, "sight",sourceToken);
-      if (!collision) return collision;
-    }
-    return true;
-  }
-
-  testInAngle(sourceToken, token) {
-    if (sourceToken.data.sightAngle == 360) return true;
-
-    //normalize angle
-    function normalizeAngle(angle) {
-      let normalized = angle % (Math.PI * 2);
-      if (normalized < 0) normalized += Math.PI * 2;
-      return normalized;
-    }
-    
-    //check angled vision
-    const angle = normalizeAngle(
-      Math.atan2(
-        token.center.y - sourceToken.center.y,
-        token.center.x - sourceToken.center.x
-      )
-    );
-    const rotation = (((sourceToken.data.rotation + 90) % 360) * Math.PI) / 180;
-    const end = normalizeAngle(
-      rotation + (sourceToken.data.sightAngle * Math.PI) / 180 / 2
-    );
-    const start = normalizeAngle(
-      rotation - (sourceToken.data.sightAngle * Math.PI) / 180 / 2
-    );
-    if (start > end) return angle >= start || angle <= end;
-    return angle >= start && angle <= end;
-  }
-
-  advancedLOSCheckInLight(token) {
-    for (let source of canvas.lighting.sources) {
-      if (source.skipRender && source.object.document.documentName !== "Token") continue;
-      if (!source.active) continue;
-      if (source.object.document.documentName === "Token") {
-        const lightRadius = Math.max(
-          source.object.data.light.dim,
-          source.object.data.light.bright
-        );
-        const lightTop = source.object.data.elevation + (lightRadius ?? Infinity);
-        const lightBottom =
-          source.object.data.elevation - (lightRadius ?? -Infinity);
-        if (
-          token.data.elevation >= lightBottom &&
-          token.data.elevation <= lightTop
-        ) {
-          if (this.checkInLightCorners(source.los,token)) return true;
-        }
-      } else {
-        const lightTop = source.object.data.flags.levels?.rangeTop ?? Infinity;
-        const lightBottom =
-          source.object.data.flags.levels?.rangeBottom ?? -Infinity;
-        if (
-          token.data.elevation >= lightBottom &&
-          token.data.elevation <= lightTop
-        ) {
-          if (this.checkInLightCorners(source.los,token)) {
-            return source.object?.data?.vision ? 2 : true; 
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  checkInLightCorners(los, token) {
-    if(!los) return false;
-      const tol = 4;
-      if (this.preciseTokenVisibility === false)
-        return los.contains(token.center.x, token.center.y);
-      const tokenCorners = [
-        { x: token.center.x, y: token.center.y },
-        { x: token.x + tol, y: token.y + tol },
-        { x: token.x + token.w - tol, y: token.y + tol },
-        { x: token.x + tol, y: token.y + token.h - tol },
-        { x: token.x + token.w - tol, y: token.y + token.h - tol},
-      ];
-      for (let point of tokenCorners) {
-        let inLos = los.contains(point.x, point.y);
-        if (inLos) return inLos;
-      }
-      return false;
-  }
 
   collateVisions() {
     const gm = game.user.isGM;
@@ -468,22 +279,16 @@ class Levels {
       token.levelsVisible = token.visible;
       if (token.data.elevation > sourceToken.data.elevation && token.visible) {
         token.levelsHidden = true;
-        this.getTokenIconSpriteOverhead(token);
-        this.removeTempToken(token);
       } else if (
         token.data.elevation < sourceToken.data.elevation &&
         token.visible
       ) {
         token.levelsHidden = true;
-        this.removeTempTokenOverhead(token);
-        this.getTokenIconSprite(token);
       } else if (
         (token.data.elevation == sourceToken.data.elevation && token.visible) ||
         !token.visible
       ) {
         token.levelsHidden = false;
-        this.removeTempTokenOverhead(token);
-        this.removeTempToken(token);
       }
       this.generateFogVisionMask(token)
     }
@@ -539,16 +344,7 @@ class Levels {
     this.tokenRevealFogContainer.spriteIndex[token.id] = s;
   }
 
-  tokenInRange(sourceToken, token) {
-    const range = canvas.lighting.globalLight
-      ? Infinity
-      : sourceToken.vision.radius;
-    if (range === 0) return false;
-    if (range === Infinity) return true;
-    const tokensSizeAdjust = (Math.min(token.w, token.h) || 0)/Math.SQRT2;
-    const dist = this.getUnitTokenDist(sourceToken, token) * canvas.dimensions.size / canvas.dimensions.distance - tokensSizeAdjust;
-    return dist <= range;
-  }
+
 
   isInsideHoleRange(isInHole, t, cTokenElev) {
     return (
@@ -576,69 +372,6 @@ class Levels {
       }
     }
     return false;
-  }
-
-  getTokenState(token, allTiles) {
-    let elevation = token.data.elevation;
-    let tilesIsIn = this.findRoomsTiles(token, allTiles);
-    if (!tilesIsIn || tilesIsIn.length == 0) {
-      return { token: token, range: [-Infinity, Infinity] }; //return { token: token, range: [0, elevation] };
-    }
-    let levelTile;
-    tilesIsIn.forEach((t) => {
-      let isInLevel = this.checkTile(
-        t,
-        this.getPositionRelativeToTile(elevation, t)
-      );
-      if (isInLevel) levelTile = isInLevel;
-    });
-    if (levelTile) {
-      return { token: token, range: levelTile.range };
-    } else {
-      levelTile = this.findCeiling(tilesIsIn);
-      return { token: token, range: [-Infinity, levelTile.range[0] - 1] };
-    }
-  }
-
-  mirrorTileInBackground(tileIndex, hideFog = false) {
-    let tile = tileIndex.tile;
-    let oldSprite = this.floorContainer.children.find((c) => c.name == tile.id);
-    let tileImg = tile.tile;
-    if (!tileImg || oldSprite || !tileImg.texture.baseTexture) return;
-    let sprite = new PIXI.Sprite.from(tileImg.texture);
-    Object.defineProperty(sprite, "filters", {
-      get() {
-        return tileImg.filters?.filter(
-          (f) => f !== tile.occlusionFilter
-        );
-      },
-      set: () => {},
-    });
-    sprite.isSprite = true;
-    sprite.width = tile.data.width;
-    sprite.height = tile.data.height;
-    sprite.position = tile.position;
-    sprite.position.x += tileImg.x;
-    sprite.position.y += tileImg.y;
-    sprite.anchor = tileImg.anchor;
-    sprite.angle = tileImg.angle;
-    sprite.alpha = tile.data.alpha ?? 1;
-    sprite.tint = tile.data.tint
-      ? foundry.utils.colorStringToHex(tile.data.tint)
-      : 0xffffff;
-    sprite.name = tile.id;
-    sprite.zIndex = tileIndex.levelsOverhead
-      ? tileIndex.range[0] + 2
-      : tileIndex.range[0];
-    sprite.zIndex += tile.data.z/1000000;
-    this.floorContainer.spriteIndex[tile.id] = sprite;
-    this.floorContainer.addChild(sprite);
-  }
-
-  removeTempTile(tileIndex) {
-    let tile = tileIndex.tile;
-    let sprite = this.floorContainer.children.find((c) => c.name == tile.id);
-    if (sprite) this.floorContainer.removeChild(sprite);
   }
 
   computeFog(tiles){
@@ -687,13 +420,11 @@ class Levels {
   }
 
   _onElevationChangeUpdate(overrideElevation = undefined) {
-    if (!this.init && canvas.sight.tokenVision) this._levelsOnSightRefresh();
+    if (!this.init && canvas.scene.tokenVision) this._levelsOnSightRefresh();
     let perfEnd, perfStart;
     if (_levels.DEBUG) perfStart = performance.now();
     let cToken = overrideElevation || canvas.tokens.controlled[0];
     if (!cToken || (!canvas.tokens.controlled[0] && game.user.isGM)) return;
-    this.removeTempTokenOverhead(cToken);
-    this.removeTempToken(cToken);
     let allTiles = this.findAllTiles();
     let holes = this.getHoles();
     if (this.elevationScale) this.updateScales();
@@ -799,7 +530,7 @@ class Levels {
       let templatepos = {
         x: template.center.x,
         y: template.center.y,
-        z: template.document.getFlag(_levelsModuleName, "elevation") ?? 0,
+        z: template.document.getFlag(CONFIG.Levels.MODULE_ID, "elevation") ?? 0,
       };
       template.visible = !this.testCollision(tokenpos, templatepos, "sight", source);
       const highlight = canvas.grid.getHighlightLayer(`Template.${template.id}`)
@@ -1112,7 +843,7 @@ class Levels {
     for(let drawing of canvas.drawings.placeables){
       let { rangeBottom, rangeTop, drawingMode } =
         this.getFlagsForObject(drawing);
-      let isLocked = drawing.document.getFlag(_levelsModuleName, "stairLocked");
+      let isLocked = drawing.document.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked");
       if (
         (drawingMode == 2 || drawingMode == 3) &&
         rangeBottom != -Infinity &&
@@ -1164,7 +895,7 @@ class Levels {
               if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
                 _levels.renderElevatorDalog(
                   stair.drawing.document.getFlag(
-                    _levelsModuleName,
+                    CONFIG.Levels.MODULE_ID,
                     "elevatorFloors"
                   ),
                   token
@@ -1280,24 +1011,6 @@ class Levels {
     const top = Math.min(...above)
     const bottom = Math.max(...below)
     return [bottom,top]
-
-
-    return
-    let rangeDiff = Infinity
-    let result = [-Infinity, Infinity]
-    for(let tile of this.levelsTiles){
-      const rangeTop = tile.range[1]
-      const rangeBottom = tile.range[0]
-      if(losHeight < rangeBottom || losHeight > rangeTop) continue;
-      if(tile.poly.contains(token.center.x,token.center.y)){
-        const diff = Math.abs(rangeTop - rangeBottom);
-        if(diff < rangeDiff){
-          rangeDiff = diff;
-          result = [rangeBottom, rangeTop]
-        }
-      }
-    }
-    return result;
   }
 
   computeSounds(cToken) {
@@ -1342,102 +1055,6 @@ class Levels {
     return globalPoints;
   }
 
-  getTokenIconSprite(token, x, y, rotate) {
-    let oldSprite = this.floorContainer.children.find(
-      (c) => c.name == token.id
-    );
-    let icon = token.icon;
-    if (token._controlled || !icon || !icon.texture.baseTexture) return;
-    let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
-    if (!oldSprite) {
-      token.refresh();
-      this.floorContainer.spriteIndex[token.id] = sprite;
-      this.floorContainer.addChild(sprite);
-    }
-  }
-
-  getSpriteCopy(oldSprite, icon, token, x, y) {
-    let sprite = oldSprite ? oldSprite : new PIXI.Sprite.from(icon.texture);
-    sprite.isSprite = true;
-    Object.defineProperty(sprite, "filters", {
-      get() {
-        return icon.filters;
-      },
-      set: () => {},
-    });
-    const tex = token.texture;
-    if (tex) {
-      let aspect = tex.width / tex.height;
-      const scale = token.icon.scale;
-      if (aspect >= 1) {
-        sprite.width = token.w * token.data.scale;
-        scale.y = Number(scale.x);
-      } else {
-        sprite.height = token.h * token.data.scale;
-        scale.x = Number(scale.y);
-      }
-    }
-    sprite.scale.x =
-      Math.abs(icon.scale.x) *
-      (token.data.mirrorX ? -1 : 1) *
-      (token.elevationScaleFactor || 1);
-    sprite.scale.y =
-      Math.abs(icon.scale.y) *
-      (token.data.mirrorY ? -1 : 1) *
-      (token.elevationScaleFactor || 1);
-    sprite.tint = token.data.tint
-      ? foundry.utils.colorStringToHex(token.data.tint)
-      : 0xffffff;
-    sprite.position.x = x || token.position.x;
-    sprite.position.y = y || token.position.y;
-    sprite.position.x += icon.x;
-    sprite.position.y += icon.y;
-    sprite.anchor = icon.anchor;
-    sprite.angle = icon.angle;
-    if (token.visible) {
-      sprite.alpha = token.data.hidden
-        ? Math.min(token.data.alpha, 0.5)
-        : token.data.alpha;
-    } else {
-      sprite.alpha = 0;
-    }
-    sprite.name = token.id;
-    sprite.zIndex = token.data.elevation + 1;
-    return sprite;
-  }
-
-  removeTempToken(token) {
-    if (!this.floorContainer.spriteIndex[token.id]) return;
-    let sprite = this.floorContainer.children.find((c) => c.name == token.id);
-    if (sprite) {
-      token?.refresh();
-      this.floorContainer.removeChild(sprite);
-    }
-    delete this.floorContainer.spriteIndex[token.id];
-  }
-
-  getTokenIconSpriteOverhead(token, x, y, rotate) {
-    let oldSprite = this.overContainer.children.find((c) => c.name == token.id);
-    let icon = token.icon;
-    if (token._controlled || !icon || !icon.texture.baseTexture) return;
-    let sprite = this.getSpriteCopy(oldSprite, icon, token, x, y);
-    if (!oldSprite) {
-      token.refresh();
-      this.overContainer.spriteIndex[token.id] = sprite;
-      this.overContainer.addChild(sprite);
-    }
-  }
-
-  removeTempTokenOverhead(token) {
-    if (!this.overContainer.spriteIndex[token.id]) return;
-    let sprite = this.overContainer.children.find((c) => c.name == token.id);
-    if (sprite) {
-      token?.refresh();
-      this.overContainer.removeChild(sprite);
-    }
-    delete this.overContainer.spriteIndex[token.id];
-  }
-
   getUnitTokenDist(token1, token2) {
     const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
     const x1 = token1.center.x;
@@ -1456,7 +1073,7 @@ class Levels {
 
   restoreGMvisibility() {
     let levelLigths = _levels.getLights();
-    canvas.foreground.placeables.forEach((t) => {
+    canvas.tiles.placeables.filter(t => t.document.overhead).forEach((t) => {
       t.visible = true;
       _levels.removeTempTile({ tile: t });
       levelLigths.forEach((light) => {
@@ -1471,8 +1088,6 @@ class Levels {
       token.levelsVisible = true;
       token.refresh()
       token.levelsHidden = false;
-      _levels.removeTempTokenOverhead(token);
-      _levels.removeTempToken(token);
       token.refresh();
     });
     _levels.clearLights(_levels.getLights());
@@ -1532,11 +1147,11 @@ class Levels {
     );
     let migrated = 0;
     async function migrateForObject(object) {
-      let oldLevelsFlag = object.getFlag(_levelsModuleName, "heightRange");
+      let oldLevelsFlag = object.getFlag(CONFIG.Levels.MODULE_ID, "heightRange");
       if (!oldLevelsFlag) return;
       let splitFlag = oldLevelsFlag.split(",");
       if (splitFlag.length != 2) {
-        await object.unsetFlag(_levelsModuleName, "heightRange");
+        await object.unsetFlag(CONFIG.Levels.MODULE_ID, "heightRange");
         return;
       }
       let range0 = parseFloat(splitFlag[0]);
@@ -1544,9 +1159,9 @@ class Levels {
         splitFlag[1].toLowerCase() == "infinity"
           ? Infinity
           : parseFloat(splitFlag[1]);
-      await object.setFlag(_levelsModuleName, "rangeBottom", range0);
-      await object.setFlag(_levelsModuleName, "rangeTop", range1);
-      await object.unsetFlag(_levelsModuleName, "heightRange");
+      await object.setFlag(CONFIG.Levels.MODULE_ID, "rangeBottom", range0);
+      await object.setFlag(CONFIG.Levels.MODULE_ID, "rangeTop", range1);
+      await object.unsetFlag(CONFIG.Levels.MODULE_ID, "heightRange");
       migrated++;
     }
     for (let scene of Array.from(game.scenes)) {
@@ -1769,8 +1384,8 @@ class Levels {
    **/
 
   getFlagsForObject(object) {
-    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
-    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
+    let rangeTop = object.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let rangeBottom = object.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (!rangeTop && rangeTop !== 0) rangeTop = Infinity;
     if (!rangeBottom && rangeBottom !== 0) rangeBottom = -Infinity;
     let isLevel = rangeTop == Infinity ? false : true;
@@ -1782,12 +1397,12 @@ class Levels {
       isLevel = true;
     if (rangeTop == Infinity && rangeBottom == -Infinity) return false;
     let drawingMode =
-      object.document.getFlag(_levelsModuleName, "drawingMode") || 0;
-    let showIfAbove = object.document.getFlag(_levelsModuleName, "showIfAbove");
-    let isBasement = object.document.getFlag(_levelsModuleName, "isBasement");
-    let noFogHide = object.document.getFlag(_levelsModuleName, "noFogHide");
+      object.document.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode") || 0;
+    let showIfAbove = object.document.getFlag(CONFIG.Levels.MODULE_ID, "showIfAbove");
+    let isBasement = object.document.getFlag(CONFIG.Levels.MODULE_ID, "isBasement");
+    let noFogHide = object.document.getFlag(CONFIG.Levels.MODULE_ID, "noFogHide");
     let showAboveRange = object.document.getFlag(
-      _levelsModuleName,
+      CONFIG.Levels.MODULE_ID,
       "showAboveRange"
     );
     if (showAboveRange == undefined || showAboveRange == null)
@@ -1806,18 +1421,6 @@ class Levels {
   }
 
   /**
-   * Get all the levels a point is in
-   * @param {Object} point - an object containing x and y coordinates {x:x,y:y}
-   * @returns {Object[]} returns an array of object each containing {tile,range,poly}
-   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
-   **/
-
-  getFloorsForPoint(point) {
-    let cPoint = { center: { x: point.x, y: point.y } };
-    return this.findRoomsTiles(cPoint, this.levelsTiles);
-  }
-
-  /**
    * Find out if a token is in the range of a particular object
    * @param {Object} token - a token
    * @param {Object} object - a tile/drawing/light/note
@@ -1825,260 +1428,13 @@ class Levels {
    **/
 
   isTokenInRange(token, object) {
-    let rangeTop = object.document.getFlag(_levelsModuleName, "rangeTop");
-    let rangeBottom = object.document.getFlag(_levelsModuleName, "rangeBottom");
+    let rangeTop = object.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let rangeBottom = object.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (!rangeTop && rangeTop !== 0) rangeTop = Infinity;
     if (!rangeBottom && rangeBottom !== 0) rangeBottom = -Infinity;
     const elevation = token.data.elevation;
     return elevation <= rangeTop && elevation >= rangeBottom;
   }
 
-  /**
-   * Get all the levels a point is in
-   * @param {Integer} elevation - an integer representing elevation
-   * @param {Object[]} floors - an array of object each containing {tile,range,poly}
-   * where tile is the tile object, range is an array with [bottom,top] and poly is the polygon computed for the room
-   * @returns {Array|false} returns false if the elevation is not contained in any of the provided floors, return an Array with [bottom,top] if one is found
-   **/
-
-  findCurrentFloorForElevation(elevation, floors) {
-    for (let floor of floors) {
-      if (elevation <= floor.range[1] && elevation >= floor.range[0])
-        return floor.range;
-    }
-    return false;
-  }
-
-  /**
-   * Check whether the given wall should be tested for collisions, based on the collision type and wall configuration
-   * @param {Object} wall - The wall being checked
-   * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement
-   * @returns {boolean} Whether the wall should be ignored
-   */
-  shouldIgnoreWall(wall, collisionType) {
-    if (collisionType === 0) {
-      return wall.data.sight === CONST.WALL_SENSE_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
-    } else if (collisionType === 1) {
-      return wall.data.move === CONST.WALL_MOVEMENT_TYPES.NONE || (wall.data.door != 0 && wall.data.ds === 1)
-    }
-  }
-
-  /**
-   * Perform a collision test between 2 point in 3D space
-   * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
-   **/
-
-  testCollision(p0, p1, type = "sight") {
-    if(this.useCollision3D) {
-      if(!game.Levels3DPreview?._active) return true;
-      return game.Levels3DPreview.interactionManager.computeSightCollision(p0,p1)
-    }
-    //Declare points adjusted with token height to use in the loop
-    const x0 = p0.x;
-    const y0 = p0.y;
-    const z0 = p0.z;
-    const x1 = p1.x;
-    const y1 = p1.y;
-    const z1 = p1.z;
-    const TYPE = this.CONSTS.COLLISIONTYPE[type];
-    //If the point are on the same Z axis return the 3d wall test
-    if (z0 == z1) {
-      return walls3dTest();
-    }
-
-    //Loop through all the planes and check for both ceiling and floor collision on each tile
-    for (let tile of this.levelsTiles) {
-      if (tile.levelsOverhead) continue;
-      const bottom = tile.range[0];
-      const top = tile.range[1];
-      if ((bottom && bottom != -Infinity) || bottom == 0) {
-        const zIntersectionPoint = getPointForPlane(bottom);
-        if (
-          ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
-          tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
-        ) {
-          if (checkForHole(zIntersectionPoint, bottom)) return {x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: bottom};
-        }
-      }
-      if ((top && top != Infinity) || top == 0) {
-        const zIntersectionPoint = getPointForPlane(top);
-        if (
-          ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
-          tile.poly.contains(zIntersectionPoint.x, zIntersectionPoint.y)
-        ) {
-          if (checkForHole(zIntersectionPoint, top)) return {x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: top};
-        }
-      }
-    }
-
-    //Return the 3d wall test if no collisions were detected on the Z plane
-    return walls3dTest();
-
-    //Get the intersection point between the ray and the Z plane
-    function getPointForPlane(z) {
-      const x = ((z - z0) * (x1 - x0) + x0 * z1 - x0 * z0) / (z1 - z0);
-      const y = ((z - z0) * (y1 - y0) + z1 * y0 - z0 * y0) / (z1 - z0);
-      const point = { x: x, y: y };
-      return point;
-    }
-    //Check if a floor is hollowed by a hole
-    function checkForHole(intersectionPT, zz) {
-      for (let hole of _levels.levelsHoles) {
-        const hbottom = hole.range[0];
-        const htop = hole.range[1];
-        if (zz > htop || zz < hbottom) continue;
-        if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    //Check if a point in 2d space is betweeen 2 points
-    function isBetween(a, b, c) {
-      //test
-      //return ((a.x<=c.x && c.x<=b.x && a.y<=c.y && c.y<=b.y) || (a.x>=c.x && c.x >=b.x && a.y>=c.y && c.y >=b.y))
-
-      const dotproduct = (c.x - a.x) * (b.x - a.x) + (c.y - a.y) * (b.y - a.y);
-      if (dotproduct < 0) return false;
-
-      const squaredlengthba =
-        (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
-      if (dotproduct > squaredlengthba) return false;
-
-      return true;
-    }
-    //Get wall heights flags, avoid infinity, use arbitrary large number instead
-    function getWallHeightRange3Dcollision(wall) {
-      let {top, bottom} = WallHeight.getWallBounds(wall);
-      if(bottom == -Infinity) bottom = -1e9;
-      if(top == Infinity) top = 1e9;
-      let wallRange = [bottom, top];
-      if (!wallRange[0] && !wallRange[1]) return false;
-      else return wallRange;
-    }
-    //Compute 3d collision for walls
-    function walls3dTest() {
-      let terrainWalls = 0;
-      for (let wall of canvas.walls.placeables) {
-        if (_levels.shouldIgnoreWall(wall, TYPE)) continue;
-
-        let isTerrain = TYPE === 0 && wall.data.sight === CONST.WALL_SENSE_TYPES.LIMITED;
-
-        //declare points in 3d space of the rectangle created by the wall
-        const wallBotTop = getWallHeightRange3Dcollision(wall);
-        const wx1 = wall.data.c[0];
-        const wx2 = wall.data.c[2];
-        const wx3 = wall.data.c[2];
-        const wy1 = wall.data.c[1];
-        const wy2 = wall.data.c[3];
-        const wy3 = wall.data.c[3];
-        const wz1 = wallBotTop[0];
-        const wz2 = wallBotTop[0];
-        const wz3 = wallBotTop[1];
-
-        //calculate the parameters for the infinite plane the rectangle defines
-        const A = wy1 * (wz2 - wz3) + wy2 * (wz3 - wz1) + wy3 * (wz1 - wz2);
-        const B = wz1 * (wx2 - wx3) + wz2 * (wx3 - wx1) + wz3 * (wx1 - wx2);
-        const C = wx1 * (wy2 - wy3) + wx2 * (wy3 - wy1) + wx3 * (wy1 - wy2);
-        const D =
-          -wx1 * (wy2 * wz3 - wy3 * wz2) -
-          wx2 * (wy3 * wz1 - wy1 * wz3) -
-          wx3 * (wy1 * wz2 - wy2 * wz1);
-
-        //solve for p0 p1 to check if the points are on opposite sides of the plane or not
-        const P1 = A * x0 + B * y0 + C * z0 + D;
-        const P2 = A * x1 + B * y1 + C * z1 + D;
-
-        //don't do anything else if the points are on the same side of the plane
-        if (P1 * P2 > 0) continue;
-
-        //Check for directional walls
-
-        if (wall.direction !== null) {
-          // Directional walls where the ray angle is not in the same hemisphere
-          const rayAngle = Math.atan2(y1 - y0, x1 - x0);
-          const angleBounds = [rayAngle - Math.PI / 2, rayAngle + Math.PI / 2];
-          if (!wall.isDirectionBetweenAngles(...angleBounds)) continue;
-        }
-
-        //calculate intersection point
-        const t =
-          -(A * x0 + B * y0 + C * z0 + D) /
-          (A * (x1 - x0) + B * (y1 - y0) + C * (z1 - z0)); //-(A*x0 + B*y0 + C*z0 + D) / (A*x1 + B*y1 + C*z1)
-        const ix = x0 + (x1 - x0) * t;
-        const iy = y0 + (y1 - y0) * t;
-        const iz = Math.round(z0 + (z1 - z0) * t);
-
-        //return true if the point is inisde the rectangle
-        const isb = isBetween(
-          { x: wx1, y: wy1 },
-          { x: wx2, y: wy2 },
-          { x: ix, y: iy }
-        );
-        if (
-          isTerrain &&
-          isb &&
-          iz <= wallBotTop[1] &&
-          iz >= wallBotTop[0] &&
-          terrainWalls == 0
-        ) {
-          terrainWalls++;
-          continue;
-        }
-        if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return {x:ix,y:iy,z:iz};
-      }
-      return false;
-    }
-  }
-
-  /**
-   * **DEPRECATED**
-   * Get the total LOS height for a token
-   * @param {Object} token - a token object
-   * @returns {Integer} returns token elevation plus the LOS height stored in the flags
-   **/
-
-  getTokenLOSheight(token) {
-    return token.losHeight;
-    let losDiff;
-    let divideBy = token.data.flags.levelsautocover?.ducking ? 3 : 1;
-    if (this.autoLOSHeight) {
-      losDiff =
-        token.data.flags.levels?.tokenHeight ||
-        canvas.scene.dimensions.distance *
-          Math.max(token.data.width, token.data.height) *
-          token.data.scale;
-    } else {
-      losDiff = token.data.flags.levels?.tokenHeight || this.defaultTokenHeight;
-    }
-
-    return token.data.elevation + losDiff / divideBy;
-  }
-
-  /**
-   * Perform a collision test between 2 TOKENS in 3D space
-   * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {String} type - "sight" or "collision" (defaults to "sight")
-   * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
-   **/
-
-  checkCollision(token1, token2, type = "sight") {
-    const token1LosH = token1.losHeight;
-    const token2LosH = token2.losHeight;
-    const p0 = {
-      x: token1.center.x,
-      y: token1.center.y,
-      z: token1LosH,
-    };
-    const p1 = {
-      x: token2.center.x,
-      y: token2.center.y,
-      z: token2LosH,
-    };
-    return this.testCollision(p0, p1, type, token1);
-  }
+  
 }

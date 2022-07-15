@@ -117,7 +117,7 @@ class LevelsUI extends FormApplication {
     const top = $target.find(".level-top").val();
     const bottom = $target.find(".level-bottom").val();
     const name = $target.find(".level-name").val();
-    this.definedLevels = canvas.scene.getFlag(_levelsModuleName, "sceneLevels");
+    this.definedLevels = canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "sceneLevels");
     this.range = this.definedLevels.find(
       (l) => l[0] == bottom && l[1] == top
     );
@@ -157,8 +157,8 @@ class LevelsUI extends FormApplication {
   }
 
   _onCheckScene(event, showDialog = true) {
-    const brokenTiles = canvas.foreground.placeables.filter((t) =>  !t.document.getFlag("levels", "excludeFromChecker")  && _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
-    const excludedTiles = canvas.foreground.placeables.filter((t) => t.document.getFlag("levels", "excludeFromChecker")).length;
+    const brokenTiles = canvas.tiles.placeables.filter(t => t.document.overhead).filter((t) =>  !t.document.getFlag("levels", "excludeFromChecker")  && _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
+    const excludedTiles = canvas.tiles.placeables.filter(t => t.document.overhead).filter((t) => t.document.getFlag("levels", "excludeFromChecker")).length;
     if(showDialog) {
       const dContent = `
       <p><a href="https://theripper93.com/#/module/levels" target="_blank"><h6 style="margin: 0;">${game.i18n.localize("levels.dialog.checkScene.learnMore")}</h6></a></p>
@@ -208,13 +208,13 @@ class LevelsUI extends FormApplication {
         let bottom = $element.find(".level-bottom").val();
         data.push([bottom, top, name]);
       });
-    canvas.scene.setFlag(_levelsModuleName, "sceneLevels", data);
+    canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", data);
   }
 
   async loadLevels() {
     $("#levels-list").empty();
     let levelsFlag =
-      canvas.scene.getFlag(_levelsModuleName, "sceneLevels") || [];
+      canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "sceneLevels") || [];
     this.definedLevels = levelsFlag;
     this.range = this.range ?? this.definedLevels[levelsFlag.length - 1];
     if (levelsFlag) {
@@ -256,7 +256,7 @@ class LevelsUI extends FormApplication {
       title: game.i18n.localize("levels.dialog.levelsclear.title"),
       content: game.i18n.localize("levels.dialog.levelsclear.content"),
       yes: async () => {
-        await canvas.scene.setFlag(_levelsModuleName, "sceneLevels", []);
+        await canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", []);
         this.loadLevels();
       },
       no: () => {},
@@ -308,7 +308,7 @@ class LevelsUI extends FormApplication {
       }
     }
 
-    for (let tile of canvas.foreground.placeables) {
+    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
       let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
       if (
         (rangeBottom || rangeBottom == 0) &&
@@ -348,7 +348,7 @@ class LevelsUI extends FormApplication {
       .sort()
       .reverse();
     if (autoRange.length) {
-      await canvas.scene.setFlag(_levelsModuleName, "sceneLevels", autoRange);
+      await canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", autoRange);
       this.loadLevels();
     }
   }
@@ -380,7 +380,7 @@ class LevelsUI extends FormApplication {
       }*/
     }
 
-    for (let tile of canvas.foreground.placeables) {
+    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
       tile.visible = this.computeRangeForDocument(
         tile,
         range,
@@ -421,8 +421,6 @@ class LevelsUI extends FormApplication {
       token.levelsVisible =
         token.data.elevation <= range[1] && token.data.elevation >= range[0];
       token.visible = token.levelsVisible;
-      if(token.visible) _levels.getTokenIconSpriteOverhead(token)
-      else _levels.removeTempTokenOverhead(token)
     }
   }
 
@@ -461,7 +459,7 @@ class LevelsUI extends FormApplication {
       wall.refresh();
     }
 
-    for (let tile of canvas.foreground.placeables) {
+    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
       tile.visible = true;
       tile.levelsUIHideen = false;
       if(!canvas.tokens._active)tile.refresh();
@@ -503,7 +501,7 @@ class LevelsUI extends FormApplication {
   getObjUpdateData(range) {
     return {
       flags: {
-        [`${_levelsModuleName}`]: { rangeBottom: range[0], rangeTop: range[1] },
+        [`${CONFIG.Levels.MODULE_ID}`]: { rangeBottom: range[0], rangeTop: range[1] },
       },
     };
   }
@@ -686,7 +684,7 @@ Hooks.on("ready", () => {
         if(!game.Levels3DPreview?._active){
           tile.data.update({
             flags: {
-              [`${_levelsModuleName}`]: {
+              [`${CONFIG.Levels.MODULE_ID}`]: {
                 rangeBottom: _levels.UI.roofEnabled
                   ? parseFloat(_levels.UI.range[1]) + 1
                   : parseFloat(_levels.UI.range[0]),
@@ -697,7 +695,7 @@ Hooks.on("ready", () => {
         }else{
           tile.data.update({
             flags: {
-              [`${_levelsModuleName}`]: {
+              [`${CONFIG.Levels.MODULE_ID}`]: {
                 rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
               }
             }
@@ -728,7 +726,7 @@ Hooks.on("ready", () => {
       if(canvas.tokens.controlled[0]) return
       if (_levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
         _levels.UI.computeLevelsVisibility();
-        if (game.settings.get(_levelsModuleName, "enableTooltips")) {
+        if (game.settings.get(CONFIG.Levels.MODULE_ID, "enableTooltips")) {
           canvas.hud.levels.bind(tile.object);
         } else {
           canvas.hud.levels.clear();
@@ -823,7 +821,7 @@ Hooks.on("ready", () => {
 
 Hooks.on("renderSceneControls", () => {
   if (
-    _levels?.UI?.rangeEnabled // && !game.settings.get(_levelsModuleName, "forceUiRefresh")
+    _levels?.UI?.rangeEnabled // && !game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
   )
     _levels.UI.computeLevelsVisibility();
 });
@@ -831,7 +829,7 @@ Hooks.on("renderSceneControls", () => {
 /*Hooks.on("renderApplication", () => {
   if (
     _levels?.UI?.rangeEnabled &&
-    game.settings.get(_levelsModuleName, "forceUiRefresh")
+    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
   )
     _levels.UI.refreshLevels();
 });
@@ -840,7 +838,7 @@ Hooks.on("sightRefresh", () => {
   if(canvas.tokens.controlled[0]) return
   if (
     _levels?.UI?.rangeEnabled &&
-    game.settings.get(_levelsModuleName, "forceUiRefresh")
+    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
   )
     _levels.UI.refreshLevels();
 });
@@ -849,7 +847,7 @@ Hooks.on("lightingRefresh", () => {
   if(canvas.tokens.controlled[0]) return
   if (
     _levels?.UI?.rangeEnabled &&
-    game.settings.get(_levelsModuleName, "forceUiRefresh")
+    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
   )
     _levels.UI.refreshLevels();
 });*/

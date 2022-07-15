@@ -1,26 +1,28 @@
-function _levelsTokenRefresh(wrapped,...args) {
-  if(!this.icon || this._destroyed) return this;
-  let scale
-  try{
-    scale = this.icon.scale
-  }catch(e){
-    return this;  
+export function adjustPolygonPoints(drawing){
+  let globalCoords = [];
+  if (drawing.document.shape.points.length != 0) {
+    for (let i = 0; i < drawing.document.shape.points.length; i += 2) {
+      globalCoords.push(
+        drawing.document.shape.points[i] + (drawing.x),
+        drawing.document.shape.points[i + 1] + (drawing.y)
+      );
+    }
+  } else {
+    globalCoords = [
+      drawing.x,
+      drawing.y,
+      drawing.x + drawing.document.shape.width,
+      drawing.y,
+      drawing.x + drawing.document.shape.width,
+      drawing.y + drawing.document.shape.height,
+      drawing.x,
+      drawing.y + drawing.document.shape.height,
+    ];
   }
-  wrapped(...args);
-  // Adjust Scale
-  
-  this.icon.scale.x =
-    Math.abs(this.icon.scale.x) *
-    (this.data.mirrorX ? -1 : 1) *
-    (this.elevationScaleFactor || 1);
-  this.icon.scale.y =
-    Math.abs(this.icon.scale.y) *
-    (this.data.mirrorY ? -1 : 1) *
-    (this.elevationScaleFactor || 1);
-  this.icon.visible = this._controlled ? true : !this.levelsHidden
-  if(this.levelsVisible !== undefined && !this.data.hidden) this.visible = this.levelsVisible;
-  return this;
+  return globalCoords;
 }
+
+
 
 function _levelsTileRefresh(wrapped,...args){
   wrapped(...args);
@@ -46,18 +48,6 @@ function _levelsTileRefresh(wrapped,...args){
       
     }
     if(!visibilityChanged) this.visible = originalVisible;
-  }
-}
-
-function _levelsOnMovementFrame(wrapped,...args) {
-  wrapped(...args);
-  // Update the token copy
-  if (_levels.floorContainer.spriteIndex[this.id])
-    _levels.getTokenIconSprite(this);
-  if (_levels.overContainer.spriteIndex[this.id])
-    _levels.getTokenIconSpriteOverhead(this);
-  if (_levels && !this._controlled) {
-    _levels.debounce3DRefresh(100);
   }
 }
 
@@ -168,52 +158,6 @@ function _lightingRefresh({darkness, backgroundColor}={}) {
   Hooks.callAll("lightingRefresh", this);
 }
 
-function _levelsTestVisibility(point, {tolerance=2, object=null}={}) {
-  const visionSources = this.sources;
-  const lightSources = canvas.lighting.sources;
-  const d = canvas.dimensions;
-  if ( !visionSources.size ) return game.user.isGM;
-
-  // Determine the array of offset points to test
-  const t = tolerance;
-  const offsets = t > 0 ? [[0, 0],[-t,0],[t,0],[0,-t],[0,t],[-t,-t],[-t,t],[t,t],[t,-t]] : [[0,0]];
-  const points = offsets.map(o => new PIXI.Point(point.x + o[0], point.y + o[1]));
-
-  // If the point is inside the buffer region, it may be hidden from view
-  if ( !this._inBuffer && !points.some(p => d.sceneRect.contains(p.x, p.y)) ) return false;
-
-  // We require both LOS and FOV membership for a point to be visible
-  let hasLOS = false;
-  let requireFOV = !canvas.lighting.globalLight;
-  let hasFOV = false;
-
-  // Check vision sources
-  for ( let source of visionSources.values() ) {
-    if ( !source.active ) continue;   // The source may be currently inactive
-    if ( !hasLOS ) {
-      let l = points.some(p => source.los.contains(p.x, p.y));
-      if ( l ) hasLOS = true;
-    }
-    if ( !hasFOV && requireFOV ) {
-      let f = points.some(p => source.fov.contains(p.x, p.y));
-      if (f) hasFOV = true;
-    }
-    if ( hasLOS && (!requireFOV || hasFOV) ) return true;
-  }
-
-  // Check light sources
-  for ( let source of lightSources.values() ) {
-    if (source.skipRender) continue; //OVERRIDE SKIP RENDER
-    if ( !source.active ) continue;   // The source may be currently inactive
-    if ( points.some(p => source.containsPoint(p)) ) {
-      if ( source.object.data.vision ) hasLOS = true;
-      hasFOV = true;
-    }
-    if (hasLOS && (!requireFOV || hasFOV)) return true;
-  }
-  return false;
-}
-
 function _levelsIsAudible() {
   if (this.levelsInaudible) return false;//OVERRIDE skip sounds on diff levels
   if (this.data.hidden) return false;
@@ -227,7 +171,7 @@ function _levelsTokenIsVisible() {//OVERRIDE complete override of token visibili
   if (!_levels) {
     const gm = game.user.isGM;
     if (this.data.hidden) return gm;
-    if (!canvas.sight.tokenVision) return true;
+    if (!canvas.scene.tokenVision) return true;
     if (this._controlled) return true;
     if (canvas.sight.sources.has(this.sourceId)) return true;
     const tolerance = Math.min(this.w, this.h) / 4;
@@ -245,7 +189,7 @@ function _levelsTokenIsVisible() {//OVERRIDE complete override of token visibili
       return this.levelsVisible;
       if (this.data.hidden) return gm;
     this.levelsVisible = undefined;
-    if (!canvas.sight.tokenVision) return true;
+    if (!canvas.scene.tokenVision) return true;
     if (this._controlled) return true;
     if (canvas.sight.sources.has(this.sourceId)) return true;
     const tolerance = Math.min(this.w, this.h) / 4;
@@ -280,13 +224,13 @@ function _levelsNoteIsVisible(wrapped,...args){
 
 async function _levelsTemplatedraw(wrapped,...args) {
   await wrapped(...args);
-  if(this.document.getFlag(_levelsModuleName, "elevation")===0) return this;
+  if(this.document.getFlag(CONFIG.Levels.MODULE_ID, "elevation")===0) return this;
   this.tooltip = this.addChild(_templateDrawTooltip(this));
 
   function _templateDrawTooltip(template) {
     // Create the tooltip Text
 
-    const tipFlag = template.document.getFlag(_levelsModuleName, "elevation");
+    const tipFlag = template.document.getFlag(CONFIG.Levels.MODULE_ID, "elevation");
     let tipN;
     if (tipFlag === undefined) {
       if (_levels?.nextTemplateHeight) {
@@ -338,7 +282,7 @@ function _levelsWallCheckCollision(wrapped,...args){
   const ray = args[0];
   if(!token) return true;
   if ( !canvas.scene.data.walls.size ) return false;
-  const blockSightMovement = game.settings.get(_levelsModuleName, "blockSightMovement");
+  const blockSightMovement = game.settings.get(CONFIG.Levels.MODULE_ID, "blockSightMovement");
   return _levels.testCollision(
     {
       x: ray.A.x,
@@ -355,61 +299,8 @@ function _levelsWallCheckCollision(wrapped,...args){
 }
 
 function _levelsTokendrawTooltip(wrapped,...args) {
-  let hideElevation = game.settings.get(_levelsModuleName, "hideElevation");
+  let hideElevation = game.settings.get(CONFIG.Levels.MODULE_ID, "hideElevation");
   if(hideElevation == 0) return wrapped(...args);
   if(hideElevation == 1 && game.user.isGM) return wrapped(...args);
   return new PIXI.Sprite()
-}
-
-function _levelsRenderLightTexture() {
-
-  // Determine ideal texture size as the closest power-of-2
-  const s = (this.radius * 2);
-  const p2 = this.getPowerOf2Size();
-  const ratio = p2 / s;
-
-  // Create or resize the render texture
-  let rt = this.fovTexture;
-  if ( !this.fovTexture ) {
-    this.fovTexture = rt = PIXI.RenderTexture.create({ width: p2, height: p2, resolution: 1 });
-    this.fovTexture.baseTexture.mipmap = false;
-  }
-  else if ((rt.width !== p2) || (rt.height !== p2)) {
-    rt.resize(p2, p2);
-  }
-
-  // Create container to render
-  const c = this._drawRenderTextureContainer()
-  c.scale.set(ratio);
-  let gf = LightSource._glowFilter;
-  if ( !gf ) {
-    gf = LightSource._glowFilter = GlowFilter.create({
-      outerStrength: 0,
-      innerStrength: LightSource.BLUR_STRENGTH,
-      glowColor: [0,1,0,1],
-      quality: 0.3
-    });
-  }
-  gf.blendMode = PIXI.BLEND_MODES.ADD;
-  c.filters = [gf];
-
-  // Add light occlusion from tiles
-  const occlusionSprite = _levels?.lightOcclusion.spriteIndex[this._lightId];
-  if(occlusionSprite && !occlusionSprite._destroyed){
-    c.addChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
-  }
-
-  // Render the container to texture
-  canvas.app.renderer.render(c, {
-    renderTexture: rt,
-    transform: new PIXI.Matrix(1, 0, 0, 1, (-this.x + this.radius) * ratio, (-this.y + this.radius) * ratio)
-  });
-  if(occlusionSprite && !occlusionSprite._destroyed){
-    c.removeChild(_levels?.lightOcclusion.spriteIndex[this._lightId]);
-  }
-  c.destroy({children: true});
-
-  // Store the rendered texture to the source
-  this._flags.renderFOV = false;
-  return this.fovTexture;
 }
