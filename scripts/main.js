@@ -13,7 +13,7 @@ Hooks.on("controlToken", (token, controlled)=>{
 })
 
 Hooks.on("updateToken", (token, updates) => {
-  if(canvas.tokens.get(token.id)?.controlled)CONFIG.Levels.handlers.StairHandler.executeStairs(updates, token);
+  if(canvas.tokens.get(token.id)?.controlled)CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
 });
 
 Hooks.on("preUpdateToken", (token,updates) => {

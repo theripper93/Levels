@@ -2,22 +2,21 @@ export function registerWrappers(){
 
     const LevelsConfig = CONFIG.Levels
 
-    libWrapper.register(
-        LevelsConfig.MODULE_ID,
-        "Tile.prototype.refresh",
-        function tileWrapper(wrapped, ...args) {
-            wrapped(...args);
-            const visible = LevelsConfig.handlers.TileHandler.isTileVisible(this);
-            this.visible = this.visible && visible;
-        },
-        "WRAPPER"
-    );
+    Hooks.on("tileRefresh", (tile) => {
+        const visible = LevelsConfig.handlers.TileHandler.isTileVisible(tile);
+        tile.visible = tile.visible && visible;
+    })
+
+    Hooks.on("drawingRefresh", (drawing) => {
+        const visible = LevelsConfig.handlers.DrawingHandler.isDrawingVisible(drawing);
+        drawing.visible = drawing.visible && visible;
+    })
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
-            args[1].tollerance = 0;
+            if(args[1]) args[1].tolerance = 0;
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);
             LevelsConfig.visibilityTestObject = null;
@@ -35,5 +34,26 @@ export function registerWrappers(){
             return LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget);
         },
         "MIXED"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "AmbientLight.prototype.emitsLight",
+        LevelsConfig.handlers.LightHandler.isLightVisibleWrapper,
+        "WRAPPER"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "AmbientSound.prototype.isAudible",
+        LevelsConfig.handlers.SoundHandler.isAudible,
+        "WRAPPER"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "Note.prototype.isVisible",
+        LevelsConfig.handlers.NoteHandler.isVisible,
+        "WRAPPER"
     );
 }

@@ -1,14 +1,24 @@
 import { injectConfig } from "./lib/injectConfig.js";
 import { TileHandler } from './handlers/tileHandler.js';
 import { RefreshHandler } from './handlers/refreshHandler.js';
-import { StairHandler } from "./handlers/stairHandler.js";
+import { DrawingHandler } from "./handlers/drawingHandler.js";
 import { BasicHandler } from "./handlers/basicHandler.js";
 import { SightHandler } from "./handlers/sightHandler.js";
+import { LightHandler } from "./handlers/lightHandler.js";
+import { SoundHandler } from "./handlers/soundHandler.js";
+import { NoteHandler } from "./handlers/noteHandler.js";
 import { registerWrappers } from './wrappers.js';
+import { inRange } from './helpers.js';
 
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
-    return this.flags?.levels?.rangeBottom ?? Infinity;
+    return this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation;
+  }
+});
+
+Object.defineProperty(DrawingDocument.prototype, "elevation", {
+  get: function () {
+    return this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation;
   }
 });
 
@@ -19,9 +29,17 @@ Hooks.on("init", () => {
   CONFIG.Levels.handlers = {
       TileHandler,
       RefreshHandler,
-      StairHandler,
+      DrawingHandler,
       BasicHandler,
-      SightHandler
+      SightHandler,
+      LightHandler,
+      SoundHandler,
+      NoteHandler
+
+  }
+
+  CONFIG.Levels.helpers = {
+      inRange
   }
 
   Hooks.callAll("levelsConfigReady", CONFIG.Levels);

@@ -1,7 +1,12 @@
 export class RefreshHandler{
 
     static refreshPlaceables(){
-        canvas.tiles.placeables.forEach(t => t.refresh());
+        this.refresh(canvas.tiles);
+        this.refresh(canvas.drawings);
+    }
+
+    static refresh(layer){
+        layer.placeables.forEach(p => p.refresh());
     }
 
 }

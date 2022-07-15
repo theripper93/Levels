@@ -22,6 +22,11 @@ export function adjustPolygonPoints(drawing){
   return globalCoords;
 }
 
+export function inRange(document, elevation){
+  const rangeBottom = document.flags?.levels?.rangeBottom ?? -Infinity;
+  const rangeTop = document.flags?.levels?.rangeTop ?? Infinity;
+  return elevation >= rangeBottom && elevation <= rangeTop;
+}
 
 
 function _levelsTileRefresh(wrapped,...args){
