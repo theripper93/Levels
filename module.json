@@ -1,85 +1,90 @@
 {
-    "name": "levels",
-    "title": "Levels",
-    "description": "Add multiple vertical levels to maps",
-    "version": "2.0.9",
-    "author": "theripper93",
-    "authors": [
-        {
-            "name": "theripper93",
-            "email": "tsplab@gmail.com",
-            "url": "https://www.patreon.com/theripper93"
-        }
-    ],
-    "languages": [
-        {
-            "lang": "en",
-            "name": "English",
-            "path": "lang/en.json"
-        },
-        {
-            "lang": "de",
-            "name": "Deutsch",
-            "path": "lang/de.json"
-        },
-        {
-            "lang": "fr",
-            "name": "Français",
-            "path": "lang/fr.json"
-        },
-        {
-            "lang": "es",
-            "name": "Español",
-            "path": "lang/es.json"
-        },
-        {
-          "lang": "ja",
-          "name": "日本語",
-          "path": "lang/ja.json"
-        }
-    ],
-    "scripts": [
-        "./scripts/levels.js",
-        "./scripts/ui.js",
-        "./scripts/tooltip.js",
-        "./scripts/lib/jquerysortable.js"
-    ],
-    "esmodules": [
-        "./scripts/config.js",
-        "./scripts/main.js"
-    ],
-    "styles": [
-        "./styles/levels.css"
-    ],
-    "packs": [
-        {
-            "name": "levelsmacros",
-            "label": "Levels Macros",
-            "path": "packs/macros.db",
-            "type": "Macro",
-            "module": "levels"
-        },
-        {
-            "name": "maps",
-            "label": "Levels Sample Scenes",
-            "path": "/packs/levels-samples.db",
-            "type": "Scene"
-        }
-    ],
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
-    "url": "https://github.com/theripper93/Levels",
-    "manifest": "https://github.com/theripper93/Levels/releases/latest/download/module.json",
-    "download": "https://github.com/theripper93/Levels/releases/download/0.9.7.3/module.zip",
-    "dependencies": [
-        {
-            "name": "betterroofs"
-        },
-        {
-            "name": "lib-wrapper"
-        },
-        {
-            "name": "wall-height"
-        }
+  "title": "Levels",
+  "description": "Add multiple vertical levels to maps",
+  "version": "2.0.9",
+  "authors": [
+    {
+      "name": "theripper93",
+      "email": "tsplab@gmail.com",
+      "url": "https://www.patreon.com/theripper93"
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    },
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
+    }
+  ],
+  "scripts": [
+    "scripts/levels.js",
+    "scripts/ui.js",
+    "scripts/tooltip.js",
+    "scripts/lib/jquerysortable.js"
+  ],
+  "esmodules": [
+    "scripts/config.js",
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/levels.css"
+  ],
+  "packs": [
+    {
+      "name": "levelsmacros",
+      "label": "Levels Macros",
+      "path": "packs/macros.db",
+      "type": "Macro",
+      "private": false
+    },
+    {
+      "name": "maps",
+      "label": "Levels Sample Scenes",
+      "path": "/packs/levels-samples.db",
+      "type": "Scene",
+      "private": false
+    }
+  ],
+  "url": "https://github.com/theripper93/Levels",
+  "manifest": "https://github.com/theripper93/Levels/releases/latest/download/module.json",
+  "download": "https://github.com/theripper93/Levels/releases/download/0.9.7.3/module.zip",
+  "id": "levels",
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "compatibility": {}
+      },
+      {
+        "id": "wall-height",
+        "type": "module",
+        "compatibility": {}
+      }
     ]
+  },
+  "compatibility": {
+    "minimum": "9",
+    "verified": "9"
+  }
 }
