@@ -672,8 +672,8 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
-  const templateData = _levels.getTemplateData();
-  if(template.data.flags?.levels?.elevation) return;
+  const templateData = CONFIG.Levels.TemplateHandler.getTemplateData();
+  if(template.document.flags?.levels?.elevation) return;
   template.data.update({
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });

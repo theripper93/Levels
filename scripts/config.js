@@ -7,6 +7,8 @@ import { SightHandler } from "./handlers/sightHandler.js";
 import { LightHandler } from "./handlers/lightHandler.js";
 import { SoundHandler } from "./handlers/soundHandler.js";
 import { NoteHandler } from "./handlers/noteHandler.js";
+import { TokenHandler } from "./handlers/tokenHandler.js";
+import { TemplateHandler } from "./handlers/TemplateHandler.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange } from './helpers.js';
 
@@ -34,13 +36,17 @@ Hooks.on("init", () => {
       SightHandler,
       LightHandler,
       SoundHandler,
-      NoteHandler
+      NoteHandler,
+      TokenHandler,
+      TemplateHandler
 
   }
 
   CONFIG.Levels.helpers = {
       inRange
   }
+
+  CONFIG.Levels.UI = new LevelsUI();
 
   Hooks.callAll("levelsConfigReady", CONFIG.Levels);
 
@@ -452,9 +458,9 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
 });
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
-  const templateData = _levels.getTemplateData();
-  if(template.data.flags?.levels?.elevation) return;
-  template.data.update({
+  const templateData = CONFIG.Levels.handlers.TemplateHandler.getTemplateData();
+  if(template.flags?.levels?.elevation) return;
+  template.updateSource({
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });

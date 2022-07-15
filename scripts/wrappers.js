@@ -56,4 +56,32 @@ export function registerWrappers(){
         LevelsConfig.handlers.NoteHandler.isVisible,
         "WRAPPER"
     );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "Token.prototype._drawTooltip",
+        LevelsConfig.handlers.TokenHandler._drawTooltip,
+        "MIXED"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "MeasuredTemplate.prototype.draw",
+        LevelsConfig.handlers.TemplateHandler.drawTooltip,
+        "WRAPPER"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "MeasuredTemplate.prototype._refreshRulerText",
+        LevelsConfig.handlers.TemplateHandler._refreshRulerText,
+        "OVERRIDE"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "MeasuredTemplate.prototype.isVisible",
+        LevelsConfig.handlers.TemplateHandler.isVisible,
+        "WRAPPER"
+    );
 }

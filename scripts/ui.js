@@ -309,7 +309,7 @@ class LevelsUI extends FormApplication {
     }
 
     for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
-      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(tile);
+      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(tile);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -321,7 +321,7 @@ class LevelsUI extends FormApplication {
     }
 
     for (let light of canvas.lighting.placeables) {
-      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(light);
+      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(light);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -333,7 +333,7 @@ class LevelsUI extends FormApplication {
     }
 
     for(let drawing of canvas.drawings.placeables){
-      let { rangeBottom, rangeTop } = _levels.getFlagsForObject(drawing);
+      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(drawing);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -354,8 +354,8 @@ class LevelsUI extends FormApplication {
   }
 
   computeLevelsVisibility(range) {
-    _levels.floorContainer.removeChildren();
-    _levels.floorContainer.spriteIndex = {};
+    CONFIG.Levels.floorContainer.removeChildren();
+    CONFIG.Levels.floorContainer.spriteIndex = {};
     if(!range) range = this.range
     if (!range) return;
     range[0] = parseFloat(range[0]);
@@ -390,12 +390,12 @@ class LevelsUI extends FormApplication {
       if(tile.visible && tile.tileSortHidden || !canvas.foreground._active){
         tile.visible = false;
       }
-      let { rangeBottom, rangeTop, isLevel } = _levels.getFlagsForObject(tile);
+      let { rangeBottom, rangeTop, isLevel } = CONFIG.Levels.getFlagsForObject(tile);
       let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
       if (tileIndex.range[0] <= range[0] || tile.visible || (this.roofEnabled && tileIndex.range[0] == range[1]+1)) {
-        _levels.mirrorTileInBackground(tileIndex);
+        CONFIG.Levels.mirrorTileInBackground(tileIndex);
       } else {
-        _levels.removeTempTile(tileIndex);
+        CONFIG.Levels.removeTempTile(tileIndex);
       }
       tile.levelsUIHideen = !tile.visible;
     }
@@ -425,7 +425,7 @@ class LevelsUI extends FormApplication {
   }
 
   computeRangeForDocument(document, range, isTile = false) {
-    let { rangeBottom, rangeTop } = _levels.getFlagsForObject(document);
+    let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(document);
     rangeBottom = rangeBottom ?? -Infinity;
     rangeTop = rangeTop ?? Infinity;
     range[0] = parseFloat(range[0]) ?? -Infinity;
@@ -493,8 +493,8 @@ class LevelsUI extends FormApplication {
       token.refresh();
     }
 
-    _levels.floorContainer.removeChildren();
-    _levels.floorContainer.spriteIndex = {};
+    CONFIG.Levels.floorContainer.removeChildren();
+    CONFIG.Levels.floorContainer.spriteIndex = {};
     canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
   }
 
@@ -504,6 +504,86 @@ class LevelsUI extends FormApplication {
         [`${CONFIG.Levels.MODULE_ID}`]: { rangeBottom: range[0], rangeTop: range[1] },
       },
     };
+  }
+
+  async elevationDialog(tool) {
+    let content = `
+    <div class="form-group">
+    <label for="elevation">${game.i18n.localize(
+      "levels.template.elevation.name"
+    )}</label>
+    <div class="form-fields">
+        <input type="number" name="templateElevation" data-dtype="Number" value="${
+          canvas.tokens.controlled[0]?.data?.elevation ?? 0
+        }" step="1">
+    </div>
+    </div>
+    <p></p>
+    <div class="form-group">
+    <label for="special">${game.i18n.localize(
+      "levels.template.special.name"
+    )}</label>
+    <div class="form-fields">
+        <input type="number" name="special" data-dtype="Number" value="0" step="1">
+    </div>
+    </div>
+    <p></p>
+    `;
+    let ignoreClose = false;
+    let toolhtml = $("body").find(`li[data-tool="setTemplateElevation"]`);
+    let dialog = new Dialog({
+      title: game.i18n.localize("levels.dialog.elevation.title"),
+      content: content,
+      buttons: {
+        confirm: {
+          label: game.i18n.localize("levels.yesnodialog.yes"),
+          callback: (html) => {
+            CONFIG.Levels.UI.nextTemplateHeight = html.find(
+              `input[name="templateElevation"]`
+            )[0].valueAsNumber;
+            CONFIG.Levels.UI.nextTemplateSpecial = html.find(
+              `input[name="special"]`
+            )[0].valueAsNumber;
+            CONFIG.Levels.UI.templateElevation = true;
+            ignoreClose = true;
+            tool.active = true;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .addClass("active");
+          },
+        },
+        close: {
+          label: game.i18n.localize("levels.yesnodialog.no"),
+          callback: () => {
+            CONFIG.Levels.UI.nextTemplateHeight = undefined;
+            CONFIG.Levels.UI.nextTemplateSpecial = undefined;
+            CONFIG.Levels.UI.templateElevation = false;
+            tool.active = false;
+            if (toolhtml[0])
+              $("body")
+                .find(`li[data-tool="setTemplateElevation"]`)
+                .removeClass("active");
+          },
+        },
+      },
+      default: "confirm",
+      close: () => {
+        if (ignoreClose == true) {
+          ignoreClose = false;
+          return;
+        }
+        CONFIG.Levels.nextTemplateHeight = undefined;
+        CONFIG.Levels.nextTemplateSpecial = undefined;
+        CONFIG.Levels.templateElevation = false;
+        tool.active = false;
+        if (toolhtml[0])
+          $("body")
+            .find(`li[data-tool="setTemplateElevation"]`)
+            .removeClass("active");
+      },
+    });
+    await dialog._render(true);
   }
 }
 
@@ -521,8 +601,8 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
             toggle: true,
             active: _levels?.UI?.roofEnabled || false,
             onClick: (toggle) => {
-              _levels.UI.roofEnabled = toggle;
-              _levels.UI.computeLevelsVisibility();
+              CONFIG.Levels.UI.roofEnabled = toggle;
+              CONFIG.Levels.UI.computeLevelsVisibility();
             },
           },
           {
@@ -532,7 +612,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
             toggle: true,
             active: _levels?.UI?.placeOverhead || false,
             onClick: (toggle) => {
-              _levels.UI.placeOverhead = toggle;
+              CONFIG.Levels.UI.placeOverhead = toggle;
             },
           }
         );
@@ -546,7 +626,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
           toggle: true,
           active: _levels?.UI?.stairEnabled || false,
           onClick: (toggle) => {
-            _levels.UI.stairEnabled = toggle;
+            CONFIG.Levels.UI.stairEnabled = toggle;
           },
         });
     }
@@ -558,10 +638,10 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         icon: "fas fa-layer-group",
         button: true,
         onClick: () => {
-          if (_levels.UI.rendered) {
-            _levels.UI.close();
+          if (CONFIG.Levels.UI.rendered) {
+            CONFIG.Levels.UI.close();
           } else {
-            _levels.UI.render(true);
+            CONFIG.Levels.UI.render(true);
           }
         },
       },
@@ -572,7 +652,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         toggle: true,
         active: _levels?.UI?.roofEnabled || false,
         onClick: (toggle) => {
-          _levels.UI.roofEnabled = toggle;
+          CONFIG.Levels.UI.roofEnabled = toggle;
         },
       },
       {
@@ -582,8 +662,8 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         toggle: true,
         active: _levels?.UI?.placeOverhead || false,
         onClick: (toggle) => {
-          _levels.UI.placeOverhead = toggle;
-          _levels.UI.computeLevelsVisibility(_levels.UI.range)
+          CONFIG.Levels.UI.placeOverhead = toggle;
+          CONFIG.Levels.UI.computeLevelsVisibility(CONFIG.Levels.UI.range)
         },
       },
       {
@@ -593,7 +673,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         toggle: true,
         active: _levels?.UI?.stairEnabled || false,
         onClick: (toggle) => {
-          _levels.UI.stairEnabled = toggle;
+          CONFIG.Levels.UI.stairEnabled = toggle;
         },
       },
       {
@@ -603,7 +683,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         toggle: true,
         active: _levels?.UI?.suppressBr || false,
         onClick: (toggle) => {
-          _levels.UI.suppressBr = toggle;
+          CONFIG.Levels.UI.suppressBr = toggle;
         },
       },
       {
@@ -612,7 +692,7 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
         icon: "fas fa-trash",
         button: true,
         onClick: () => {
-          _levels.UI.clearLevels();
+          CONFIG.Levels.UI.clearLevels();
         },
       },
     ];
@@ -628,10 +708,10 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
     $("body")
       .on("mousedown", `li[data-control="levels"]`, (event) => {
         if (event.which == 3) {
-          if (_levels.UI.rendered) {
-            _levels.UI.close();
+          if (CONFIG.Levels.UI.rendered) {
+            CONFIG.Levels.UI.close();
           } else {
-            _levels.UI.render(true);
+            CONFIG.Levels.UI.render(true);
           }
         }
       });
@@ -642,19 +722,19 @@ Hooks.on("ready", () => {
   if (game.user.isGM) {
 
     Hooks.on("canvasInit", () => {
-      _levels.UI.close(true);
+      CONFIG.Levels.UI.close(true);
     })
 
     Hooks.on("updateToken", (token,updates)=>{
-      if("elevation" in updates)_levels.UI.updatePlayerList();
+      if("elevation" in updates)CONFIG.Levels.UI.updatePlayerList();
     })
 
     Hooks.on("createToken", (token,updates)=>{
-      _levels.UI.updatePlayerList();
+      CONFIG.Levels.UI.updatePlayerList();
     })
 
     Hooks.on("deleteToken", (token,updates)=>{
-      _levels.UI.updatePlayerList();
+      CONFIG.Levels.UI.updatePlayerList();
     })
 
     Hooks.on("renderLevelsUI", (app, html) => {
@@ -677,7 +757,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateTile", (tile, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
         tile.data.update({
           overhead: true,
         });
@@ -685,10 +765,10 @@ Hooks.on("ready", () => {
           tile.data.update({
             flags: {
               [`${CONFIG.Levels.MODULE_ID}`]: {
-                rangeBottom: _levels.UI.roofEnabled
-                  ? parseFloat(_levels.UI.range[1]) + 1
-                  : parseFloat(_levels.UI.range[0]),
-                rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
+                rangeBottom: CONFIG.Levels.UI.roofEnabled
+                  ? parseFloat(CONFIG.Levels.UI.range[1]) + 1
+                  : parseFloat(CONFIG.Levels.UI.range[0]),
+                rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : CONFIG.Levels.UI.range[1],
               }
             }
           });
@@ -696,15 +776,15 @@ Hooks.on("ready", () => {
           tile.data.update({
             flags: {
               [`${CONFIG.Levels.MODULE_ID}`]: {
-                rangeTop: _levels.UI.roofEnabled ? Infinity : _levels.UI.range[1],
+                rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : CONFIG.Levels.UI.range[1],
               }
             }
           });
         }
         if(!_levels?.UI?.suppressBr){
           let brmode = 2
-          if(_levels.UI.roofEnabled) brmode = 1
-          if(_levels.UI.placeOverhead) brmode = 0
+          if(CONFIG.Levels.UI.roofEnabled) brmode = 1
+          if(CONFIG.Levels.UI.placeOverhead) brmode = 0
           tile.data.update({
             flags: {
               betterroofs: { 
@@ -717,15 +797,15 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("deleteTile", (tile, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
-        _levels.UI.computeLevelsVisibility();
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
+        CONFIG.Levels.UI.computeLevelsVisibility();
       }
     });
 
     Hooks.on("updateTile", (tile, updates) => {
       if(canvas.tokens.controlled[0]) return
-      if (_levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
-        _levels.UI.computeLevelsVisibility();
+      if (CONFIG.Levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
+        CONFIG.Levels.UI.computeLevelsVisibility();
         if (game.settings.get(CONFIG.Levels.MODULE_ID, "enableTooltips")) {
           canvas.hud.levels.bind(tile.object);
         } else {
@@ -735,60 +815,60 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateAmbientLight", (light, updates) => {
-      if (_levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
-        light.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+      if (CONFIG.Levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
+        light.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
     Hooks.on("preCreateAmbientSound", (sound, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
-        sound.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
+        sound.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
     Hooks.on("preCreateNote", (note, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
-        note.data.update(_levels.UI.getObjUpdateData(_levels.UI.range));
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
+        note.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
     Hooks.on("preCreateDrawing", (drawing, updates) => {
-      let sortedLevels = [..._levels.UI.definedLevels].sort((a, b) => {
+      let sortedLevels = [...CONFIG.Levels.UI.definedLevels].sort((a, b) => {
         return parseFloat(b[0]) - parseFloat(a[0])
       })
-      let aboverange = sortedLevels.find(l => _levels.UI.range[0] === l[0] && _levels.UI.range[1] === l[1])
+      let aboverange = sortedLevels.find(l => CONFIG.Levels.UI.range[0] === l[0] && CONFIG.Levels.UI.range[1] === l[1])
       aboverange = sortedLevels.indexOf(aboverange) === 0 ? undefined : sortedLevels[sortedLevels.indexOf(aboverange) - 1]
 
       if (aboverange) {
         let newTop = aboverange[1];
         let newBot = aboverange[0];
-        if (_levels.UI.rangeEnabled == true) {
+        if (CONFIG.Levels.UI.rangeEnabled == true) {
           drawing.data.update({
             hidden: true,
-            text: _levels.UI.stairEnabled
-              ? `Levels Stair ${_levels.UI.range[0]}-${newBot}`
-              : `Levels Hole ${_levels.UI.range[0]}-${newTop}`,
+            text: CONFIG.Levels.UI.stairEnabled
+              ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}`
+              : `Levels Hole ${CONFIG.Levels.UI.range[0]}-${newTop}`,
             flags: {
               levels: {
-                drawingMode: _levels.UI.stairEnabled ? 2 : 1,
-                rangeBottom: _levels.UI.range[0],
-                rangeTop: _levels.UI.stairEnabled ? newBot - 1 : newTop,
+                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 1,
+                rangeBottom: CONFIG.Levels.UI.range[0],
+                rangeTop: CONFIG.Levels.UI.stairEnabled ? newBot - 1 : newTop,
               },
             },
           });
         }
       } else {
-        if (_levels.UI.rangeEnabled == true) {
+        if (CONFIG.Levels.UI.rangeEnabled == true) {
           drawing.data.update({
             hidden: true,
-            text: _levels.UI.stairEnabled
-              ? `Levels Stair ${_levels.UI.range[0]}-${_levels.UI.range[1] + 1}`
-              : `Levels Hole ${_levels.UI.range[0]}-${_levels.UI.range[1]}`,
+            text: CONFIG.Levels.UI.stairEnabled
+              ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}`
+              : `Levels Hole ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1]}`,
             flags: {
               levels: {
-                drawingMode: _levels.UI.stairEnabled ? 2 : 1,
-                rangeBottom: _levels.UI.range[0],
-                rangeTop: _levels.UI.range[1],
+                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 1,
+                rangeBottom: CONFIG.Levels.UI.range[0],
+                rangeTop: CONFIG.Levels.UI.range[1],
               },
             },
           });
@@ -797,12 +877,12 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateWall", (wall, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
         wall.data.update({
           flags: {
             "wall-height": {
-              bottom: _levels.UI.range[0],
-              top: _levels.UI.range[1],
+              bottom: CONFIG.Levels.UI.range[0],
+              top: CONFIG.Levels.UI.range[1],
             },
           },
         });
@@ -810,9 +890,9 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("preCreateToken", (token, updates) => {
-      if (_levels.UI.rangeEnabled == true) {
+      if (CONFIG.Levels.UI.rangeEnabled == true) {
         token.data.update({
-          elevation: _levels.UI.range[0],
+          elevation: CONFIG.Levels.UI.range[0],
         });
       }
     });
@@ -823,34 +903,8 @@ Hooks.on("renderSceneControls", () => {
   if (
     _levels?.UI?.rangeEnabled // && !game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
   )
-    _levels.UI.computeLevelsVisibility();
+    CONFIG.Levels.UI.computeLevelsVisibility();
 });
-
-/*Hooks.on("renderApplication", () => {
-  if (
-    _levels?.UI?.rangeEnabled &&
-    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
-  )
-    _levels.UI.refreshLevels();
-});
-
-Hooks.on("sightRefresh", () => {
-  if(canvas.tokens.controlled[0]) return
-  if (
-    _levels?.UI?.rangeEnabled &&
-    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
-  )
-    _levels.UI.refreshLevels();
-});
-
-Hooks.on("lightingRefresh", () => {
-  if(canvas.tokens.controlled[0]) return
-  if (
-    _levels?.UI?.rangeEnabled &&
-    game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
-  )
-    _levels.UI.refreshLevels();
-});*/
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   let templateTool = {
@@ -858,11 +912,11 @@ Hooks.on("getSceneControlButtons", (controls, b, c) => {
     title: game.i18n.localize("levels.controls.setTemplateElevation.name"),
     icon: "fas fa-sort",
     toggle: true,
-    active: _levels?.templateElevation || false,
+    active: _levels?.UI.templateElevation || false,
     onClick: (toggle) => {
-      _levels.templateElevation = toggle;
-      if (toggle) _levels.elevationDialog(templateTool);
-      else _levels.nextTemplateHeight = undefined;
+      CONFIG.Levels.UI.templateElevation = toggle;
+      if (toggle) CONFIG.Levels.UI.elevationDialog(templateTool);
+      else CONFIG.Levels.UI.nextTemplateHeight = undefined;
     },
   };
   _levelsTemplateTool = templateTool;
