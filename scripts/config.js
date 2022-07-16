@@ -11,6 +11,7 @@ import { TokenHandler } from "./handlers/tokenHandler.js";
 import { TemplateHandler } from "./handlers/TemplateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
 import { BackgroundHandler } from "./handlers/backgroundHandler.js";
+import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange,getRangeForDocument } from './helpers.js';
 
@@ -67,6 +68,8 @@ Hooks.on("init", () => {
       inRange,
       getRangeForDocument
   }
+
+  CONFIG.Levels.API = LevelsAPI;
 
   CONFIG.Levels.UI = new LevelsUI();
 
