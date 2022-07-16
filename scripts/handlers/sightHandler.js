@@ -1,26 +1,17 @@
 export class SightHandler {
-  static performLOSTest(sourceToken, token) {
-    return this.advancedLosTestVisibility(sourceToken, token);
+  static performLOSTest(sourceToken, token, source) {
+    return this.advancedLosTestVisibility(sourceToken, token, source);
   }
 
-  static advancedLosTestVisibility(sourceToken, token) {
-    const gm = game.user.isGM;
-    const visibilityOverride = this.overrideVisibilityTest(sourceToken, token);
-    if (typeof visibilityOverride === "boolean") return visibilityOverride;
+  static advancedLosTestVisibility(sourceToken, token, source) {
     const angleTest = this.testInAngle(sourceToken, token);
     if (!angleTest) return false;
     const inLOS = !this.advancedLosTestInLos(sourceToken, token);
+    if(sourceToken.vision.los === source) return inLOS;
     const inRange = this.tokenInRange(sourceToken, token);
-    if (inLOS && inRange && token.document.hidden && gm) return true;
-    if (inLOS && inRange && !token.document.hidden) return true;
-    /*const inLight = this.advancedLOSCheckInLight(token);
-    if (inLight === 2 && !token.document.hidden) return true;
-    if (inLOS && inLight && !token.document.hidden) return true;*/
+    if (inLOS && inRange) return true;
     return false;
   }
-
-  //Method for modules to override the levels visibility test
-  static overrideVisibilityTest(sourceToken, token) {}
 
   static advancedLosTestInLos(sourceToken, token) {
     const tol = 4;
@@ -131,66 +122,51 @@ export class SightHandler {
     return d;
   }
 
-  static testInLight(object, testTarget, result){
-    debugger
-  }
-
-  static advancedLOSCheckInLight(token) {
-    for (let source of canvas.lighting.sources) {
-      if (source.skipRender && source.object.document.documentName !== "Token")
-        continue;
-      if (!source.active) continue;
-      if (source.object.document.documentName === "Token") {
-        const lightRadius = Math.max(
-          source.object.document.light.dim,
-          source.object.document.light.bright
-        );
-        const lightTop =
-          source.object.document.elevation + (lightRadius ?? Infinity);
-        const lightBottom =
-          source.object.document.elevation - (lightRadius ?? -Infinity);
-        if (
-          token.document.elevation >= lightBottom &&
-          token.document.elevation <= lightTop
-        ) {
-          if (this.checkInLightCorners(source.los, token)) return true;
-        }
-      } else {
-        const lightTop = source.object.document.flags.levels?.rangeTop ?? Infinity;
-        const lightBottom =
-          source.object.document.flags.levels?.rangeBottom ?? -Infinity;
-        if (
-          token.document.elevation >= lightBottom &&
-          token.document.elevation <= lightTop
-        ) {
-          if (this.checkInLightCorners(source.los, token)) {
-            return source.object?.data?.vision ? 2 : true;
-          }
-        }
-      }
+  static testInLight(object, testTarget, source, result){
+    const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+    const top = object.document.flags?.levels?.rangeTop ?? Infinity;
+    const bottom = object.document.flags?.levels?.rangeBottom ?? -Infinity;
+    let lightHeight = null;
+    if(object instanceof Token){
+      lightHeight = object.losHeight;
+    }else if(top != Infinity && bottom != -Infinity){
+      lightHeight = (top + bottom) / 2;
+    }
+    else if(top != Infinity){
+      lightHeight = top;
+    }
+    else if(bottom != -Infinity){
+      lightHeight = bottom;
+    }
+    if(lightHeight == null) return result;
+    const lightRadius = source.config.radius/unitsToPixel;
+    const targetLOSH = testTarget.losHeight;
+    const targetElevation = testTarget.document.elevation;
+    const lightTop = lightHeight + lightRadius;
+    const lightBottom = lightHeight - lightRadius;
+    if(targetLOSH <= lightTop && targetLOSH >= lightBottom){
+      return result;
+    }
+    if(targetElevation <= lightTop && targetElevation >= lightBottom){
+      return result;
     }
     return false;
   }
 
-  static checkInLightCorners(los, token) {
-    return false;
-    if (!los) return false;
-    const tol = 4;
-    if (this.preciseTokenVisibility === false)
-      return los.contains(token.center.x, token.center.y);
-    const tokenCorners = [
-      { x: token.center.x, y: token.center.y },
-      { x: token.x + tol, y: token.y + tol },
-      { x: token.x + token.w - tol, y: token.y + tol },
-      { x: token.x + tol, y: token.y + token.h - tol },
-      { x: token.x + token.w - tol, y: token.y + token.h - tol },
-    ];
-    for (let point of tokenCorners) {
-      let inLos = los.contains(point.x, point.y);
-      if (inLos) return inLos;
+  static containsWrapper(wrapped, ...args){
+    const LevelsConfig = CONFIG.Levels;
+    const testTarget = LevelsConfig.visibilityTestObject;
+    if(!this.config?.source?.object || !(testTarget instanceof Token)) return wrapped(...args);
+    let result;
+    if(this.config.source instanceof LightSource){
+      result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));
+    }else if(this.config.source.object instanceof Token){
+        result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget, this);
+    }else{
+        result = wrapped(...args);
     }
-    return false;
-  }
+    return result;
+}
   /**
    * Check whether the given wall should be tested for collisions, based on the collision type and wall configuration
    * @param {Object} wall - The wall being checked
@@ -240,8 +216,21 @@ export class SightHandler {
       return walls3dTest.bind(this)();
     }
 
+    //Check the background for collisions
+    const bgElevation = canvas?.scene?.flags?.levels?.backgroundElevation ?? 0
+    const zIntersectionPointBG = getPointForPlane(bgElevation);
+    if (((z0 < bgElevation && bgElevation < z1) || (z1 < bgElevation && bgElevation < z0))) {
+        return {
+          x: zIntersectionPointBG.x,
+          y: zIntersectionPointBG.y,
+          z: bgElevation,
+        };
+    }
+
+
     //Loop through all the planes and check for both ceiling and floor collision on each tile
     for (let tile of canvas.tiles.placeables) {
+      if(tile.document.flags?.levels?.noCollision) continue;
       const bottom = tile.document.flags?.levels?.rangeBottom ?? -Infinity;
       const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
       if (bottom != -Infinity) {
@@ -250,7 +239,6 @@ export class SightHandler {
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
           tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y)
         ) {
-          if (checkForHole(zIntersectionPoint, bottom))
             return {
               x: zIntersectionPoint.x,
               y: zIntersectionPoint.y,
@@ -258,16 +246,6 @@ export class SightHandler {
             };
         }
       }
-      /*if ((top && top != Infinity) || top == 0) {
-        const zIntersectionPoint = getPointForPlane(top);
-        if (
-          ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
-          tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y)
-        ) {
-          if (checkForHole(zIntersectionPoint, top))
-            return { x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: top };
-        }
-      }*/
     }
 
     //Return the 3d wall test if no collisions were detected on the Z plane
@@ -279,19 +257,6 @@ export class SightHandler {
       const y = ((z - z0) * (y1 - y0) + z1 * y0 - z0 * y0) / (z1 - z0);
       const point = { x: x, y: y };
       return point;
-    }
-    //Check if a floor is hollowed by a hole
-    function checkForHole(intersectionPT, zz) {
-      return true;
-      for (let hole of _levels.levelsHoles) {
-        const hbottom = hole.range[0];
-        const htop = hole.range[1];
-        if (zz > htop || zz < hbottom) continue;
-        if (hole.poly.contains(intersectionPT.x, intersectionPT.y)) {
-          return false;
-        }
-      }
-      return true;
     }
     //Check if a point in 2d space is betweeen 2 points
     function isBetween(a, b, c) {

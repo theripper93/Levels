@@ -2,7 +2,7 @@ import { injectConfig } from "./lib/injectConfig.js";
 import { TileHandler } from './handlers/tileHandler.js';
 import { RefreshHandler } from './handlers/refreshHandler.js';
 import { DrawingHandler } from "./handlers/drawingHandler.js";
-import { BasicHandler } from "./handlers/basicHandler.js";
+import { UIHandler } from "./handlers/uiHandler.js";
 import { SightHandler } from "./handlers/sightHandler.js";
 import { LightHandler } from "./handlers/lightHandler.js";
 import { SoundHandler } from "./handlers/soundHandler.js";
@@ -10,18 +10,25 @@ import { NoteHandler } from "./handlers/noteHandler.js";
 import { TokenHandler } from "./handlers/tokenHandler.js";
 import { TemplateHandler } from "./handlers/TemplateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
+import { BackgroundHandler } from "./handlers/backgroundHandler.js";
 import { registerWrappers } from './wrappers.js';
-import { inRange } from './helpers.js';
+import { inRange,getRangeForDocument } from './helpers.js';
 
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
-    return this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation;
+    return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas?.scene?.flags?.levels?.backgroundElevation ?? 0;
   }
 });
 
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
   get: function () {
     return this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation;
+  }
+});
+
+Object.defineProperty(WeatherEffects.prototype, "elevation", {
+  get: function () {
+    return canvas?.scene?.flags?.levels?.weatherElevation ?? 9999;
   }
 });
 
@@ -33,19 +40,21 @@ Hooks.on("init", () => {
       TileHandler,
       RefreshHandler,
       DrawingHandler,
-      BasicHandler,
+      UIHandler,
       SightHandler,
       LightHandler,
       SoundHandler,
       NoteHandler,
       TokenHandler,
       TemplateHandler,
-      FoWHandler
+      FoWHandler,
+      BackgroundHandler
 
   }
 
   CONFIG.Levels.helpers = {
-      inRange
+      inRange,
+      getRangeForDocument
   }
 
   CONFIG.Levels.UI = new LevelsUI();
@@ -55,6 +64,7 @@ Hooks.on("init", () => {
   registerWrappers();
 
   CONFIG.Levels.FoWHandler = new FoWHandler();
+  CONFIG.Levels.handlers.BackgroundHandler.setupElevation();
 
   Hooks.callAll("levelsReady", CONFIG.Levels);
 
@@ -246,10 +256,6 @@ Hooks.on("renderTileConfig", (app, html, data) => {
             "label": "Levels",
             "icon": "fas fa-layer-group",
         },
-        "noOverheadWarning": {
-          type: "custom",
-          html: `<p class="notes" id="no-overhead-warning" style="color: red;">${game.i18n.localize("levels.tilecoonfig.noOverhead")}</p>`,
-        },
         "rangeTop": {
           type: "text",
           dType: "Number",
@@ -277,19 +283,20 @@ Hooks.on("renderTileConfig", (app, html, data) => {
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: Infinity,
         },
-        "isBasement": {
+        "noCollision": {
           type: "checkbox",
-          label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
-          notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
+          label: game.i18n.localize("levels.tilecoonfig.noCollision.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.noCollision.hint"),
         },
         "noFogHide": {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.noFogHide.name"),
           notes: game.i18n.localize("levels.tilecoonfig.noFogHide.hint"),
         },
-        "excludeFromChecker": {
+        "isBasement": {
           type: "checkbox",
-          label: game.i18n.localize("levels.tilecoonfig.excludeFromChecker.name"),
+          label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
         },
   });
   html.on("change", "input", (e) => {
@@ -466,3 +473,29 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });
+
+Hooks.on("renderSceneConfig", (app, html, data) => {
+  injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'input[name="foregroundElevation"]',
+        "backgroundElevation": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.sceneconfig.backgroundElevation.name"),
+          notes: game.i18n.localize("levels.sceneconfig.backgroundElevation.notes"),
+          default: 0,
+        },
+  });
+
+  injectConfig.inject(app, html, {
+    "moduleId": "levels",
+        "inject": 'select[name="weather"]',
+        "weatherElevation": {
+          type: "text",
+          dType: "Number",
+          label: game.i18n.localize("levels.sceneconfig.weatherElevation.name"),
+          notes: game.i18n.localize("levels.sceneconfig.weatherElevation.notes"),
+          default: 9999,
+        },
+  });
+})

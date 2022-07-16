@@ -28,3 +28,20 @@ export function inRange(document, elevation){
   return elevation >= rangeBottom && elevation <= rangeTop;
 }
 
+export function getRangeForDocument(document){
+  if(document instanceof WallDocument){
+    return {
+      rangeBottom: document.flags?.["wall-height"]?.bottom ?? -Infinity,
+      rangeTop: document.flags?.["wall-height"]?.top ?? Infinity
+    }
+  }else if(document instanceof TokenDocument){
+    return {
+      rangeBottom: document.elevation,
+      rangeTop: document.elevation
+    }
+  }
+  const rangeBottom = document.flags?.levels?.rangeBottom ?? -Infinity;
+  const rangeTop = document.flags?.levels?.rangeTop ?? Infinity;
+  return { rangeBottom, rangeTop };
+}
+

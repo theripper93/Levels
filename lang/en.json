@@ -42,12 +42,14 @@
     "levels.tilecoonfig.showIfAbove.hint": "If enabled, the tile will be shown even if the token is below the bottom height range (example use, balconies)",
     "levels.tilecoonfig.showAboveRange.name":"Max Elevation Difference",
     "levels.tilecoonfig.showAboveRange.hint": "When 'Show even when below?' is enabled, this is the maximum elevation difference between the token and the tile, past this value the tile will no longer show.",
-    "levels.tilecoonfig.isBasement.name":"is Basement?",
+    "levels.tilecoonfig.isBasement.name":"Strict Range",
     "levels.tilecoonfig.isBasement.hint": "If enabled, the tile will only be shown if the token is inside the tile range, this means that a token above the top range will not see this tile.",
     "levels.tilecoonfig.noFogHide.name":"Don't hide this tile in the Fog",
     "levels.tilecoonfig.noFogHide.hint": "Exclude this tile from Level's 'Advanced Fog of War'.",
     "levels.tilecoonfig.range.unit": "Elevation",
     "levels.tilecoonfig.excludeFromChecker.name": "Exclude from Scene Checker",
+    "levels.tilecoonfig.noCollision.name": "Allow Sight",
+    "levels.tilecoonfig.noCollision.hint": "If enabled, the tile will not block sight.",
 
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
@@ -64,6 +66,11 @@
     "levels.tokenconfig.tokenHeight.unit": "(Distance)",
     "levels.template.elevation.name": "Elevation",
     "levels.template.special.name": "Special",
+
+    "levels.sceneconfig.backgroundElevation.name": "Background Elevation",
+    "levels.sceneconfig.backgroundElevation.notes": "An elevation in distance units which configures the height of the background image and underfoot tiles.",
+    "levels.sceneconfig.weatherElevation.name": "Weather Elevation",
+    "levels.sceneconfig.weatherElevation.notes": "An elevation in distance units which configures the height of the weather effects.",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",

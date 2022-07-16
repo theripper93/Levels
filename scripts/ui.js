@@ -29,7 +29,6 @@ class LevelsUI extends FormApplication {
 
   async activateListeners(html) {
     this.rangeEnabled = true;
-    ui.controls.controls.find((c) => c.name == "tiles").layer = "foreground";
     this.loadLevels();
     html.on("click", ".level-item", this._onChangeLevel.bind(this));
     html.on("click", ".level-item .fa-trash", this._onRemoveLevel.bind(this));
@@ -60,9 +59,22 @@ class LevelsUI extends FormApplication {
     );
     html.on(
       "click",
-      "#levels-ui-controls .fa-bug",
-      this._onCheckScene.bind(this)
+      "#levels-ui-controls .fa-archway",
+      () => {
+        this.roofEnabled = !this.roofEnabled;
+        this.setButtonStyles();
+        this.computeLevelsVisibility();
+      }
     );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-tree",
+      () => {
+        this.placeOverhead = !this.placeOverhead;
+        this.setButtonStyles();
+      }
+    );
+
     html.on("click", ".player-portrait", this._onControlToken.bind(this));
     html.on("change", ".level-inputs input", this.saveData.bind(this));
     //make list sortable
@@ -85,11 +97,13 @@ class LevelsUI extends FormApplication {
       html.find("#levels-list li:last-child").click();
     } else html.find("#levels-list li")[index].click();
     this.updatePlayerList();
-    if(canvas.background._active) canvas.foreground.activate()
-    const brokenTiles = this._onCheckScene(undefined, false)
-    if(brokenTiles) {
-      html.find("#levels-ui-controls .fa-bug").addClass("broken")
-    }
+    this.setButtonStyles();
+  }
+
+  setButtonStyles() {
+    this.element.find(".fa-archway").toggleClass("active", this.roofEnabled);
+    this.element.find(".fa-tree").toggleClass("active", this.placeOverhead);
+    this.element.find(".fa-users").toggleClass("active", this.element.find(".players-on-level").hasClass("active"));
   }
 
   _onAddLevel(event) {
@@ -107,7 +121,8 @@ class LevelsUI extends FormApplication {
   }
 
   _onChangeLevel(event) {
-    if(!$(event.target).hasClass("player-portrait")) canvas.tokens.releaseAll();
+    if (!$(event.target).hasClass("player-portrait"))
+      canvas.tokens.releaseAll();
     let $target = $(event.currentTarget);
     let $parent = $target.parent();
     $parent.find(".fa-caret-right").removeClass("active");
@@ -117,16 +132,14 @@ class LevelsUI extends FormApplication {
     const top = $target.find(".level-top").val();
     const bottom = $target.find(".level-bottom").val();
     const name = $target.find(".level-name").val();
-    this.definedLevels = canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "sceneLevels");
-    this.range = this.definedLevels.find(
-      (l) => l[0] == bottom && l[1] == top
+    this.definedLevels = canvas.scene.getFlag(
+      CONFIG.Levels.MODULE_ID,
+      "sceneLevels"
     );
-    if($(event.target).hasClass("player-portrait")) return
-    WallHeight.currentTokenElevation = parseFloat(bottom)
+    this.range = this.definedLevels.find((l) => l[0] == bottom && l[1] == top);
+    if ($(event.target).hasClass("player-portrait")) return;
+    WallHeight.currentTokenElevation = parseFloat(bottom);
     this.computeLevelsVisibility(this.range);
-    setTimeout(() => {
-      canvas.tokens.placeables.forEach((t) => {t.refresh()})
-    }, 100)
     Hooks.callAll("levelsUiChangeLevel");
   }
 
@@ -156,42 +169,13 @@ class LevelsUI extends FormApplication {
     });
   }
 
-  _onCheckScene(event, showDialog = true) {
-    const brokenTiles = canvas.tiles.placeables.filter(t => t.document.overhead).filter((t) =>  !t.document.getFlag("levels", "excludeFromChecker")  && _betterRoofsHelpers.getRoomPoly(t, false, true).isBroken);
-    const excludedTiles = canvas.tiles.placeables.filter(t => t.document.overhead).filter((t) => t.document.getFlag("levels", "excludeFromChecker")).length;
-    if(showDialog) {
-      const dContent = `
-      <p><a href="https://theripper93.com/#/module/levels" target="_blank"><h6 style="margin: 0;">${game.i18n.localize("levels.dialog.checkScene.learnMore")}</h6></a></p>
-      <h3 style="font-weight: 500;">${game.i18n.localize("levels.dialog.checkScene.content")}</h3>
-      <hr>
-      <ul>
-      ${brokenTiles.map((t) => `<li data-tileid=${t.id}><a>${t.data.img}</a></li>`).join("")}
-      </ul>
-      <h4>${brokenTiles.length === 0 ? game.i18n.localize("levels.dialog.checkScene.noIssues") : "" }</h4>
-      `;
-      Dialog.prompt({
-        title: excludedTiles > 0 ? game.i18n.localize("levels.dialog.checkScene.title") + " | " + game.i18n.localize("levels.dialog.checkScene.excluded") + ` (${excludedTiles})` : game.i18n.localize("levels.dialog.checkScene.title"),
-        content: dContent,
-        render: (html) => {
-          html.on("click", "li", (e) => {
-            const $target = $(e.currentTarget);
-            const tileId = $target.data("tileid");
-            const tile = brokenTiles.find((t) => t.id == tileId);
-            if(tile) tile.sheet.render(true);
-          })
-        },
-        callback: () => {},
-      })
-    }
-    return brokenTiles.length > 0;
-  }
-
   _onShowPlayerList(event) {
     this.element.find(".players-on-level").toggleClass("active");
+    this.setButtonStyles();
   }
 
   _onControlToken(event) {
-    canvas.tokens.releaseAll()
+    canvas.tokens.releaseAll();
     const tokenId = event.currentTarget.dataset.tokenid;
     const token = canvas.tokens.get(tokenId);
     token.control();
@@ -236,11 +220,11 @@ class LevelsUI extends FormApplication {
       data[2] ?? ""
     }" placeholder="${game.i18n.localize("levels.widget.element")}">
     <i class="fas fa-caret-down"></i>
-    <input type="number" class="level-bottom" value="${data[0]}" placeholder="0">
-    <i class="fas fa-caret-up"></i>
-    <input type="number" class="level-top" value="${
-      data[1]
+    <input type="number" class="level-bottom" value="${
+      data[0]
     }" placeholder="0">
+    <i class="fas fa-caret-up"></i>
+    <input type="number" class="level-top" value="${data[1]}" placeholder="0">
     <i class="fas fa-trash"></i>
     </div>
 	</li>
@@ -264,39 +248,50 @@ class LevelsUI extends FormApplication {
     });
   }
 
-  updatePlayerList(){
-    const playerActors = Array.from(game.users).map( user => user.character?.id)
-    const players = canvas.tokens.placeables.filter( token => playerActors.includes(token.actor?.id))
+  updatePlayerList() {
+    const playerActors = Array.from(game.users).map(
+      (user) => user.character?.id
+    );
+    const players = canvas.tokens.placeables.filter((token) =>
+      playerActors.includes(token.actor?.id)
+    );
     $(this.element)
-    .find("li")
-    .each((index, element) => {
-      let $element = $(element);
-      const top = $element.find(".level-top").val();
-      const bottom = $element.find(".level-bottom").val();
-      const $playerList = $element.find(".players-on-level");
-      $playerList.empty();
-      players.forEach(player => {
-        if(player.data.elevation >= bottom && player.data.elevation <= top && player.id){
-          const color = Array.from(game.users).find( user => user.character?.id == player?.actor?.id)?.border
-          $playerList.append(`<img class="player-portrait" data-tokenid="${player.id}" title="${player.actor?.name}" style="border-color: ${color}" src="${player.data.img}">`);
-        }
-      })
-    });
+      .find("li")
+      .each((index, element) => {
+        let $element = $(element);
+        const top = $element.find(".level-top").val();
+        const bottom = $element.find(".level-bottom").val();
+        const $playerList = $element.find(".players-on-level");
+        $playerList.empty();
+        players.forEach((player) => {
+          if (
+            player.document.elevation >= bottom &&
+            player.document.elevation <= top &&
+            player.id
+          ) {
+            const color = Array.from(game.users).find(
+              (user) => user.character?.id == player?.actor?.id
+            )?.border;
+            $playerList.append(
+              `<img class="player-portrait" data-tokenid="${player.id}" title="${player.actor?.name}" style="border-color: ${color}" src="${player.document.texture.src}">`
+            );
+          }
+        });
+      });
     this.element.css("height", "auto");
   }
 
-  close(force=false) {
-    if(!force) this.saveData();
-    if(!force) this.clearVisibility();
+  close(force = false) {
+    if (!force) this.saveData();
+    if (!force) this.computeLevelsVisibility();
     this.rangeEnabled = false;
-    ui.controls.controls.find((c) => c.name == "tiles").layer = "background";
     super.close();
   }
 
   async getFromScene() {
     let autoLevels = {};
     for (let wall of canvas.walls.placeables) {
-      const {top, bottom} = WallHeight.getWallBounds(wall);
+      const { top, bottom } = WallHeight.getWallBounds(wall);
       let entityRange = [bottom, top];
       if (
         entityRange[0] != -Infinity &&
@@ -308,8 +303,11 @@ class LevelsUI extends FormApplication {
       }
     }
 
-    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
-      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(tile);
+    for (let tile of canvas.tiles.placeables.filter(
+      (t) => t.document.overhead
+    )) {
+      let { rangeBottom, rangeTop } =
+        CONFIG.Levels.helpers.getRangeForDocument(tile);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -321,7 +319,8 @@ class LevelsUI extends FormApplication {
     }
 
     for (let light of canvas.lighting.placeables) {
-      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(light);
+      let { rangeBottom, rangeTop } =
+        CONFIG.Levels.helpers.getRangeForDocument(light);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -332,8 +331,9 @@ class LevelsUI extends FormApplication {
       }
     }
 
-    for(let drawing of canvas.drawings.placeables){
-      let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(drawing);
+    for (let drawing of canvas.drawings.placeables) {
+      let { rangeBottom, rangeTop } =
+        CONFIG.Levels.helpers.getRangeForDocument(drawing);
       if (
         (rangeBottom || rangeBottom == 0) &&
         (rangeTop || rangeTop == 0) &&
@@ -342,90 +342,28 @@ class LevelsUI extends FormApplication {
       ) {
         autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
       }
-    };
+    }
     let autoRange = Object.entries(autoLevels)
       .map((x) => x[1])
       .sort()
       .reverse();
     if (autoRange.length) {
-      await canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", autoRange);
+      await canvas.scene.setFlag(
+        CONFIG.Levels.MODULE_ID,
+        "sceneLevels",
+        autoRange
+      );
       this.loadLevels();
     }
   }
 
-  computeLevelsVisibility(range) {
-    CONFIG.Levels.floorContainer.removeChildren();
-    CONFIG.Levels.floorContainer.spriteIndex = {};
-    if(!range) range = this.range
-    if (!range) return;
-    range[0] = parseFloat(range[0]);
-    range[1] = parseFloat(range[1]);
-    for (let wall of canvas.walls.placeables) {
-      const {top, bottom} = WallHeight.getWallBounds(wall);
-      let entityRange = [bottom, top];
-      if(entityRange[0] === entityRange[1] && (entityRange[0] === null || entityRange[0] === undefined)){
-        wall.visible = true
-        continue
-      }
-      if (entityRange[0] >= range[0] && entityRange[1] <= range[1]) {
-        wall.visible = true;
-      } else {
-        wall.visible = false;
-      }
-      /*if (wall.data.door) {
-        let door = canvas.controls.doors.children.find(
-          (c) => c.wall.id == wall.id
-        );
-        if (door) door.visible = wall.visible;
-      }*/
-    }
-
-    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
-      tile.visible = this.computeRangeForDocument(
-        tile,
-        range,
-        this.roofEnabled
-      );
-      if(tile.visible && tile.tile) tile.tile.alpha = 1
-      if(tile.visible && tile.tileSortHidden || !canvas.foreground._active){
-        tile.visible = false;
-      }
-      let { rangeBottom, rangeTop, isLevel } = CONFIG.Levels.getFlagsForObject(tile);
-      let tileIndex = { tile: tile, range: [rangeBottom, rangeTop] };
-      if (tileIndex.range[0] <= range[0] || tile.visible || (this.roofEnabled && tileIndex.range[0] == range[1]+1)) {
-        CONFIG.Levels.mirrorTileInBackground(tileIndex);
-      } else {
-        CONFIG.Levels.removeTempTile(tileIndex);
-      }
-      tile.levelsUIHideen = !tile.visible;
-    }
-
-    for (let light of canvas.lighting.placeables) {
-      light.visible = this.computeRangeForDocument(light, range);
-      light.source.skipRender = !light.visible;
-    }
-    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
-
-    for (let note of canvas.notes.placeables) {
-      note.visible = this.computeRangeForDocument(note, range);
-    }
-
-    for (let sound of canvas.sounds.placeables) {
-      sound.visible = this.computeRangeForDocument(sound, range);
-    }
-
-    for(let drawing of canvas.drawings.placeables){
-      drawing.visible = this.computeRangeForDocument(drawing, range);
-    };
-    for (let token of canvas.tokens.placeables) {
-      token.levelsVisible =
-        token.data.elevation <= range[1] && token.data.elevation >= range[0];
-      token.visible = token.levelsVisible;
-    }
+  computeLevelsVisibility() {
+    CONFIG.Levels.handlers.RefreshHandler.refreshAll();
   }
 
   computeRangeForDocument(document, range, isTile = false) {
-    let { rangeBottom, rangeTop } = CONFIG.Levels.getFlagsForObject(document);
+    let { rangeBottom, rangeTop } =
+      CONFIG.Levels.helpers.getRangeForDocument(document);
     rangeBottom = rangeBottom ?? -Infinity;
     rangeTop = rangeTop ?? Infinity;
     range[0] = parseFloat(range[0]) ?? -Infinity;
@@ -453,55 +391,13 @@ class LevelsUI extends FormApplication {
     }
   }
 
-  clearVisibility() {
-    for (let wall of canvas.walls.placeables) {
-      wall.visible = true;
-      wall.refresh();
-    }
-
-    for (let tile of canvas.tiles.placeables.filter(t => t.document.overhead)) {
-      tile.visible = true;
-      tile.levelsUIHideen = false;
-      if(!canvas.tokens._active)tile.refresh();
-    }
-    canvas.foreground.refresh()
-
-    for (let light of canvas.lighting.placeables) {
-      light.visible = true;
-      light.source.skipRender = false;
-      light.refresh();
-    }
-
-    for(let drawing of canvas.drawings.placeables){
-      drawing.visible = true;
-      drawing.refresh();
-    };
-
-    for (let sound of canvas.sounds.placeables) {
-      sound.visible = true;
-      sound.refresh();
-    }
-
-    for (let note of canvas.notes.placeables) {
-      note.visible = true;
-      note.refresh();
-    }
-
-    for( let token of canvas.tokens.placeables){
-      token.visible = true;
-      token.levelsVisible = true;
-      token.refresh();
-    }
-
-    CONFIG.Levels.floorContainer.removeChildren();
-    CONFIG.Levels.floorContainer.spriteIndex = {};
-    canvas.perception.schedule({ lighting: { initialize: true, refresh: true } });
-  }
-
   getObjUpdateData(range) {
     return {
       flags: {
-        [`${CONFIG.Levels.MODULE_ID}`]: { rangeBottom: range[0], rangeTop: range[1] },
+        [`${CONFIG.Levels.MODULE_ID}`]: {
+          rangeBottom: range[0],
+          rangeTop: range[1],
+        },
       },
     };
   }
@@ -587,134 +483,17 @@ class LevelsUI extends FormApplication {
   }
 }
 
-Hooks.on("getSceneControlButtons", (controls, b, c) => {
-  if (game.user.isGM) {
-    if (_levels?.UI?.rangeEnabled) {
-      controls.find((c) => c.name == "tiles").layer = "foreground";
-      controls
-        .find((c) => c.name == "tiles")
-        .tools.push(
-          {
-            name: "placeRoof",
-            title: game.i18n.localize("levels.controls.levelsroof.name"),
-            icon: "fas fa-archway",
-            toggle: true,
-            active: _levels?.UI?.roofEnabled || false,
-            onClick: (toggle) => {
-              CONFIG.Levels.UI.roofEnabled = toggle;
-              CONFIG.Levels.UI.computeLevelsVisibility();
-            },
-          },
-          {
-            name: "placeOverhead",
-            title: game.i18n.localize("levels.controls.placeOverhead.name"),
-            icon: "fas fa-tree",
-            toggle: true,
-            active: _levels?.UI?.placeOverhead || false,
-            onClick: (toggle) => {
-              CONFIG.Levels.UI.placeOverhead = toggle;
-            },
-          }
-        );
+$(document).on("click", `li[data-control="levels"]`, (e) => {
+  CONFIG.Levels.UI.render(true);
+})
 
-      controls
-        .find((c) => c.name == "drawings")
-        .tools.push({
-          name: "placeStair",
-          title: game.i18n.localize("levels.controls.levelshole.name"),
-          icon: "fab fa-firstdraft",
-          toggle: true,
-          active: _levels?.UI?.stairEnabled || false,
-          onClick: (toggle) => {
-            CONFIG.Levels.UI.stairEnabled = toggle;
-          },
-        });
-    }
-
-    let levelsTools = [
-      {
-        name: "enablerange",
-        title: game.i18n.localize("levels.controls.levelsview.name"),
-        icon: "fas fa-layer-group",
-        button: true,
-        onClick: () => {
-          if (CONFIG.Levels.UI.rendered) {
-            CONFIG.Levels.UI.close();
-          } else {
-            CONFIG.Levels.UI.render(true);
-          }
-        },
-      },
-      {
-        name: "placeRoof",
-        title: game.i18n.localize("levels.controls.levelsroof.name"),
-        icon: "fas fa-archway",
-        toggle: true,
-        active: _levels?.UI?.roofEnabled || false,
-        onClick: (toggle) => {
-          CONFIG.Levels.UI.roofEnabled = toggle;
-        },
-      },
-      {
-        name: "placeOverhead",
-        title: game.i18n.localize("levels.controls.placeOverhead.name"),
-        icon: "fas fa-tree",
-        toggle: true,
-        active: _levels?.UI?.placeOverhead || false,
-        onClick: (toggle) => {
-          CONFIG.Levels.UI.placeOverhead = toggle;
-          CONFIG.Levels.UI.computeLevelsVisibility(CONFIG.Levels.UI.range)
-        },
-      },
-      {
-        name: "placeStair",
-        title: game.i18n.localize("levels.controls.levelshole.name"),
-        icon: "fab fa-firstdraft",
-        toggle: true,
-        active: _levels?.UI?.stairEnabled || false,
-        onClick: (toggle) => {
-          CONFIG.Levels.UI.stairEnabled = toggle;
-        },
-      },
-      {
-        name: "suppressBrmode",
-        title: game.i18n.localize("levels.controls.suppressBrmode.name"),
-        icon: "fas fa-not-equal",
-        toggle: true,
-        active: _levels?.UI?.suppressBr || false,
-        onClick: (toggle) => {
-          CONFIG.Levels.UI.suppressBr = toggle;
-        },
-      },
-      {
-        name: "clear",
-        title: game.i18n.localize("levels.controls.levelsclear.name"),
-        icon: "fas fa-trash",
-        button: true,
-        onClick: () => {
-          CONFIG.Levels.UI.clearLevels();
-        },
-      },
-    ];
-    let levelsLayerTool = {
-      name: "levels",
-      layer: "levelsLayer",
-      title: game.i18n.localize("levels.controls.main.name"),
-      icon: "fas fa-layer-group",
-      tools: levelsTools,
-    };
-    controls.push(levelsLayerTool);
-
-    $("body")
-      .on("mousedown", `li[data-control="levels"]`, (event) => {
-        if (event.which == 3) {
-          if (CONFIG.Levels.UI.rendered) {
-            CONFIG.Levels.UI.close();
-          } else {
-            CONFIG.Levels.UI.render(true);
-          }
-        }
-      });
+Hooks.on("renderSceneControls", (controls, b, c) => {
+  if(game.user.isGM){
+    $(".main-controls").append(`
+    <li class="scene-control " data-control="levels" data-tooltip="${game.i18n.localize("levels.controls.main.name")}">
+    <i class="fas fa-layer-group"></i>
+    </li>
+    `)
   }
 });
 
@@ -737,6 +516,12 @@ Hooks.on("ready", () => {
       CONFIG.Levels.UI.updatePlayerList();
     })
 
+    Hooks.on("controlToken", (token,controlled)=>{
+      if(CONFIG.Levels.UI.rangeEnabled && !canvas.tokens.controlled.length){
+        CONFIG.Levels.UI.computeLevelsVisibility();
+      }
+    })
+
     Hooks.on("renderLevelsUI", (app, html) => {
 
       if(!app.positionSet){
@@ -752,28 +537,27 @@ Hooks.on("ready", () => {
       }
     })
 
-    Hooks.on("renderSceneControls", () => {
-      if (canvas["levelsLayer"]) canvas["levelsLayer"].deactivate();
-    });
-
     Hooks.on("preCreateTile", (tile, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
-        tile.data.update({
+        tile.updateSource({
           overhead: true,
         });
         if(!game.Levels3DPreview?._active){
-          tile.data.update({
+          tile.updateSource({
             flags: {
+              "betterroofs": {
+                brMode: CONFIG.Levels.UI.roofEnabled,
+              },
               [`${CONFIG.Levels.MODULE_ID}`]: {
                 rangeBottom: CONFIG.Levels.UI.roofEnabled
                   ? parseFloat(CONFIG.Levels.UI.range[1]) + 1
                   : parseFloat(CONFIG.Levels.UI.range[0]),
-                rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : CONFIG.Levels.UI.range[1],
+                rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : parseFloat(CONFIG.Levels.UI.range[1]),
               }
             }
           });
         }else{
-          tile.data.update({
+          tile.updateSource({
             flags: {
               [`${CONFIG.Levels.MODULE_ID}`]: {
                 rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : CONFIG.Levels.UI.range[1],
@@ -781,54 +565,37 @@ Hooks.on("ready", () => {
             }
           });
         }
-        if(!_levels?.UI?.suppressBr){
-          let brmode = 2
-          if(CONFIG.Levels.UI.roofEnabled) brmode = 1
-          if(CONFIG.Levels.UI.placeOverhead) brmode = 0
-          tile.data.update({
+        if(CONFIG.Levels.UI.placeOverhead){
+
+          tile.updateSource({
             flags: {
-              betterroofs: { 
-                brMode: brmode
-              },
+              [`${CONFIG.Levels.MODULE_ID}`]: {
+                showIfAbove: true,
+                showAboveRange: parseFloat(CONFIG.Levels.UI.range[1]) - parseFloat(CONFIG.Levels.UI.range[0]),
+                rangeBottom: parseFloat(CONFIG.Levels.UI.range[1]),
+                rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
+              }
             }
-          })
-        }
-      }
-    });
-
-    Hooks.on("deleteTile", (tile, updates) => {
-      if (CONFIG.Levels.UI.rangeEnabled == true) {
-        CONFIG.Levels.UI.computeLevelsVisibility();
-      }
-    });
-
-    Hooks.on("updateTile", (tile, updates) => {
-      if(canvas.tokens.controlled[0]) return
-      if (CONFIG.Levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
-        CONFIG.Levels.UI.computeLevelsVisibility();
-        if (game.settings.get(CONFIG.Levels.MODULE_ID, "enableTooltips")) {
-          canvas.hud.levels.bind(tile.object);
-        } else {
-          canvas.hud.levels.clear();
+          });
         }
       }
     });
 
     Hooks.on("preCreateAmbientLight", (light, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true && !game.Levels3DPreview?._active) {
-        light.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
+        light.updateSource(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
     Hooks.on("preCreateAmbientSound", (sound, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
-        sound.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
+        sound.updateSource(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
     Hooks.on("preCreateNote", (note, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
-        note.data.update(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
+        note.updateSource(CONFIG.Levels.UI.getObjUpdateData(CONFIG.Levels.UI.range));
       }
     });
 
@@ -843,30 +610,26 @@ Hooks.on("ready", () => {
         let newTop = aboverange[1];
         let newBot = aboverange[0];
         if (CONFIG.Levels.UI.rangeEnabled == true) {
-          drawing.data.update({
+          drawing.updateSource({
             hidden: true,
-            text: CONFIG.Levels.UI.stairEnabled
-              ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}`
-              : `Levels Hole ${CONFIG.Levels.UI.range[0]}-${newTop}`,
+            text: `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}`,
             flags: {
               levels: {
-                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 1,
+                drawingMode: 2,
                 rangeBottom: CONFIG.Levels.UI.range[0],
-                rangeTop: CONFIG.Levels.UI.stairEnabled ? newBot - 1 : newTop,
+                rangeTop: newBot - 1,
               },
             },
           });
         }
       } else {
         if (CONFIG.Levels.UI.rangeEnabled == true) {
-          drawing.data.update({
+          drawing.updateSource({
             hidden: true,
-            text: CONFIG.Levels.UI.stairEnabled
-              ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}`
-              : `Levels Hole ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1]}`,
+            text: `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}`,
             flags: {
               levels: {
-                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 1,
+                drawingMode: 2,
                 rangeBottom: CONFIG.Levels.UI.range[0],
                 rangeTop: CONFIG.Levels.UI.range[1],
               },
@@ -878,7 +641,7 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateWall", (wall, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
-        wall.data.update({
+        wall.updateSource({
           flags: {
             "wall-height": {
               bottom: CONFIG.Levels.UI.range[0],
@@ -891,7 +654,7 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateToken", (token, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
-        token.data.update({
+        token.updateSource({
           elevation: CONFIG.Levels.UI.range[0],
         });
       }

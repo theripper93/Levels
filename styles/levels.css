@@ -160,6 +160,14 @@ body.dragging, body.dragging * {
     text-shadow: 0 0 5px var(--levels-text-color);
 }
 
+#levels-ui-controls i.active{
+    color: var(--color-border-highlight);
+}
+
+#levels-ui-controls i.active:hover{
+    text-shadow: 0 0 5px var(--color-shadow-highlight);
+}
+
 #levelsUI .players-on-level{
     flex-direction: row;
     overflow: hidden;
@@ -182,10 +190,6 @@ body.dragging, body.dragging * {
     margin-bottom: 0.2rem;
     background-color: var(--levels-text-color);
     cursor: pointer;
-}
-
-#levelsUI #levels-ui-controls .fa-bug.broken{
-    color: #f94848;
 }
 
 /** Tooltip **/

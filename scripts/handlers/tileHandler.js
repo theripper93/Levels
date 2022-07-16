@@ -1,11 +1,20 @@
 export class TileHandler{
     static isTileVisible(tile){
-        if(!tile.document.flags.levels) return true;
+
         const currentToken = CONFIG.Levels.currentToken;
+
         CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
         if(!currentToken) return true;
+
         const tokenElevation = currentToken.document.elevation;
         const tokenLOS = currentToken.losHeight;
+
+        //Handle background tiles
+        if(!tile.document.overhead){
+            return tokenLOS >= (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)
+        }
+
+        if(!tile.document.flags.levels) return true;
 
         const {rangeTop, rangeBottom, showIfAbove, showAboveRange, isBasement, noFogHide} = getFlags(tile.document)
         //Not a levels tile

@@ -1,26 +1,42 @@
 export function registerWrappers(){
 
     const LevelsConfig = CONFIG.Levels
-
-    Hooks.on("refreshTile", (tile) => {
-        const visible = LevelsConfig.handlers.TileHandler.isTileVisible(tile);
-        tile.visible = tile.visible && visible;
+    const computeUI = LevelsConfig.handlers.UIHandler.UIVisible
+    Hooks.on("refreshTile", (placeable) => {
+        const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
+        placeable.visible = placeable.visible && visible;
+        computeUI(placeable);
     })
 
-    Hooks.on("refreshDrawing", (drawing) => {
-        const visible = LevelsConfig.handlers.DrawingHandler.isDrawingVisible(drawing);
-        drawing.visible = drawing.visible && visible;
+    Hooks.on("refreshDrawing", (placeable) => {
+        const visible = LevelsConfig.handlers.DrawingHandler.isDrawingVisible(placeable);
+        placeable.visible = placeable.visible && visible;
+        computeUI(placeable);
     })
 
-    Hooks.on("refreshToken", (token) => {
-        CONFIG.Levels.FoWHandler.lazyCreateBubble(token);
+    Hooks.on("refreshToken", (placeable) => {
+        CONFIG.Levels.FoWHandler.lazyCreateBubble(placeable);
+        computeUI(placeable);
+    })
+
+    Hooks.on("refreshAmbientLight", (placeable) => {
+        computeUI(placeable);
+    })
+
+    Hooks.on("refreshWall", (placeable) => {
+        computeUI(placeable);
+    })
+
+    Hooks.on("refreshAmbientSound", (placeable) => {
+        computeUI(placeable);
     })
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
-            if(args[1]) args[1].tolerance = 0;
+            args[1] ??= {};
+            args[1].tolerance = 0;
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);
             LevelsConfig.visibilityTestObject = null;
@@ -32,19 +48,7 @@ export function registerWrappers(){
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "ClockwiseSweepPolygon.prototype.contains",
-        function containsWrapper(wrapped, ...args) {
-            const testTarget = LevelsConfig.visibilityTestObject;
-            if(testTarget instanceof Token){
-                return LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget);
-            }
-            else if(testTarget instanceof AmbientLight){
-                return LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, wrapped(...args));
-            }else{
-                return wrapped(...args);
-            }
-            if(!(testTarget instanceof Token)) return wrapped(...args);
-            return LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget);
-        },
+        LevelsConfig.handlers.SightHandler.containsWrapper,
         "MIXED"
     );
 
