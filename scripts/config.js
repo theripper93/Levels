@@ -20,9 +20,20 @@ Object.defineProperty(TileDocument.prototype, "elevation", {
   }
 });
 
+/*Object.defineProperty(TileDocument.prototype, "sort", {
+  get: function () {
+    if (this.overhead) {
+      const e = this.elevation;
+      return e*10000+this.z;
+    }else{
+      return this.z
+    }
+  }
+});*/
+
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
   get: function () {
-    return this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation;
+    return this.flags?.levels?.rangeBottom
   }
 });
 

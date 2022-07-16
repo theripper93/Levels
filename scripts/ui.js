@@ -283,8 +283,8 @@ class LevelsUI extends FormApplication {
 
   close(force = false) {
     if (!force) this.saveData();
-    if (!force) this.computeLevelsVisibility();
     this.rangeEnabled = false;
+    if (!force) this.computeLevelsVisibility();
     super.close();
   }
 
