@@ -1,5 +1,3 @@
-let _levelsTemplateTool;
-
 class LevelsUI extends FormApplication {
   constructor() {
     super();
@@ -662,27 +660,20 @@ Hooks.on("ready", () => {
   }
 });
 
-Hooks.on("renderSceneControls", () => {
-  if (
-    _levels?.UI?.rangeEnabled // && !game.settings.get(CONFIG.Levels.MODULE_ID, "forceUiRefresh")
-  )
-    CONFIG.Levels.UI.computeLevelsVisibility();
-});
-
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
   let templateTool = {
     name: "setTemplateElevation",
     title: game.i18n.localize("levels.controls.setTemplateElevation.name"),
     icon: "fas fa-sort",
     toggle: true,
-    active: _levels?.UI.templateElevation || false,
+    active: CONFIG.Levels?.UI.templateElevation || false,
     onClick: (toggle) => {
       CONFIG.Levels.UI.templateElevation = toggle;
       if (toggle) CONFIG.Levels.UI.elevationDialog(templateTool);
       else CONFIG.Levels.UI.nextTemplateHeight = undefined;
     },
   };
-  _levelsTemplateTool = templateTool;
+  CONFIG.Levels.UI._levelsTemplateTool = templateTool;
   controls.find((c) => c.name == "token").tools.push(templateTool);
 });
 

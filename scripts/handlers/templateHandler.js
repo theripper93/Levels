@@ -90,7 +90,7 @@ export class TemplateHandler{
         CONFIG.Levels.UI.nextTemplateHeight = undefined;
         CONFIG.Levels.UI.nextTemplateSpecial = undefined;
         CONFIG.Levels.UI.templateElevation = false;
-        _levelsTemplateTool.active = false;
+        CONFIG.Levels.UI._levelsTemplateTool.active = false;
         $("body")
           .find(`li[data-tool="setTemplateElevation"]`)
           .removeClass("active");

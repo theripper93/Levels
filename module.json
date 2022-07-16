@@ -37,7 +37,6 @@
     }
   ],
   "scripts": [
-    "scripts/levels.js",
     "scripts/ui.js",
     "scripts/tooltip.js",
     "scripts/lib/jquerysortable.js"
