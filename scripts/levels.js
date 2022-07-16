@@ -1055,21 +1055,7 @@ class Levels {
     return globalPoints;
   }
 
-  getUnitTokenDist(token1, token2) {
-    const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
-    const x1 = token1.center.x;
-    const y1 = token1.center.y;
-    const z1 = token1.losHeight * unitsToPixel;
-    const x2 = token2.center.x;
-    const y2 = token2.center.y;
-    const z2 = token2.losHeight * unitsToPixel;
 
-    const d =
-      Math.sqrt(
-        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
-      ) / unitsToPixel;
-    return d;
-  }
 
   restoreGMvisibility() {
     let levelLigths = _levels.getLights();

@@ -9,6 +9,7 @@ import { SoundHandler } from "./handlers/soundHandler.js";
 import { NoteHandler } from "./handlers/noteHandler.js";
 import { TokenHandler } from "./handlers/tokenHandler.js";
 import { TemplateHandler } from "./handlers/TemplateHandler.js";
+import { FoWHandler } from "./handlers/fowHandler.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange } from './helpers.js';
 
@@ -38,7 +39,8 @@ Hooks.on("init", () => {
       SoundHandler,
       NoteHandler,
       TokenHandler,
-      TemplateHandler
+      TemplateHandler,
+      FoWHandler
 
   }
 
@@ -51,6 +53,10 @@ Hooks.on("init", () => {
   Hooks.callAll("levelsConfigReady", CONFIG.Levels);
 
   registerWrappers();
+
+  CONFIG.Levels.FoWHandler = new FoWHandler();
+
+  Hooks.callAll("levelsReady", CONFIG.Levels);
 
 })
 
@@ -133,10 +139,6 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: true,
-    onChange: (setting) => {
-      _levels.fogHiding = setting;
-      _levels._onElevationChangeUpdate();
-    },
   });
 
   game.settings.register(CONFIG.Levels.MODULE_ID, "revealTokenInFog", {

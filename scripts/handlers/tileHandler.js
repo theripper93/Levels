@@ -2,6 +2,7 @@ export class TileHandler{
     static isTileVisible(tile){
         if(!tile.document.flags.levels) return true;
         const currentToken = CONFIG.Levels.currentToken;
+        CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
         if(!currentToken) return true;
         const tokenElevation = currentToken.document.elevation;
         const tokenLOS = currentToken.losHeight;

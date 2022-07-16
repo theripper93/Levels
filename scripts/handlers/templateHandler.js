@@ -14,7 +14,7 @@ export class TemplateHandler{
             y: this.center.y,
             z: templateElevation
         }
-        const isVisible = CONFIG.Levels.sightHandler.testCollision(origin,target);
+        const isVisible = CONFIG.Levels.handlers.SightHandler.testCollision(origin,target);
         return result && isVisible;
     }
 

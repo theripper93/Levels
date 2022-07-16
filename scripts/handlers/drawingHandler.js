@@ -2,9 +2,9 @@ import { adjustPolygonPoints } from "../helpers.js";
 
 export class DrawingHandler {
 
-  static isDrawingVisible() {
+  static isDrawingVisible(drawing) {
     const currentElevation = CONFIG.Levels.currentToken?.losHeight
-    const rangeBottom = this.document.flags.levels?.rangeBottom ?? -Infinity;
+    const rangeBottom = drawing.document.flags.levels?.rangeBottom ?? -Infinity;
     if(currentElevation === undefined) return true;
     const isVisible = rangeBottom <= currentElevation;
     return isVisible;

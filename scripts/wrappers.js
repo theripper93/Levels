@@ -2,14 +2,18 @@ export function registerWrappers(){
 
     const LevelsConfig = CONFIG.Levels
 
-    Hooks.on("tileRefresh", (tile) => {
+    Hooks.on("refreshTile", (tile) => {
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(tile);
         tile.visible = tile.visible && visible;
     })
 
-    Hooks.on("drawingRefresh", (drawing) => {
+    Hooks.on("refreshDrawing", (drawing) => {
         const visible = LevelsConfig.handlers.DrawingHandler.isDrawingVisible(drawing);
         drawing.visible = drawing.visible && visible;
+    })
+
+    Hooks.on("refreshToken", (token) => {
+        CONFIG.Levels.FoWHandler.lazyCreateBubble(token);
     })
 
     libWrapper.register(
@@ -30,6 +34,14 @@ export function registerWrappers(){
         "ClockwiseSweepPolygon.prototype.contains",
         function containsWrapper(wrapped, ...args) {
             const testTarget = LevelsConfig.visibilityTestObject;
+            if(testTarget instanceof Token){
+                return LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget);
+            }
+            else if(testTarget instanceof AmbientLight){
+                return LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, wrapped(...args));
+            }else{
+                return wrapped(...args);
+            }
             if(!(testTarget instanceof Token)) return wrapped(...args);
             return LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget);
         },

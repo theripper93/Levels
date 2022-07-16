@@ -21,7 +21,7 @@ Hooks.on("preUpdateToken", (token,updates) => {
     const elevDiff = token.object.document.elevation - updates.elevation;
     const p0 = {x:token.object.x,y:token.object.y,z:updates.elevation}
     const p1 = {x:token.object.x,y:token.object.y,z:token.object.losHeight-elevDiff+0.1}
-    const collision = CONFIG.Levels.handlers.sightHandler.testCollision(p0, p1, "collision")
+    const collision = CONFIG.Levels.handlers.SightHandler.testCollision(p0, p1, "collision")
     if(collision){
       ui.notifications.error(game.i18n.localize("levels.err.collision"))
       if(!game.user.isGM) delete updates.elevation

@@ -13,9 +13,9 @@ export class SightHandler {
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange && token.document.hidden && gm) return true;
     if (inLOS && inRange && !token.document.hidden) return true;
-    const inLight = this.advancedLOSCheckInLight(token);
+    /*const inLight = this.advancedLOSCheckInLight(token);
     if (inLight === 2 && !token.document.hidden) return true;
-    if (inLOS && inLight && !token.document.hidden) return true;
+    if (inLOS && inLight && !token.document.hidden) return true;*/
     return false;
   }
 
@@ -115,6 +115,26 @@ export class SightHandler {
     return dist <= range;
   }
 
+  static getUnitTokenDist(token1, token2) {
+    const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+    const x1 = token1.center.x;
+    const y1 = token1.center.y;
+    const z1 = token1.losHeight * unitsToPixel;
+    const x2 = token2.center.x;
+    const y2 = token2.center.y;
+    const z2 = token2.losHeight * unitsToPixel;
+
+    const d =
+      Math.sqrt(
+        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
+      ) / unitsToPixel;
+    return d;
+  }
+
+  static testInLight(object, testTarget, result){
+    debugger
+  }
+
   static advancedLOSCheckInLight(token) {
     for (let source of canvas.lighting.sources) {
       if (source.skipRender && source.object.document.documentName !== "Token")
@@ -153,6 +173,7 @@ export class SightHandler {
   }
 
   static checkInLightCorners(los, token) {
+    return false;
     if (!los) return false;
     const tol = 4;
     if (this.preciseTokenVisibility === false)
@@ -237,7 +258,7 @@ export class SightHandler {
             };
         }
       }
-      if ((top && top != Infinity) || top == 0) {
+      /*if ((top && top != Infinity) || top == 0) {
         const zIntersectionPoint = getPointForPlane(top);
         if (
           ((z0 < top && top < z1) || (z1 < top && top < z0)) &&
@@ -246,7 +267,7 @@ export class SightHandler {
           if (checkForHole(zIntersectionPoint, top))
             return { x: zIntersectionPoint.x, y: zIntersectionPoint.y, z: top };
         }
-      }
+      }*/
     }
 
     //Return the 3d wall test if no collisions were detected on the Z plane
