@@ -16,7 +16,19 @@ export function registerWrappers(){
 
     Hooks.on("refreshToken", (placeable) => {
         CONFIG.Levels.FoWHandler.lazyCreateBubble(placeable);
+        LevelsConfig.handlers.TokenHandler.setScale(placeable);
         computeUI(placeable);
+    })
+
+    Hooks.on("updateToken", (token, updates) => {
+        if("elevation" in updates && CONFIG.Levels.settings.get("tokenElevScale")){
+            LevelsConfig.handlers.RefreshHandler.refresh(canvas.tokens)
+        }
+    })
+
+
+    Hooks.on("controlToken", (token, control) => {
+        CONFIG.Levels.settings.get("tokenElevScale") && LevelsConfig.handlers.RefreshHandler.refresh(canvas.tokens)
     })
 
     Hooks.on("refreshAmbientLight", (placeable) => {

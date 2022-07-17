@@ -11,6 +11,7 @@ import { TokenHandler } from "./handlers/tokenHandler.js";
 import { TemplateHandler } from "./handlers/TemplateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
 import { BackgroundHandler } from "./handlers/backgroundHandler.js";
+import { SettingsHandler } from "./handlers/settingsHandler.js";
 import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange,getRangeForDocument } from './helpers.js';
@@ -21,17 +22,6 @@ Object.defineProperty(TileDocument.prototype, "elevation", {
   }
 });
 
-/*Object.defineProperty(TileDocument.prototype, "sort", {
-  get: function () {
-    if (this.overhead) {
-      const e = this.elevation;
-      return e*10000+this.z;
-    }else{
-      return this.z
-    }
-  }
-});*/
-
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
   get: function () {
     return this.flags?.levels?.rangeBottom
@@ -41,6 +31,9 @@ Object.defineProperty(DrawingDocument.prototype, "elevation", {
 Object.defineProperty(WeatherEffects.prototype, "elevation", {
   get: function () {
     return canvas?.scene?.flags?.levels?.weatherElevation ?? 9999;
+  },
+  set: function (value) {
+    console.error("Cannot set elevation on WeatherEffects. Levels overrides WeatherEffects.prototype.elevation core behaviour. If you wish to set the WeatherEffects elevation, use SceneDocument.flags.levels.weatherElevation");
   }
 });
 
@@ -60,7 +53,8 @@ Hooks.on("init", () => {
       TokenHandler,
       TemplateHandler,
       FoWHandler,
-      BackgroundHandler
+      BackgroundHandler,
+      SettingsHandler
 
   }
 
@@ -72,6 +66,8 @@ Hooks.on("init", () => {
   CONFIG.Levels.API = LevelsAPI;
 
   CONFIG.Levels.UI = new LevelsUI();
+
+  CONFIG.Levels.settings = new SettingsHandler();
 
   Hooks.callAll("levelsConfigReady", CONFIG.Levels);
 
@@ -138,9 +134,8 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-    onChange: (setting) => {
-      _levels.elevationScale = setting;
-      _levels.updateScales();
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 
@@ -151,8 +146,8 @@ Hooks.on("init", () => {
     config: true,
     type: Number,
     default: 1,
-    onChange: (setting) => {
-      _levels.tokenElevScaleMultiSett = setting;
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 
@@ -163,6 +158,9 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: true,
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
+    },
   });
 
   game.settings.register(CONFIG.Levels.MODULE_ID, "revealTokenInFog", {
@@ -172,8 +170,8 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-    onChange: (setting) => {
-      _levels.revealTokenInFog = setting;
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 
@@ -184,6 +182,9 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
+    },
   });
 
   game.settings.register(CONFIG.Levels.MODULE_ID, "hideElevation", {
@@ -198,9 +199,8 @@ Hooks.on("init", () => {
       2: game.i18n.localize("levels.settings.hideElevation.opt2"),
     },
     default: 0,
-    onChange: (setting) => {
-      _levels.hideElevation = setting;
-      canvas.tokens.placeables.forEach((t) => t.refresh());
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 
@@ -211,6 +211,9 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: true,
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
+    },
   });
 
   game.settings.register(CONFIG.Levels.MODULE_ID, "preciseTokenVisibility", {
@@ -220,8 +223,8 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-    onChange: (setting) => {
-      _levels.preciseTokenVisibility = setting;
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 
@@ -232,29 +235,8 @@ Hooks.on("init", () => {
     config: true,
     type: Boolean,
     default: false,
-    onChange: (setting) => {
-      _levels.exactTokenVisibility = setting;
-    },
-  });
-
-  game.settings.register(CONFIG.Levels.MODULE_ID, "forceUiRefresh", {
-    name: game.i18n.localize("levels.settings.forceUiRefresh.name"),
-    hint: game.i18n.localize("levels.settings.forceUiRefresh.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
-
-  game.settings.register(CONFIG.Levels.MODULE_ID, "debugRaycast", {
-    name: game.i18n.localize("levels.settings.debugRaycast.name"),
-    hint: game.i18n.localize("levels.settings.debugRaycast.hint"),
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (setting) => {
-      _levels.RAYS = setting;
+    onChange: () => {
+      CONFIG.Levels.settings.cacheSettings()
     },
   });
 });
@@ -472,7 +454,7 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
   if (
-    game.settings.get(CONFIG.Levels.MODULE_ID, "lockElevation") &&
+    CONFIG.Levels.settings.get("lockElevation") &&
     !game.user.isGM
   ) {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);

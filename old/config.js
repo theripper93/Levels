@@ -641,7 +641,7 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
   if (
-    game.settings.get(CONFIG.Levels.MODULE_ID, "lockElevation") &&
+    CONFIG.Levels.settings.get("lockElevation") &&
     !game.user.isGM
   ) {
     const controlIcons = hud.find(`div[class="attribute elevation"]`);
@@ -678,9 +678,3 @@ Hooks.on("preCreateMeasuredTemplate", (template) => {
     flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
   });
 });
-
-//Incompatibility Warnings
-
-Hooks.once('libChangelogsReady', function() {
-  if(game.modules.get("midi-qol")?.active && game.settings.get("midi-qol","playerControlsInvisibleTokens"))libChangelogs.registerConflict("levels", "midi-qol",game.i18n.localize("levels.conflicts.midiqol.tokenvis"),"major")
-})

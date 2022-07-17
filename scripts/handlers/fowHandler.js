@@ -1,19 +1,13 @@
 export class FoWHandler {
   constructor() {
-    this.advancedFogContainer = new PIXI.Container();
-    this.advancedFogContainer.name = "advancedFogContainer";
-    this.revealTokenContainer = new PIXI.Container();
-    this.revealTokenContainer.name = "revealTokenContainer";
-    this.tiles = {};
-    this.bubbles = {};
     this.setHooks();
   }
 
   setHooks(){
-    Hooks.on("canvasReady", ()=>{
+    Hooks.on("drawCanvasVisibility", ()=>{
+      this.init();
       canvas.effects.visibility.explored.addChild(this.advancedFogContainer);
       canvas.effects.visibility.explored.addChild(this.revealTokenContainer);
-      this.init();
     })
     Hooks.on("deleteTile", (tile)=>{
       this.removeTileFogMask(tile.id);
@@ -37,14 +31,16 @@ export class FoWHandler {
   }
 
   init() {
-    this.advancedFogContainer.removeChildren();
-    this.revealTokenContainer.removeChildren();
+    this.advancedFogContainer = new PIXI.Container();
+    this.advancedFogContainer.name = "advancedFogContainer";
+    this.revealTokenContainer = new PIXI.Container();
+    this.revealTokenContainer.name = "revealTokenContainer";
     this.tiles = {};
     this.bubbles = {};
   }
 
   createTokenBubble(token) {
-    if(!game.settings.get(CONFIG.Levels.MODULE_ID, "revealTokenInFog")) return;
+    if(!CONFIG.Levels.settings.get("revealTokenInFog")) return;
     if(this.bubbles[token.id]){
         this.revealTokenContainer.removeChild(this.bubbles[token.id]);
         this.bubbles[token.id].destroy();
@@ -90,7 +86,10 @@ export class FoWHandler {
   createTileFogMask(tile) {
     if(this.tiles[tile.id]){
         this.advancedFogContainer.removeChild(this.tiles[tile.id]);
-        this.tiles[tile.id].destroy();
+        try{
+          this.tiles[tile.id].destroy();
+        }
+        catch(e){}
         delete this.tiles[tile.id];
     }
     if(!tile?.mesh?.texture) return;
@@ -106,7 +105,7 @@ export class FoWHandler {
       get: () => {
         if(!CONFIG.Levels.currentToken) return false;
         if(tile.document.flags?.levels?.noFogHide) return false;
-        if(!game.settings.get(CONFIG.Levels.MODULE_ID, "fogHiding")) return false;
+        if(!CONFIG.Levels.settings.get("fogHiding")) return false;
         const bottom = tile.document.flags?.levels?.rangeBottom ?? -Infinity;
         const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
         if(bottom == -Infinity && top == Infinity) return false;
