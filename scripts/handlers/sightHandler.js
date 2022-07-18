@@ -93,9 +93,7 @@ export class SightHandler {
   }
 
   static tokenInRange(sourceToken, token) {
-    const range = canvas.lighting.globalLight
-      ? Infinity
-      : sourceToken.vision.radius;
+    const range = sourceToken.vision.radius;
     if (range === 0) return false;
     if (range === Infinity) return true;
     const tokensSizeAdjust = (Math.min(token.w, token.h) || 0) / Math.SQRT2;

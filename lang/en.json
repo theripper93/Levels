@@ -132,6 +132,7 @@
     "levels.ui.getFromScene": "Get Levels from Scene",
     "levels.ui.clearLevels": "Clear Levels",
     "levels.ui.debugScene": "Debug Scene (Red means issues detected)",
+    "levels.ui.minElevDiff": "Minimum Level Size",
 
 
     "levels.conflicts.midiqol.tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."

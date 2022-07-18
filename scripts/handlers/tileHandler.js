@@ -20,7 +20,7 @@ export class TileHandler{
         //Not a levels tile
         if(rangeTop === Infinity && rangeBottom === -Infinity || !tile.document.overhead) return true;
 
-        const inRange = tokenLOS >= rangeTop && tokenLOS <= rangeBottom;
+        const inRange = tokenLOS < rangeTop && tokenLOS >= rangeBottom;
 
         //If tile is basement and token is out of it's range, it's not visible
         if(!inRange && isBasement) return false;

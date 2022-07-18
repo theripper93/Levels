@@ -159,10 +159,22 @@ class LevelsUI extends FormApplication {
     Dialog.confirm({
       title: game.i18n.localize("levels.dialog.getFromScene.title"),
       content: game.i18n.localize("levels.dialog.getFromScene.content"),
-      yes: async () => {
-        this.getFromScene();
+      yes: (html) => {
+        const maxRange = parseFloat(html.find("#maxelevationdifference").val());
+        this.getFromScene(maxRange);
       },
       no: () => {},
+      render: (html) => {
+        const maxRange = `
+        <hr>
+        <div class="form-group" style="display: grid;grid-template-columns: 1fr 1fr;align-items: center;">
+          <label>${game.i18n.localize("levels.ui.minElevDiff")}</label>
+          <input type="text" id="maxelevationdifference" data-dtype="Number" value="9" placeholder="">
+        </div>
+        <br>
+        `
+        $(html[0]).append(maxRange);
+      },
       defaultYes: false,
     });
   }
@@ -286,7 +298,7 @@ class LevelsUI extends FormApplication {
     super.close();
   }
 
-  async getFromScene() {
+  async getFromScene(maxRange = 9) {
     let autoLevels = {};
     for (let wall of canvas.walls.placeables) {
       const { top, bottom } = WallHeight.getWallBounds(wall);
@@ -343,6 +355,7 @@ class LevelsUI extends FormApplication {
     }
     let autoRange = Object.entries(autoLevels)
       .map((x) => x[1])
+      .filter( x => Math.abs(x[1] - x[0]) >= maxRange)
       .sort()
       .reverse();
     if (autoRange.length) {
@@ -548,7 +561,7 @@ Hooks.on("ready", () => {
               },
               [`${CONFIG.Levels.MODULE_ID}`]: {
                 rangeBottom: CONFIG.Levels.UI.roofEnabled
-                  ? parseFloat(CONFIG.Levels.UI.range[1]) + 1
+                  ? parseFloat(CONFIG.Levels.UI.range[1])
                   : parseFloat(CONFIG.Levels.UI.range[0]),
                 rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : parseFloat(CONFIG.Levels.UI.range[1]),
               }

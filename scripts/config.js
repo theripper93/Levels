@@ -38,9 +38,19 @@ Object.defineProperty(WeatherEffects.prototype, "elevation", {
 });
 
 Hooks.on("init", () => {
+
+  const canvas3d = game.modules.get("levels-3d-preview")?.active;
+
   CONFIG.Levels = {
     MODULE_ID: "levels"
   }
+
+  Object.defineProperty(CONFIG.Levels, "useCollision3D", {
+    get: function () {
+      return canvas3d && canvas.scene.flags["levels-3d-preview"]?.object3dSight
+    }
+  })
+
   CONFIG.Levels.handlers = {
       TileHandler,
       RefreshHandler,
@@ -69,7 +79,7 @@ Hooks.on("init", () => {
 
   CONFIG.Levels.settings = new SettingsHandler();
 
-  Hooks.callAll("levelsConfigReady", CONFIG.Levels);
+  Hooks.callAll("levelsInit", CONFIG.Levels);
 
   registerWrappers();
 
@@ -382,7 +392,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
           dType: "Number",
           options: {
             0 : game.i18n.localize("levels.drawingconfig.isHole.opt0"),
-            1 : game.i18n.localize("levels.drawingconfig.isHole.opt1"),
+            //1 : game.i18n.localize("levels.drawingconfig.isHole.opt1"),
             2 : game.i18n.localize("levels.drawingconfig.isHole.opt2"),
             3 : game.i18n.localize("levels.drawingconfig.isHole.opt3"),
           }

@@ -17,7 +17,7 @@ Hooks.on("updateToken", (token, updates) => {
 });
 
 Hooks.on("preUpdateToken", (token,updates) => {
-  if("elevation" in updates && !_levels?.useCollision3D){
+  if("elevation" in updates && !CONFIG.Levels?.useCollision3D){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const p0 = {x:token.object.x,y:token.object.y,z:updates.elevation}
     const p1 = {x:token.object.x,y:token.object.y,z:token.object.losHeight-elevDiff+0.1}
