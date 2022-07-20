@@ -93,14 +93,7 @@ export class FoWHandler {
         delete this.tiles[tile.id];
     }
     if(!tile?.mesh?.texture) return;
-    const sprite = PIXI.Sprite.from(tile.mesh.texture);
-    sprite.alpha = 1;
-    sprite.tint = 0x000000;
-    sprite.width = tile.document.width;
-    sprite.height = tile.document.height;
-    sprite.position = tile.position;
-    sprite.angle = tile.mesh.angle;
-    sprite.tile = tile;
+    const sprite = CONFIG.Levels.helpers.cloneTileMesh(tile);
     Object.defineProperty(sprite, "visible", {
       get: () => {
         if(!CONFIG.Levels.currentToken) return false;

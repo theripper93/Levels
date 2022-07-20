@@ -29,11 +29,11 @@ export class TemplateHandler{
           const tipFlag = template.document.getFlag(CONFIG.Levels.MODULE_ID, "elevation");
           let tipN;
           if (tipFlag === undefined) {
-            if (_levels?.nextTemplateHeight) {
+            if (CONFIG.Levels.UI.nextTemplateHeight !== undefined) {
               tipN = CONFIG.Levels.UI.nextTemplateHeight;
             } else {
               const cToken =
-                canvas.tokens.controlled[0] || _levels?.lastTokenForTemplate;
+                canvas.tokens.controlled[0] || _token;
               tipN = cToken?.data?.elevation ?? 0;
             }
           } else {

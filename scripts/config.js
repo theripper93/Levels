@@ -12,9 +12,10 @@ import { TemplateHandler } from "./handlers/TemplateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
 import { BackgroundHandler } from "./handlers/backgroundHandler.js";
 import { SettingsHandler } from "./handlers/settingsHandler.js";
+import { LightMaskingHandler } from "./handlers/lightMaskingHandler.js";
 import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
-import { inRange,getRangeForDocument } from './helpers.js';
+import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
 
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
@@ -38,7 +39,6 @@ Object.defineProperty(WeatherEffects.prototype, "elevation", {
 });
 
 Hooks.on("init", () => {
-
   const canvas3d = game.modules.get("levels-3d-preview")?.active;
 
   CONFIG.Levels = {
@@ -48,6 +48,16 @@ Hooks.on("init", () => {
   Object.defineProperty(CONFIG.Levels, "useCollision3D", {
     get: function () {
       return canvas3d && canvas.scene.flags["levels-3d-preview"]?.object3dSight
+    }
+  })
+
+  Object.defineProperty(CONFIG.Levels, "currentToken", {
+    get: function () {
+      Hooks.callAll("levelsPerspectiveChanged", this._currentToken);
+      return this._currentToken;
+    },
+    set: function (value) {
+      this._currentToken = value;
     }
   })
 
@@ -64,13 +74,15 @@ Hooks.on("init", () => {
       TemplateHandler,
       FoWHandler,
       BackgroundHandler,
-      SettingsHandler
+      SettingsHandler,
+      LightMaskingHandler
 
   }
 
   CONFIG.Levels.helpers = {
       inRange,
-      getRangeForDocument
+      getRangeForDocument,
+      cloneTileMesh
   }
 
   CONFIG.Levels.API = LevelsAPI;
@@ -84,6 +96,7 @@ Hooks.on("init", () => {
   registerWrappers();
 
   CONFIG.Levels.FoWHandler = new FoWHandler();
+  CONFIG.Levels.LightMaskingHandler = new LightMaskingHandler();
   CONFIG.Levels.handlers.BackgroundHandler.setupElevation();
 
   Hooks.callAll("levelsReady", CONFIG.Levels);

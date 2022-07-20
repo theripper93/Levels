@@ -41,7 +41,7 @@ export class DrawingHandler {
               }
             } else if (stair.drawingMode == 3) {
               if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
-                _levels.renderElevatorDalog(
+                CONFIG.Levels.handlers.DrawingHandler.renderElevatorDalog(
                   stair.drawing.document.getFlag(
                     CONFIG.Levels.MODULE_ID,
                     "elevatorFloors"

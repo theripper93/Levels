@@ -45,3 +45,14 @@ export function getRangeForDocument(document){
   return { rangeBottom, rangeTop };
 }
 
+export function cloneTileMesh(tile){
+  const sprite = PIXI.Sprite.from(tile.mesh.texture);
+    sprite.alpha = 1;
+    sprite.tint = 0x000000;
+    sprite.width = tile.document.width;
+    sprite.height = tile.document.height;
+    sprite.position.set(tile.document.x, tile.document.y);
+    sprite.angle = tile.mesh.angle;
+    sprite.tile = tile;
+    return sprite;
+}

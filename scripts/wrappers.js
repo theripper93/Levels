@@ -45,6 +45,13 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
+        "AdaptiveLightingShader.create",
+        LevelsConfig.handlers.LightMaskingHandler.injectShaders,
+        "MIXED"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
             args[1] ??= {};
