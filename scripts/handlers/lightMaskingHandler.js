@@ -17,7 +17,7 @@ export class LightMaskingHandler{
         )
         const shader = wrapped(...args);
         for(let i = 0; i < TEX_COUNT; i++){
-            shader.uniforms[`levels_elevationTextures${i}`] = PIXI.Texture.BLANK;
+            shader.uniforms[`levels_elevationTextures${i}`] = PIXI.Texture.EMPTY;
         }
         shader.uniforms.levels_scale = [0,0];
         shader.uniforms.levels_offset = [0,0];
@@ -45,6 +45,9 @@ export class LightMaskingHandler{
         })
         Hooks.on("levelsPerspectiveChanged", () => {
             this.updateUniforms();
+        })
+        Hooks.on("refreshToken", (token) => {
+            this.updateLightUniforms(token);
         })
     }
 
@@ -124,9 +127,11 @@ export class LightMaskingHandler{
 
     updateLightUniforms(light){
         const elevation = light.document.flags.levels?.rangeTop ?? light.losHeight ?? 0;
-        this.setUniforms(elevation, light.source.coloration.uniforms, light);
-        this.setUniforms(elevation, light.source.illumination.uniforms, light)
-        this.setUniforms(elevation, light.source.background.uniforms, light)
+        const source = light.source ?? light.light;
+        if(!source?.active) return;
+        this.setUniforms(elevation, source.coloration.uniforms, light);
+        this.setUniforms(elevation, source.illumination.uniforms, light)
+        this.setUniforms(elevation, source.background.uniforms, light)
     }
 
     setUniforms(elevation, uniforms, light){
@@ -135,15 +140,15 @@ export class LightMaskingHandler{
             c.elevation <= (CONFIG.Levels.currentToken?.losHeight ?? Infinity)
         ).map(tex=>tex.texture);
         for(let i = 0; i < TEX_COUNT; i++){
-            uniforms[`levels_elevationTextures${i}`] = texArray[i] ?? PIXI.Texture.BLANK;
+            uniforms[`levels_elevationTextures${i}`] = texArray[i] ?? PIXI.Texture.EMPTY;
         }
         const sceneWidth = canvas.dimensions.width;
         const sceneHeight = canvas.dimensions.height;
-        const lightRect = light.source.radius*2;
+        const lightRect = (light.source ?? light.light).radius*2;
         uniforms.levels_scale = [lightRect/sceneWidth, lightRect/sceneHeight]//[sceneWidth/lightRect, sceneHeight/lightRect];
         uniforms.levels_offset = [
-            (light.center.x - light.source.radius)/canvas.dimensions.width,
-            (light.center.y - light.source.radius)/canvas.dimensions.height
+            (light.center.x - lightRect/2)/canvas.dimensions.width,
+            (light.center.y - lightRect/2)/canvas.dimensions.height
         ];
     }
 
@@ -181,7 +186,7 @@ class elevationTexture{
             }
             canvas.app.renderer.render(container, {renderTexture: this.texture});
             this._needsUpdate = false;
-            this._debugSprite = PIXI.Sprite.from(this.texture);
+            this.sprite = PIXI.Sprite.from(this.texture);
         }, 100);
     }
 

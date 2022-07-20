@@ -53,11 +53,11 @@ Hooks.on("init", () => {
 
   Object.defineProperty(CONFIG.Levels, "currentToken", {
     get: function () {
-      Hooks.callAll("levelsPerspectiveChanged", this._currentToken);
       return this._currentToken;
     },
     set: function (value) {
       this._currentToken = value;
+      Hooks.callAll("levelsPerspectiveChanged", this._currentToken);
     }
   })
 
