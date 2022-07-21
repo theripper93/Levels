@@ -5,6 +5,10 @@ export class LightMaskingHandler{
         this.setHooks();
     }
 
+    get enabled(){
+        return canvas.scene.flags.levels?.lightMasking ?? true
+    }
+
     static injectShaders(wrapped, ...args){
         if(this.fragmentShader.includes("uniform sampler2D levels_elevationTextures")) return wrapped(...args);
         this.fragmentShader = this.fragmentShader.replace(
@@ -21,6 +25,7 @@ export class LightMaskingHandler{
         }
         shader.uniforms.levels_scale = [0,0];
         shader.uniforms.levels_offset = [0,0];
+        shader.uniforms.levels_mask_count = 0;
         return shader;
     }
 
@@ -126,7 +131,8 @@ export class LightMaskingHandler{
     }
 
     updateLightUniforms(light){
-        const elevation = light.document.flags.levels?.rangeTop ?? light.losHeight ?? 0;
+        if(!this.enabled) return;
+        const elevation = light.document.flags.levels?.rangeTop ?? light.losHeight ?? canvas.primary.background.elevation;
         const source = light.source ?? light.light;
         if(!source?.active) return;
         this.setUniforms(elevation, source.coloration.uniforms, light);
@@ -145,6 +151,7 @@ export class LightMaskingHandler{
         const sceneWidth = canvas.dimensions.width;
         const sceneHeight = canvas.dimensions.height;
         const lightRect = (light.source ?? light.light).radius*2;
+        uniforms.levels_mask_count = texArray.length;
         uniforms.levels_scale = [lightRect/sceneWidth, lightRect/sceneHeight]//[sceneWidth/lightRect, sceneHeight/lightRect];
         uniforms.levels_offset = [
             (light.center.x - lightRect/2)/canvas.dimensions.width,
@@ -201,6 +208,7 @@ const UNIFORMS = {
     get: () => {
         let shaderChunk = `uniform vec2 levels_scale;
         uniform vec2 levels_offset;
+        uniform float levels_mask_count;
         `
         for(let i = 0; i < TEX_COUNT; i++){
             shaderChunk += `uniform sampler2D levels_elevationTextures${i};\n`
@@ -212,6 +220,7 @@ const UNIFORMS = {
 const END_FRAGMENT = {
     get: () => {
         let shaderChunk = `
+        if(levels_mask_count > 0.0){
         vec2 vUvsLevels = vec2(vUvs.x * levels_scale.x + levels_offset.x, vUvs.y * levels_scale.y + levels_offset.y);
         `
         for(let i = 0; i < TEX_COUNT; i++){
@@ -221,7 +230,7 @@ const END_FRAGMENT = {
             }\n
             `
         }
+        shaderChunk += `}`
         return shaderChunk;
     }
 }
-

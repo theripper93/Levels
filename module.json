@@ -83,7 +83,10 @@
     ]
   },
   "compatibility": {
-    "minimum": "9",
-    "verified": "9"
-  }
+    "minimum": "10",
+    "verified": "10"
+  },
+
+  "name": "levels",
+  "minimumCoreVersion": "10"
 }
