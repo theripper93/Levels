@@ -72,6 +72,14 @@ class LevelsUI extends FormApplication {
         this.setButtonStyles();
       }
     );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-sort-amount-up-alt",
+      () => {
+        this.stairEnabled = !this.stairEnabled;
+        this.setButtonStyles();
+      }
+    );
 
     html.on("click", ".player-portrait", this._onControlToken.bind(this));
     html.on("change", ".level-inputs input", this.saveData.bind(this));
@@ -101,6 +109,7 @@ class LevelsUI extends FormApplication {
   setButtonStyles() {
     this.element.find(".fa-archway").toggleClass("active", this.roofEnabled);
     this.element.find(".fa-tree").toggleClass("active", this.placeOverhead);
+    this.element.find(".fa-sort-amount-up-alt").toggleClass("active", this.stairEnabled);
     this.element.find(".fa-users").toggleClass("active", this.element.find(".players-on-level").hasClass("active"));
   }
 
@@ -295,6 +304,7 @@ class LevelsUI extends FormApplication {
     if (!force) this.saveData();
     this.rangeEnabled = false;
     if (!force) this.computeLevelsVisibility();
+    canvas.walls.placeables.forEach(w => w.visible = true)
     super.close();
   }
 
@@ -536,14 +546,13 @@ Hooks.on("ready", () => {
     Hooks.on("renderLevelsUI", (app, html) => {
 
       if(!app.positionSet){
-        $("#levelsUI").css({
-          top:"2px",
-          left: "unset",
-          right:"310px",
-        })
-        const pos = $("#levelsUI")[0]?.getBoundingClientRect()
-        app.position.left = pos.left
-        app.position.top = pos.top
+        console.log((window.innerWidth - $("#sidebar").width() - $("#levelsUI").width()))
+        app.setPosition({
+          top: 2,
+          left: (window.innerWidth - $("#sidebar").width() - $("#levelsUI").width()) - 10,
+          width: $("#levelsUI").width(),
+          height: $("#levelsUI").height(),
+        });
         app.positionSet = true
       }
     })
@@ -580,6 +589,7 @@ Hooks.on("ready", () => {
         if(CONFIG.Levels.UI.placeOverhead){
 
           tile.updateSource({
+            roof: true,
             flags: {
               [`${CONFIG.Levels.MODULE_ID}`]: {
                 showIfAbove: true,
@@ -623,11 +633,11 @@ Hooks.on("ready", () => {
         let newBot = aboverange[0];
         if (CONFIG.Levels.UI.rangeEnabled == true) {
           drawing.updateSource({
-            hidden: true,
-            text: `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}`,
+            hidden: CONFIG.Levels.UI.stairEnabled,
+            text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}` : "",
             flags: {
               levels: {
-                drawingMode: 2,
+                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
                 rangeBottom: CONFIG.Levels.UI.range[0],
                 rangeTop: newBot - 1,
               },
@@ -637,11 +647,11 @@ Hooks.on("ready", () => {
       } else {
         if (CONFIG.Levels.UI.rangeEnabled == true) {
           drawing.updateSource({
-            hidden: true,
-            text: `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}`,
+            hidden: CONFIG.Levels.UI.stairEnabled,
+            text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}` : "",
             flags: {
               levels: {
-                drawingMode: 2,
+                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
                 rangeBottom: CONFIG.Levels.UI.range[0],
                 rangeTop: CONFIG.Levels.UI.range[1],
               },

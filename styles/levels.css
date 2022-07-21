@@ -1,11 +1,3 @@
-:root{
-    --levels-text-color: #f0f0e0;
-}
-
-#levelsUI{
-    min-width: 100px;
-}
-
 body.dragging, body.dragging * {
     cursor:-webkit-grabbing !important;
 }
@@ -18,7 +10,7 @@ body.dragging, body.dragging * {
 
 #levelsUI .placeholder {
     height: 0.3rem;
-    background: var(--levels-text-color);
+    background: var(--color-text-light-2);
   }
 
 #levelsUI .window-content{
@@ -59,7 +51,7 @@ body.dragging, body.dragging * {
 
 #levelsUI input{
     border-radius: 0px;
-    color: var(--levels-text-color);
+    color: var(--color-text-light-2);
     height: auto !important;
     border: none;
     background: transparent;
@@ -71,7 +63,7 @@ body.dragging, body.dragging * {
 }
 
 #levelsUI li .fas{
-    color: var(--levels-text-color);
+    color: var(--color-text-light-2);
     align-self: center;
     font-size: 10px;
 }   
@@ -82,7 +74,7 @@ body.dragging, body.dragging * {
 
 #levelsUI li .fas.active{
     margin-left: 0.3rem;
-    color: var(--levels-text-color);
+    color: var(--color-text-light-2);
 }
 
 #levelsUI li .fa-trash,#levelsUI .fa-arrows-alt{
@@ -101,11 +93,11 @@ body.dragging, body.dragging * {
 }
 #levelsUI li .fa-trash:hover{
     cursor: pointer;
-    text-shadow: 0 0 5px var(--levels-text-color);
+    text-shadow: 0 0 5px var(--color-text-light-2);
 }
 
 #levelsUI input::placeholder{
-    color: var(--levels-text-color);
+    color: var(--color-text-light-2);
     opacity: 0.5;
 }
 
@@ -147,7 +139,7 @@ body.dragging, body.dragging * {
 
 #levels-ui-controls{
     display: flex;
-    color: var(--levels-text-color);
+    color: var(--color-text-light-2);
     align-items: flex-end;
     justify-content: space-evenly;
     width: 100%;
@@ -157,7 +149,7 @@ body.dragging, body.dragging * {
 
 #levels-ui-controls i:hover{
     cursor: pointer;
-    text-shadow: 0 0 5px var(--levels-text-color);
+    text-shadow: 0 0 5px var(--color-text-light-2);
 }
 
 #levels-ui-controls i.active{
@@ -188,7 +180,7 @@ body.dragging, body.dragging * {
     margin-right: 0.2rem;
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
-    background-color: var(--levels-text-color);
+    background-color: var(--color-text-light-2);
     cursor: pointer;
 }
 

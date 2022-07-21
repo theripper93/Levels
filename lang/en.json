@@ -129,6 +129,7 @@
     "levels.dialog.checkScene.excluded": "Excluded from Check",
 
     "levels.ui.players": "Show Players in the UI",
+    "levels.ui.stair": "Place Drawings as Stairs",
     "levels.ui.addLevel": "Add a new level",
     "levels.ui.editLevels": "Edit Levels",
     "levels.ui.getFromScene": "Get Levels from Scene",
