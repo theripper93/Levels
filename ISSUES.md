@@ -1,7 +1,3 @@
-# "k is not defined" error
-This error will pop up because V9 does not recognize V10 only manifests. It just means a V10 ready version of the module is ready but you can't install it since you are on V9, you can safely ignore this error.
-This error will be handle by foundry in the final V9 Release to properly display that V10 is required for the update.
-
 # Before Opening an issue:
 (This document is stored in the Levels repository but it's valid for all my repos)
 
