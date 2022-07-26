@@ -79,10 +79,10 @@
     "levels.controls.definelevels.name": "Edit Levels",
     "levels.controls.levelup.name": "Up one Level",
     "levels.controls.leveldown.name": "Down one Level",
-    "levels.controls.levelsroof.name": "Enable Levels Roofs View/Placement",
+    "levels.controls.levelsroof.name": "Roofs View/Placement",
     "levels.controls.levelshole.name": "Place drawings as Stairs when enabled, place as holes when disabled",
     "levels.controls.levelsclear.name": "Clear Levels",
-    "levels.controls.placeOverhead.name": "If enabled place tiles as overhead tiles 'inside' levels",
+    "levels.controls.placeOverhead.name": "Place tiles as overhead tiles 'inside' levels",
     "levels.controls.setTemplateElevation.name":"Set elevation for next placed template",
     "levels.controls.suppressBrmode.name":"Suppress Better Roofs mode application",
 
@@ -128,7 +128,7 @@
     "levels.dialog.checkScene.noIssues": "No Issues Detected!",
     "levels.dialog.checkScene.excluded": "Excluded from Check",
 
-    "levels.ui.players": "Show Players in the UI",
+    "levels.ui.players": "Show Players",
     "levels.ui.stair": "Place Drawings as Stairs",
     "levels.ui.addLevel": "Add a new level",
     "levels.ui.editLevels": "Edit Levels",

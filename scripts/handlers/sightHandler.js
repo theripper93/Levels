@@ -235,7 +235,7 @@ export class SightHandler {
         const zIntersectionPoint = getPointForPlane(bottom);
         if (
           ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
-          tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y)
+          tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, 0.99)
         ) {
             return {
               x: zIntersectionPoint.x,

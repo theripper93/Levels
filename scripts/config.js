@@ -8,7 +8,7 @@ import { LightHandler } from "./handlers/lightHandler.js";
 import { SoundHandler } from "./handlers/soundHandler.js";
 import { NoteHandler } from "./handlers/noteHandler.js";
 import { TokenHandler } from "./handlers/tokenHandler.js";
-import { TemplateHandler } from "./handlers/TemplateHandler.js";
+import { TemplateHandler } from "./handlers/templateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
 import { BackgroundHandler } from "./handlers/backgroundHandler.js";
 import { SettingsHandler } from "./handlers/settingsHandler.js";
