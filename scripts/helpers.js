@@ -46,6 +46,11 @@ export function getRangeForDocument(document){
 }
 
 export function cloneTileMesh(tile){
+  if(!tile.mesh) {
+    const sprite = new PIXI.Sprite();
+    sprite.tile = tile;
+    return sprite;
+  };
   const sprite = PIXI.Sprite.from(tile.mesh.texture);
     sprite.alpha = 1;
     sprite.tint = 0x000000;
