@@ -179,7 +179,7 @@ class elevationTexture{
     }
 
     get tileIds(){
-        return Object.values(this.clones).filter(c => c.tile.document.elevation === this.elevation).map(c => c.tile.id);
+        return Object.values(this.clones).filter(c => c.tile.document?.elevation === this.elevation).map(c => c.tile.id);
     }
 
     initialize(){
