@@ -141,6 +141,7 @@ export class LightMaskingHandler{
     }
 
     setUniforms(elevation, uniforms, light){
+        const isToken = light instanceof Token;
         const texArray = Object.values(this.elevationTextureContainer).filter(c => 
             c.elevation >= elevation &&
             c.elevation <= (CONFIG.Levels.currentToken?.losHeight ?? Infinity)
@@ -148,15 +149,20 @@ export class LightMaskingHandler{
         for(let i = 0; i < TEX_COUNT; i++){
             uniforms[`levels_elevationTextures${i}`] = texArray[i] ?? PIXI.Texture.EMPTY;
         }
+        debugger
         const sceneWidth = canvas.dimensions.width;
         const sceneHeight = canvas.dimensions.height;
         const lightRect = (light.source ?? light.light).radius*2;
         uniforms.levels_mask_count = texArray.length;
         uniforms.levels_scale = [lightRect/sceneWidth, lightRect/sceneHeight]//[sceneWidth/lightRect, sceneHeight/lightRect];
         uniforms.levels_offset = [
-            (light.center.x - lightRect/2)/canvas.dimensions.width,
-            (light.center.y - lightRect/2)/canvas.dimensions.height
+            (light.center.x - lightRect/2)/sceneWidth,
+            (light.center.y - lightRect/2)/sceneHeight
         ];
+        /*uniforms.levels_offset = [
+            (light.center.x - lightRect/2)/sceneWidth,
+            (light.center.y - lightRect/2)/sceneHeight
+        ];*/
     }
 
     clear(){
