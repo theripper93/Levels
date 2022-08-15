@@ -149,7 +149,6 @@ export class LightMaskingHandler{
         for(let i = 0; i < TEX_COUNT; i++){
             uniforms[`levels_elevationTextures${i}`] = texArray[i] ?? PIXI.Texture.EMPTY;
         }
-        debugger
         const sceneWidth = canvas.dimensions.width;
         const sceneHeight = canvas.dimensions.height;
         const lightRect = (light.source ?? light.light).radius*2;
