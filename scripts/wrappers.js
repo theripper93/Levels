@@ -3,6 +3,7 @@ export function registerWrappers(){
     const LevelsConfig = CONFIG.Levels
     const computeUI = LevelsConfig.handlers.UIHandler.UIVisible
     Hooks.on("refreshTile", (placeable) => {
+        
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
         placeable.visible = placeable.visible && visible;
         computeUI(placeable);
@@ -48,6 +49,13 @@ export function registerWrappers(){
         "AdaptiveLightingShader.create",
         LevelsConfig.handlers.LightMaskingHandler.injectShaders,
         "MIXED"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "LightSource.prototype._updateCommonUniforms",
+        LevelsConfig.handlers.LightMaskingHandler.uniformsWrapper,
+        "WRAPPER"
     );
 
     libWrapper.register(

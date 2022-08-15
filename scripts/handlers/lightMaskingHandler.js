@@ -33,6 +33,9 @@ export class LightMaskingHandler{
         Hooks.on("canvasReady", ()=>{
             this.init();
         })
+        Hooks.on("preUpdateTile", (tile, updates)=>{
+            if(updates.flags?.levels) updates.flags.levels.previousElevation = tile.elevation;
+        })
         Hooks.on("updateTile", (tile, updates)=>{
             this.updateTile(tile, updates);
         })
@@ -41,18 +44,6 @@ export class LightMaskingHandler{
         })
         Hooks.on("deleteTile", (tile)=>{
             this.deleteTile(tile);
-        })
-        Hooks.on("refreshAmbientLight", (light)=>{
-            this.updateLightUniforms(light);
-        })
-        Hooks.on("updateLight", (light)=>{
-            this.updateLightUniforms(light);
-        })
-        Hooks.on("levelsPerspectiveChanged", () => {
-            this.updateUniforms();
-        })
-        Hooks.on("refreshToken", (token) => {
-            this.updateLightUniforms(token);
         })
     }
 
@@ -95,7 +86,7 @@ export class LightMaskingHandler{
     updateTile(tile, updates){
         let needsUpdate = false;
         const elevation = tile.elevation;
-        const oldElevation = this.getElevation(tile.id);
+        const oldElevation = updates.flags?.levels?.previousElevation ?? elevation;
         if(elevation !== oldElevation) needsUpdate = true;
         if("x" in updates || "y" in updates || "width" in updates || "height" in updates || "texture" in updates || "hidden" in updates){
             needsUpdate = true;
@@ -107,9 +98,9 @@ export class LightMaskingHandler{
         this.spriteContainer[tile.id]?.destroy();
         delete this.spriteContainer[tile.id];
         this.spriteContainer[tile.id] = CONFIG.Levels.helpers.cloneTileMesh(tile);
-        if(oldElevation !== elevation) return this.refreshContainer(elevation);
         this.refreshContainer(elevation);
         this.refreshContainer(oldElevation);
+        this.updateUniforms();
     }
 
     getElevation(tileId){
@@ -119,29 +110,34 @@ export class LightMaskingHandler{
         return null;
     }
 
+    static uniformsWrapper(wrapped,...args){
+        wrapped(...args);
+        if(this.object?.document) CONFIG.Levels.LightMaskingHandler.setUniforms(this.object, args[0].uniforms);
+    }
+
     updateUniforms(){
         this._needsUpdate = true;
         setTimeout(()=>{
             if(!this._needsUpdate) return;
             for(let light of canvas.lighting.placeables){
-                this.updateLightUniforms(light);
+                if(!light.coloration.uniforms) continue;
+                this.updateLightUniforms(light, light.coloration.uniforms);
+                this.updateLightUniforms(light, light.illumination.uniforms);
+                this.updateLightUniforms(light, light.background.uniforms);
+            }
+            for(let token of canvas.tokens.placeables){
+                if(token.light.radius <= 0 || !token.light.coloration.uniforms) continue;
+                this.updateLightUniforms(token.light, token.light.coloration.uniforms);
+                this.updateLightUniforms(token.light, token.light.illumination.uniforms);
+                this.updateLightUniforms(token.light, token.light.background.uniforms);
             }
             this._needsUpdate = false;
         }, 100);
     }
 
-    updateLightUniforms(light){
+    setUniforms(light, uniforms){
         if(!this.enabled) return;
         const elevation = light.document.flags.levels?.rangeTop ?? light.losHeight ?? canvas.primary.background.elevation;
-        const source = light.source ?? light.light;
-        if(!source?.active) return;
-        this.setUniforms(elevation, source.coloration.uniforms, light);
-        this.setUniforms(elevation, source.illumination.uniforms, light)
-        this.setUniforms(elevation, source.background.uniforms, light)
-    }
-
-    setUniforms(elevation, uniforms, light){
-        const isToken = light instanceof Token;
         const texArray = Object.values(this.elevationTextureContainer).filter(c => 
             c.elevation >= elevation &&
             c.elevation <= (CONFIG.Levels.currentToken?.losHeight ?? Infinity)
@@ -151,17 +147,14 @@ export class LightMaskingHandler{
         }
         const sceneWidth = canvas.dimensions.width;
         const sceneHeight = canvas.dimensions.height;
-        const lightRect = (light.source ?? light.light).radius*2;
+        const source = (light.source ?? light.light);
+        const lightRect = source.radius*2;
         uniforms.levels_mask_count = texArray.length;
         uniforms.levels_scale = [lightRect/sceneWidth, lightRect/sceneHeight]//[sceneWidth/lightRect, sceneHeight/lightRect];
         uniforms.levels_offset = [
-            (light.center.x - lightRect/2)/sceneWidth,
-            (light.center.y - lightRect/2)/sceneHeight
+            (source.x - lightRect/2)/sceneWidth,
+            (source.y - lightRect/2)/sceneHeight
         ];
-        /*uniforms.levels_offset = [
-            (light.center.x - lightRect/2)/sceneWidth,
-            (light.center.y - lightRect/2)/sceneHeight
-        ];*/
     }
 
     clear(){

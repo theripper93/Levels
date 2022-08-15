@@ -19,13 +19,31 @@ import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
 
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
-    return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas?.scene?.flags?.levels?.backgroundElevation ?? 0;
+    return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas.primary.background.elevation;
   }
 });
 
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
   get: function () {
-    return this.flags?.levels?.rangeBottom
+    return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
+  }
+});
+
+Object.defineProperty(NoteDocument.prototype, "elevation", {
+  get: function () {
+    return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
+  }
+});
+
+Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
+  get: function () {
+    return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
+  }
+});
+
+Object.defineProperty(MeasuredTemplateDocument.prototype, "elevation", {
+  get: function () {
+    return this.flags?.levels?.elevation ?? canvas.primary.background.elevation;
   }
 });
 
