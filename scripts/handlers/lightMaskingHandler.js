@@ -120,16 +120,16 @@ export class LightMaskingHandler{
         setTimeout(()=>{
             if(!this._needsUpdate) return;
             for(let light of canvas.lighting.placeables){
-                if(!light.coloration.uniforms) continue;
-                this.updateLightUniforms(light, light.coloration.uniforms);
-                this.updateLightUniforms(light, light.illumination.uniforms);
-                this.updateLightUniforms(light, light.background.uniforms);
+                if(!light.coloration?.uniforms) continue;
+                this.setUniforms(light, light.coloration.uniforms);
+                this.setUniforms(light, light.illumination.uniforms);
+                this.setUniforms(light, light.background.uniforms);
             }
             for(let token of canvas.tokens.placeables){
-                if(token.light.radius <= 0 || !token.light.coloration.uniforms) continue;
-                this.updateLightUniforms(token.light, token.light.coloration.uniforms);
-                this.updateLightUniforms(token.light, token.light.illumination.uniforms);
-                this.updateLightUniforms(token.light, token.light.background.uniforms);
+                if(token.light.radius <= 0 || !token.light.coloration?.uniforms) continue;
+                this.setUniforms(token, token.light.coloration.uniforms);
+                this.setUniforms(token, token.light.illumination.uniforms);
+                this.setUniforms(token, token.light.background.uniforms);
             }
             this._needsUpdate = false;
         }, 100);

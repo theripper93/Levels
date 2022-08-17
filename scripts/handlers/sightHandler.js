@@ -154,7 +154,7 @@ export class SightHandler {
   static containsWrapper(wrapped, ...args){
     const LevelsConfig = CONFIG.Levels;
     const testTarget = LevelsConfig.visibilityTestObject;
-    if(!this.config?.source?.object || !(testTarget instanceof Token)) return wrapped(...args);
+    if(!this.config?.source?.object || !(testTarget instanceof Token) || this.config.source instanceof GlobalLightSource) return wrapped(...args);
     let result;
     if(this.config.source instanceof LightSource){
       result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));
