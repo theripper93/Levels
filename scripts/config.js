@@ -12,7 +12,6 @@ import { TemplateHandler } from "./handlers/templateHandler.js";
 import { FoWHandler } from "./handlers/fowHandler.js";
 import { BackgroundHandler } from "./handlers/backgroundHandler.js";
 import { SettingsHandler } from "./handlers/settingsHandler.js";
-import { LightMaskingHandler } from "./handlers/lightMaskingHandler.js";
 import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
@@ -49,7 +48,7 @@ Object.defineProperty(MeasuredTemplateDocument.prototype, "elevation", {
 
 Object.defineProperty(WeatherEffects.prototype, "elevation", {
   get: function () {
-    return canvas?.scene?.flags?.levels?.weatherElevation ?? 9999;
+    return canvas?.scene?.flags?.levels?.weatherElevation ?? Infinity;
   },
   set: function (value) {
     console.error("Cannot set elevation on WeatherEffects. Levels overrides WeatherEffects.prototype.elevation core behaviour. If you wish to set the WeatherEffects elevation, use SceneDocument.flags.levels.weatherElevation");
@@ -93,7 +92,6 @@ Hooks.on("init", () => {
       FoWHandler,
       BackgroundHandler,
       SettingsHandler,
-      LightMaskingHandler
 
   }
 
@@ -114,7 +112,6 @@ Hooks.on("init", () => {
   registerWrappers();
 
   CONFIG.Levels.FoWHandler = new FoWHandler();
-  CONFIG.Levels.LightMaskingHandler = new LightMaskingHandler();
   CONFIG.Levels.handlers.BackgroundHandler.setupElevation();
 
   Hooks.callAll("levelsReady", CONFIG.Levels);
@@ -532,7 +529,8 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
           dType: "Number",
           label: game.i18n.localize("levels.sceneconfig.weatherElevation.name"),
           notes: game.i18n.localize("levels.sceneconfig.weatherElevation.notes"),
-          default: 9999,
+          default: "",
+          placeholder: "Infinity"
         },
   });
 

@@ -575,7 +575,7 @@ Hooks.on("ready", () => {
                 rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : parseFloat(CONFIG.Levels.UI.range[1]),
               }
             },
-            roof: CONFIG.Levels.UI.roofEnabled,
+            roof: true,
           });
         }else{
           tile.updateSource({

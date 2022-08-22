@@ -46,16 +46,10 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
-        "AdaptiveLightingShader.create",
-        LevelsConfig.handlers.LightMaskingHandler.injectShaders,
-        "MIXED"
-    );
-
-    libWrapper.register(
-        LevelsConfig.MODULE_ID,
-        "LightSource.prototype._updateCommonUniforms",
-        LevelsConfig.handlers.LightMaskingHandler.uniformsWrapper,
-        "WRAPPER"
+        "Wall.prototype.identifyInteriorState", function disableInteriorState(){
+            this.roof = null;
+        },
+        "OVERRIDE"
     );
 
     libWrapper.register(
