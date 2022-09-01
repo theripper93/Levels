@@ -4,7 +4,7 @@ export class SightHandler {
     const radius = visionSource.object.getLightRadius(mode.range);
     const dx = test.point.x - visionSource.x;
     const dy = test.point.y - visionSource.y;
-    const dz = ((target.losHeight ?? target.document?.elevation ?? target.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance);
+    const dz = target ? ((target?.losHeight ?? target?.document?.elevation ?? target?.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance) : 0;
     return (dx * dx + dy * dy + dz * dz) <= radius*radius;
   }
 
