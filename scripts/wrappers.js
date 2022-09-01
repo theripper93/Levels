@@ -86,6 +86,16 @@ export function registerWrappers(){
         "WRAPPER"
     );
 
+    if(!game.modules.get("perfect-vision")?.active){
+        libWrapper.register(
+            LevelsConfig.MODULE_ID,
+            "DetectionMode.prototype._testRange",
+            LevelsConfig.handlers.SightHandler._testRange,
+            "OVERRIDE",
+            { perf_mode: "FAST" }
+        );
+    }
+
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "ClockwiseSweepPolygon.prototype.contains",

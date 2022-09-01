@@ -1,4 +1,13 @@
 export class SightHandler {
+
+  static _testRange(visionSource, mode, target, test) {
+    const radius = visionSource.object.getLightRadius(mode.range);
+    const dx = test.point.x - visionSource.x;
+    const dy = test.point.y - visionSource.y;
+    const dz = ((target.losHeight ?? target.document?.elevation ?? target.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance);
+    return (dx * dx + dy * dy + dz * dz) <= radius*radius;
+  }
+
   static performLOSTest(sourceToken, token, source) {
     return this.advancedLosTestVisibility(sourceToken, token, source);
   }
