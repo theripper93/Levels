@@ -26,6 +26,7 @@ class LevelsUI extends FormApplication {
   }
 
   async activateListeners(html) {
+    ui.controls.control.foreground = true;
     this.rangeEnabled = true;
     this.loadLevels();
     html.on("click", ".level-item", this._onChangeLevel.bind(this));

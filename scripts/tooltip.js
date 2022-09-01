@@ -45,7 +45,7 @@ Hooks.on("renderSceneControls", () => {
 Hooks.on("hoverTile", (object, hovered) => {
   if (
     hovered &&
-    object.data.overhead &&
+    object.document.overhead &&
     CONFIG.Levels.settings.get("enableTooltips") && !game.Levels3DPreview?._active
   ) {
     canvas.hud.levels.bind(object);

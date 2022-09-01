@@ -74,6 +74,14 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
+        "TilesLayer.prototype.displayRoofs", function displayRoofs(wrapped, ...args){
+            return wrapped(...args) || (CONFIG.Levels.UI?.rangeEnabled && !canvas.tokens.controlled.length);
+        },
+        "WRAPPER"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
             args[1] ??= {};

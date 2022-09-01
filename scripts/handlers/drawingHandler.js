@@ -11,16 +11,17 @@ export class DrawingHandler {
   }
 
   static executeStairs(updates, token) {
+    
     if ("x" in updates || "y" in updates) {
       let stairs = this.getStairs();
-      let tokenX = updates.x || token.data.x;
-      let tokenY = updates.y || token.data.y;
+      let tokenX = updates.x || token.x;
+      let tokenY = updates.y || token.y;
       let newUpdates;
-      let tokenElev = updates.elevation || token.data.elevation;
+      let tokenElev = updates.elevation || token.elevation;
       let gridSize = canvas.scene.dimensions.size;
       let newTokenCenter = {
-        x: tokenX + (gridSize * token.data.width) / 2,
-        y: tokenY + (gridSize * token.data.height) / 2,
+        x: tokenX + (gridSize * token.width) / 2,
+        y: tokenY + (gridSize * token.height) / 2,
       };
       let inStair;
       for (let stair of stairs) {
