@@ -34,12 +34,12 @@ export class TemplateHandler{
             } else {
               const cToken =
                 canvas.tokens.controlled[0] || _token;
-              tipN = cToken?.data?.elevation ?? 0;
+              tipN = cToken?.document?.elevation ?? 0;
             }
           } else {
             tipN = tipFlag;
           }
-          let units = canvas.scene.data.gridUnits;
+          let units = canvas.scene.grid.units;
           const tip = tipN > 0 ? `+${tipN} ${units}` : `${tipN} ${units}`;
           const style = CONFIG.canvasTextStyle.clone();
           style.fontSize = Math.max(
@@ -54,10 +54,10 @@ export class TemplateHandler{
     }
 
     static _refreshRulerText() {
-        let special = this.data.flags.levels?.special// || _levels?.nextTemplateSpecial
+        let special = this.document.flags.levels?.special// || _levels?.nextTemplateSpecial
         let text;
         let u = canvas.scene.grid.units;
-        if ( this.data.t === "rect" ) {
+        if ( this.document.t === "rect" ) {
           let d = canvas.dimensions;
           let dx = Math.round(this.ray.dx) * (d.distance / d.size);
           let dy = Math.round(this.ray.dy) * (d.distance / d.size);
@@ -79,7 +79,7 @@ export class TemplateHandler{
         LevelsVolumetricTemplates.tools.handMode &&
         cToken
           ? Math.round(
-              (cToken.losHeight - cToken?.data?.elevation) * 0.8
+              (cToken.losHeight - cToken?.document?.elevation) * 0.8
             )
           : 0;
       let elevation;
