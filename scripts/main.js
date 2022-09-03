@@ -1,5 +1,5 @@
 Hooks.on("updateToken", (token, updates) => {
-  if(!token.object.controlled) return;
+  if(!token?.object?.controlled) return;
   if("elevation" in updates) CONFIG.Levels.handlers.RefreshHandler.refreshPlaceables();
 })
 
@@ -13,11 +13,11 @@ Hooks.on("controlToken", (token, controlled)=>{
 })
 
 Hooks.on("updateToken", (token, updates) => {
-  if(canvas.tokens.get(token.id)?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
+  if(token?.object?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
 });
 
 Hooks.on("preUpdateToken", (token,updates) => {
-  if("elevation" in updates && !CONFIG.Levels?.useCollision3D){
+  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const p0 = {x:token.object.x,y:token.object.y,z:updates.elevation}
     const p1 = {x:token.object.x,y:token.object.y,z:token.object.losHeight-elevDiff+0.1}
