@@ -121,7 +121,7 @@ Hooks.on("init", () => {
 Hooks.once("ready", () => {
   // Module title
   const MODULE_ID = CONFIG.Levels.MODULE_ID;
-  const MODULE_TITLE = game.modules.get(MODULE_ID).data.title;
+  const MODULE_TITLE = game.modules.get(MODULE_ID).title;
 
   const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
   const FALLBACK_MESSAGE = `<large>
