@@ -36,6 +36,10 @@ export function registerWrappers(){
         computeUI(placeable);
     })
 
+    Hooks.on("refreshNote", (placeable) => {
+        computeUI(placeable);
+    })
+
     Hooks.on("refreshWall", (placeable) => {
         computeUI(placeable);
     })

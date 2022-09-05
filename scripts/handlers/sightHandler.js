@@ -15,6 +15,7 @@ export class SightHandler {
   static advancedLosTestVisibility(sourceToken, token, source) {
     const angleTest = this.testInAngle(sourceToken, token);
     if (!angleTest) return false;
+    return !this.advancedLosTestInLos(sourceToken, token);
     const inLOS = !this.advancedLosTestInLos(sourceToken, token);
     if(sourceToken.vision.los === source) return inLOS;
     const inRange = this.tokenInRange(sourceToken, token);

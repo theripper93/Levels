@@ -7,6 +7,13 @@ export class UIHandler{
         placeable.visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop)
     }
 
+    static emitsLightUI(light){
+        if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || CONFIG.Levels.currentToken) return true;
+        const { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(light.document)
+        const UITop = parseFloat(CONFIG.Levels.UI.range[1]);
+        return rangeTop <= UITop;
+    }
+
     static inUIRange(bottom, top){
         const UIBottom = parseFloat(CONFIG.Levels.UI.range[0]);
         const UITop = parseFloat(CONFIG.Levels.UI.range[1]);

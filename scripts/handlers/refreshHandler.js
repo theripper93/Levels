@@ -14,7 +14,14 @@ export class RefreshHandler{
         },30)
         setTimeout(() => {
             this.refresh(canvas.tokens);
+            this.refresh(canvas.notes);
         },100)
+    }
+
+    static restoreVisAll(){
+        for(const layer of Object.values(canvas.layers)){
+            if(layer.placeables) layer.placeables.forEach(p => p.visible = true);
+        }
     }
 
     static refresh(layer){

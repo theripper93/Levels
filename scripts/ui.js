@@ -305,7 +305,9 @@ class LevelsUI extends FormApplication {
     if (!force) this.saveData();
     this.rangeEnabled = false;
     if (!force) this.computeLevelsVisibility();
-    canvas.walls.placeables.forEach(w => w.visible = true)
+    CONFIG.Levels.handlers.RefreshHandler.restoreVisAll();
+    CONFIG.Levels.handlers.RefreshHandler.refreshAll();
+    WallHeight.schedulePerceptionUpdate()
     super.close();
   }
 
@@ -381,6 +383,7 @@ class LevelsUI extends FormApplication {
 
   computeLevelsVisibility() {
     CONFIG.Levels.handlers.RefreshHandler.refreshAll();
+    WallHeight.schedulePerceptionUpdate();
   }
 
   computeRangeForDocument(document, range, isTile = false) {
