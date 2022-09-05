@@ -1,10 +1,17 @@
 export class SightHandler {
 
   static _testRange(visionSource, mode, target, test) {
-    const radius = visionSource.object.getLightRadius(mode.range);
+    let radius = visionSource.object.getLightRadius(mode.range);
     const dx = test.point.x - visionSource.x;
     const dy = test.point.y - visionSource.y;
-    const dz = target ? ((target?.losHeight ?? target?.document?.elevation ?? target?.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance) : 0;
+    let dz;
+    if(target instanceof Token) {
+      radius += Math.min(target.w, target.h) / 2;
+      dz = ((target.losHeight - target.document.elevation) / 2 + target.document.elevation) -
+        ((visionSource.object.losHeight - visionSource.object.document.elevation) / 2 + visionSource.object.document.elevation)
+    }else{
+      dz = target ? ((target?.losHeight ?? target?.document?.elevation ?? target?.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance) : 0;
+    }
     return (dx * dx + dy * dy + dz * dz) <= radius*radius;
   }
 
