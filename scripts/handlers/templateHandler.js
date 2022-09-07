@@ -1,9 +1,10 @@
 export class TemplateHandler{
     static isVisible(wrapped, ...args){
         const result = wrapped(...args);
+        return result;
         const currentElevation = CONFIG.Levels.currentToken?.losHeight
         const templateElevation = this.document.flags.levels?.elevation;
-        if(currentElevation === undefined || templateElevation === undefined) return result;
+        if(currentElevation === undefined || templateElevation === undefined || !CONFIG.Levels.currentToken) return result;
         const origin = {
             x: CONFIG.Levels.currentToken.x,
             y: CONFIG.Levels.currentToken.y,
