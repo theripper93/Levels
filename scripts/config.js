@@ -16,6 +16,13 @@ import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
 
+Object.defineProperty(globalThis, "_levels", {
+  get: () => {
+    console.warn("Levels: _levels is deprecated. Use CONFIG.Levels.API instead.");
+    return CONFIG.Levels.API;
+  }
+})
+
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
     return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas.primary.background.elevation;
