@@ -170,4 +170,13 @@ export function registerWrappers(){
         LevelsConfig.handlers.TemplateHandler.isVisible,
         "WRAPPER"
     );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "CanvasOcclusionMask.prototype._identifyOccludedTiles",
+        LevelsConfig.handlers.TileHandler._identifyOccludedTiles,
+        "OVERRIDE"
+    );
+
+    
 }

@@ -1,6 +1,5 @@
 export class TileHandler{
     static isTileVisible(tile){
-
         const currentToken = CONFIG.Levels.currentToken;
 
         CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
@@ -34,6 +33,19 @@ export class TileHandler{
         return true;
 
     }
+
+    static _identifyOccludedTiles(tokens) {
+        const occluded = new Set();
+        const controlled = tokens.filter(t => t.controlled);
+        for ( const token of (controlled.length ? controlled : tokens) ) {
+          const tiles = canvas.tiles.quadtree.getObjects(token.bounds);
+          for ( const tile of tiles ) {
+            if ( occluded.has(tile) ) continue;  // Don't bother re-testing a tile
+            if ( tile.testOcclusion(token, {corners: tile.isRoof}) ) occluded.add(tile);
+          }
+        }
+        return occluded;
+      }
 }
 
 function getFlags(document){
