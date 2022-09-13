@@ -40,6 +40,20 @@ export class DrawingHandler {
                   newUpdates = { elevation: stair.range[1] };
                 }
               }
+            } else if (stair.drawingMode == 21) {
+              if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
+                if (tokenElev == stair.range[1]) {
+                  inStair = stair.drawing.id;
+                  newUpdates = { elevation: stair.range[0] };
+                }
+              }
+            } else if (stair.drawingMode == 22) {
+              if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
+                if (tokenElev == stair.range[0]) {
+                  inStair = stair.drawing.id;
+                  newUpdates = { elevation: stair.range[1] };
+                }
+              }
             } else if (stair.drawingMode == 3) {
               if (tokenElev <= stair.range[1] && tokenElev >= stair.range[0]) {
                 CONFIG.Levels.handlers.DrawingHandler.renderElevatorDalog(
@@ -91,7 +105,7 @@ export class DrawingHandler {
         "stairLocked"
       );
       if (
-        (drawingMode == 2 || drawingMode == 3) &&
+        (drawingMode == 2 || drawingMode == 3 || drawingMode == 21 || drawingMode == 22) &&
         rangeBottom != -Infinity &&
         rangeTop != Infinity &&
         !isLocked

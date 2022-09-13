@@ -60,6 +60,8 @@
     "levels.drawingconfig.isHole.opt0": "None",
     "levels.drawingconfig.isHole.opt1": "Hole",
     "levels.drawingconfig.isHole.opt2": "Stair",
+    "levels.drawingconfig.isHole.opt21": "Stair (One Way - Down)",
+    "levels.drawingconfig.isHole.opt22": "Stair (One Way - Up)",
     "levels.drawingconfig.isHole.opt3": "Elevator",
     "levels.drawingHud.title": "Toggle Locked State for Stair",
     "levels.tokenconfig.tokenHeight.name": "Token LOS Height",

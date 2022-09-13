@@ -190,6 +190,11 @@ Hooks.on("init", () => {
     scope: "world",
     config: true,
     type: Number,
+    range: {
+      min: 0.1,
+      max: 2,
+      step: 0.1,
+    },
     default: 1,
     onChange: () => {
       CONFIG.Levels.settings.cacheSettings()
@@ -427,8 +432,9 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
           dType: "Number",
           options: {
             0 : game.i18n.localize("levels.drawingconfig.isHole.opt0"),
-            //1 : game.i18n.localize("levels.drawingconfig.isHole.opt1"),
             2 : game.i18n.localize("levels.drawingconfig.isHole.opt2"),
+            21 : game.i18n.localize("levels.drawingconfig.isHole.opt21"),
+            22 : game.i18n.localize("levels.drawingconfig.isHole.opt22"),
             3 : game.i18n.localize("levels.drawingconfig.isHole.opt3"),
           }
         },
