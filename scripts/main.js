@@ -5,7 +5,7 @@ Hooks.on("updateToken", (token, updates) => {
 
 Hooks.on("controlToken", (token, controlled)=>{
   if(controlled){
-    CONFIG.Levels.currentToken = token;
+    CONFIG.Levels.currentToken = canvas.tokens.controlled.find(t => t.document.sight.enabled);
   }else{
     if(game.user.isGM && !canvas.tokens.controlled.length) CONFIG.Levels.currentToken = null;
   }
