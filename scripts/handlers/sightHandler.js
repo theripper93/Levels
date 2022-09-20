@@ -211,7 +211,7 @@ export class SightHandler {
    **/
 
    static testCollision(p0, p1, type = "sight") {
-    if (this.useCollision3D) {
+    if (canvas?.scene?.flags['levels-3d-preview']?.object3dSight) {
       if (!game.Levels3DPreview?._active) return true;
       return game.Levels3DPreview.interactionManager.computeSightCollision(
         p0,

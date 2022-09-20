@@ -93,7 +93,7 @@ export function registerWrappers(){
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);
             LevelsConfig.visibilityTestObject = null;
-            return res;
+            return !!res;
         },
         "WRAPPER"
     );
