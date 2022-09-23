@@ -670,8 +670,8 @@ Hooks.on("ready", () => {
         wall.updateSource({
           flags: {
             "wall-height": {
-              bottom: CONFIG.Levels.UI.range[0],
-              top: CONFIG.Levels.UI.range[1],
+              bottom: parseFloat(CONFIG.Levels.UI.range[0]),
+              top: parseFloat(CONFIG.Levels.UI.range[1]),
             },
           },
         });
