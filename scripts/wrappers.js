@@ -54,7 +54,7 @@ export function registerWrappers(){
             this.roof = null;
             for (const tile of canvas.tiles.roofs) {
               if (tile.document.hidden) continue;
-              if (Number.isFinite(tile.document?.flags?.levels?.rangeBottom)) continue;
+              if (Number.isFinite(tile.document?.flags?.levels?.rangeBottom) && Number.isFinite(tile.document?.flags?.levels?.rangeTop)) continue;
               const [x1, y1, x2, y2] = this.document.c;
               const isInterior = tile.containsPixel(x1, y1) && tile.containsPixel(x2, y2);
               if (isInterior) {
