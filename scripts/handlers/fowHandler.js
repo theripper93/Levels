@@ -97,6 +97,7 @@ export class FoWHandler {
     Object.defineProperty(sprite, "visible", {
       get: () => {
         if(!CONFIG.Levels.currentToken) return false;
+        if(!tile.document.overhead) return false;
         if(tile.document.flags?.levels?.noFogHide) return false;
         if(!CONFIG.Levels.settings.get("fogHiding")) return false;
         const bottom = tile.document.flags?.levels?.rangeBottom ?? -Infinity;
