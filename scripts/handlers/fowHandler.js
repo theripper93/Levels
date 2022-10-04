@@ -8,6 +8,7 @@ export class FoWHandler {
       this.init();
       canvas.effects.visibility.explored.addChild(this.advancedFogContainer);
       canvas.effects.visibility.explored.addChild(this.revealTokenContainer);
+      Hooks.callAll("levelsAdvancedFogInit", this.advancedFogContainer);
     })
     Hooks.on("deleteTile", (tile)=>{
       this.removeTileFogMask(tile.id);
@@ -84,6 +85,7 @@ export class FoWHandler {
   }
 
   createTileFogMask(tile) {
+    if(!tile?.document?.overhead) return false;
     if(this.tiles[tile.id]){
         this.advancedFogContainer.removeChild(this.tiles[tile.id]);
         try{
