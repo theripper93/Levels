@@ -2,7 +2,8 @@ export class UIHandler{
 
     static UIVisible(placeable){
         if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || CONFIG.Levels.currentToken) return;
-        const { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document)
+        let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document)
+        rangeBottom = placeable.document.elevation ?? -Infinity;
         if(rangeBottom == -Infinity && rangeTop == Infinity) return;
         placeable.visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop)
     }
