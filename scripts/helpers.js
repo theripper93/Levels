@@ -56,8 +56,10 @@ export function cloneTileMesh(tile){
     sprite.tint = 0x000000;
     sprite.width = tile.document.width;
     sprite.height = tile.document.height;
-    sprite.position.set(tile.document.x, tile.document.y);
+    sprite.position.set(tile.center.x, tile.center.y);
+    sprite.anchor.set(0.5, 0.5);
     sprite.angle = tile.mesh.angle;
+    sprite.scale.set(tile.document.texture.scaleX, tile.document.texture.scaleY);
     sprite.tile = tile;
     return sprite;
 }
