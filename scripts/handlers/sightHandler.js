@@ -32,7 +32,7 @@ export class SightHandler {
 
   static advancedLosTestInLos(sourceToken, token) {
     const tol = 4;
-    if (CONFIG.Levels.settings._preciseTokenVisibility === false)
+    if (CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
       return this.checkCollision(sourceToken, token, "sight");
     const targetLOSH = token.losHeight;
     const targetElevation =
@@ -49,7 +49,7 @@ export class SightHandler {
       { x: token.x + tol, y: token.y + token.h - tol, z: targetLOSH },
       { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
     ];
-    if (CONFIG.Levels.settings._exactTokenVisibility) {
+    if (CONFIG.Levels.settings.get("exactTokenVisibility")) {
       const exactPoints = [
         {
           x: token.center.x,
