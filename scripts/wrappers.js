@@ -50,25 +50,6 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
-        "CONFIG.Wall.objectClass.prototype.identifyInteriorState", function disableInteriorState(wrapped,...args){
-            this.roof = null;
-            for (const tile of canvas.tiles.roofs) {
-              if (tile.document.hidden) continue;
-              if (Number.isFinite(tile.document?.flags?.levels?.rangeBottom) && Number.isFinite(tile.document?.flags?.levels?.rangeTop)) continue;
-              const [x1, y1, x2, y2] = this.document.c;
-              const isInterior = tile.containsPixel(x1, y1) && tile.containsPixel(x2, y2);
-              if (isInterior) {
-                this.roof = tile;
-                break;
-              }
-            }
-        },
-        "OVERRIDE",
-        { perf_mode: "FAST" }
-    );
-
-    libWrapper.register(
-        LevelsConfig.MODULE_ID,
         "CONFIG.Tile.objectClass.prototype.isRoof", function isRoof(wrapped, ...args){
             if(this.document.overhead && Number.isFinite(this.document.flags?.levels?.rangeBottom)) return true;
             else return wrapped(...args);
