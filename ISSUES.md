@@ -31,7 +31,8 @@ If you don't have clear steps to reproduce use the `#troubleshooting` discord ch
 * Once you have this informations use the `Bug Report Template`
 
 ```
-NOTE: Many of my modules rely on the Game Canvas, if you are using FoundryVTT with Game Canvas Disabled or with no active scene, you might encounter errors. You can ignore these errors, no fixes will be provided for error tiggered by a disabled game canvas.
+NOTE: Many of my modules rely on the Game Canvas, if you are using FoundryVTT with Game Canvas Disabled or with no active scene, you might encounter errors.
+You can ignore these errors, no fixes will be provided for error tiggered by a disabled game canvas or no active scene.
 ```
 
 **BUG REPORT TEMPLATE**
