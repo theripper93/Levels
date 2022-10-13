@@ -420,8 +420,8 @@ class LevelsUI extends FormApplication {
     return {
       flags: {
         [`${CONFIG.Levels.MODULE_ID}`]: {
-          rangeBottom: range[0],
-          rangeTop: range[1],
+          rangeBottom: parseFloat(range[0]),
+          rangeTop: parseFloat(range[1]),
         },
       },
     };
@@ -642,7 +642,7 @@ Hooks.on("ready", () => {
             flags: {
               levels: {
                 drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
-                rangeBottom: CONFIG.Levels.UI.range[0],
+                rangeBottom: parseFloat(CONFIG.Levels.UI.range[0]),
                 rangeTop: newBot - 1,
               },
             },
@@ -656,8 +656,8 @@ Hooks.on("ready", () => {
             flags: {
               levels: {
                 drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
-                rangeBottom: CONFIG.Levels.UI.range[0],
-                rangeTop: CONFIG.Levels.UI.range[1],
+                rangeBottom: parseFloat(CONFIG.Levels.UI.range[0]),
+                rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
               },
             },
           });
@@ -681,7 +681,7 @@ Hooks.on("ready", () => {
     Hooks.on("preCreateToken", (token, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
         token.updateSource({
-          elevation: CONFIG.Levels.UI.range[0],
+          elevation: parseFloat(CONFIG.Levels.UI.range[0]),
         });
       }
     });
