@@ -13,7 +13,7 @@ export class UIHandler{
     }
 
     static emitsLightUI(light){
-        if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || CONFIG.Levels.currentToken) return true;
+        if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || CONFIG.Levels.currentToken) return undefined;
         const { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(light.document)
         const UITop = parseFloat(CONFIG.Levels.UI.range[1]);
         return rangeTop <= UITop;

@@ -1,10 +1,11 @@
 export class LightHandler{
     static isLightVisibleWrapper(wrapped, ...args){
         const result = wrapped(...args);
-        function isActive(){
-            if(!CONFIG.Levels.handlers.UIHandler.emitsLightUI(this)) return false;
-            const rangeBottom = this instanceof Token ? this.document.elevation : this.document.flags.levels?.rangeBottom ?? -Infinity;
-            const rangeTop = this instanceof Token ? this.losHeight : this.document.flags.levels?.rangeTop ?? Infinity;
+        const isActive = () => {
+            const object = this.document ? this : this.object;
+            if(CONFIG.Levels.handlers.UIHandler.emitsLightUI(object) === true) return true;
+            const rangeBottom = object instanceof Token ? object.document.elevation : object.document.flags.levels?.rangeBottom ?? -Infinity;
+            const rangeTop = object instanceof Token ? object.losHeight : object.document.flags.levels?.rangeTop ?? Infinity;
             const currentElevation = CONFIG.Levels.currentToken?.losHeight
             if(currentElevation === undefined) return result;
             const underBackground = currentElevation >= canvas.primary.background.elevation && rangeTop < canvas.primary.background.elevation;
@@ -18,6 +19,6 @@ export class LightHandler{
             return isLightVisible;
         }
         
-        return result || !isActive.call(this.object);
+        return result || !isActive();
     }
 }
