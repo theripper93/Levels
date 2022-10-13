@@ -7,7 +7,7 @@ export class LightHandler{
             const rangeBottom = object instanceof Token ? object.document.elevation : object.document.flags.levels?.rangeBottom ?? -Infinity;
             const rangeTop = object instanceof Token ? object.losHeight : object.document.flags.levels?.rangeTop ?? Infinity;
             const currentElevation = CONFIG.Levels.currentToken?.losHeight
-            if(currentElevation === undefined) return result;
+            if(currentElevation === undefined) return true;
             const underBackground = currentElevation >= canvas.primary.background.elevation && rangeTop < canvas.primary.background.elevation;
             if(underBackground) return false;
             let isLightVisible = false;
