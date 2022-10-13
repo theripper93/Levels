@@ -18,6 +18,6 @@ export class LightHandler{
             return isLightVisible;
         }
         
-        return result || !isActive.bind(this.object)();
+        return result || !isActive.call(this.object);
     }
 }
