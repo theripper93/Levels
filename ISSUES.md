@@ -8,7 +8,7 @@ You can join the discord here: https://theripper93.com/
 
 ## Help/Troubleshooting
 
-If you have issues setting up one of my modules or using one or more of it's features use the `#troubleshooting` discord channel, help/setup request in the github issues will be ignored and closed.
+If you have issues setting up one of my modules or using one or more of it's features use the `#troubleshooting-help` discord channel, help/setup request in the github issues will be ignored and closed.
 
 ## Feature requests/Enhancements
 Post your feature request on discord, the issue traker here is just used to track bugs.
@@ -29,6 +29,12 @@ If you don't have clear steps to reproduce use the `#troubleshooting` discord ch
 * Try to isolate the issue as much as possible (try to reproduce it on a new scene with minimal amount of factors)
 * Provide a list of steps to take to reproduce the issue
 * Once you have this informations use the `Bug Report Template`
+
+```
+NOTE: Many of my modules rely on the Game Canvas.
+If you are using FoundryVTT with Game Canvas Disabled or with no active scene, you might encounter errors.
+You can ignore these errors, no fixes will be provided for error tiggered by a disabled game canvas or no active scene.
+```
 
 **BUG REPORT TEMPLATE**
 ```
