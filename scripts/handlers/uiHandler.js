@@ -5,6 +5,10 @@ export class UIHandler{
         let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document)
         rangeBottom = placeable.document.elevation ?? rangeBottom;
         if(rangeBottom == -Infinity && rangeTop == Infinity) return;
+        if(placeable instanceof Token){
+            rangeBottom = placeable.losHeight;
+            rangeTop = placeable.losHeight;
+        }
         placeable.visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop)
     }
 

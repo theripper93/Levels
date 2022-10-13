@@ -285,8 +285,8 @@ class LevelsUI extends FormApplication {
         $playerList.empty();
         players.forEach((player) => {
           if (
-            player.document.elevation >= bottom &&
-            player.document.elevation <= top &&
+            player.losHeight >= bottom &&
+            player.losHeight <= top &&
             player.id
           ) {
             const color = Array.from(game.users).find(
@@ -435,7 +435,7 @@ class LevelsUI extends FormApplication {
     )}</label>
     <div class="form-fields">
         <input type="number" name="templateElevation" data-dtype="Number" value="${
-          canvas.tokens.controlled[0]?.data?.elevation ?? 0
+          canvas.tokens.controlled[0]?.document?.elevation ?? 0
         }" step="1">
     </div>
     </div>

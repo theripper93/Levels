@@ -122,7 +122,8 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
-        "CONFIG.AmbientLight.objectClass.prototype.emitsLight",
+        //"CONFIG.AmbientLight.objectClass.prototype.emitsLight",
+        "CONFIG.AmbientLight.objectClass.prototype._isSuppressed",
         LevelsConfig.handlers.LightHandler.isLightVisibleWrapper,
         "WRAPPER"
     );
