@@ -3,7 +3,8 @@ export class LightHandler{
         const result = wrapped(...args);
         const isActive = () => {
             const object = this.document ? this : this.object;
-            if(CONFIG.Levels.handlers.UIHandler.emitsLightUI(object) === true) return true;
+            const ui = CONFIG.Levels.handlers.UIHandler.emitsLightUI(object);
+            if(ui !== undefined) return ui;
             const rangeBottom = object instanceof Token ? object.document.elevation : object.document.flags.levels?.rangeBottom ?? -Infinity;
             const rangeTop = object instanceof Token ? object.losHeight : object.document.flags.levels?.rangeTop ?? Infinity;
             const currentElevation = CONFIG.Levels.currentToken?.losHeight
