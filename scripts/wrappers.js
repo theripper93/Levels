@@ -123,18 +123,17 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
-        //"CONFIG.AmbientLight.objectClass.prototype.emitsLight",
-        "LightSource.prototype._isSuppressed",
+        "CONFIG.AmbientLight.objectClass.prototype.emitsLight",
         LevelsConfig.handlers.LightHandler.isLightVisibleWrapper,
         "WRAPPER"
     );
 
-   /* libWrapper.register(
+    libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CONFIG.Token.objectClass.prototype.emitsLight",
         LevelsConfig.handlers.LightHandler.isLightVisibleWrapper,
         "WRAPPER"
-    );*/
+    );
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,

@@ -1,25 +1,19 @@
 export class LightHandler{
     static isLightVisibleWrapper(wrapped, ...args){
         const result = wrapped(...args);
-        const isActive = () => {
-            const object = this.document ? this : this.object;
-            const ui = CONFIG.Levels.handlers.UIHandler.emitsLightUI(object);
-            if(ui !== undefined) return ui;
-            const rangeBottom = object instanceof Token ? object.document.elevation : object.document.flags.levels?.rangeBottom ?? -Infinity;
-            const rangeTop = object instanceof Token ? object.losHeight : object.document.flags.levels?.rangeTop ?? Infinity;
-            const currentElevation = CONFIG.Levels.currentToken?.losHeight
-            if(currentElevation === undefined) return true;
-            const underBackground = currentElevation >= canvas.primary.background.elevation && rangeTop < canvas.primary.background.elevation;
-            if(underBackground) return false;
-            let isLightVisible = false;
-            if((canvas.scene.flags.levels?.lightMasking ?? true)){
-                isLightVisible = rangeBottom <= currentElevation;
-            }else{
-                isLightVisible = rangeBottom <= currentElevation && currentElevation <= rangeTop;
-            }
-            return isLightVisible;
+        if(!CONFIG.Levels.handlers.UIHandler.emitsLightUI(this)) return false;
+        const rangeBottom = this instanceof Token ? this.document.elevation : this.document.flags.levels?.rangeBottom ?? -Infinity;
+        const rangeTop = this instanceof Token ? this.losHeight : this.document.flags.levels?.rangeTop ?? Infinity;
+        const currentElevation = CONFIG.Levels.currentToken?.losHeight
+        if(currentElevation === undefined) return result;
+        const underBackground = currentElevation >= canvas.primary.background.elevation && rangeTop < canvas.primary.background.elevation;
+        if(underBackground) return false;
+        let isLightVisible = false;
+        if((canvas.scene.flags.levels?.lightMasking ?? true)){
+            isLightVisible = rangeBottom <= currentElevation;
+        }else{
+            isLightVisible = rangeBottom <= currentElevation && currentElevation <= rangeTop;
         }
-        
-        return result || !isActive();
+        return result && isLightVisible;
     }
 }

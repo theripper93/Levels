@@ -7,17 +7,18 @@ export class TileHandler{
 
         const tokenElevation = currentToken.document.elevation;
         const tokenLOS = currentToken.losHeight;
+        const bgElevation = canvas?.scene?.flags?.levels?.backgroundElevation ?? 0;
 
         //Handle background tiles
         if(!tile.document.overhead){
-            return tokenLOS >= (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)
+            return tokenLOS >= bgElevation
         }
 
         if(!tile.document.flags.levels) return true;
 
         const {rangeTop, rangeBottom, showIfAbove, showAboveRange, isBasement, noFogHide} = getFlags(tile.document)
-        //Not a levels tile
-        if(rangeTop === Infinity && rangeBottom === -Infinity || !tile.document.overhead) return true;
+        //Not a levels tile, hide if token is under background
+        if(rangeTop === Infinity && rangeBottom === -Infinity || !tile.document.overhead) return tokenLOS >= bgElevation;
 
         const inRange = tokenLOS < rangeTop && tokenLOS >= rangeBottom;
 
@@ -29,6 +30,9 @@ export class TileHandler{
 
         //Tiles set as show above will be hidden if the token exceeds the range
         if( tokenLOS < rangeBottom && showIfAbove && Math.abs(tokenElevation - rangeBottom) > showAboveRange) return false;
+
+        //If it's a roof or show if above is enabled and the bottom of the tile is higher than the bg, and the token is under the bg, hide the tile
+        if((showIfAbove || rangeTop === Infinity) && rangeBottom > bgElevation && tokenLOS < bgElevation) return false;
 
         return true;
 
