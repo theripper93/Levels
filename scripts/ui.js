@@ -680,8 +680,9 @@ Hooks.on("ready", () => {
 
     Hooks.on("preCreateToken", (token, updates) => {
       if (CONFIG.Levels.UI.rangeEnabled == true) {
+        if(updates) updates.elevation = parseFloat(CONFIG.Levels.UI.range[0]);
         token.updateSource({
-          elevation: parseFloat(CONFIG.Levels.UI.range[0]),
+          elevation: updates?.elevation ?? parseFloat(CONFIG.Levels.UI.range[0]),
         });
       }
     });
