@@ -291,6 +291,13 @@ Hooks.on("init", () => {
   });
 });
 
+Hooks.on("updateTile", (tile, updates) => {
+  if(updates?.flags?.levels?.allWallBlockSight !== undefined){
+    canvas.walls.placeables.forEach(w => w.identifyInteriorState())
+    WallHeight.schedulePerceptionUpdate()
+  }
+})
+
 Hooks.on("renderTileConfig", (app, html, data) => {
   const isInjected = html.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).length > 0;
   if(isInjected) return;
@@ -343,6 +350,12 @@ Hooks.on("renderTileConfig", (app, html, data) => {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
           notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
+        },
+        "allWallBlockSight": {
+          type: "checkbox",
+          label: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.name"),
+          notes: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.hint"),
+          default: true,
         },
   });
   html.on("change", "input", (e) => {

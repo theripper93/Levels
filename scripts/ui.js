@@ -577,6 +577,7 @@ Hooks.on("ready", () => {
                   ? parseFloat(CONFIG.Levels.UI.range[1])
                   : parseFloat(CONFIG.Levels.UI.range[0]),
                 rangeTop: CONFIG.Levels.UI.roofEnabled ? Infinity : parseFloat(CONFIG.Levels.UI.range[1]),
+                allWallBlockSight: CONFIG.Levels.UI.roofEnabled
               }
             },
             roof: CONFIG.Levels.UI.roofEnabled,

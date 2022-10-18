@@ -62,7 +62,8 @@ export function registerWrappers(){
         "CONFIG.Wall.objectClass.prototype.identifyInteriorState", function disableInteriorState(wrapped,...args){
             this.roof = null;
             for (const tile of canvas.tiles.roofs) {
-              if (tile.document.hidden) continue;
+              const allWallBlockSight = tile.document?.flags?.levels?.allWallBlockSight ?? true;
+              if (tile.document.hidden || !allWallBlockSight) continue;
               const isBottomFinite = Number.isFinite(tile.document.flags?.levels?.rangeBottom);
               if (isBottomFinite && Number.isFinite(tile.document?.flags?.levels?.rangeTop)) continue;
               if(isBottomFinite){

@@ -50,6 +50,8 @@
     "levels.tilecoonfig.excludeFromChecker.name": "Exclude from Scene Checker",
     "levels.tilecoonfig.noCollision.name": "Allow Sight",
     "levels.tilecoonfig.noCollision.hint": "If enabled, the tile will not block sight.",
+    "levels.tilecoonfig.allWallBlockSight.name": "All Walls Block Sight",
+    "levels.tilecoonfig.allWallBlockSight.hint": "When checked, all walls under this tile will count as vision blocking when the tile is not occluded.",
 
     "levels.drawingconfig.hb.name": "Height (Bottom)",
     "levels.drawingconfig.ht.name": "Height (Top)",
