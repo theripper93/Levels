@@ -25,7 +25,7 @@ Object.defineProperty(globalThis, "_levels", {
 
 Object.defineProperty(TileDocument.prototype, "elevation", {
   get: function () {
-    if(CONFIG.Levels.UI.rangeEnabled && this.object?.sourceId?.includes("preview")){
+    if(CONFIG.Levels?.UI?.rangeEnabled && !this.id){
       return parseFloat(CONFIG.Levels.UI.range[0] || 0);
     }
     return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas.primary.background.elevation;
@@ -34,7 +34,7 @@ Object.defineProperty(TileDocument.prototype, "elevation", {
 
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
   get: function () {
-    if(CONFIG.Levels.UI.rangeEnabled && this.object?.sourceId?.includes("preview")){
+    if(CONFIG.Levels?.UI?.rangeEnabled && !this.id){
       return parseFloat(CONFIG.Levels.UI.range[0] || 0);
     }
     return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
@@ -49,7 +49,7 @@ Object.defineProperty(NoteDocument.prototype, "elevation", {
 
 Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
   get: function () {
-    if(CONFIG.Levels.UI.rangeEnabled && this.object?.sourceId?.includes("preview")){
+    if(CONFIG.Levels.UI.rangeEnabled && !this.id){
       return parseFloat(CONFIG.Levels.UI.range[0] || 0);
     }
     return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
