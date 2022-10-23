@@ -91,15 +91,17 @@ export function registerWrappers(){
         "WRAPPER"
     );
 
+    const visibilityTestObjectStack = [];
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
             args[1] ??= {};
             args[1].tolerance = 0;
+            visibilityTestObjectStack.push(LevelsConfig.visibilityTestObject);
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);
-            LevelsConfig.visibilityTestObject = null;
+            LevelsConfig.visibilityTestObject = visibilityTestObjectStack.pop();
             return !!res;
         },
         "WRAPPER"
