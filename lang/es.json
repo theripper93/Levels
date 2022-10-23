@@ -51,6 +51,10 @@
     "levels.tilecoonfig.noFogHide.hint": "Excluir esta baldosa del modo 'Niebla de guerra avanzada' de Levels",
     "levels.tilecoonfig.range.unit": "Elevación",
     "levels.tilecoonfig.excludeFromChecker.name": "Excluir del depurador de escenas",
+    "levels.tilecoonfig.noCollision.name": "Permitir visión",
+    "levels.tilecoonfig.noCollision.hint": "Si se habilita, la baldosa no bloqueará la visión",
+    "levels.tilecoonfig.allWallBlockSight.name": "Todos los muros bloquean la visión",
+    "levels.tilecoonfig.allWallBlockSight.hint": "Cuando se habilita, todos los muros bajo esta baldosa se tendrán en cuenta a la hora de bloquear la visión cuando la baldosa no está ocluida",
 	
     "levels.drawingconfig.hb.name": "Altura (inferior)",
     "levels.drawingconfig.ht.name": "Altura (superior)",
@@ -61,12 +65,21 @@
     "levels.drawingconfig.isHole.opt0": "Ninguno",
     "levels.drawingconfig.isHole.opt1": "Agujero",
     "levels.drawingconfig.isHole.opt2": "Escaleras",
+    "levels.drawingconfig.isHole.opt21": "Escaleras (sentido único - descendentes)",
+    "levels.drawingconfig.isHole.opt22": "Escaleras (sentido único - ascendentes)",
     "levels.drawingconfig.isHole.opt3": "Ascensor",
     "levels.drawingHud.title": "Conmutar estado de bloqueo de las escaleras",
     "levels.tokenconfig.tokenHeight.name": "Altura de la linea de visión de iconos",
     "levels.tokenconfig.tokenHeight.unit": "(Distancia)",
     "levels.template.elevation.name": "Elevación",
     "levels.template.special.name": "Especial",
+
+    "levels.sceneconfig.backgroundElevation.name": "Elevación del fondo",
+    "levels.sceneconfig.backgroundElevation.notes": "Elevación en unidades de distancia que configura la altura de la imagen de fondo para las baldosas bajo los pies",
+    "levels.sceneconfig.weatherElevation.name": "Elevación del clima",
+    "levels.sceneconfig.weatherElevation.notes": "Elevación en unidades de distancia que configura la altura de los efectos climatológicos",
+    "levels.sceneconfig.lightMasking.name": "Máscara de luces",
+    "levels.sceneconfig.lightMasking.notes": "Muestra luces bajo la elevación actual y las enmascara usando baldosas. Esta característica tiene ciertas limitaciones, por favor consulte la documentación del módulo si quiere más información",
 
     "levels.controls.main.name": "Niveles",
     "levels.controls.levelsview.name": "Habilitar visión/colocación de niveles",
@@ -123,11 +136,13 @@
     "levels.dialog.checkScene.excluded": "Excluidas de la depuración",
 
     "levels.ui.players": "Mostrar a los jugadores en la IU",
+    "levels.ui.stair": "Colocar dibujos como escaleras",
     "levels.ui.addLevel": "Añadir nuevo nivel",
     "levels.ui.editLevels": "Editar niveles",
     "levels.ui.getFromScene": "Importar los niveles de la escena",
     "levels.ui.clearLevels": "Borrar niveles",
     "levels.ui.debugScene": "Depurar escena (en rojo significa que se han detectado problemas)",
+    "levels.ui.minElevDiff": "Tamaño de nivel mínimo",
 
 
     "levels.conflicts.midiqol.tokenvis": "Habilitar la opción de MidiQOL 'Permitir a los jugadores controlar sus iconos ocultos' producirá problemas con la visibilidad de los iconos. Por favor, deshabilite esa opción"
