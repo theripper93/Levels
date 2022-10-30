@@ -126,6 +126,13 @@ export function registerWrappers(){
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
+        "ClockwiseSweepPolygon.prototype._testCollision",
+        LevelsConfig.handlers.SightHandler._testCollision,
+        "MIXED"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
         "CONFIG.AmbientLight.objectClass.prototype.emitsLight",
         LevelsConfig.handlers.LightHandler.isLightVisibleWrapper,
         "WRAPPER"

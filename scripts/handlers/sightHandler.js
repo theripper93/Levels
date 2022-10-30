@@ -170,6 +170,21 @@ export class SightHandler {
     return false;
   }
 
+  static _testCollision(wrapped, ...args) {
+    if(!this.config?.source?.object || !CONFIG?.Levels?.visibilityTestObject) return wrapped(...args);
+    const p1 = {
+      x: args[0].A.x,
+      y: args[0].A.y,
+      z: this.config.source.object.losHeight ?? 0,
+    };
+    const p2 = {
+      x: args[0].B.x,
+      y: args[0].B.y,
+      z: CONFIG?.Levels?.visibilityTestObject?.losHeight ?? 0,
+    };
+    return CONFIG.Levels.API.testCollision(p1,p2, args[1])
+  }
+
   static containsWrapper(wrapped, ...args){
     const LevelsConfig = CONFIG.Levels;
     const testTarget = LevelsConfig.visibilityTestObject;
