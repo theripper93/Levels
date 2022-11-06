@@ -9,11 +9,11 @@ export class BackgroundHandler{
             Object.defineProperty(canvas.primary.background, "visible", {
               get: function () {
                 if(this.texture == PIXI.Texture.EMPTY) return false;
-                if(CONFIG.Levels?.UI?.rangeEnabled){
+                if(CONFIG.Levels?.UI?.rangeEnabled && !canvas.tokens.controlled.length){
                     return (parseFloat(CONFIG.Levels.UI.range[0]) ?? Infinity) >= this.elevation
                 }
-                if(CONFIG.Levels.currentToken){
-                  return CONFIG.Levels.currentToken.losHeight >= this.elevation;
+                if(CONFIG.Levels.currentToken || canvas.tokens.controlled.length){
+                  return (CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight >= this.elevation;
                 }else{
                   return true;
                 }
