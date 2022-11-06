@@ -51,7 +51,7 @@ export function registerWrappers(){
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CONFIG.Tile.objectClass.prototype.isRoof", function isRoof(wrapped, ...args){
-            if(this.document.flags["tile-scroll"]?.enableRotate || this.document.flags["tile-scroll"]?.enableScroll) return wrapped(...args);
+            if(this.document.flags?.levels?.noCollision || this.document.flags["tile-scroll"]?.enableRotate || this.document.flags["tile-scroll"]?.enableScroll) return wrapped(...args);
             return wrapped(...args) || (this.document.overhead && Number.isFinite(this.document.flags?.levels?.rangeBottom));
         },
         "WRAPPER"
