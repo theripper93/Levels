@@ -315,8 +315,14 @@ export class SightHandler {
     }
     //Compute 3d collision for walls
     function walls3dTest() {
+      const rectX = Math.min(x0, x1);
+      const rectY = Math.min(y0, y1);
+      const rectW = Math.abs(x1 - x0);
+      const rectH = Math.abs(y1 - y0);
+      const rect = new PIXI.Rectangle(rectX, rectY, rectW, rectH);
+      const walls = canvas.walls.quadtree.getObjects(rect);
       let terrainWalls = 0;
-      for (let wall of canvas.walls.placeables) {
+      for (let wall of walls) {
         if (this.shouldIgnoreWall(wall, TYPE)) continue;
 
         let isTerrain =

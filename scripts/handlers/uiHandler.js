@@ -1,7 +1,7 @@
 export class UIHandler{
 
     static UIVisible(placeable){
-        if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken || (!placeable?.document?.flags.levels && !placeable?.document?.flags["wall-height"])) return;
+        if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken) return;
         let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document)
         rangeBottom = placeable.document.elevation ?? rangeBottom;
         if(rangeBottom == -Infinity && rangeTop == Infinity) return;
