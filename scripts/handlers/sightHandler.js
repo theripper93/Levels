@@ -17,25 +17,25 @@ export class SightHandler {
     return (dx * dx + dy * dy + dz * dz) <= radius*radius;
   }
 
-  static performLOSTest(sourceToken, token, source) {
-    return this.advancedLosTestVisibility(sourceToken, token, source);
+  static performLOSTest(sourceToken, token, source, type = "sight") {
+    return this.advancedLosTestVisibility(sourceToken, token, source, type);
   }
 
-  static advancedLosTestVisibility(sourceToken, token, source) {
+  static advancedLosTestVisibility(sourceToken, token, source, type = "sight") {
     const angleTest = this.testInAngle(sourceToken, token);
     if (!angleTest) return false;
-    return !this.advancedLosTestInLos(sourceToken, token);
-    const inLOS = !this.advancedLosTestInLos(sourceToken, token);
+    return !this.advancedLosTestInLos(sourceToken, token, type);
+    const inLOS = !this.advancedLosTestInLos(sourceToken, token, type);
     if(sourceToken.vision.los === source) return inLOS;
     const inRange = this.tokenInRange(sourceToken, token);
     if (inLOS && inRange) return true;
     return false;
   }
 
-  static advancedLosTestInLos(sourceToken, token) {
+  static advancedLosTestInLos(sourceToken, token, type = "sight") {
     const tol = 4;
     if (CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
-      return this.checkCollision(sourceToken, token, "sight");
+      return this.checkCollision(sourceToken, token, type);
     const targetLOSH = token.losHeight;
     const targetElevation =
       token.document.elevation + (targetLOSH - token.document.elevation) * 0.1;
@@ -74,7 +74,7 @@ export class SightHandler {
       let collision = this.testCollision(
         sourceCenter,
         point,
-        "sight",
+        type,
         sourceToken
       );
       if (!collision) return collision;
@@ -175,14 +175,19 @@ export class SightHandler {
     const p1 = {
       x: args[0].A.x,
       y: args[0].A.y,
-      z: this.config.source.object.losHeight ?? 0,
+      z: this.config.source?.elevation ?? 0,
     };
     const p2 = {
       x: args[0].B.x,
       y: args[0].B.y,
       z: CONFIG?.Levels?.visibilityTestObject?.losHeight ?? 0,
     };
-    return CONFIG.Levels.API.testCollision(p1,p2, args[1])
+    const result = CONFIG.Levels.API.testCollision(p1,p2, this.config.type);
+    switch (args[1]) {
+      case "any": return !!result;
+      case "all": return result ? [PolygonVertex.fromPoint(result)] : [];
+      default: return result ? PolygonVertex.fromPoint(result) : null;
+    }
   }
 
   static containsWrapper(wrapped, ...args){
@@ -193,7 +198,7 @@ export class SightHandler {
     if(this.config.source instanceof LightSource){
       result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));
     }else if(this.config.source.object instanceof Token){
-        result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget, this);
+        result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget, this, this.config.type);
     }else{
         result = wrapped(...args);
     }
@@ -202,7 +207,7 @@ export class SightHandler {
   /**
    * Check whether the given wall should be tested for collisions, based on the collision type and wall configuration
    * @param {Object} wall - The wall being checked
-   * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement
+   * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement, 2 for sound, 3 for light
    * @returns {boolean} Whether the wall should be ignored
    */
    static shouldIgnoreWall(wall, collisionType) {
@@ -216,6 +221,16 @@ export class SightHandler {
         wall.document.move === CONST.WALL_MOVEMENT_TYPES.NONE ||
         (wall.document.door != 0 && wall.document.ds === 1)
       );
+    } else if (collisionType === 2) {
+      return (
+        wall.document.sound === CONST.WALL_MOVEMENT_TYPES.NONE ||
+        (wall.document.door != 0 && wall.document.ds === 1)
+      );
+    } else if (collisionType === 3) {
+      return (
+        wall.document.light === CONST.WALL_MOVEMENT_TYPES.NONE ||
+        (wall.document.door != 0 && wall.document.ds === 1)
+      );
     }
   }
 
@@ -223,7 +238,7 @@ export class SightHandler {
    * Perform a collision test between 2 point in 3D space
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} p1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {String} type - "sight" or "collision" (defaults to "sight")
+   * @param {String} type - "sight" or "move"/"collision" or "sound" or "light" (defaults to "sight")
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
@@ -242,7 +257,7 @@ export class SightHandler {
     const x1 = p1.x;
     const y1 = p1.y;
     const z1 = p1.z;
-    const TYPE = type == "sight" ? 0 : 1;
+    const TYPE = type == "sight" ? 0 : type == "sound" ? 2 : type == "light" ? 3 : 1;
     //If the point are on the same Z axis return the 3d wall test
     if (z0 == z1) {
       return walls3dTest.bind(this)();
@@ -326,7 +341,10 @@ export class SightHandler {
         if (this.shouldIgnoreWall(wall, TYPE)) continue;
 
         let isTerrain =
-          TYPE === 0 && wall.document.sight === CONST.WALL_SENSE_TYPES.LIMITED;
+          TYPE === 0 && wall.document.sight === CONST.WALL_SENSE_TYPES.LIMITED ||
+          TYPE === 1 && wall.document.move === CONST.WALL_SENSE_TYPES.LIMITED ||
+          TYPE === 2 && wall.document.sound === CONST.WALL_SENSE_TYPES.LIMITED ||
+          TYPE === 3 && wall.document.light === CONST.WALL_SENSE_TYPES.LIMITED;
 
         //declare points in 3d space of the rectangle created by the wall
         const wallBotTop = getWallHeightRange3Dcollision(wall);
@@ -400,7 +418,7 @@ export class SightHandler {
    * Perform a collision test between 2 TOKENS in 3D space
    * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
    * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {String} type - "sight" or "collision" (defaults to "sight")
+   * @param {String} type - "sight" or "move"/"collision" or "sound" or "light" (defaults to "sight")
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
