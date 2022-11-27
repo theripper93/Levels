@@ -2,10 +2,29 @@ export function registerWrappers(){
 
     const LevelsConfig = CONFIG.Levels
     const computeUI = LevelsConfig.handlers.UIHandler.UIVisible
-    Hooks.on("refreshTile", (placeable) => {
+    /*Hooks.on("refreshTile", (placeable) => {
         
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
         placeable.visible = placeable.visible && visible;
+        computeUI(placeable);
+    })*/
+
+    Hooks.on("refreshTile", (placeable) => {
+        
+        const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
+        if(CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
+            if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < placeable.document.elevation) {
+                if (!visible) {
+                    placeable.occluded = true;
+                    placeable.mesh.shader.enabled = false;
+                    placeable.mesh.alpha = 0;
+                }
+            } else {
+                placeable.visible = placeable.visible && visible;
+            }
+        } else {
+            placeable.visible = placeable.visible && visible;
+        }
         computeUI(placeable);
     })
 

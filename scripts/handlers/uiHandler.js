@@ -1,6 +1,8 @@
 export class UIHandler{
 
     static UIVisible(placeable){
+        const isPreview = placeable.document?.id == null;
+        if(isPreview) return true;
         if(!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken) return;
         let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document)
         rangeBottom = placeable.document.elevation ?? rangeBottom;
