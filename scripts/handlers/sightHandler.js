@@ -2,48 +2,35 @@ export class SightHandler {
 
   static _testRange(visionSource, mode, target, test) {
     let radius = visionSource.object.getLightRadius(mode.range);
+    const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+    const sourceZ = visionSource.elevation * unitsToPixel;
     const dx = test.point.x - visionSource.x;
     const dy = test.point.y - visionSource.y;
-    let dz;
-    if(target instanceof Token) {
-      radius += Math.min(target.w, target.h) / 2;
-      dz = ((target.losHeight - target.document.elevation) / 2 + target.document.elevation) -
-        ((visionSource.object.losHeight - visionSource.object.document.elevation) / 2 + visionSource.object.document.elevation)
-    }else if(!target || (target.document?.elevation === undefined && target?.document?.flags?.levels?.rangeBottom === undefined)){
-      dz = 0;
-    }else{
-      dz = target ? ((target?.document?.elevation ?? target?.document?.flags?.levels?.rangeBottom ?? 0) - (visionSource.object?.losHeight ?? visionSource.elevation ?? 0)) * (canvas.dimensions.size / canvas.dimensions.distance) : 0;
-    }
+    const dz = (test.point.z ?? sourceZ) - sourceZ;
     return (dx * dx + dy * dy + dz * dz) <= radius*radius;
   }
 
-  static performLOSTest(sourceToken, token, source, type = "sight") {
-    return this.advancedLosTestVisibility(sourceToken, token, source, type);
+  static performLOSTest(sourceToken, tokenOrPoint, source, type = "sight") {
+    return this.advancedLosTestVisibility(sourceToken, tokenOrPoint, source, type);
   }
 
-  static advancedLosTestVisibility(sourceToken, token, source, type = "sight") {
-    const angleTest = this.testInAngle(sourceToken, token);
+  static advancedLosTestVisibility(sourceToken, tokenOrPoint, source, type = "sight") {
+    const angleTest = this.testInAngle(sourceToken, tokenOrPoint);
     if (!angleTest) return false;
-    return !this.advancedLosTestInLos(sourceToken, token, type);
-    const inLOS = !this.advancedLosTestInLos(sourceToken, token, type);
+    return !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
+    const inLOS = !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
     if(sourceToken.vision.los === source) return inLOS;
-    const inRange = this.tokenInRange(sourceToken, token);
+    const inRange = this.tokenInRange(sourceToken, tokenOrPoint);
     if (inLOS && inRange) return true;
     return false;
   }
 
-  static advancedLosTestInLos(sourceToken, token, type = "sight") {
-    const tol = 4;
-    if (CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
-      return this.checkCollision(sourceToken, token, type);
+  static getTestPoints(token, tol = 4) {
     const targetLOSH = token.losHeight;
+    if (CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
+      return [{ x: token.center.x, y: token.center.y, z: targetLOSH }];
     const targetElevation =
       token.document.elevation + (targetLOSH - token.document.elevation) * 0.1;
-    const sourceCenter = {
-      x: sourceToken.center.x,
-      y: sourceToken.center.y,
-      z: sourceToken.losHeight,
-    };
     const tokenCorners = [
       { x: token.center.x, y: token.center.y, z: targetLOSH },
       { x: token.x + tol, y: token.y + tol, z: targetLOSH },
@@ -52,7 +39,7 @@ export class SightHandler {
       { x: token.x + token.w - tol, y: token.y + token.h - tol, z: targetLOSH },
     ];
     if (CONFIG.Levels.settings.get("exactTokenVisibility")) {
-      const exactPoints = [
+      tokenCorners.push(
         {
           x: token.center.x,
           y: token.center.y,
@@ -67,10 +54,20 @@ export class SightHandler {
           y: token.y + token.h - tol,
           z: targetElevation,
         },
-      ];
-      tokenCorners.push(...exactPoints);
+      );
     }
-    for (let point of tokenCorners) {
+    return tokenCorners;
+  }
+
+  static advancedLosTestInLos(sourceToken, tokenOrPoint, type = "sight") {
+    if (!(tokenOrPoint instanceof Token) || CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
+      return this.checkCollision(sourceToken, tokenOrPoint, type);
+    const sourceCenter = {
+      x: sourceToken.center.x,
+      y: sourceToken.center.y,
+      z: sourceToken.losHeight,
+    };
+    for (let point of this.getTestPoints(tokenOrPoint)) {
       let collision = this.testCollision(
         sourceCenter,
         point,
@@ -82,7 +79,7 @@ export class SightHandler {
     return true;
   }
 
-  static testInAngle(sourceToken, token) {
+  static testInAngle(sourceToken, tokenOrPoint) {
     const documentAngle = sourceToken.document?.sight?.angle ?? sourceToken.document?.config?.angle
     if (documentAngle == 360) return true;
 
@@ -93,11 +90,13 @@ export class SightHandler {
       return normalized;
     }
 
+    const point = tokenOrPoint instanceof Token ? tokenOrPoint.center : tokenOrPoint;
+
     //check angled vision
     const angle = normalizeAngle(
       Math.atan2(
-        token.center.y - sourceToken.center.y,
-        token.center.x - sourceToken.center.x
+        point.y - sourceToken.center.y,
+        point.x - sourceToken.center.x
       )
     );
     const rotation = (((sourceToken.document.rotation + 90) % 360) * Math.PI) / 180;
@@ -111,30 +110,39 @@ export class SightHandler {
     return angle >= start && angle <= end;
   }
 
-  static tokenInRange(sourceToken, token) {
+  static tokenInRange(sourceToken, tokenOrPoint) {
     const range = sourceToken.vision.radius;
     if (range === 0) return false;
     if (range === Infinity) return true;
-    const tokensSizeAdjust = (Math.min(token.w, token.h) || 0) / Math.SQRT2;
+    const tokensSizeAdjust = tokenOrPoint instanceof Token
+      ? (Math.min(tokenOrPoint.w, tokenOrPoint.h) || 0) / Math.SQRT2 : 0;
     const dist =
-      (this.getUnitTokenDist(sourceToken, token) * canvas.dimensions.size) /
+      (this.getUnitTokenDist(sourceToken, tokenOrPoint) * canvas.dimensions.size) /
         canvas.dimensions.distance -
       tokensSizeAdjust;
     return dist <= range;
   }
 
-  static getUnitTokenDist(token1, token2) {
+  static getUnitTokenDist(token1, tokenOrPoint2) {
     const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
     const x1 = token1.center.x;
     const y1 = token1.center.y;
-    const z1 = token1.losHeight * unitsToPixel;
-    const x2 = token2.center.x;
-    const y2 = token2.center.y;
-    const z2 = token2.losHeight * unitsToPixel;
+    const z1 = token1.losHeight;
+    let x2, y2, z2;
+
+    if (tokenOrPoint2 instanceof Token) {
+      x1 = tokenOrPoint2.center.x;
+      y1 = tokenOrPoint2.center.y;
+      z1 = tokenOrPoint2.losHeight;
+    } else {
+      x1 = tokenOrPoint2.x;
+      y1 = tokenOrPoint2.y;
+      z1 = tokenOrPoint2.z;
+    }
 
     const d =
       Math.sqrt(
-        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
+        Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow((z2 - z1) * unitsToPixel, 2)
       ) / unitsToPixel;
     return d;
   }
@@ -198,7 +206,12 @@ export class SightHandler {
     if(this.config.source instanceof LightSource){
       result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));
     }else if(this.config.source.object instanceof Token){
-        result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, testTarget, this, this.config.type);
+        const point = {
+          x: args[0],
+          y: args[1],
+          z: testTarget.losHeight,
+        };
+        result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, point, this, this.config.type);
     }else{
         result = wrapped(...args);
     }
@@ -416,25 +429,22 @@ export class SightHandler {
 
   /**
    * Perform a collision test between 2 TOKENS in 3D space
-   * @param {Object} token1 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
-   * @param {Object} token2 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
+   * @param {Token|{x:number,y:number,z:number}} token1 - a token or a point in 3d space where z is the elevation
+   * @param {Token|{x:number,y:number,z:number}} token2 - a token or a point in 3d space where z is the elevation
    * @param {String} type - "sight" or "move"/"collision" or "sound" or "light" (defaults to "sight")
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
-
-   static checkCollision(token1, token2, type = "sight") {
-    const token1LosH = token1.losHeight;
-    const token2LosH = token2.losHeight;
-    const p0 = {
-      x: token1.center.x,
-      y: token1.center.y,
-      z: token1LosH,
-    };
-    const p1 = {
-      x: token2.center.x,
-      y: token2.center.y,
-      z: token2LosH,
-    };
-    return this.testCollision(p0, p1, type, token1);
+   static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight") {
+    const p0 = tokenOrPoint1 instanceof Token ? {
+      x: tokenOrPoint1.center.x,
+      y: tokenOrPoint1.center.y,
+      z: tokenOrPoint1.losHeight,
+    } : tokenOrPoint1;
+    const p1 = tokenOrPoint2 instanceof Token ? {
+      x: tokenOrPoint2.center.x,
+      y: tokenOrPoint2.center.y,
+      z: tokenOrPoint2.losHeight,
+    } : tokenOrPoint2;
+    return this.testCollision(p0, p1, type);
   }
 }
