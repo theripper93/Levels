@@ -126,31 +126,48 @@ export function registerWrappers(){
         "WRAPPER"
     );
 
+    function elevatePoints(config, visionSource) {
+        const object = config.object;
+        const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+        if (object instanceof Token) {
+            if (config.tests._levels !== object) {
+                config.tests.length = 0;
+                for (const p of LevelsConfig.handlers.SightHandler.getTestPoints(object)) {
+                    config.tests.push({ point: { x: p.x, y: p.y, z: p.z * unitsToPixel }, los: new Map() });
+                }
+                config.tests._levels = object;
+            }
+        } else {
+            let z;
+            if (object instanceof PlaceableObject) {
+                z = object.document.elevation ?? object.document.flags.levels?.rangeBottom;
+            } else if (object instanceof DoorControl) {
+                z = visionSource?.elevation;
+            }
+            z ??= canvas.primary.background.elevation;
+            z *= unitsToPixel;
+            for (const test of config.tests) {
+                test.point.z = z;
+            }
+        }
+        return config;
+    }
+
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "DetectionMode.prototype.testVisibility",
-        function (wrapped, visionSource, mode, config = {}) {
-            const object = config.object;
-            const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
-            if (object instanceof Token) {
-                config.tests = LevelsConfig.handlers.SightHandler.getTestPoints(object).map(p => {
-                    return { point: { x: p.x, y: p.y, z: p.z * unitsToPixel }, los: new Map() };
-                });
-            } else {
-                let z;
-                if (object instanceof PlaceableObject) {
-                    z = object.document.elevation ?? object.document.flags.levels?.rangeBottom;
-                } else if (object instanceof DoorControl) {
-                    z = visionSource.elevation;
-                    // z = object.wall.document.flags["wall-height"]?.bottom;
-                }
-                z ??= canvas.primary.background.elevation;
-                z *= unitsToPixel;
-                for (const test of config.tests) {
-                    test.point.z = z;
-                }
-            }
-            return wrapped(visionSource, mode, config);
+        function (wrapped, visionSource, mode, config) {
+            return wrapped(visionSource, mode, elevatePoints(config, visionSource));
+        },
+        "WRAPPER",
+        { perf_mode: "FAST" }
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "LightSource.prototype.testVisibility",
+        function (wrapped, config) {
+            return wrapped(elevatePoints(config, CONFIG.Levels.currentToken?.vision));
         },
         "WRAPPER",
         { perf_mode: "FAST" }
