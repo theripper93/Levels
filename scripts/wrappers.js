@@ -115,8 +115,8 @@ export function registerWrappers(){
         LevelsConfig.MODULE_ID,
         "CanvasVisibility.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
-            args[1] ??= {};
-            args[1].tolerance = 0;
+            const options = args[1] ??= {};
+            if (options.object instanceof Token) options.tolerance = 0;
             visibilityTestObjectStack.push(LevelsConfig.visibilityTestObject);
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);
@@ -124,6 +124,36 @@ export function registerWrappers(){
             return !!res;
         },
         "WRAPPER"
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "DetectionMode.prototype.testVisibility",
+        function (wrapped, visionSource, mode, config = {}) {
+            const object = config.object;
+            const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+            if (object instanceof Token) {
+                config.tests = LevelsConfig.handlers.SightHandler.getTestPoints(object).map(p => {
+                    return { point: { x: p.x, y: p.y, z: p.z * unitsToPixel }, los: new Map() };
+                });
+            } else {
+                let z;
+                if (object instanceof PlaceableObject) {
+                    z = object.document.elevation ?? object.document.flags.levels?.rangeBottom;
+                } else if (object instanceof DoorControl) {
+                    z = visionSource.elevation;
+                    // z = object.wall.document.flags["wall-height"]?.bottom;
+                }
+                z ??= canvas.primary.background.elevation;
+                z *= unitsToPixel;
+                for (const test of config.tests) {
+                    test.point.z = z;
+                }
+            }
+            return wrapped(visionSource, mode, config);
+        },
+        "WRAPPER",
+        { perf_mode: "FAST" }
     );
 
     if(!game.modules.get("perfect-vision")?.active){
