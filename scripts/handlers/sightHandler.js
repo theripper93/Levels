@@ -180,16 +180,28 @@ export class SightHandler {
   }
 
   static _testCollision(wrapped, ...args) {
-    if(!this.config?.source?.object || !CONFIG?.Levels?.visibilityTestObject) return wrapped(...args);
+    const visionSource = this.config?.source;
+    const target = CONFIG?.Levels?.visibilityTestObject;
+    if(!visionSource?.object || !target) return wrapped(...args);
+    let targetElevation;
+    if (target instanceof Token) {
+      targetElevation = target.losHeight;
+    } else if (target instanceof PlaceableObject) {
+      targetElevation = target.document.elevation ?? target.document.flags.levels?.rangeBottom;
+    } else if (target instanceof DoorControl) {
+      targetElevation = visionSource.elevation;
+    } else {
+      targetElevation = canvas.primary.background.elevation;
+    }
     const p1 = {
       x: args[0].A.x,
       y: args[0].A.y,
-      z: this.config.source?.elevation ?? 0,
+      z: visionSource.elevation,
     };
     const p2 = {
       x: args[0].B.x,
       y: args[0].B.y,
-      z: CONFIG?.Levels?.visibilityTestObject?.losHeight ?? 0,
+      z: targetElevation,
     };
     const result = CONFIG.Levels.API.testCollision(p1,p2, this.config.type);
     switch (args[1]) {
