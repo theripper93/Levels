@@ -64,8 +64,8 @@ export class SightHandler {
     if (!(tokenOrPoint instanceof Token) || CONFIG.Levels.settings.get("preciseTokenVisibility") === false)
       return this.checkCollision(sourceToken, tokenOrPoint, type);
     const sourceCenter = {
-      x: sourceToken.center.x,
-      y: sourceToken.center.y,
+      x: sourceToken.vision.x,
+      y: sourceToken.vision.y,
       z: sourceToken.losHeight,
     };
     for (let point of this.getTestPoints(tokenOrPoint)) {
@@ -96,8 +96,8 @@ export class SightHandler {
     //check angled vision
     const angle = normalizeAngle(
       Math.atan2(
-        point.y - sourceToken.center.y,
-        point.x - sourceToken.center.x
+        point.y - sourceToken.vision.y,
+        point.x - sourceToken.vision.x
       )
     );
     const rotation = (((sourceToken.document.rotation + 90) % 360) * Math.PI) / 180;
@@ -126,8 +126,8 @@ export class SightHandler {
 
   static getUnitTokenDist(token1, tokenOrPoint2) {
     const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
-    const x1 = token1.center.x;
-    const y1 = token1.center.y;
+    const x1 = token1.vision.x;
+    const y1 = token1.vision.y;
     const z1 = token1.losHeight;
     let x2, y2, z2;
 
@@ -449,8 +449,8 @@ export class SightHandler {
    **/
    static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight") {
     const p0 = tokenOrPoint1 instanceof Token ? {
-      x: tokenOrPoint1.center.x,
-      y: tokenOrPoint1.center.y,
+      x: tokenOrPoint1.vision.x,
+      y: tokenOrPoint1.vision.y,
       z: tokenOrPoint1.losHeight,
     } : tokenOrPoint1;
     const p1 = tokenOrPoint2 instanceof Token ? {
