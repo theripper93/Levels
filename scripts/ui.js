@@ -27,6 +27,7 @@ class LevelsUI extends FormApplication {
 
   async activateListeners(html) {
     ui.controls.control.foreground = true;
+    canvas.tiles._activateSubLayer(true);
     this.rangeEnabled = true;
     this.loadLevels();
     html.on("click", ".level-item", this._onChangeLevel.bind(this));
@@ -129,6 +130,8 @@ class LevelsUI extends FormApplication {
   }
 
   _onChangeLevel(event) {
+    ui.controls.control.foreground = true;
+    canvas.tiles._activateSubLayer(true);
     if (!$(event.target).hasClass("player-portrait"))
       canvas.tokens.releaseAll();
     let $target = $(event.currentTarget);

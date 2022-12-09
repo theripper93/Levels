@@ -105,10 +105,18 @@ export function registerWrappers(){
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "TilesLayer.prototype.displayRoofs", function displayRoofs(wrapped, ...args){
-            return wrapped(...args) || (CONFIG.Levels.UI?.rangeEnabled && !canvas.tokens.controlled.length);
+            const res = wrapped(...args);
+            return res || (CONFIG.Levels.UI?.rangeEnabled && !canvas.tokens.controlled.length);
         },
         "WRAPPER"
     );
+
+    Hooks.on("activateTilesLayer ", () => {
+        if(CONFIG.Levels.UI?.rangeEnabled){
+            ui.controls.control.foreground = true;
+            canvas.tiles._activateSubLayer(true);
+        }
+    })
 
     const visibilityTestObjectStack = [];
     libWrapper.register(
