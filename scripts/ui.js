@@ -129,9 +129,17 @@ class LevelsUI extends FormApplication {
     this.saveData();
   }
 
-  _onChangeLevel(event) {
+  activateForeground(){
+    ui.controls.control.foreground = true;
     ui.controls.control.foreground = true;
     canvas.tiles._activateSubLayer(true);
+    canvas.perception.update({refreshLighting: true, refreshTiles: true}, true);
+    const fgControl = document.querySelector(`[data-tool="foreground"]`)
+    if(fgControl) fgControl.classList.add("active")
+  }
+
+  _onChangeLevel(event) {
+    this.activateForeground()
     if (!$(event.target).hasClass("player-portrait"))
       canvas.tokens.releaseAll();
     let $target = $(event.currentTarget);
@@ -147,7 +155,7 @@ class LevelsUI extends FormApplication {
       CONFIG.Levels.MODULE_ID,
       "sceneLevels"
     );
-    this.range = this.definedLevels.find((l) => l[0] == bottom && l[1] == top);
+    this.range = this.definedLevels?.find((l) => l[0] == bottom && l[1] == top) ?? [parseFloat(bottom), parseFloat(top)];
     if ($(event.target).hasClass("player-portrait")) return;
     WallHeight.currentTokenElevation = parseFloat(bottom);
     this.computeLevelsVisibility(this.range);
@@ -527,6 +535,14 @@ Hooks.on("renderSceneControls", (controls, b, c) => {
 
 Hooks.on("ready", () => {
   if (game.user.isGM) {
+
+    Hooks.on("activateTilesLayer", ()=>{
+      if(CONFIG.Levels.UI.rangeEnabled){
+        Hooks.once("renderSceneControls", ()=>{
+          CONFIG.Levels.UI.activateForeground();
+        })
+      }
+    })
 
     Hooks.on("canvasInit", () => {
       CONFIG.Levels.UI.close(true);
