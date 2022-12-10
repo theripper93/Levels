@@ -16,8 +16,10 @@ export function registerWrappers(){
             if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < placeable.document.elevation) {
                 if (!visible) {
                     placeable.occluded = true;
-                    placeable.mesh.shader.enabled = false;
-                    placeable.mesh.alpha = 0;
+                    if(placeable.mesh){
+                        placeable.mesh.shader.enabled = false;
+                        placeable.mesh.alpha = 0;
+                    }
                 }
             } else {
                 placeable.visible = placeable.visible && visible;
