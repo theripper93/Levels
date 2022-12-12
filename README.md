@@ -6,7 +6,7 @@ Create maps with multiple vertical levels
 
 Other Language: [English](README.md), [Deutsch](README.de.md)
 
-## Documentation has been moved to the [WIKI](https://theripper93.com/wiki/index.php/Levels)
+## Documentation has been moved to the [WIKI](https://wiki.theripper93.com/levels)
 
 
 credits
