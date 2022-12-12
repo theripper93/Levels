@@ -273,7 +273,8 @@ export class SightHandler {
       if (!game.Levels3DPreview?._active) return true;
       return game.Levels3DPreview.interactionManager.computeSightCollision(
         p0,
-        p1
+        p1,
+        type
       );
     }
     //Declare points adjusted with token height to use in the loop
