@@ -130,12 +130,14 @@ class LevelsUI extends FormApplication {
   }
 
   activateForeground(){
-    ui.controls.control.foreground = true;
-    ui.controls.control.foreground = true;
-    canvas.tiles._activateSubLayer(true);
-    canvas.perception.update({refreshLighting: true, refreshTiles: true}, true);
-    const fgControl = document.querySelector(`[data-tool="foreground"]`)
-    if(fgControl) fgControl.classList.add("active")
+    try{
+      ui.controls.control.foreground = true;
+      ui.controls.control.foreground = true;
+      canvas.tiles._activateSubLayer(true);
+      canvas.perception.update({refreshLighting: true, refreshTiles: true}, true);
+      const fgControl = document.querySelector(`[data-tool="foreground"]`)
+      if(fgControl) fgControl.classList.add("active")
+    }catch(e){}
   }
 
   _onChangeLevel(event) {

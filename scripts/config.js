@@ -16,6 +16,18 @@ import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
 import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
 
+//warnings
+
+Hooks.on('ready', () => {
+  if(!game.user.isGM) return;
+  const recommendedVersion = '10.291';
+
+  if(isNewerVersion(recommendedVersion, game.version)) {
+    ui.notifications.error(`Levels recommends Foundry VTT version ${recommendedVersion} or newer. Levels might not work as expected in the currently installed version (${game.version}).`, {permanent: true});
+    return;
+  }
+})
+
 Object.defineProperty(globalThis, "_levels", {
   get: () => {
     console.warn("Levels: _levels is deprecated. Use CONFIG.Levels.API instead.");
