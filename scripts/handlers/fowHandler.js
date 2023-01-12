@@ -41,6 +41,7 @@ export class FoWHandler {
   }
 
   createTokenBubble(token) {
+    if(!token) return;
     if(!CONFIG.Levels.settings.get("revealTokenInFog")) return;
     if(this.bubbles[token.id]){
         this.revealTokenContainer.removeChild(this.bubbles[token.id]);
