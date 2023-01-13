@@ -1,15 +1,6 @@
 export class SettingsHandler{
     constructor(){
-        this.settingsKeys = [
-            "tokenElevScale",
-            "tokenElevScaleMultiSett",
-            "fogHiding",
-            "revealTokenInFog",
-            "lockElevation",
-            "hideElevation",
-            "preciseTokenVisibility",
-            "exactTokenVisibility"
-        ];
+        this.settingsKeys = ["tokenElevScale", "tokenElevScaleMultiSett", "fogHiding", "revealTokenInFog", "lockElevation", "hideElevation", "preciseTokenVisibility", "exactTokenVisibility", "enableTooltips"];
     }
 
     get(key){
