@@ -21,6 +21,16 @@ class LevelsUI extends FormApplication {
     };
   }
 
+  get currentRange() {
+    const bgElev = canvas.primary.background.elevation;
+    if(!this.rangeEnabled) return { bottom: bgElev, top: bgElev };
+    if(!this.range?.length) return { bottom: bgElev, top: bgElev };
+    return {
+      bottom: parseFloat(this.range[0]),
+      top: parseFloat(this.range[1]),
+    }
+  }
+
   getData() {
     return {};
   }
@@ -576,7 +586,7 @@ Hooks.on("ready", () => {
           top: 2,
           left: (window.innerWidth - $("#sidebar").width() - $("#levelsUI").width()) - 10,
           width: $("#levelsUI").width(),
-          height: $("#levelsUI").height(),
+          height: Math.max(150, $("#levelsUI").height()),
         });
         app.positionSet = true
       }
