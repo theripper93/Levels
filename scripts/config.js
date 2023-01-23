@@ -324,60 +324,62 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   if(isInjected) return;
 
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "tab" : {
-            "name": "levels",
-            "label": "Levels",
-            "icon": "fas fa-layer-group",
-        },
-        "rangeTop": {
+      moduleId: "levels",
+      tab: {
+          name: "levels",
+          label: "Levels",
+          icon: "fas fa-layer-group",
+      },
+      rangeTop: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "rangeBottom": {
+          step: "any",
+      },
+      rangeBottom: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "-Infinity",
-        },
-        "showIfAbove": {
+          step: "any",
+      },
+      showIfAbove: {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.showIfAbove.name"),
           notes: game.i18n.localize("levels.tilecoonfig.showIfAbove.hint"),
-        },
-        "showAboveRange": {
+      },
+      showAboveRange: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.showAboveRange.name"),
           notes: game.i18n.localize("levels.tilecoonfig.showAboveRange.hint"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "noCollision": {
+      },
+      noCollision: {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.noCollision.name"),
           notes: game.i18n.localize("levels.tilecoonfig.noCollision.hint"),
-        },
-        "noFogHide": {
+      },
+      noFogHide: {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.noFogHide.name"),
           notes: game.i18n.localize("levels.tilecoonfig.noFogHide.hint"),
-        },
-        "isBasement": {
+      },
+      isBasement: {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
           notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
-        },
-        "allWallBlockSight": {
+      },
+      allWallBlockSight: {
           type: "checkbox",
           label: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.name"),
           notes: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.hint"),
           default: true,
-        },
+      },
   });
   html.on("change", "input", (e) => {
     const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
@@ -393,118 +395,127 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "inject": 'input[name="config.dim"]',
-        "rangeTop": {
+      moduleId: "levels",
+      inject: 'input[name="config.dim"]',
+      rangeTop: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "rangeBottom": {
+          step: "any",
+      },
+      rangeBottom: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "-Infinity",
-        },
+          step: "any",
+      },
   });
 });
 
 Hooks.on("renderNoteConfig", (app, html, data) => {
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "inject": 'select[name="textAnchor"]',
-        "rangeTop": {
+      moduleId: "levels",
+      inject: 'select[name="textAnchor"]',
+      rangeTop: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "rangeBottom": {
+          step: "any",
+      },
+      rangeBottom: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "-Infinity",
-        },
+          step: "any",
+      },
   });
 });
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "inject": 'input[name="radius"]',
-        "rangeTop": {
+      moduleId: "levels",
+      inject: 'input[name="radius"]',
+      rangeTop: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "rangeBottom": {
+          step: "any",
+      },
+      rangeBottom: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "-Infinity",
-        },
+          step: "any",
+      },
   });
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
 
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "inject": 'input[name="z"]',
-        "drawingMode": {
+      moduleId: "levels",
+      inject: 'input[name="z"]',
+      drawingMode: {
           type: "select",
           label: game.i18n.localize("levels.drawingconfig.isHole.name"),
           default: 0,
           dType: "Number",
           options: {
-            0 : game.i18n.localize("levels.drawingconfig.isHole.opt0"),
-            2 : game.i18n.localize("levels.drawingconfig.isHole.opt2"),
-            21 : game.i18n.localize("levels.drawingconfig.isHole.opt21"),
-            22 : game.i18n.localize("levels.drawingconfig.isHole.opt22"),
-            3 : game.i18n.localize("levels.drawingconfig.isHole.opt3"),
-          }
-        },
-        "elevatorFloors": {
+              0: game.i18n.localize("levels.drawingconfig.isHole.opt0"),
+              2: game.i18n.localize("levels.drawingconfig.isHole.opt2"),
+              21: game.i18n.localize("levels.drawingconfig.isHole.opt21"),
+              22: game.i18n.localize("levels.drawingconfig.isHole.opt22"),
+              3: game.i18n.localize("levels.drawingconfig.isHole.opt3"),
+          },
+      },
+      elevatorFloors: {
           type: "text",
           label: game.i18n.localize("levels.drawingconfig.elevatorFloors.name"),
           notes: game.i18n.localize("levels.drawingconfig.elevatorFloors.hint"),
-        },
-        "rangeTop": {
+      },
+      rangeTop: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "Infinity",
-        },
-        "rangeBottom": {
+          step: "any",
+      },
+      rangeBottom: {
           type: "number",
           label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: "",
           placeholder: "-Infinity",
-        },
+          step: "any",
+      },
   });
 });
 
 Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
   const injHtml = injectConfig.inject(app, html, {
-    "moduleId": "levels",
-        "inject": 'input[name="width"]',
-        "elevation": {
+      moduleId: "levels",
+      inject: 'input[name="width"]',
+      elevation: {
           type: "text",
           dType: "Number",
           label: game.i18n.localize("levels.template.elevation.name"),
           units: game.i18n.localize("levels.tilecoonfig.range.unit"),
           default: Infinity,
-        },
+          step: "any",
+      },
   });
 });
 
