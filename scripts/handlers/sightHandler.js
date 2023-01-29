@@ -284,7 +284,8 @@ export class SightHandler {
     const x1 = p1.x;
     const y1 = p1.y;
     const z1 = p1.z;
-    const TYPE = type == "sight" ? 0 : type == "sound" ? 2 : type == "light" ? 3 : 1;
+     const TYPE = type == "sight" ? 0 : type == "sound" ? 2 : type == "light" ? 3 : 1;
+     const ALPHATTHRESHOLD = type == "sight" ? 0.99 : 0.1;
     //If the point are on the same Z axis return the 3d wall test
     if (z0 == z1) {
       return walls3dTest.bind(this)();
@@ -304,19 +305,16 @@ export class SightHandler {
 
     //Loop through all the planes and check for both ceiling and floor collision on each tile
     for (let tile of canvas.tiles.placeables) {
-      if(tile.document.flags?.levels?.noCollision) continue;
+      if(tile.document.flags?.levels?.noCollision || !tile.document.overhead) continue;
       const bottom = tile.document.flags?.levels?.rangeBottom ?? -Infinity;
       const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
       if (bottom != -Infinity) {
         const zIntersectionPoint = getPointForPlane(bottom);
-        if (
-          ((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) &&
-          tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, 0.99)
-        ) {
+        if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, ALPHATTHRESHOLD)) {
             return {
-              x: zIntersectionPoint.x,
-              y: zIntersectionPoint.y,
-              z: bottom,
+                x: zIntersectionPoint.x,
+                y: zIntersectionPoint.y,
+                z: bottom,
             };
         }
       }
