@@ -18,5 +18,6 @@ export class TokenHandler{
       token.mesh.scale.x*=scaleFactor;
       token.mesh.scale.y*=scaleFactor;
 
-    }
+  }
+
 }

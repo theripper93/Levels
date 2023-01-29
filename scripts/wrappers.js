@@ -270,5 +270,7 @@ export function registerWrappers(){
         "OVERRIDE"
     );
 
+    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Token.objectClass.prototype.isVisible", LevelsConfig.handlers.UIHandler.tokenUIWrapperIsVisible, "WRAPPER");
+
     
 }

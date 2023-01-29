@@ -405,6 +405,7 @@ class LevelsUI extends FormApplication {
   }
 
   computeLevelsVisibility() {
+    WallHeight.currentTokenElevation = parseFloat(this.range[0] ?? 0);
     CONFIG.Levels.handlers.RefreshHandler.refreshAll();
     WallHeight.schedulePerceptionUpdate();
   }
@@ -575,6 +576,8 @@ Hooks.on("ready", () => {
     Hooks.on("controlToken", (token,controlled)=>{
       if(CONFIG.Levels.UI.rangeEnabled && !canvas.tokens.controlled.length){
         CONFIG.Levels.UI.computeLevelsVisibility();
+      }else if(CONFIG.Levels.UI.rangeEnabled){
+        CONFIG.Levels.handlers.RefreshHandler.refresh(canvas.tokens);
       }
     })
 
