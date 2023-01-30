@@ -22,7 +22,7 @@ export class UIHandler {
         if (!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled) return wrapped(...args);
         const isTokenSelected = canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken;
         const isVision = canvas.effects.visionSources.size;
-        if (isTokenSelected && !isVision) {
+        if ((isTokenSelected && !isVision) || !isTokenSelected) {
             const wrappedResult = wrapped(...args);
             return wrappedResult && CONFIG.Levels.handlers.UIHandler.inUIRange(this.losHeight, this.losHeight);
         } else {

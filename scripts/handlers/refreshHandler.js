@@ -10,10 +10,6 @@ export class RefreshHandler{
             if(layer.placeables) this.refresh(layer);
         }
         setTimeout(() => {
-            this.refresh(canvas.tokens);
-        },30)
-        setTimeout(() => {
-            this.refresh(canvas.tokens);
             this.refresh(canvas.notes);
         },100)
     }
