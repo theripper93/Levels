@@ -1,4 +1,23 @@
-[Information on Bug Reporting, help requests and more](https://theripper93.com/info/issues)
+## [Information on Bug Reporting, help requests and more](https://theripper93.com/info/issues)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //IGNORE - Message Template
 
