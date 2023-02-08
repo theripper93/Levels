@@ -195,7 +195,7 @@ Hooks.once("ready", () => {
 Hooks.on("init", () => {
   game.settings.register(CONFIG.Levels.MODULE_ID, "tokenElevScale", {
     name: game.i18n.localize("levels.settings.tokenElevScale.name"),
-    hint: game.i18n.localize("levels.settings.tokenElevScale.name"),
+    hint: game.i18n.localize("levels.settings.tokenElevScale.hint"),
     scope: "world",
     config: true,
     type: Boolean,
