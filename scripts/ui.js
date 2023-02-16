@@ -309,7 +309,7 @@ class LevelsUI extends FormApplication {
         players.forEach((player) => {
           if (
             player.losHeight >= bottom &&
-            player.losHeight <= top &&
+            player.losHeight < top &&
             player.id
           ) {
             const color = Array.from(game.users).find(
