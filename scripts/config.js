@@ -381,6 +381,9 @@ Hooks.on("renderTileConfig", (app, html, data) => {
           default: true,
       },
   });
+  injHtml.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).closest(".form-group").before(`
+  <p class="notes" style="color: red" id="no-overhead-warning">${game.i18n.localize("levels.tilecoonfig.noOverhead")}</>
+  `);
   html.on("change", "input", (e) => {
     const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
     const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");

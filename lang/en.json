@@ -35,7 +35,7 @@
     "levels.settings.revealTokenInFog.hint": "If a token is visible, reveal the fog of war around that token",
 
 
-    "levels.tilecoonfig.noOverhead": "This is NOT an overhead tile, this tile will be ignored by levels and rendered at the bottom of the stack.",
+    "levels.tilecoonfig.noOverhead": "This is NOT an overhead tile, this tile will be rendered at the background elevation. To change these settings, please enable the 'Is Overhead?' option in the overhead tab.",
     "levels.tilecoonfig.rangeTop.name": "Height (Top)",
     "levels.tilecoonfig.rangeBottom.name": "Height (Bottom)",
     "levels.tilecoonfig.showIfAbove.name": "Show even when below?",
