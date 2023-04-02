@@ -16,7 +16,7 @@ export class SightHandler {
   }
 
   static advancedLosTestVisibility(sourceToken, tokenOrPoint, source, type = "sight") {
-    const angleTest = this.testInAngle(sourceToken, tokenOrPoint);
+    const angleTest = this.testInAngle(sourceToken, tokenOrPoint, source);
     if (!angleTest) return false;
     return !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
     const inLOS = !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
@@ -80,8 +80,8 @@ export class SightHandler {
     return true;
   }
 
-  static testInAngle(sourceToken, tokenOrPoint) {
-    const documentAngle = sourceToken.document?.sight?.angle ?? sourceToken.document?.config?.angle
+  static testInAngle(sourceToken, tokenOrPoint, source) {
+    const documentAngle = source?.config?.angle ?? sourceToken.document?.sight?.angle ?? sourceToken.document?.config?.angle
     if (documentAngle == 360) return true;
 
     //normalize angle
