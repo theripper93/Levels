@@ -520,6 +520,12 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
           default: Infinity,
           step: "any",
       },
+      special: {
+          type: "number",
+          label: game.i18n.localize("levels.template.depth.name"),
+          default: 0,
+          dType: "Number",
+      },
   });
 });
 

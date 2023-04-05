@@ -70,6 +70,7 @@
     "levels.tokenconfig.tokenHeight.unit": "(Distance)",
     "levels.template.elevation.name": "Elevation",
     "levels.template.special.name": "Special",
+    "levels.template.depth.name": "Depth",
 
     "levels.sceneconfig.backgroundElevation.name": "Background Elevation",
     "levels.sceneconfig.backgroundElevation.notes": "An elevation in distance units which configures the height of the background image and underfoot tiles.",
