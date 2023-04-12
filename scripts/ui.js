@@ -628,10 +628,11 @@ Hooks.on("ready", () => {
         if(CONFIG.Levels.UI.placeOverhead){
 
           tile.updateSource({
-            roof: true,
+            roof: false,
             flags: {
               [`${CONFIG.Levels.MODULE_ID}`]: {
                 showIfAbove: true,
+                noCollision: true,
                 showAboveRange: parseFloat(CONFIG.Levels.UI.range[1]) - parseFloat(CONFIG.Levels.UI.range[0]),
                 rangeBottom: parseFloat(CONFIG.Levels.UI.range[1]),
                 rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
