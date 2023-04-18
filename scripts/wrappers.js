@@ -15,8 +15,8 @@ export function registerWrappers(){
         if(CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
             if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < placeable.document.elevation) {
                 if (!visible) {
-                    placeable.occluded = true;
                     if(placeable.mesh){
+                        placeable.mesh.occluded = true;
                         placeable.mesh.shader.enabled = false;
                         placeable.mesh.alpha = 0;
                     }
@@ -235,12 +235,12 @@ export function registerWrappers(){
         "WRAPPER"
     );
 
-    libWrapper.register(
+    /*libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CONFIG.Token.objectClass.prototype._drawTooltip",
         LevelsConfig.handlers.TokenHandler._drawTooltip,
         "MIXED"
-    );
+    );*/
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
