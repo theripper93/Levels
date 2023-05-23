@@ -14,7 +14,7 @@ import { BackgroundHandler } from "./handlers/backgroundHandler.js";
 import { SettingsHandler } from "./handlers/settingsHandler.js";
 import { LevelsAPI } from "./API.js";
 import { registerWrappers } from './wrappers.js';
-import { inRange,getRangeForDocument, cloneTileMesh } from './helpers.js';
+import { inRange,getRangeForDocument, cloneTileMesh, inDistance } from './helpers.js';
 
 //warnings
 
@@ -65,6 +65,16 @@ Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
       return parseFloat(CONFIG.Levels.UI.range[0] || 0);
     }
     return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
+  }
+});
+
+Object.defineProperty(AmbientSoundDocument.prototype, "elevation", {
+  get: function () {
+    if(CONFIG.Levels.UI.rangeEnabled && !this.id){
+      return parseFloat(CONFIG.Levels.UI.range[0] || 0);
+    }
+    if(isNaN(this.flags?.levels?.rangeBottom))return canvas.primary.background.elevation;
+    return (this.flags?.levels?.rangeBottom + (this.flags?.levels?.rangeTop ?? this.flags?.levels?.rangeBottom)) / 2;
   }
 });
 
@@ -126,7 +136,8 @@ Hooks.on("init", () => {
   CONFIG.Levels.helpers = {
       inRange,
       getRangeForDocument,
-      cloneTileMesh
+    cloneTileMesh,
+      inDistance,
   }
 
   CONFIG.Levels.API = LevelsAPI;

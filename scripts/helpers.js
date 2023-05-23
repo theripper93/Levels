@@ -28,6 +28,27 @@ export function inRange(document, elevation){
   return elevation >= rangeBottom && elevation <= rangeTop;
 }
 
+export function inDistance(placeable1, placeable2, distance) {
+  const placeable1Vector = {
+    x: placeable1.center.x,
+    y: placeable1.center.y,
+    z: (placeable1.losHeight ?? placeable1.document.elevation) * canvas.scene.dimensions.size / canvas.scene.dimensions.distance,
+  }
+
+  const placeable2Vector = {
+    x: placeable2.center.x,
+    y: placeable2.center.y,
+    z: (placeable2.losHeight ?? placeable2.document.elevation) * canvas.scene.dimensions.size / canvas.scene.dimensions.distance,
+  }
+
+  return Math.hypot(
+    placeable1Vector.x - placeable2Vector.x,
+    placeable1Vector.y - placeable2Vector.y,
+    placeable1Vector.z - placeable2Vector.z
+  ) <= distance;
+
+}
+
 export function getRangeForDocument(document){
   if(document instanceof WallDocument){
     return {
