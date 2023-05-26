@@ -68,6 +68,16 @@ Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
   }
 });
 
+Object.defineProperty(AmbientSoundDocument.prototype, "elevation", {
+  get: function () {
+    if(CONFIG.Levels.UI.rangeEnabled && !this.id){
+      return parseFloat(CONFIG.Levels.UI.range[0] || 0);
+    }
+    if(isNaN(this.flags?.levels?.rangeBottom))return canvas.primary.background.elevation;
+    return (this.flags?.levels?.rangeBottom + (this.flags?.levels?.rangeTop ?? this.flags?.levels?.rangeBottom)) / 2;
+  }
+});
+
 Object.defineProperty(MeasuredTemplateDocument.prototype, "elevation", {
   get: function () {
     return this.flags?.levels?.elevation ?? canvas.primary.background.elevation;
