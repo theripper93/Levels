@@ -235,12 +235,12 @@ export function registerWrappers(){
         "WRAPPER"
     );
 
-    /*libWrapper.register(
+    libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CONFIG.Token.objectClass.prototype._drawTooltip",
         LevelsConfig.handlers.TokenHandler._drawTooltip,
         "MIXED"
-    );*/
+    );
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
