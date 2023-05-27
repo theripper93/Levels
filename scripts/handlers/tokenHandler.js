@@ -1,10 +1,11 @@
 export class TokenHandler{
-    static _drawTooltip(wrapped,...args) {
-        const hideElevation = CONFIG.Levels.settings.get("hideElevation");
-        if(hideElevation == 0) return wrapped(...args);
-        if(hideElevation == 1 && game.user.isGM) return wrapped(...args);
-        return new PIXI.Sprite()
-    }
+  
+  static refreshTooltip(token) {
+    const hideElevation = CONFIG.Levels.settings.get("hideElevation");
+    if (hideElevation == 0) return;
+    if(hideElevation == 1 && game.user.isGM) return;
+    token.tooltip.text = "";
+  }
 
     static setScale(token){
       if(!CONFIG.Levels.settings.get("tokenElevScale") || !CONFIG.Levels.currentToken || token == CONFIG.Levels.currentToken) return;

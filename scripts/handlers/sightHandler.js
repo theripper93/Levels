@@ -310,7 +310,7 @@ export class SightHandler {
       const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
       if (bottom != -Infinity) {
         const zIntersectionPoint = getPointForPlane(bottom);
-        if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, ALPHATTHRESHOLD)) {
+        if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.mesh?.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, ALPHATTHRESHOLD)) {
             return {
                 x: zIntersectionPoint.x,
                 y: zIntersectionPoint.y,

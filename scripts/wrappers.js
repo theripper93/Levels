@@ -37,6 +37,7 @@ export function registerWrappers(){
     })
 
     Hooks.on("refreshToken", (placeable) => {
+        LevelsConfig.handlers.TokenHandler.refreshTooltip(placeable);
         CONFIG.Levels.FoWHandler.lazyCreateBubble(placeable);
         LevelsConfig.handlers.TokenHandler.setScale(placeable);
         computeUI(placeable);
@@ -93,7 +94,7 @@ export function registerWrappers(){
                 if(wallBottom >= bottom) continue;
               }
               const [x1, y1, x2, y2] = this.document.c;
-              const isInterior = tile.containsPixel(x1, y1) && tile.containsPixel(x2, y2);
+              const isInterior = tile.mesh?.containsPixel(x1, y1) && tile.mesh?.containsPixel(x2, y2);
               if (isInterior) {
                 this.roof = tile;
                 break;
@@ -233,13 +234,6 @@ export function registerWrappers(){
         "CONFIG.Note.objectClass.prototype.isVisible",
         LevelsConfig.handlers.NoteHandler.isVisible,
         "WRAPPER"
-    );
-
-    libWrapper.register(
-        LevelsConfig.MODULE_ID,
-        "CONFIG.Token.objectClass.prototype._drawTooltip",
-        LevelsConfig.handlers.TokenHandler._drawTooltip,
-        "MIXED"
     );
 
     libWrapper.register(
