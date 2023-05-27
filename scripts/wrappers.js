@@ -20,6 +20,7 @@ export function registerWrappers(){
                         placeable.mesh.shader.enabled = false;
                         placeable.mesh.alpha = 0;
                     }
+                    placeable.visible = placeable.visible && visible;
                 }
             } else {
                 placeable.visible = placeable.visible && visible;
