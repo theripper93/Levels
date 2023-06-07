@@ -85,6 +85,13 @@
       {
         "id": "perfect-vision",
         "type": "module",
+        "reason": "Perfect Vision is required for masking lights between floors",
+        "compatibility": {}
+      },
+      {
+        "id": "theripper-premium-hub",
+        "type": "module",
+        "reason": "TheRipper93's Module Hub will alert you of critical updates and give you easy access to documentation in the configure settings screen",
         "compatibility": {}
       }
     ]
