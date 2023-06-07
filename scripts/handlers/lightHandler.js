@@ -10,7 +10,7 @@ export class LightHandler{
         const underBackground = currentElevation >= canvas.primary.background.elevation && rangeTop < canvas.primary.background.elevation;
         if(underBackground) return false;
         let isLightVisible = false;
-        if ((canvas.scene.flags.levels?.lightMasking ?? true)) {
+        if ((false)) {
             if (this instanceof Token) isLightVisible = this.visible || rangeBottom <= currentElevation;
             else isLightVisible = rangeBottom <= currentElevation;
         }else{
