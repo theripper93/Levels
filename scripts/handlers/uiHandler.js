@@ -34,7 +34,8 @@ export class UIHandler {
         if (!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled || CONFIG.Levels.currentToken) return true;
         const { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(light.document);
         const UITop = parseFloat(CONFIG.Levels.UI.range[1]);
-        return rangeTop <= UITop;
+        const UIBottom = parseFloat(CONFIG.Levels.UI.range[0]);
+        return rangeTop <= UITop && rangeBottom >= UIBottom;
     }
 
     static inUIRange(bottom, top) {
