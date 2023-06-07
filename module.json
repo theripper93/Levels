@@ -80,6 +80,13 @@
         "type": "module",
         "compatibility": {}
       }
+    ],
+    "recommends": [
+      {
+        "id": "perfect-vision",
+        "type": "module",
+        "compatibility": {}
+      }
     ]
   },
   "compatibility": {
