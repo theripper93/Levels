@@ -10,7 +10,6 @@ export function registerWrappers(){
     })*/
 
     Hooks.on("refreshTile", (placeable) => {
-        
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
         if(CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
             if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < placeable.document.elevation) {

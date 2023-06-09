@@ -49,7 +49,8 @@ export function inDistance(placeable1, placeable2, distance) {
 
 }
 
-export function getRangeForDocument(document){
+export function getRangeForDocument(document) {
+  document = document.document ?? document;
   if(document instanceof WallDocument){
     return {
       rangeBottom: document.flags?.["wall-height"]?.bottom ?? -Infinity,
