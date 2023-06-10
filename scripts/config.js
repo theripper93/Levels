@@ -136,8 +136,8 @@ Hooks.on("init", () => {
   CONFIG.Levels.helpers = {
       inRange,
       getRangeForDocument,
-    cloneTileMesh,
-      inDistance,
+      cloneTileMesh,
+      inDistance
   }
 
   CONFIG.Levels.API = LevelsAPI;
