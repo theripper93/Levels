@@ -21,7 +21,7 @@ export class RefreshHandler{
     }
 
     static refresh(layer){
-        layer.placeables.forEach(p => p.refresh());
+        layer.placeables.forEach(p => p.renderFlags.set({refreshState: true}));
     }
 
 }

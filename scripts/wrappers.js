@@ -76,7 +76,8 @@ export function registerWrappers(){
             if(this.document.flags?.levels?.noCollision || this.document.flags["tile-scroll"]?.enableRotate || this.document.flags["tile-scroll"]?.enableScroll) return wrapped(...args);
             return wrapped(...args) || (this.document.overhead && Number.isFinite(this.document.flags?.levels?.rangeBottom));
         },
-        "WRAPPER"
+        "WRAPPER",
+        { perf_mode: "FAST" }
     );
 
     libWrapper.register(
