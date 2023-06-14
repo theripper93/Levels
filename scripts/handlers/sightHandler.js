@@ -236,10 +236,11 @@ export class SightHandler {
    * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement, 2 for sound, 3 for light
    * @returns {boolean} Whether the wall should be ignored
    */
-   static shouldIgnoreWall(wall, collisionType) {
+  static shouldIgnoreWall(wall, collisionType) {
     if (collisionType === 0) {
       return (
         wall.document.sight === CONST.WALL_SENSE_TYPES.NONE ||
+        wall.document.sight > 20 ||
         (wall.document.door != 0 && wall.document.ds === 1)
       );
     } else if (collisionType === 1) {
@@ -250,11 +251,13 @@ export class SightHandler {
     } else if (collisionType === 2) {
       return (
         wall.document.sound === CONST.WALL_MOVEMENT_TYPES.NONE ||
+        wall.document.sound > 20 ||
         (wall.document.door != 0 && wall.document.ds === 1)
       );
     } else if (collisionType === 3) {
       return (
         wall.document.light === CONST.WALL_MOVEMENT_TYPES.NONE ||
+        wall.document.light > 20 ||
         (wall.document.door != 0 && wall.document.ds === 1)
       );
     }
