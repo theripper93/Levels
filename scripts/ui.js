@@ -32,7 +32,9 @@ class LevelsUI extends FormApplication {
   }
 
   getData() {
-    return {};
+    return {
+      lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
+    };
   }
 
   async activateListeners(html) {
@@ -92,6 +94,14 @@ class LevelsUI extends FormApplication {
         this.setButtonStyles();
       }
     );
+    html.on(
+      "click",
+      "#levels-ui-controls .fa-circle-exclamation",
+      async () => {
+        await canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "lightMasking", false);
+        this.render(true);
+      }
+    )
 
     html.on("click", ".player-portrait", this._onControlToken.bind(this));
     html.on("change", ".level-inputs input", this.saveData.bind(this));
@@ -589,7 +599,7 @@ Hooks.on("ready", () => {
           top: 2,
           left: (window.innerWidth - $("#sidebar").width() - $("#levelsUI").width()) - 10,
           width: $("#levelsUI").width(),
-          height: Math.max(150, $("#levelsUI").height()),
+          height: Math.max(150, $("#levelsUI").height()) + 10,
         });
         app.positionSet = true
       }

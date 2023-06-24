@@ -76,8 +76,8 @@
     "levels.sceneconfig.backgroundElevation.notes": "An elevation in distance units which configures the height of the background image and underfoot tiles.",
     "levels.sceneconfig.weatherElevation.name": "Weather Elevation",
     "levels.sceneconfig.weatherElevation.notes": "An elevation in distance units which configures the height of the weather effects.",
-    "levels.sceneconfig.lightMasking.name": "Light Masking",
-    "levels.sceneconfig.lightMasking.notes": "Show lights below current elevation and mask them using tiles. This feature as limitations, please check the Levels module page for more information.",
+    "levels.sceneconfig.lightMasking.name": "Levels: Don't disable lights",
+    "levels.sceneconfig.lightMasking.notes": "When enabled, Levels will not take control of Light visibility, this option should be disabled in scenes that make use of multiple levels.",
 
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Enable Levels View/Placement",
@@ -141,6 +141,7 @@
     "levels.ui.clearLevels": "Clear Levels",
     "levels.ui.debugScene": "Debug Scene (Red means issues detected)",
     "levels.ui.minElevDiff": "Minimum Level Size",
+    "levels.ui.warning": "WARNING! 'Don't disable lights' is enabled in the Scene Settings - Multiple levels will not work correctly. Click to resolve this issue.",
 
 
     "levels.conflicts.midiqol.tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."

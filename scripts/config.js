@@ -596,7 +596,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         },
     });
 
-    /*injectConfig.inject(app, html, {
+    injectConfig.inject(app, html, {
         moduleId: "levels",
         inject: 'input[name="fogExploration"]',
         lightMasking: {
@@ -605,5 +605,5 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
             notes: game.i18n.localize("levels.sceneconfig.lightMasking.notes"),
             default: true,
         },
-    });*/
+    });
 });
