@@ -36,10 +36,10 @@ export function registerWrappers(){
         computeUI(placeable);
     })
 
-    Hooks.on("refreshToken", (placeable) => {
+    Hooks.on("refreshToken", (placeable, renderFlags) => {
         LevelsConfig.handlers.TokenHandler.refreshTooltip(placeable);
         CONFIG.Levels.FoWHandler.lazyCreateBubble(placeable);
-        LevelsConfig.handlers.TokenHandler.setScale(placeable);
+        LevelsConfig.handlers.TokenHandler.setScale(placeable, renderFlags);
         computeUI(placeable);
     })
 
