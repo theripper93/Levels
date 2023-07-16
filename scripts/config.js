@@ -44,6 +44,20 @@ Object.defineProperty(TileDocument.prototype, "elevation", {
     },
 });
 
+Tile.prototype.inTriggeringRange = function (token) {
+    const bottom = this.document.elevation;
+    let top = this.document.flags?.levels?.rangeTop ?? Infinity;
+    if (top === Infinity && game.Levels3DPreview?._active) {
+        const depth = this.document.flags?.["levels-3d-preview"]?.depth
+        if(depth) top = bottom + (depth / canvas.scene.dimensions.size) * canvas.scene.dimensions.distance;
+    }
+    if (token) {
+        return token.document.elevation >= bottom && token.document.elevation <= top;
+    } else {
+        return { bottom, top };
+    }
+}
+
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
     get: function () {
         if (CONFIG.Levels?.UI?.rangeEnabled && !this.id) {
