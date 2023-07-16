@@ -19,7 +19,8 @@ export class LevelsAPI{
      * @returns {Boolean} returns wether the token is in the range or not
      **/
 
-    static isTokenInRange(token, placeableOrDocument, useElevation = true){
+    static isTokenInRange(token, placeableOrDocument, useElevation = true) {
+        if(placeableOrDocument.inTriggeringRange) return placeableOrDocument.inTriggeringRange(token);
         placeableOrDocument = placeableOrDocument?.document ?? placeableOrDocument;
         const elevation = useElevation ? token.document.elevation : token.losHeight;
         return CONFIG.Levels.helpers.inRange(placeableOrDocument, elevation);
