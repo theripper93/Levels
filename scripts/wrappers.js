@@ -1,4 +1,4 @@
-export function registerWrappers(){
+export function registerWrappers() {
 
     const LevelsConfig = CONFIG.Levels
     const computeUI = LevelsConfig.handlers.UIHandler.UIVisible
@@ -11,10 +11,10 @@ export function registerWrappers(){
 
     Hooks.on("refreshTile", (placeable) => {
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
-        if(CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
+        if (CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
             if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < placeable.document.elevation) {
                 if (!visible) {
-                    if(placeable.mesh){
+                    if (placeable.mesh) {
                         placeable.mesh.occluded = true;
                         placeable.mesh.shader.enabled = false;
                         placeable.mesh.alpha = 0;
@@ -44,7 +44,7 @@ export function registerWrappers(){
     })
 
     Hooks.on("updateToken", (token, updates) => {
-        if("elevation" in updates && CONFIG.Levels.settings.get("tokenElevScale")){
+        if ("elevation" in updates && CONFIG.Levels.settings.get("tokenElevScale")) {
             LevelsConfig.handlers.RefreshHandler.refresh(canvas.tokens)
         }
     })
@@ -69,6 +69,20 @@ export function registerWrappers(){
     Hooks.on("refreshAmbientSound", (placeable) => {
         computeUI(placeable);
     })
+
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "TokenLayer.prototype._getOccludableTokens",
+        function (wrapped, ...args) {
+            if (game.user.isGM) return wrapped(...args);
+            else {
+                return CONFIG.Levels.currentToken ? [CONFIG.Levels.currentToken] : wrapped(...args);
+            }
+        },
+        "MIXED",
+    );
+
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
