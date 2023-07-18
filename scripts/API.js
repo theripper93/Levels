@@ -49,4 +49,34 @@ export class LevelsAPI{
     static testCollision(p0, p1, type = "sight"){
         return CONFIG.Levels.handlers.SightHandler.testCollision(p0, p1, type);
     }
+
+    static async rescaleGridDistance(previousDistance, currentDistance = canvas.scene?.dimensions?.distance, scene = canvas.scene) {
+        const documentClasses = [TileDocument, TokenDocument, AmbientLightDocument, AmbientSoundDocument, NoteDocument, WallDocument, MeasuredTemplateDocument];
+        const rescaleFactor = currentDistance / previousDistance;
+        for (const dClass of documentClasses) {
+            const documentCollection = Array.from(scene[dClass.collectionName]);
+            const updates = [];
+            for (const document of documentCollection) {
+                const updateData = {
+                    _id: document._id,
+                    flags: {
+                        levels: {}
+                    },
+                };
+                if (dClass === WallDocument) {
+                    
+                } else if (dClass === MeasuredTemplateDocument) {
+                    
+                } else {
+                    const rangeBottom = document.flags?.levels?.rangeBottom;
+                    const rangeTop = document.flags?.levels?.rangeTop;
+                    if (!isNaN(rangeBottom)) updateData.flags.levels.rangeBottom = rangeBottom * rescaleFactor;
+                    if (!isNaN(rangeTop)) updateData.flags.levels.rangeTop = rangeTop * rescaleFactor;
+                }
+                updates.push(updateData);
+            }
+            await scene.updateEmbeddedDocuments(dClass.documentName, updates);
+        }
+
+    }
 }
