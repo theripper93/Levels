@@ -70,10 +70,20 @@ export class LevelsAPI {
                     _id: document._id,
                     flags: {
                         levels: {},
+                        "wall-height": {},
                     },
                 };
                 if (dClass === WallDocument) {
+                    const rangeBottom = document.flags?.["wall-height"]?.bottom;
+                    const rangeTop = document.flags?.["wall-height"]?.top;
+                    if (!isNaN(rangeBottom)) updateData.flags["wall-height"].bottom = rangeBottom * rescaleFactor;
+                    if (!isNaN(rangeTop)) updateData.flags["wall-height"].top = rangeTop * rescaleFactor;
+                    delete updateData.flags.levels;
                 } else if (dClass === MeasuredTemplateDocument) {
+                } else if (dClass === TokenDocument) { 
+                    const elevation = document.elevation;
+                    if (!isNaN(elevation)) updateData.elevation = elevation * rescaleFactor;
+                    delete updateData.flags;
                 } else {
                     const rangeBottom = document.flags?.levels?.rangeBottom;
                     const rangeTop = document.flags?.levels?.rangeTop;
