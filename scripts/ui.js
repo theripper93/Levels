@@ -31,6 +31,13 @@ class LevelsUI extends FormApplication {
     }
   }
 
+  getRange() {
+    return {
+      bottom: parseFloat(this.range[0] ?? -Infinity),
+      top: parseFloat(this.range[1] ?? Infinity),
+    }
+  }
+
   getData() {
     return {
       lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,

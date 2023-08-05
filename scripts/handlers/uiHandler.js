@@ -1,7 +1,17 @@
 export class UIHandler {
     static UIVisible(placeable) {
         const isPreview = placeable.document?.id == null;
-        if (isPreview) return true;
+        if (isPreview) {
+            placeable.visible = true;
+            if (CONFIG.Levels.UI?.rangeEnabled && !placeable.document?.flags?.levels) {
+                const uiRange = CONFIG.Levels.UI.getRange();
+                placeable.document.flags.levels = {
+                    rangeBottom: uiRange.bottom,
+                    rangeTop: uiRange.top,
+                };
+            }
+            return true;
+        }
         if (!game.user.isGM || !CONFIG.Levels.UI?.rangeEnabled) return;
         const isTokenSelected = canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken;
         const isVision = canvas.effects.visionSources.size;
