@@ -23,7 +23,8 @@ export class BackgroundHandler{
 
         Hooks.on("updateScene", (scene, updates)=>{
             if(scene.id === canvas.scene?.id && updates.flags?.levels?.backgroundElevation !== undefined){
-              canvas.draw();
+              PrimaryCanvasGroup.BACKGROUND_ELEVATION = (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)  
+              canvas.primary.background.elevation = PrimaryCanvasGroup.BACKGROUND_ELEVATION;
             }
         })
     }
