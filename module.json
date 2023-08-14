@@ -48,6 +48,20 @@
   "styles": [
     "styles/levels.css"
   ],
+      "packFolders":[
+        {
+            "name": "Levels",
+            "sorting": "m",
+            "ownership": {
+              "PLAYER": "NONE",
+              "ASSISTANT": "OWNER"
+            },
+            "packs":[
+              "levelsmacros",
+              "maps"
+            ]
+          }
+    ],
   "packs": [
     {
       "name": "levelsmacros",
