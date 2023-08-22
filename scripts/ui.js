@@ -259,7 +259,6 @@ class LevelsUI extends FormApplication {
       content: game.i18n.localize("levels.dialog.sceneDrop.content"),
     })
     if (!dialogResult) return;
-    debugger
     const collections = Object.keys(scene.collections);
     for (const collection of collections) {
       const documents = Array.from(scene[collection]);
