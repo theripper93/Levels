@@ -110,6 +110,16 @@ class LevelsUI extends FormApplication {
       }
     )
 
+    html.on("drop", (event) => {
+      let data;
+      try {
+        data = JSON.parse(event.originalEvent.dataTransfer.getData("text/plain"));
+      } catch (err) {
+        return false;
+      }
+      if(data.type === "Scene") this._onDropScene(data.uuid)
+    });
+
     html.on("click", ".player-portrait", this._onControlToken.bind(this));
     html.on("change", ".level-inputs input", this.saveData.bind(this));
     //make list sortable
@@ -239,6 +249,33 @@ class LevelsUI extends FormApplication {
     const tokenId = event.currentTarget.dataset.tokenid;
     const token = canvas.tokens.get(tokenId);
     token.control();
+  }
+
+  async _onDropScene(uuid) {
+    const scene = await fromUuid(uuid);
+    if (!scene) return;
+    const dialogResult = await Dialog.confirm({
+      title: game.i18n.localize("levels.dialog.sceneDrop.title"),
+      content: game.i18n.localize("levels.dialog.sceneDrop.content"),
+    })
+    if (!dialogResult) return;
+    debugger
+    const collections = Object.keys(scene.collections);
+    for (const collection of collections) {
+      const documents = Array.from(scene[collection]);
+      if(!documents.length) continue;
+      await canvas.scene.createEmbeddedDocuments(documents[0].documentName, documents);
+    }
+    const sceneBg = scene.background.src;
+    if(!sceneBg) return;
+    const {sceneWidth, sceneHeight, sceneX, sceneY} = scene.dimensions;
+    await canvas.scene.createEmbeddedDocuments("Tile", [{
+      "texture.src": sceneBg,
+      "width": sceneWidth,
+      "height": sceneHeight,
+      "x": sceneX,
+      "y": sceneY,
+    }]);
   }
 
   saveData() {

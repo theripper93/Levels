@@ -102,6 +102,8 @@
     "levels.dialog.getFromScene.content": "Get Levels from current scene? This will overwrite your current levels",
     "levels.dialog.elevator.title": "Levels - Choose a Floor",
     "levels.dialog.elevation.title": "Set Elevation for next Template placement",
+    "levels.dialog.sceneDrop.title": "Levels - Scene Drop",
+    "levels.dialog.sceneDrop.content": "All elements from the dropped scene will be placed at the current level, are you sure you want to continue?",
 
     "levels.ui.title": "Levels - Layer Tool",
 
