@@ -73,7 +73,8 @@ export class SightHandler {
         sourceCenter,
         point,
         type,
-        sourceToken
+        {source: sourceToken, target: tokenOrPoint}
+        
       );
       if (!collision) return collision;
     }
@@ -203,7 +204,7 @@ export class SightHandler {
       y: args[0].B.y,
       z: targetElevation,
     };
-    const result = CONFIG.Levels.API.testCollision(p1,p2, this.config.type);
+    const result = CONFIG.Levels.API.testCollision(p1,p2, this.config.type, {source: visionSource, target: target});
     switch (args[1]) {
       case "any": return !!result;
       case "all": return result ? [PolygonVertex.fromPoint(result)] : [];
@@ -236,7 +237,7 @@ export class SightHandler {
    * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement, 2 for sound, 3 for light
    * @returns {boolean} Whether the wall should be ignored
    */
-  static shouldIgnoreWall(wall, collisionType) {
+  static shouldIgnoreWall(wall, collisionType, options) {
     if (collisionType === 0) {
       return (
         wall.document.sight === CONST.WALL_SENSE_TYPES.NONE ||
@@ -271,7 +272,7 @@ export class SightHandler {
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
-   static testCollision(p0, p1, type = "sight") {
+   static testCollision(p0, p1, type = "sight", options) {
     if (canvas?.scene?.flags['levels-3d-preview']?.object3dSight) {
       if (!game.Levels3DPreview?._active) return true;
       return game.Levels3DPreview.interactionManager.computeSightCollision(
@@ -366,7 +367,7 @@ export class SightHandler {
       const walls = canvas.walls.quadtree.getObjects(rect);
       let terrainWalls = 0;
       for (let wall of walls) {
-        if (this.shouldIgnoreWall(wall, TYPE)) continue;
+        if (this.shouldIgnoreWall(wall, TYPE, options)) continue;
 
         let isTerrain =
           TYPE === 0 && wall.document.sight === CONST.WALL_SENSE_TYPES.LIMITED ||
@@ -460,6 +461,6 @@ export class SightHandler {
       y: tokenOrPoint2.center.y,
       z: tokenOrPoint2.losHeight,
     } : tokenOrPoint2;
-    return this.testCollision(p0, p1, type);
+    return this.testCollision(p0, p1, type, {source: tokenOrPoint1, target: tokenOrPoint2});
   }
 }
