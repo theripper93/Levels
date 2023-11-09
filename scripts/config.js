@@ -304,7 +304,7 @@ Hooks.on("init", () => {
         scope: "world",
         config: true,
         type: Boolean,
-        default: true,
+        default: false,
         onChange: () => {
             CONFIG.Levels.settings.cacheSettings();
         },
