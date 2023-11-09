@@ -15,11 +15,15 @@ import { SettingsHandler } from "./handlers/settingsHandler.js";
 import { LevelsAPI } from "./API.js";
 import { registerWrappers } from "./wrappers.js";
 import { inRange, getRangeForDocument, cloneTileMesh, inDistance } from "./helpers.js";
+import { setupWarnings } from "./warnings.js";
 
 //warnings
 
 Hooks.on("ready", () => {
     if (!game.user.isGM) return;
+
+    setupWarnings();
+
     const recommendedVersion = "10.291";
 
     if (isNewerVersion(recommendedVersion, game.version)) {
@@ -48,15 +52,15 @@ Tile.prototype.inTriggeringRange = function (token) {
     const bottom = this.document.elevation;
     let top = this.document.flags?.levels?.rangeTop ?? Infinity;
     if (game.Levels3DPreview?._active) {
-        const depth = this.document.flags?.["levels-3d-preview"]?.depth
-        if(depth) top = bottom + (depth / canvas.scene.dimensions.size) * canvas.scene.dimensions.distance;
+        const depth = this.document.flags?.["levels-3d-preview"]?.depth;
+        if (depth) top = bottom + (depth / canvas.scene.dimensions.size) * canvas.scene.dimensions.distance;
     }
     if (token) {
         return token.document.elevation >= bottom && token.document.elevation <= top;
     } else {
         return { bottom, top };
     }
-}
+};
 
 Object.defineProperty(DrawingDocument.prototype, "elevation", {
     get: function () {
@@ -355,64 +359,68 @@ Hooks.on("renderTileConfig", (app, html, data) => {
         },
         rangeTop: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeTop.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
             step: "any",
         },
         rangeBottom: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "-Infinity",
             step: "any",
         },
         showIfAbove: {
             type: "checkbox",
-            label: game.i18n.localize("levels.tilecoonfig.showIfAbove.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.showIfAbove.hint"),
+            label: game.i18n.localize("levels.tileconfig.showIfAbove.name"),
+            notes: game.i18n.localize("levels.tileconfig.showIfAbove.hint"),
         },
         showAboveRange: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.showAboveRange.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.showAboveRange.hint"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.showAboveRange.name"),
+            notes: game.i18n.localize("levels.tileconfig.showAboveRange.hint"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
         },
         noCollision: {
             type: "checkbox",
-            label: game.i18n.localize("levels.tilecoonfig.noCollision.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.noCollision.hint"),
+            label: game.i18n.localize("levels.tileconfig.noCollision.name"),
+            notes: game.i18n.localize("levels.tileconfig.noCollision.hint"),
         },
         noFogHide: {
             type: "checkbox",
-            label: game.i18n.localize("levels.tilecoonfig.noFogHide.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.noFogHide.hint"),
+            label: game.i18n.localize("levels.tileconfig.noFogHide.name"),
+            notes: game.i18n.localize("levels.tileconfig.noFogHide.hint"),
         },
         isBasement: {
             type: "checkbox",
-            label: game.i18n.localize("levels.tilecoonfig.isBasement.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.isBasement.hint"),
+            label: game.i18n.localize("levels.tileconfig.isBasement.name"),
+            notes: game.i18n.localize("levels.tileconfig.isBasement.hint"),
         },
         allWallBlockSight: {
             type: "checkbox",
-            label: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.name"),
-            notes: game.i18n.localize("levels.tilecoonfig.allWallBlockSight.hint"),
+            label: game.i18n.localize("levels.tileconfig.allWallBlockSight.name"),
+            notes: game.i18n.localize("levels.tileconfig.allWallBlockSight.hint"),
             default: true,
         },
     });
     injHtml.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).closest(".form-group").before(`
-  <p class="notes" style="color: red" id="no-overhead-warning">${game.i18n.localize("levels.tilecoonfig.noOverhead")}</>
+  <p class="notes" style="color: red" id="no-overhead-warning">${game.i18n.localize("levels.tileconfig.noOverhead")}</>
+  <p class="notes" style="color: red" id="occlusion-none-warning">${game.i18n.localize("levels.tileconfig.occlusionNone")}</>
   `);
     html.on("change", "input", (e) => {
         const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
+        debugger;
+        const occlusionMode = html.find(`select[name="occlusion.mode"]`).val();
         const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");
         injHtml.find("input").prop("disabled", !isOverhead);
         injHtml.find("input[name='flags.levels.showAboveRange']").closest(".form-group").toggle(isShowIfAbove);
         html.find("#no-overhead-warning").toggle(!isOverhead);
+        html.find("#occlusion-none-warning").toggle(occlusionMode == 0);
         app.setPosition({ height: "auto" });
     });
     html.find(`input[name="overhead"]`).trigger("change");
@@ -425,16 +433,16 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
         inject: 'input[name="config.dim"]',
         rangeTop: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeTop.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
             step: "any",
         },
         rangeBottom: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "-Infinity",
             step: "any",
@@ -448,16 +456,16 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
         inject: 'select[name="textAnchor"]',
         rangeTop: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeTop.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
             step: "any",
         },
         rangeBottom: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "-Infinity",
             step: "any",
@@ -471,16 +479,16 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
         inject: 'input[name="radius"]',
         rangeTop: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeTop.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
             step: "any",
         },
         rangeBottom: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "-Infinity",
             step: "any",
@@ -512,16 +520,16 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
         },
         rangeTop: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeTop.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeTop.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "Infinity",
             step: "any",
         },
         rangeBottom: {
             type: "number",
-            label: game.i18n.localize("levels.tilecoonfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: "",
             placeholder: "-Infinity",
             step: "any",
@@ -537,7 +545,7 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
             type: "text",
             dType: "Number",
             label: game.i18n.localize("levels.template.elevation.name"),
-            units: game.i18n.localize("levels.tilecoonfig.range.unit"),
+            units: game.i18n.localize("levels.tileconfig.range.unit"),
             default: Infinity,
             step: "any",
         },

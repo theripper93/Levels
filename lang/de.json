@@ -4,8 +4,8 @@
     "levels.settings.enableTooltips.hint": "Tooltips mit Ober- und Unterseite anzeigen, wenn der Mauszeiger über Levels-Objekten schwebt",
     "levels.settings.tokenElevScale.name": "Token-Größe basierend auf der Höhe ändern",
     "levels.settings.tokenElevScale.hint": "Größe der Token basierend auf der Elevation des kontrollierten Tokens ändern",
-    "levels.settings.tokenElevScaleMultiSett.name":"Aufzugsskala benutzerdefinierter Multiplikator",
-    "levels.settings.tokenElevScaleMultiSett.hint":"Multiplizieren Sie die Aufzugsskala mit dieser Zahl. Eine Zahl, die größer als 1 ist, macht Token größer, eine kleinere als 1 macht sie kleiner",
+    "levels.settings.tokenElevScaleMultiSett.name": "Aufzugsskala benutzerdefinierter Multiplikator",
+    "levels.settings.tokenElevScaleMultiSett.hint": "Multiplizieren Sie die Aufzugsskala mit dieser Zahl. Eine Zahl, die größer als 1 ist, macht Token größer, eine kleinere als 1 macht sie kleiner",
     "levels.settings.fogHiding.name": "Erweiterte Kriegsnebel",
     "levels.settings.fogHiding.hint": "Unerforschte Etagen vor dem erforschten Fog of War verstecken",
     "levels.settings.lockElevation.name": "Sperre Aufzug",
@@ -22,14 +22,13 @@
     "levels.settings.preciseTokenVisibility.hint": "Das Aktivieren dieser Option prüft auf Kosten einer gewissen Performance die Sichtbarkeit gegen die Ecken des Tokens zusätzlich zur Mitte",
     "levels.settings.blockSightMovement.name": "Zaun",
     "levels.settings.blockSightMovement.hint": "Wenn aktiviert, schränken Wände mit einer Höhe, die die Sicht nicht einschränkt, trotzdem die Bewegung ein",
-    
-    "levels.tilecoonfig.rangeTop.name": "Höhe (oben)",
-    "levels.tilecoonfig.rangeBottom.name": "Höhe (Unten)",
-    "levels.tilecoonfig.showIfAbove.name": "Auch anzeigen, wenn unten?",
-    "levels.tilecoonfig.showAboveRange.name": "Maximale Höhendifferenz",
-    "levels.tilecoonfig.isBasement.name": "Ist Fundament?",
-    "levels.tilecoonfig.noFogHide.name": "Diese Kachel im Nebel nicht ausblenden",
-    "levels.tilecoonfig.range.unit": "Aufzug",
+    "levels.tileconfig.rangeTop.name": "Höhe (oben)",
+    "levels.tileconfig.rangeBottom.name": "Höhe (Unten)",
+    "levels.tileconfig.showIfAbove.name": "Auch anzeigen, wenn unten?",
+    "levels.tileconfig.showAboveRange.name": "Maximale Höhendifferenz",
+    "levels.tileconfig.isBasement.name": "Ist Fundament?",
+    "levels.tileconfig.noFogHide.name": "Diese Kachel im Nebel nicht ausblenden",
+    "levels.tileconfig.range.unit": "Aufzug",
     "levels.drawingconfig.hb.name": "Höhe (Unten)",
     "levels.drawingconfig.ht.name": "Höhe (Oben)",
     "levels.drawingconfig.range.name": "Lochbereich",
@@ -45,7 +44,6 @@
     "levels.tokenconfig.tokenHeight.unit": "(Entfernung)",
     "levels.template.elevation.name": "Auf",
     "levels.template.special.name": "Spezial",
-
     "levels.controls.main.name": "Levels",
     "levels.controls.levelsview.name": "Levels-Ansicht/Platzierung aktivieren",
     "levels.controls.definelevels.name": "Levels bearbeiten",
@@ -56,7 +54,6 @@
     "levels.controls.levelsclear.name": "Levels löschen",
     "levels.controls.placeOverhead.name": "Wenn aktiviert, platziere Kacheln als Overhead-Kacheln 'innerhalb' von Levels",
     "levels.controls.setTemplateElevation.name": "Höhe für nächste platzierte Vorlage setzen",
-
     "levels.dialog.levelsclear.title": "Levels löschen",
     "levels.dialog.levelsclear.content": "Alle gespeicherten Ebenen löschen?",
     "levels.dialog.define.warn": "Definieren Sie Ebenen als: unten,oben|unten,oben - z.B. 0,9|10,19|20,29",
@@ -64,13 +61,10 @@
     "levels.dialog.define.text": "Ebenen: ",
     "levels.dialog.elevator.title": "Ebenen - Wählen Sie eine Etage",
     "levels.dialog.elevation.title": "Elevation für nächste Vorlagenplatzierung festlegen",
-
     "levels.yesnodialog.yes": "Bestätigen",
     "levels.yesnodialog.no": "Abbrechen",
-
     "levels.widget.title": "Levels",
     "levels.widget.element": "Level",
-
     "levels.form.bottom": "Unten:",
     "levels.form.top": "Oben:",
     "levels.form.name": "Name:",
@@ -79,8 +73,6 @@
     "levels.form.tip": "*Levels sollten sich nicht überschneiden (z.B. 0,9 / 10,19 / 20,29)",
     "levels.form.suggestedLevels": "Vorgeschlagene Levels generieren",
     "levels.form.autoLevels": "Levels von Szene holen",
-
     "levels.err.lessfog": "Levels: WARNUNG! Less Fog erkannt - die Token-Sichtbarkeit funktioniert nicht wie erwartet, bitte deaktivieren Sie eines der beiden Module.",
     "levels.firsttime.dialog": ""
-
 }

@@ -2,6 +2,7 @@
     <div class="form-group">
         <ol id="levels-list" class="directory-list"></ol>
     <div id="levels-ui-controls">
+        {{#if lightMasking}} <i class="fas fa-circle-exclamation" style="color: var(--color-level-warning);" data-tooltip="{{localize "levels.ui.warning"}}"></i> {{/if}}
         <i class="fas fa-users" data-tooltip="{{localize "levels.ui.players"}}"></i>
         <i class="fas fa-sort-amount-up-alt" data-tooltip="{{localize "levels.ui.stair"}}"></i>
         <i class="fas fa-archway" data-tooltip="{{localize "levels.controls.levelsroof.name"}}"></i>
@@ -10,7 +11,6 @@
         <i class="far fa-edit" data-tooltip="{{localize "levels.ui.editLevels"}}"></i>
         <i class="fas fa-map" data-tooltip="{{localize "levels.ui.getFromScene"}}"></i>
         <i class="fas fa-trash" data-tooltip="{{localize "levels.ui.clearLevels"}}"></i>
-        {{#if lightMasking}} <i class="fas fa-circle-exclamation" style="color: var(--color-level-warning);" data-tooltip="{{localize "levels.ui.warning"}}"></i> {{/if}}
     </div>
     </div>
     </div>
