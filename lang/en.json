@@ -1,285 +1,287 @@
 {
-    "modulename": "Levels",
-    "settings": {
-        "enableTooltips": {
-            "name": "Enable Tooltips",
-            "hint": "Show tooltips with top and bottom when hovering levels objects"
+    "levels": {
+        "modulename": "Levels",
+        "settings": {
+            "enableTooltips": {
+                "name": "Enable Tooltips",
+                "hint": "Show tooltips with top and bottom when hovering levels objects"
+            },
+            "tokenElevScale": {
+                "name": "Elevation Scale",
+                "hint": "Change size of tokens based on the elevation of the controlled token"
+            },
+            "tokenElevScaleMultiSett": {
+                "name": "Elevation Scale Multiplier",
+                "hint": "Multiply elevation scale by this number. A number larger than 1 will make tokens bigger while one smaller than 1 will make them smaller"
+            },
+            "fogHiding": {
+                "name": "Advanced Fog of War",
+                "hint": "Hide unexplored floors from the explored fog of war"
+            },
+            "lockElevation": {
+                "name": "Lock Elevation",
+                "hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config"
+            },
+            "defaultLosHeight": {
+                "name": "Default Token Height",
+                "hint": "Height of a token (where the eyes of that creature are) in units. Default 6."
+            },
+            "autoLOSHeight": {
+                "name": "Automatic token height",
+                "hint": "Automatically calculate token height based on size and scale. Will ignore default token height but per token settings not set to 0 will have priority over the automatic calculation"
+            },
+            "debugRaycast": {
+                "name": "DEBUG: Enable ray visualization",
+                "hint": "Show the 3D Sight rays (green visible, red not visible)"
+            },
+            "preciseLightOcclusion": {
+                "name": "Experimental: Precise light occlusion",
+                "hint": "Removes light occlusion artefacts at the cost of performance"
+            },
+            "preciseTokenVisibility": {
+                "name": "Precise token visibility",
+                "hint": "Enabling this option will check for sight against corners of the token in addition to the center at the cost of some performance"
+            },
+            "exactTokenVisibility": {
+                "name": "Exact token visibility",
+                "hint": "Precise token visibility must be enabled for this option to work. This option will do an 11 point check against the token's corners. Suggested if you are using 3D Canvas"
+            },
+            "blockSightMovement": {
+                "name": "Fence",
+                "hint": "When enabled, walls with height that does not restrict vision will still restrict movement"
+            },
+            "forceUiRefresh": {
+                "name": "Force UI refresh",
+                "hint": "Forces more frequent refreshes of the levels UI at the cost of performance, if enabled may cause issues on specific systems (eg. PF2e)"
+            },
+            "hideElevation": {
+                "name": "Hide Elevation",
+                "hint": "Hide elevation from the tokens",
+                "opt0": "Don't Hide",
+                "opt1": "Hide for players",
+                "opt2": "Hide for everyone"
+            },
+            "revealTokenInFog": {
+                "name": "Reveal token in fog",
+                "hint": "If a token is visible, reveal the fog of war around that token"
+            }
         },
-        "tokenElevScale": {
-            "name": "Elevation Scale",
-            "hint": "Change size of tokens based on the elevation of the controlled token"
+        "tileconfig": {
+            "noOverhead": "This is NOT an overhead tile, this tile will be rendered at the background elevation. To change these settings, please enable the 'Is Overhead?' option in the overhead tab.",
+            "occlusionNone": "Occlusion Mode is set to 'None', this tile will not block sight. Set Occlusion Mode to 'Fade' if you want this tile to block sight.",
+            "rangeTop": {
+                "name": "Height (Top)"
+            },
+            "rangeBottom": {
+                "name": "Height (Bottom)"
+            },
+            "showIfAbove": {
+                "name": "Show even when below?",
+                "hint": "If enabled, the tile will be shown even if the token is below the bottom height range (example use, balconies)"
+            },
+            "showAboveRange": {
+                "name": "Max Elevation Difference",
+                "hint": "When 'Show even when below?' is enabled, this is the maximum elevation difference between the token and the tile, past this value the tile will no longer show."
+            },
+            "isBasement": {
+                "name": "Strict Range",
+                "hint": "If enabled, the tile will only be shown if the token is inside the tile range, this means that a token above the top range will not see this tile."
+            },
+            "noFogHide": {
+                "name": "Don't hide this tile in the Fog",
+                "hint": "Exclude this tile from Level's 'Advanced Fog of War'."
+            },
+            "range": {
+                "unit": "Elevation"
+            },
+            "excludeFromChecker": {
+                "name": "Exclude from Scene Checker"
+            },
+            "noCollision": {
+                "name": "Allow Sight",
+                "hint": "If enabled, the tile will not block sight."
+            },
+            "allWallBlockSight": {
+                "name": "All Walls Block Sight",
+                "hint": "When checked, all walls under this tile will count as vision blocking when the tile is not occluded."
+            }
         },
-        "tokenElevScaleMultiSett": {
-            "name": "Elevation Scale Multiplier",
-            "hint": "Multiply elevation scale by this number. A number larger than 1 will make tokens bigger while one smaller than 1 will make them smaller"
+        "drawingconfig": {
+            "hb": {
+                "name": "Height (Bottom)"
+            },
+            "ht": {
+                "name": "Height (Top)"
+            },
+            "range": {
+                "name": "Hole Range"
+            },
+            "elevatorFloors": {
+                "name": "Elevator Floors",
+                "hint": "Define Floors as: elevation,name|elevation,name... - eg. 0,Ground Floor|10,First Floor..."
+            },
+            "isHole": {
+                "name": "Levels Drawing Mode",
+                "opt0": "None",
+                "opt1": "Hole",
+                "opt2": "Stair",
+                "opt21": "Stair (One Way - Down)",
+                "opt22": "Stair (One Way - Up)",
+                "opt3": "Elevator"
+            }
         },
-        "fogHiding": {
-            "name": "Advanced Fog of War",
-            "hint": "Hide unexplored floors from the explored fog of war"
+        "drawingHud": {
+            "title": "Toggle Locked State for Stair"
         },
-        "lockElevation": {
-            "name": "Lock Elevation",
-            "hint": "Prevent players from changing elevation from the token HUD. Keep in mind that if the player has permission to edit tokens they will be able to change it in the token config"
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "Token LOS Height",
+                "unit": "(Distance)"
+            }
         },
-        "defaultLosHeight": {
-            "name": "Default Token Height",
-            "hint": "Height of a token (where the eyes of that creature are) in units. Default 6."
+        "template": {
+            "elevation": {
+                "name": "Elevation"
+            },
+            "special": {
+                "name": "Special"
+            },
+            "depth": {
+                "name": "Depth"
+            }
         },
-        "autoLOSHeight": {
-            "name": "Automatic token height",
-            "hint": "Automatically calculate token height based on size and scale. Will ignore default token height but per token settings not set to 0 will have priority over the automatic calculation"
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "Background Elevation",
+                "notes": "An elevation in distance units which configures the height of the background image and underfoot tiles."
+            },
+            "weatherElevation": {
+                "name": "Weather Elevation",
+                "notes": "An elevation in distance units which configures the height of the weather effects."
+            },
+            "lightMasking": {
+                "name": "Levels: Don't disable lights",
+                "notes": "When enabled, Levels will not take control of Light visibility, this option should be disabled in scenes that make use of multiple levels."
+            }
         },
-        "debugRaycast": {
-            "name": "DEBUG: Enable ray visualization",
-            "hint": "Show the 3D Sight rays (green visible, red not visible)"
+        "controls": {
+            "main": {
+                "name": "Levels"
+            },
+            "levelsview": {
+                "name": "Enable Levels View/Placement"
+            },
+            "definelevels": {
+                "name": "Edit Levels"
+            },
+            "levelup": {
+                "name": "Up one Level"
+            },
+            "leveldown": {
+                "name": "Down one Level"
+            },
+            "levelsroof": {
+                "name": "Roofs View/Placement"
+            },
+            "levelshole": {
+                "name": "Place drawings as Stairs when enabled, place as holes when disabled"
+            },
+            "levelsclear": {
+                "name": "Clear Levels"
+            },
+            "placeOverhead": {
+                "name": "Place tiles as overhead tiles 'inside' levels"
+            },
+            "setTemplateElevation": {
+                "name": "Set elevation for next placed template"
+            },
+            "suppressBrmode": {
+                "name": "Suppress Better Roofs mode application"
+            }
         },
-        "preciseLightOcclusion": {
-            "name": "Experimental: Precise light occlusion",
-            "hint": "Removes light occlusion artefacts at the cost of performance"
+        "dialog": {
+            "levelsclear": {
+                "title": "Clear Levels",
+                "content": "Clear all stored levels?"
+            },
+            "define": {
+                "warn": "Define levels as: bottom,top|bottom,top - eg. 0,9|10,19|20,29",
+                "title": "Define Levels for this Scene",
+                "text": "Levels: "
+            },
+            "removeLevel": {
+                "title": "Remove Level",
+                "content": "Are you sure you want to remove this level?"
+            },
+            "getFromScene": {
+                "title": "Get Levels from Scene",
+                "content": "Get Levels from current scene? This will overwrite your current levels"
+            },
+            "elevator": {
+                "title": "Levels - Choose a Floor"
+            },
+            "elevation": {
+                "title": "Set Elevation for next Template placement"
+            },
+            "sceneDrop": {
+                "title": "Levels - Scene Drop",
+                "content": "All elements from the dropped scene will be placed at the current level, are you sure you want to continue?"
+            },
+            "checkScene": {
+                "title": "Levels - Scene Checker",
+                "content": "Detected tiles with polygons that were possibly not autodetected or defined correctly, please doublecheck the following tiles:",
+                "learnMore": "Don't Know what the Polygon is? Having other issues? Check out the Levels page, it includes a video dedicated to the Polygon!",
+                "noIssues": "No Issues Detected!",
+                "excluded": "Excluded from Check"
+            }
         },
-        "preciseTokenVisibility": {
-            "name": "Precise token visibility",
-            "hint": "Enabling this option will check for sight against corners of the token in addition to the center at the cost of some performance"
+        "ui": {
+            "title": "Levels - Layer Tool",
+            "players": "Show Players",
+            "stair": "Place Drawings as Stairs",
+            "addLevel": "Add a new level",
+            "editLevels": "Edit Levels",
+            "getFromScene": "Get Levels from Scene",
+            "clearLevels": "Clear Levels",
+            "debugScene": "Debug Scene (Red means issues detected)",
+            "minElevDiff": "Minimum Level Size",
+            "warning": "WARNING! 'Don't disable lights' is enabled in the Scene Settings - Multiple levels will not work correctly. Click to resolve this issue."
         },
-        "exactTokenVisibility": {
-            "name": "Exact token visibility",
-            "hint": "Precise token visibility must be enabled for this option to work. This option will do an 11 point check against the token's corners. Suggested if you are using 3D Canvas"
+        "yesnodialog": {
+            "yes": "Confirm",
+            "no": "Cancel"
         },
-        "blockSightMovement": {
-            "name": "Fence",
-            "hint": "When enabled, walls with height that does not restrict vision will still restrict movement"
+        "widget": {
+            "title": "Levels",
+            "element": "Level"
         },
-        "forceUiRefresh": {
-            "name": "Force UI refresh",
-            "hint": "Forces more frequent refreshes of the levels UI at the cost of performance, if enabled may cause issues on specific systems (eg. PF2e)"
+        "form": {
+            "bottom": "Bottom:",
+            "top": "Top:",
+            "name": "Name:",
+            "currentLevel": "Current Levels",
+            "addNew": "Add a new level",
+            "tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)",
+            "suggestedLevels": "Generate Suggested Levels",
+            "autoLevels": "Get levels from Scene"
         },
-        "hideElevation": {
-            "name": "Hide Elevation",
-            "hint": "Hide elevation from the tokens",
-            "opt0": "Don't Hide",
-            "opt1": "Hide for players",
-            "opt2": "Hide for everyone"
+        "err": {
+            "collision": "Levels: The attempted movement collides with at least one floor/ceiling",
+            "tokenOOB": "Levels: The token %n height exceeds the ceiling of the currently selected level. Please manually set the token height or make your level higher. Find out more <a href='https://wiki.theripper93.com/free/wall-height#token-height' target='_blank'>here</a>.",
+            "wallheight": "WARNING! Levels requires Wall Height to be version 4.1.0 or higher to work correctly.",
+            "lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
+            "tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!"
         },
-        "revealTokenInFog": {
-            "name": "Reveal token in fog",
-            "hint": "If a token is visible, reveal the fog of war around that token"
-        }
-    },
-    "tileconfig": {
-        "noOverhead": "This is NOT an overhead tile, this tile will be rendered at the background elevation. To change these settings, please enable the 'Is Overhead?' option in the overhead tab.",
-        "occlusionNone": "Occlusion Mode is set to 'None', this tile will not block sight. Set Occlusion Mode to 'Fade' if you want this tile to block sight.",
-        "rangeTop": {
-            "name": "Height (Top)"
+        "info": {
+            "advancedMode": "Levels: Advanced Mode option in Better Roofs has been enabled."
         },
-        "rangeBottom": {
-            "name": "Height (Bottom)"
+        "firsttime": {
+            "dialog": ""
         },
-        "showIfAbove": {
-            "name": "Show even when below?",
-            "hint": "If enabled, the tile will be shown even if the token is below the bottom height range (example use, balconies)"
-        },
-        "showAboveRange": {
-            "name": "Max Elevation Difference",
-            "hint": "When 'Show even when below?' is enabled, this is the maximum elevation difference between the token and the tile, past this value the tile will no longer show."
-        },
-        "isBasement": {
-            "name": "Strict Range",
-            "hint": "If enabled, the tile will only be shown if the token is inside the tile range, this means that a token above the top range will not see this tile."
-        },
-        "noFogHide": {
-            "name": "Don't hide this tile in the Fog",
-            "hint": "Exclude this tile from Level's 'Advanced Fog of War'."
-        },
-        "range": {
-            "unit": "Elevation"
-        },
-        "excludeFromChecker": {
-            "name": "Exclude from Scene Checker"
-        },
-        "noCollision": {
-            "name": "Allow Sight",
-            "hint": "If enabled, the tile will not block sight."
-        },
-        "allWallBlockSight": {
-            "name": "All Walls Block Sight",
-            "hint": "When checked, all walls under this tile will count as vision blocking when the tile is not occluded."
-        }
-    },
-    "drawingconfig": {
-        "hb": {
-            "name": "Height (Bottom)"
-        },
-        "ht": {
-            "name": "Height (Top)"
-        },
-        "range": {
-            "name": "Hole Range"
-        },
-        "elevatorFloors": {
-            "name": "Elevator Floors",
-            "hint": "Define Floors as: elevation,name|elevation,name... - eg. 0,Ground Floor|10,First Floor..."
-        },
-        "isHole": {
-            "name": "Levels Drawing Mode",
-            "opt0": "None",
-            "opt1": "Hole",
-            "opt2": "Stair",
-            "opt21": "Stair (One Way - Down)",
-            "opt22": "Stair (One Way - Up)",
-            "opt3": "Elevator"
-        }
-    },
-    "drawingHud": {
-        "title": "Toggle Locked State for Stair"
-    },
-    "tokenconfig": {
-        "tokenHeight": {
-            "name": "Token LOS Height",
-            "unit": "(Distance)"
-        }
-    },
-    "template": {
-        "elevation": {
-            "name": "Elevation"
-        },
-        "special": {
-            "name": "Special"
-        },
-        "depth": {
-            "name": "Depth"
-        }
-    },
-    "sceneconfig": {
-        "backgroundElevation": {
-            "name": "Background Elevation",
-            "notes": "An elevation in distance units which configures the height of the background image and underfoot tiles."
-        },
-        "weatherElevation": {
-            "name": "Weather Elevation",
-            "notes": "An elevation in distance units which configures the height of the weather effects."
-        },
-        "lightMasking": {
-            "name": "Levels: Don't disable lights",
-            "notes": "When enabled, Levels will not take control of Light visibility, this option should be disabled in scenes that make use of multiple levels."
-        }
-    },
-    "controls": {
-        "main": {
-            "name": "Levels"
-        },
-        "levelsview": {
-            "name": "Enable Levels View/Placement"
-        },
-        "definelevels": {
-            "name": "Edit Levels"
-        },
-        "levelup": {
-            "name": "Up one Level"
-        },
-        "leveldown": {
-            "name": "Down one Level"
-        },
-        "levelsroof": {
-            "name": "Roofs View/Placement"
-        },
-        "levelshole": {
-            "name": "Place drawings as Stairs when enabled, place as holes when disabled"
-        },
-        "levelsclear": {
-            "name": "Clear Levels"
-        },
-        "placeOverhead": {
-            "name": "Place tiles as overhead tiles 'inside' levels"
-        },
-        "setTemplateElevation": {
-            "name": "Set elevation for next placed template"
-        },
-        "suppressBrmode": {
-            "name": "Suppress Better Roofs mode application"
-        }
-    },
-    "dialog": {
-        "levelsclear": {
-            "title": "Clear Levels",
-            "content": "Clear all stored levels?"
-        },
-        "define": {
-            "warn": "Define levels as: bottom,top|bottom,top - eg. 0,9|10,19|20,29",
-            "title": "Define Levels for this Scene",
-            "text": "Levels: "
-        },
-        "removeLevel": {
-            "title": "Remove Level",
-            "content": "Are you sure you want to remove this level?"
-        },
-        "getFromScene": {
-            "title": "Get Levels from Scene",
-            "content": "Get Levels from current scene? This will overwrite your current levels"
-        },
-        "elevator": {
-            "title": "Levels - Choose a Floor"
-        },
-        "elevation": {
-            "title": "Set Elevation for next Template placement"
-        },
-        "sceneDrop": {
-            "title": "Levels - Scene Drop",
-            "content": "All elements from the dropped scene will be placed at the current level, are you sure you want to continue?"
-        },
-        "checkScene": {
-            "title": "Levels - Scene Checker",
-            "content": "Detected tiles with polygons that were possibly not autodetected or defined correctly, please doublecheck the following tiles:",
-            "learnMore": "Don't Know what the Polygon is? Having other issues? Check out the Levels page, it includes a video dedicated to the Polygon!",
-            "noIssues": "No Issues Detected!",
-            "excluded": "Excluded from Check"
-        }
-    },
-    "ui": {
-        "title": "Levels - Layer Tool",
-        "players": "Show Players",
-        "stair": "Place Drawings as Stairs",
-        "addLevel": "Add a new level",
-        "editLevels": "Edit Levels",
-        "getFromScene": "Get Levels from Scene",
-        "clearLevels": "Clear Levels",
-        "debugScene": "Debug Scene (Red means issues detected)",
-        "minElevDiff": "Minimum Level Size",
-        "warning": "WARNING! 'Don't disable lights' is enabled in the Scene Settings - Multiple levels will not work correctly. Click to resolve this issue."
-    },
-    "yesnodialog": {
-        "yes": "Confirm",
-        "no": "Cancel"
-    },
-    "widget": {
-        "title": "Levels",
-        "element": "Level"
-    },
-    "form": {
-        "bottom": "Bottom:",
-        "top": "Top:",
-        "name": "Name:",
-        "currentLevel": "Current Levels",
-        "addNew": "Add a new level",
-        "tip": "*Levels should not overlap (eg. 0,9 / 10,19 / 20,29)",
-        "suggestedLevels": "Generate Suggested Levels",
-        "autoLevels": "Get levels from Scene"
-    },
-    "err": {
-        "collision": "Levels: The attempted movement collides with at least one floor/ceiling",
-        "tokenOOB": "Levels: The token %n height exceeds the ceiling of the currently selected level. Please manually set the token height or make your level higher. Find out more <a href='https://wiki.theripper93.com/free/wall-height#token-height' target='_blank'>here</a>.",
-        "wallheight": "WARNING! Levels requires Wall Height to be version 4.1.0 or higher to work correctly.",
-        "lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
-        "tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!"
-    },
-    "info": {
-        "advancedMode": "Levels: Advanced Mode option in Better Roofs has been enabled."
-    },
-    "firsttime": {
-        "dialog": ""
-    },
-    "conflicts": {
-        "midiqol": {
-            "tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "Enabling the 'Players control owned hidden tokens' option in MidiQOL will cause token visibility issues. Please disable this option in the module settings."
+            }
         }
     }
 }
