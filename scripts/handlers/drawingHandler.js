@@ -10,9 +10,7 @@ export class DrawingHandler {
     return isVisible;
   }
 
-  static executeStairs(updates, token) {
-    
-    if ("x" in updates || "y" in updates) {
+  static _executeStairs(updates, token) {
       let stairs = this.getStairs();
       let tokenX = updates.x || token.x;
       let tokenY = updates.y || token.y;
@@ -91,6 +89,18 @@ export class DrawingHandler {
         setTimeout(function () {
           token?.update(newUpdates);
         }, duration);
+      }
+    }
+
+  static executeStairs(updates, token) {
+    if ("x" in updates || "y" in updates) {
+      const canvasToken = canvas.tokens.placeables.find(t => t.id === token._id);
+      if (canvasToken && canvasToken._animation) {
+        canvasToken._animation.then(_ => {
+          this._executeStairs(updates, token);
+        });
+      } else {
+        this._executeStairs(updates, token);
       }
     }
   }
