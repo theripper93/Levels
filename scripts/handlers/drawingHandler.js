@@ -79,18 +79,12 @@ export class DrawingHandler {
           .click();
       }
       if (newUpdates) {
-        const s = canvas.dimensions.size;
-        const oldToken = canvas.tokens.get(token.id);
-        const updateX = updates.x || oldToken.x;
-        const updateY = updates.y || oldToken.y;
-        const dist = Math.sqrt(
-          Math.pow(oldToken.x - updateX, 2) + Math.pow(oldToken.y - updateY, 2)
-        );
-        const speed = s * 10;
-        const duration = (dist * 1000) / speed;
-        setTimeout(function () {
+        const animation = canvas.tokens.get(token.id)?._animation;
+        if (animation) {
+          animation.then(() => token?.update(newUpdates));
+        } else {
           token?.update(newUpdates);
-        }, duration);
+        }
       }
     }
   }

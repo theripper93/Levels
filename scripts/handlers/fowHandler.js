@@ -10,6 +10,11 @@ export class FoWHandler {
       canvas.effects.visibility.explored.addChild(this.revealTokenContainer);
       Hooks.callAll("levelsAdvancedFogInit", this.advancedFogContainer);
     })
+    Hooks.on("initializeVisionSources", () => {
+      canvas.effects.visibility.explored.addChild(this.advancedFogContainer);
+      canvas.effects.visibility.explored.addChild(this.revealTokenContainer);
+      Hooks.callAll("levelsAdvancedFogInit", this.advancedFogContainer);
+    });
     Hooks.on("deleteTile", (tile)=>{
       this.removeTileFogMask(tile.id);
     })
