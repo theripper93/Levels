@@ -414,7 +414,6 @@ Hooks.on("renderTileConfig", (app, html, data) => {
   `);
     html.on("change", "input", (e) => {
         const isOverhead = html.find(`input[name="overhead"]`).is(":checked");
-        debugger;
         const occlusionMode = html.find(`select[name="occlusion.mode"]`).val();
         const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");
         injHtml.find("input").prop("disabled", !isOverhead);
