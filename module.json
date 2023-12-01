@@ -64,19 +64,19 @@
       "private": false
     }
   ],
-  "packFolders":[
+  "packFolders": [
     {
-        "name": "Levels",
-        "sorting": "a",
-        "color": "#ffa200",
-        "ownership": {
-          "PLAYER": "NONE"
-        },
-        "packs":[
-          "levelsmacros",
-          "maps"
-        ]
-      }
+      "name": "Levels",
+      "sorting": "a",
+      "color": "#ffa200",
+      "ownership": {
+        "PLAYER": "NONE"
+      },
+      "packs": [
+        "levelsmacros",
+        "maps"
+      ]
+    }
   ],
   "url": "https://github.com/theripper93/Levels",
   "manifest": "https://github.com/theripper93/Levels/releases/latest/download/module.json",
