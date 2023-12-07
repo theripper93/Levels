@@ -79,12 +79,14 @@ export class DrawingHandler {
           .click();
       }
       if (newUpdates) {
-        const animation = canvas.tokens.get(token.id)?._animation;
-        if (animation) {
-          animation.then(() => token?.update(newUpdates));
-        } else {
-          token?.update(newUpdates);
-        }
+          Hooks.once("updateToken", (token, updates) => {
+              const animation = canvas.tokens.get(token.id)?._animation;
+              if (animation) {
+                  animation.then(() => token?.update(newUpdates));
+              } else {
+                  token?.update(newUpdates);
+              }
+          });
       }
     }
   }
@@ -117,6 +119,7 @@ export class DrawingHandler {
   }
 
   static async renderElevatorDalog(levelsFlag) {
+    //await new Promise((resolve) => setTimeout(resolve, 1000));
     let elevatorFloors = [];
     levelsFlag.split("|").forEach((f) => {
       elevatorFloors.push(f.split(","));

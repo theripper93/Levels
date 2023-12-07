@@ -2,12 +2,6 @@ export function registerWrappers() {
 
     const LevelsConfig = CONFIG.Levels
     const computeUI = LevelsConfig.handlers.UIHandler.UIVisible
-    /*Hooks.on("refreshTile", (placeable) => {
-        
-        const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
-        placeable.visible = placeable.visible && visible;
-        computeUI(placeable);
-    })*/
 
     Hooks.on("refreshTile", (placeable) => {
         const visible = LevelsConfig.handlers.TileHandler.isTileVisible(placeable);
@@ -70,6 +64,13 @@ export function registerWrappers() {
         computeUI(placeable);
     })
 
+    Hooks.on("activateTilesLayer ", () => {
+        if(CONFIG.Levels.UI?.rangeEnabled){
+            ui.controls.control.foreground = true;
+            canvas.tiles._activateSubLayer(true);
+        }
+    })
+
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
@@ -128,13 +129,6 @@ export function registerWrappers() {
         },
         "WRAPPER"
     );
-
-    Hooks.on("activateTilesLayer ", () => {
-        if(CONFIG.Levels.UI?.rangeEnabled){
-            ui.controls.control.foreground = true;
-            canvas.tiles._activateSubLayer(true);
-        }
-    })
 
     const visibilityTestObjectStack = [];
     libWrapper.register(
@@ -199,15 +193,13 @@ export function registerWrappers() {
         { perf_mode: "FAST" }
     );
 
-    if(!game.modules.get("perfect-vision")?.active){
-        libWrapper.register(
-            LevelsConfig.MODULE_ID,
-            "DetectionMode.prototype._testRange",
-            LevelsConfig.handlers.SightHandler._testRange,
-            "OVERRIDE",
-            { perf_mode: "FAST" }
-        );
-    }
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "DetectionMode.prototype._testRange",
+        LevelsConfig.handlers.SightHandler._testRange,
+        "OVERRIDE",
+        { perf_mode: "FAST" }
+    );
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
