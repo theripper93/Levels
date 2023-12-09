@@ -270,7 +270,8 @@
             "tokenOOB": "Levels: The token %n height exceeds the ceiling of the currently selected level. Please manually set the token height or make your level higher. Find out more <a href='https://wiki.theripper93.com/free/wall-height#token-height' target='_blank'>here</a>.",
             "wallheight": "WARNING! Levels requires Wall Height to be version 4.1.0 or higher to work correctly.",
             "lessfog": "Levels: WARNING! Less Fog detected - token visibility will not work as expected, please disable either module",
-            "tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!"
+            "tokenheight": "Levels: WARNING! Detected 'Enable Token Height' option enabled in module Wall Height - this setting is incompatible with Levels and has been disabled!",
+            "elevatedvision": "Levels: WARNING! Detected 'Default for automatic token elevation' option enabled in module 'Elevated Vision' - this setting is known to disrupt Levels regular functionality and has been disabled!"
         },
         "info": {
             "advancedMode": "Levels: Advanced Mode option in Better Roofs has been enabled."

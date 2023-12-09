@@ -12,4 +12,15 @@ export function setupWarnings() {
             ui.notifications.error(game.i18n.localize("levels.err.tokenOOB").replace("%n", token.document.name), {permanent: true});
         }
     });
+
+    //MODULE INCOMPATIBILITY
+
+    if(!game.user.isGM) return;
+
+    if (game.modules.get("elevatedvision")?.active && game.settings.get("elevatedvision", "auto-change-elevation")) {
+        ui.notifications.warn("levels.err.elevatedvision", {permanent: true, localize: true});
+        game.settings.set("elevatedvision", "auto-change-elevation", false);
+    }
+
+
 }
