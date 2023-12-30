@@ -224,6 +224,7 @@ export class SightHandler {
           x: args[0],
           y: args[1],
           z: testTarget.losHeight,
+          object: testTarget
         };
         result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, point, this, this.config.type);
     }else{
@@ -238,10 +239,12 @@ export class SightHandler {
    * @returns {boolean} Whether the wall should be ignored
    */
   static shouldIgnoreWall(wall, collisionType, options) {
+    const proximity = this.shouldIgnoreProximityWall(wall.document, options.A, options.B, options.source?.vision?.data?.externalRadius ?? 0)
     if (collisionType === 0) {
       return (
         wall.document.sight === CONST.WALL_SENSE_TYPES.NONE ||
-        wall.document.sight > 20 ||
+        proximity ||
+        //wall.document.sight > 20 ||
         (wall.document.door != 0 && wall.document.ds === 1)
       );
     } else if (collisionType === 1) {
@@ -264,6 +267,20 @@ export class SightHandler {
     }
   }
 
+  static shouldIgnoreProximityWall(document, source, target, externalRadius = 0) {
+    if(!source || !target) return false;
+    const d = document.threshold?.sight
+    if (!d || d.sight < 30) return false; // No threshold applies
+    const proximity = document.sight === CONST.WALL_SENSE_TYPES.PROXIMITY;
+    const pt = foundry.utils.closestPointToSegment(source, document.object.A, document.object.B);
+    //const ptTarget = foundry.utils.closestPointToSegment(target, document.object.A, document.object.B);
+    //const targetDistance = Math.hypot(ptTarget.x - target.x, ptTarget.y - target.y);
+    const sourceDistance = Math.hypot(pt.x - source.x, pt.y - source.y);
+    const sourceTargetDistance = Math.hypot(source.x - target.x, source.y - target.y);
+    const thresholdDistance = d * document.parent.dimensions.distancePixels;
+    return proximity ? sourceTargetDistance <= thresholdDistance || sourceDistance <= thresholdDistance / 2 : sourceDistance + externalRadius > thresholdDistance;
+  }
+
   /**
    * Perform a collision test between 2 point in 3D space
    * @param {Object} p0 - a point in 3d space {x:x,y:y,z:z} where z is the elevation
@@ -272,7 +289,7 @@ export class SightHandler {
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
-   static testCollision(p0, p1, type = "sight", options) {
+  static testCollision(p0, p1, type = "sight", options) {
     if (canvas?.scene?.flags['levels-3d-preview']?.object3dSight) {
       if (!game.Levels3DPreview?._active) return true;
       return game.Levels3DPreview.interactionManager.computeSightCollision(
@@ -287,7 +304,12 @@ export class SightHandler {
     const z0 = p0.z;
     const x1 = p1.x;
     const y1 = p1.y;
-    const z1 = p1.z;
+     const z1 = p1.z;
+     
+     options.A = {...p0};
+    options.B = {...p1};
+    options.targetObject = p1.object ?? null;
+
      const TYPE = type == "sight" ? 0 : type == "sound" ? 2 : type == "light" ? 3 : 1;
      const ALPHATTHRESHOLD = type == "sight" ? 0.99 : 0.1;
     //If the point are on the same Z axis return the 3d wall test
@@ -450,7 +472,7 @@ export class SightHandler {
    * @param {String} type - "sight" or "move"/"collision" or "sound" or "light" (defaults to "sight")
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
-   static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight") {
+  static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight") {
     const p0 = tokenOrPoint1 instanceof Token ? {
       x: tokenOrPoint1.vision.x,
       y: tokenOrPoint1.vision.y,
