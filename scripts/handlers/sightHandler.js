@@ -289,7 +289,7 @@ export class SightHandler {
    * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
    **/
 
-  static testCollision(p0, p1, type = "sight", options) {
+  static testCollision(p0, p1, type = "sight", options = {}) {
     if (canvas?.scene?.flags['levels-3d-preview']?.object3dSight) {
       if (!game.Levels3DPreview?._active) return true;
       return game.Levels3DPreview.interactionManager.computeSightCollision(
