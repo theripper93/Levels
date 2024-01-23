@@ -79,6 +79,9 @@ export class DrawingHandler {
           .click();
       }
       if (newUpdates) {
+        newUpdates.flags ??= {};
+        newUpdates.flags.levels ??= {};
+        newUpdates.flags.levels.stairUpdate = true;
           Hooks.once("updateToken", (token, updates) => {
               const animation = canvas.tokens.get(token.id)?._animation;
               if (animation) {

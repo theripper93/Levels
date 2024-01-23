@@ -12,9 +12,13 @@ Hooks.on("controlToken", (token, controlled)=>{
   CONFIG.Levels.handlers.RefreshHandler.refreshPlaceables();
 })
 
-Hooks.on("preUpdateToken", (token, updates) => {
-  if(token?.object?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
-  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D){
+Hooks.on("preUpdateToken", (token, updates, updateData) => {
+  if (token?.object?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
+  const isStairUpdate = updates?.flags?.levels?.stairUpdate;
+  if (isStairUpdate) {
+    delete updates.flags.levels.stairUpdate;
+  }
+  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const prevElevation = token.object.losHeight;
     const newElevation = prevElevation - elevDiff;
