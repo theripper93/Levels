@@ -157,7 +157,7 @@ export class DrawingHandler {
     function updateElev(event) {
       let newElev = parseFloat(event.target.id);
       if (newElev || newElev == 0)
-        canvas.tokens.controlled[0]?.document?.update({ elevation: newElev });
+        canvas.tokens.controlled[0]?.document?.update({ elevation: newElev, flags: { levels: { stairUpdate: true } } });
     }
   }
 
