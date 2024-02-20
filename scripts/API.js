@@ -95,6 +95,20 @@ export class LevelsAPI {
             const changed = await scene.updateEmbeddedDocuments(dClass.documentName, updates);
             result.push({ documentClass: dClass, changed: changed });
         }
+
+
+        //update scene levels
+
+        const sceneLevels = scene.getFlag("levels", "sceneLevels");
+        const newSceneLevels = sceneLevels.map((level) => {
+            return [
+                parseFloat(level[0]) * rescaleFactor,
+                parseFloat(level[1]) * rescaleFactor,
+                level[2],
+            ];
+        });
+        await scene.setFlag("levels", "sceneLevels", newSceneLevels);
+
         return result;
     }
 }

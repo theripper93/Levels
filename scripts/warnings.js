@@ -22,5 +22,9 @@ export function setupWarnings() {
         game.settings.set("elevatedvision", "auto-change-elevation", false);
     }
 
+    if (game.modules.get("elevatedvision")?.active) {
+        ui.notifications.warn("levels.err.elevatedvisioncompat", {permanent: true, localize: true});
+    }
+
 
 }
