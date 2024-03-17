@@ -25,7 +25,9 @@ export class UIHandler {
             rangeBottom = placeable.losHeight;
             rangeTop = placeable.losHeight;
         }
-        placeable.visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop);
+        const visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop);
+        placeable.visible = visible;
+        return visible;
     }
 
     static tokenUIWrapperIsVisible(wrapped, ...args) {
