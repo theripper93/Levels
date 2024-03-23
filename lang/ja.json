@@ -1,96 +1,290 @@
 {
-    "levels.modulename": "階層",
-    "levels.settings.enableTooltips.name": "ツールチップを表示",
-    "levels.settings.enableTooltips.hint": "階層オブジェクトにホバーする時、ツールチップで詳細情報を表示する",
-    "levels.settings.tokenElevScale.name": "高度でコマのサイズを変える",
-    "levels.settings.tokenElevScale.hint": "現在選択しているコマを視点として他のコマの大きさを高度によって変更する（遠ければ遠いほど小さくなる）。",
-    "levels.settings.tokenElevScaleMultiSett.name": "高度カスタム倍率",
-    "levels.settings.tokenElevScaleMultiSett.hint": "高度の倍率を設定します。大きな数字はコマを大きくし、1より小さい数字はコマを小さくします。",
-    "levels.settings.fogHiding.name": "高度なマスク",
-    "levels.settings.fogHiding.hint": "マスクの除去状況を階層ごとに個別管理する。",
-    "levels.settings.lockElevation.name": "高度設定ロック",
-    "levels.settings.lockElevation.hint": "PLにコマの設定から高度を変更できないようにします。ただし、コマの編集権限を持っている場合はコマの詳細設定から結局変更ができるのでご注意ください。",
-    "levels.settings.defaultLosHeight.name": "デフォルトの高さ",
-    "levels.settings.defaultLosHeight.hint": "コマの空間上の高さ（身長）をマップ単位で指定します、3次元空間では目が位置するところです。デフォルトは6単位です。",
-    "levels.settings.autoLOSHeight.name": "高度自動設定",
-    "levels.settings.autoLOSHeight.hint": "現在のコマの縮尺・サイズに合わせて高度を自動的に算出します。デフォルトの設定を無視しますが、一度でもマニュアルで記入すると自動計算より優先されます。",
-    "levels.settings.debugRaycast.name": "デバッグ：視線を表示",
-    "levels.settings.debugRaycast.hint": "3Dの視線を表示します。（緑：見える箇所、赤：見えない箇所）",
-    "levels.settings.preciseLightOcclusion.name": "試験機能：正確なオクルージョン",
-    "levels.settings.preciseLightOcclusion.hint": "パフォーマンスが悪くなりますが、光の無駄なアーティファクトを除去します。",
-    "levels.settings.preciseTokenVisibility.name": "正確なコマの視線",
-    "levels.settings.preciseTokenVisibility.hint": "有効化することでコマの視線を中央からではなく、角からも計算するようになります。パフォーマンスは少し悪くなります。",
-    "levels.settings.blockSightMovement.name": "柵",
-    "levels.settings.blockSightMovement.hint": "有効化時、視線をブロックしないウォールは移動をブロックするようになります。",
-    "levels.settings.forceUiRefresh.name": "UI再描画",
-    "levels.settings.forceUiRefresh.hint": "階層ModのUIを強制的に再描画させる回数を増やします。パフォーマンスが悪くなり、特定のシステムでは機能しない恐れがあります（PF2等）",
-    "levels.settings.hideElevation.name": "高低差隠匿",
-    "levels.settings.hideElevation.hint": "コマから高低差の情報を隠すかどうか設定します。",
-    "levels.settings.hideElevation.opt0": "隠さない",
-    "levels.settings.hideElevation.opt1": "PLから隠す",
-    "levels.settings.hideElevation.opt2": "全員から隠す",
-    "levels.settings.revealTokenInFog.name": "マスク中にコマを表示",
-    "levels.settings.revealTokenInFog.hint": "コマが少しでも見えているのであればそのコマの全体像のマスクだけ除去されます。",
-    "levels.tileconfig.rangeTop.name": "高さ（上）",
-    "levels.tileconfig.rangeBottom.name": "高さ（下）",
-    "levels.tileconfig.showIfAbove.name": "下層に居ても表示する？",
-    "levels.tileconfig.showAboveRange.name": "最大高低差",
-    "levels.tileconfig.isBasement.name": "地下室？",
-    "levels.tileconfig.noFogHide.name": "このタイトルをマスクしない",
-    "levels.tileconfig.range.unit": "高度",
-    "levels.drawingconfig.hb.name": "高さ（下）",
-    "levels.drawingconfig.ht.name": "高さ（上）",
-    "levels.drawingconfig.range.name": "穴の距離",
-    "levels.drawingconfig.elevatorFloors.name": "階層の床設定",
-    "levels.drawingconfig.elevatorFloors.hint": "床を設定します。「高度,名前｜高度,名前」のように設定します。例： 0,1階|10,2階　等",
-    "levels.drawingconfig.isHole.name": "階層の描画設定",
-    "levels.drawingconfig.isHole.opt0": "無し",
-    "levels.drawingconfig.isHole.opt1": "穴",
-    "levels.drawingconfig.isHole.opt2": "階段",
-    "levels.drawingconfig.isHole.opt3": "エレベータ",
-    "levels.drawingHud.title": "階段のロック状態を解除",
-    "levels.tokenconfig.tokenHeight.name": "コマの視線の高さ",
-    "levels.tokenconfig.tokenHeight.unit": "(距離)",
-    "levels.template.elevation.name": "高度",
-    "levels.template.special.name": "特殊",
-    "levels.controls.main.name": "階層",
-    "levels.controls.levelsview.name": "階層配置モードに移行する",
-    "levels.controls.definelevels.name": "階層編集",
-    "levels.controls.levelup.name": "上の階層に移動",
-    "levels.controls.leveldown.name": "下の階層に移動",
-    "levels.controls.levelsroof.name": "階層屋根配置モードに移行する",
-    "levels.controls.levelshole.name": "有効化時は画像を階段として配置し、無効化時は穴として配置します。",
-    "levels.controls.levelsclear.name": "階層クリア",
-    "levels.controls.placeOverhead.name": "有効化時、タイルを階層の「中の前景タイル」として配置する。",
-    "levels.controls.setTemplateElevation.name": "次に配置するテンプレートの階層を指定",
-    "levels.controls.suppressBrmode.name": "Better roofsの機能を抑制する",
-    "levels.dialog.levelsclear.title": "階層クリア",
-    "levels.dialog.levelsclear.content": "保存されたすべての階層をクリアしますか？",
-    "levels.dialog.define.warn": "階層は「床,天井|床,天井…」のように指定します。例：0,9|10,19|20,29",
-    "levels.dialog.define.title": "このシーンの階層を定義する",
-    "levels.dialog.define.text": "階層： ",
-    "levels.dialog.removeLevel.title": "階層を削除",
-    "levels.dialog.removeLevel.content": "本当にこの階層を削除しますか？",
-    "levels.dialog.getFromScene.title": "シーンから階層を取得する",
-    "levels.dialog.getFromScene.content": "現在のシーンから階層の設定を取得しますか？既に設定されている階層は失われます。",
-    "levels.dialog.elevator.title": "階層 ー 選択",
-    "levels.dialog.elevation.title": "次のテンプレートの配置階層を設定",
-    "levels.ui.title": "階層 ー レイヤー",
-    "levels.yesnodialog.yes": "確認",
-    "levels.yesnodialog.no": "キャンセル",
-    "levels.widget.title": "階層",
-    "levels.widget.element": "階層",
-    "levels.form.bottom": "床：",
-    "levels.form.top": "天井：",
-    "levels.form.name": "名前：",
-    "levels.form.currentLevel": "現在の階層",
-    "levels.form.addNew": "階層を追加",
-    "levels.form.tip": "*階層は重複しないようにしてください（正しい例： 0,9 / 10,19 / 20,29)",
-    "levels.form.suggestedLevels": "お勧め階層生成",
-    "levels.form.autoLevels": "シーンから階層を取得",
-    "levels.err.collision": "その移動は少なくとも1つの床・天井と衝突します。",
-    "levels.err.lessfog": "階層：警告！Less fogモジュールが検出されました。マスク除去が正しく機能しない可能性があります。いずれかのModを無効化してください。",
-    "levels.err.tokenheight": "階層：警告！Wall Heightモジュールのコマの身長を管理する機能が検出されましたが、このモジュールでは使用不能なため自動的に無効化しました。",
-    "levels.firsttime.dialog": "",
-    "levels.conflicts.midiqol.tokenvis": "Midi-Qolの「プレイヤーは所有する非表示トークンをコントロールできる」を有効化するとコマの視認性が正常に動作しない可能性があります。この機能を無効化してください。"
+    "levels": {
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "MidiQOL で「プレーヤーが所有する隠しトークンをコントロールする」オプションを有効にすると、トークンの可視性の問題が発生します。\nモジュール設定でこのオプションを無効にしてください。"
+            }
+        },
+        "controls": {
+            "definelevels": {
+                "name": "レベルの編集"
+            },
+            "leveldown": {
+                "name": "1 つ下のレベル"
+            },
+            "levelsclear": {
+                "name": "レベルをクリアする"
+            },
+            "levelshole": {
+                "name": "有効な場合は図面を階段として配置し、無効な場合は穴として配置します"
+            },
+            "levelsroof": {
+                "name": "屋根のビュー/配置"
+            },
+            "levelsview": {
+                "name": "レベルの表示/配置を有効にする"
+            },
+            "levelup": {
+                "name": "1 つ上のレベルへ"
+            },
+            "main": {
+                "name": "レベル"
+            },
+            "placeOverhead": {
+                "name": "タイルをオーバーヘッド タイルとして「内部」レベルに配置します"
+            },
+            "setTemplateElevation": {
+                "name": "次に配置されるテンプレートの標高を設定する"
+            },
+            "suppressBrmode": {
+                "name": "Better Roofs モードのアプリケーションを抑制する"
+            }
+        },
+        "dialog": {
+            "checkScene": {
+                "content": "自動検出されていないか、正しく定義されていない可能性があるポリゴンを含むタイルが検出されました。次のタイルを再確認してください。",
+                "excluded": "チェック対象外",
+                "learnMore": "ポリゴンが何なのかわからないですか?\n他に問題がありますか?\nレベル ページをチェックしてください。ポリゴン専用のビデオが含まれています。",
+                "noIssues": "問題は検出されませんでした。",
+                "title": "レベル - シーンチェッカー"
+            },
+            "define": {
+                "text": "レベル:",
+                "title": "このシーンのレベルを定義する",
+                "warn": "レベルを次のように定義します:bottom,top|bottom,top - 例: \n0,9|10,19|20,29"
+            },
+            "elevation": {
+                "title": "次のテンプレート配置の標高を設定します"
+            },
+            "elevator": {
+                "title": "レベル - フロアを選択してください"
+            },
+            "getFromScene": {
+                "content": "現在のシーンからレベルを取得しますか?\nこれにより、現在のレベルが上書きされます",
+                "title": "シーンからレベルを取得"
+            },
+            "levelsclear": {
+                "content": "保存されているレベルをすべてクリアしますか?",
+                "title": "レベルをクリアする"
+            },
+            "removeLevel": {
+                "content": "このレベルを削除してもよろしいですか?",
+                "title": "レベルの削除"
+            },
+            "sceneDrop": {
+                "content": "ドロップされたシーンのすべての要素が現在のレベルに配置されます。続行してもよろしいですか?",
+                "title": "レベル - シーンドロップ"
+            }
+        },
+        "drawingHud": {
+            "title": "階段のロック状態の切り替え"
+        },
+        "drawingconfig": {
+            "elevatorFloors": {
+                "hint": "フロアを次のように定義します: 標高,名前|標高,名前... - 例: \n0,1階|10,1階...",
+                "name": "エレベーター床"
+            },
+            "hb": {
+                "name": "高さ(下)"
+            },
+            "ht": {
+                "name": "高さ（上部）"
+            },
+            "isHole": {
+                "name": "レベル描画モード",
+                "opt0": "なし",
+                "opt1": "穴",
+                "opt2": "階段",
+                "opt21": "階段（一方通行 - 下り）",
+                "opt22": "階段 (一方通行 - 上り)",
+                "opt3": "エレベーター"
+            },
+            "range": {
+                "name": "穴の範囲"
+            }
+        },
+        "err": {
+            "collision": "レベル: 試みられた移動が少なくとも 1 つの床/天井に衝突します。",
+            "elevatedvision": "レベル: 警告!\nモジュール「Elevated Vision」で「自動トークン昇格のデフォルト」オプションが有効になっていることが検出されました - この設定はレベルの通常の機能を妨げることが知られているため、無効になっています。",
+            "elevatedvisioncompat": "レベル: 警告!\nモジュール「Elevated Vision」が検出されました - このモジュールはレベルの通常の機能を妨害することが知られているため、レベルと組み合わせて使用​​しないでください。",
+            "lessfog": "レベル: 警告!\n検出された霧が少なくなりました - トークンの可視性が期待どおりに機能しません。いずれかのモジュールを無効にしてください。",
+            "tokenOOB": "レベル: トークン %n の高さが、現在選択されているレベルの上限を超えています。\nトークンの高さを手動で設定するか、レベルを高くしてください。\n詳細については、<a href='https://wiki.theripper93.com/free/wall-height をご覧ください。",
+            "tokenheight": "レベル: 警告!\nモジュールの壁の高さで有効になっている「トークンの高さを有効にする」オプションが検出されました - この設定はレベルと互換性がないため、無効になっています。",
+            "wallheight": "警告！\nレベルが正しく動作するには、壁の高さがバージョン 4.1.0 以降である必要があります。"
+        },
+        "firsttime": {
+            "dialog": "。"
+        },
+        "form": {
+            "addNew": "新しいレベルを追加する",
+            "autoLevels": "シーンからレベルを取得",
+            "bottom": "底：",
+            "currentLevel": "現在のレベル",
+            "name": "名前：",
+            "suggestedLevels": "推奨レベルの生成",
+            "tip": "*レベルは重複しないでください (例: 0,9 / 10,19 / 20,29)",
+            "top": "上："
+        },
+        "info": {
+            "advancedMode": "レベル: Better Roofs の詳細モード オプションが有効になりました。"
+        },
+        "modulename": "レベル",
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "背景の標高",
+                "notes": "背景画像と足元のタイルの高さを構成する距離単位の標高。"
+            },
+            "lightMasking": {
+                "name": "レベル: ライトを無効にしないでください",
+                "notes": "有効にすると、レベルはライトの可視性を制御しなくなり、複数のレベルを使用するシーンではこのオプションを無効にする必要があります。"
+            },
+            "weatherElevation": {
+                "name": "気象標高",
+                "notes": "天候の影響の高さを構成する距離単位の標高。"
+            }
+        },
+        "settings": {
+            "autoLOSHeight": {
+                "hint": "サイズとスケールに基づいてトークンの高さを自動的に計算します。\nデフォルトのトークンの高さは無視されますが、0 に設定されていないトークンごとの設定は自動計算よりも優先されます。",
+                "name": "自動トークンの高さ"
+            },
+            "blockSightMovement": {
+                "hint": "有効にすると、視界を妨げない高さの壁でも動きが制限されます。",
+                "name": "フェンス"
+            },
+            "debugRaycast": {
+                "hint": "3D サイト光線を表示します (緑色が表示され、赤色が表示されません)",
+                "name": "デバッグ: 光線の視覚化を有効にする"
+            },
+            "defaultLosHeight": {
+                "hint": "トークンの高さ（そのクリーチャーの目の位置）を単位で表したもの。\nデフォルトは6。",
+                "name": "デフォルトのトークンの高さ"
+            },
+            "enableTooltips": {
+                "hint": "レベルオブジェクトをホバーするときに上部と下部のツールチップを表示します",
+                "name": "ツールチップを有効にする"
+            },
+            "exactTokenVisibility": {
+                "hint": "このオプションが機能するには、正確なトークンの可視性が有効になっている必要があります。\nこのオプションは、トークンの角に対して 11 ポイントのチェックを実行します。 \n3D Canvas を使用している場合に推奨",
+                "name": "正確なトークンの可視性"
+            },
+            "fogHiding": {
+                "hint": "探索された戦争の霧から未探索のフロアを隠す",
+                "name": "高度な戦争の霧"
+            },
+            "forceUiRefresh": {
+                "hint": "パフォーマンスを犠牲にして、レベル UI のより頻繁な更新を強制します。有効にすると、特定のシステム (PF2e など) で問題が発生する可能性があります。",
+                "name": "UIを強制的に更新する"
+            },
+            "hideElevation": {
+                "hint": "トークンから標高を非表示にする",
+                "name": "標高を非表示にする",
+                "opt0": "隠さないでください",
+                "opt1": "プレイヤーのために隠す",
+                "opt2": "みんなのために隠れて"
+            },
+            "lockElevation": {
+                "hint": "プレイヤーがトークン HUD から標高を変更できないようにします。\nプレイヤーがトークンを編集する権限を持っている場合は、トークン構成で変更できることに注意してください。",
+                "name": "ロックの標高"
+            },
+            "preciseLightOcclusion": {
+                "hint": "パフォーマンスを犠牲にして光のオクルージョンアーティファクトを除去します",
+                "name": "実験的: 正確な光の遮断"
+            },
+            "preciseTokenVisibility": {
+                "hint": "このオプションを有効にすると、パフォーマンスが多少低下しますが、トークンの中心に加えて隅も照準をチェックします。",
+                "name": "正確なトークンの可視性"
+            },
+            "revealTokenInFog": {
+                "hint": "トークンが表示されている場合、そのトークンの周囲にある戦争の霧を明らかにします",
+                "name": "霧の中でトークンを明らかにする"
+            },
+            "tokenElevScale": {
+                "hint": "制御されているトークンの昇格に基づいてトークンのサイズを変更します",
+                "name": "標高スケール"
+            },
+            "tokenElevScaleMultiSett": {
+                "hint": "標高スケールにこの数値を掛けます。 \n1 より大きい数値はトークンを大きくし、1 より小さい数値はトークンを小さくします。",
+                "name": "標高スケール乗数"
+            }
+        },
+        "template": {
+            "depth": {
+                "name": "深さ"
+            },
+            "elevation": {
+                "name": "標高"
+            },
+            "special": {
+                "name": "特別"
+            }
+        },
+        "tileconfig": {
+            "allWallBlockSight": {
+                "hint": "チェックすると、タイルが遮られていない場合、このタイルの下にあるすべての壁が視界を遮るものとしてカウントされます。",
+                "name": "すべての壁が視界を遮る"
+            },
+            "excludeFromChecker": {
+                "name": "シーンチェッカーから除外"
+            },
+            "isBasement": {
+                "hint": "有効にすると、トークンがタイル範囲内にある場合にのみタイルが表示されます。これは、上部範囲より上のトークンにはこのタイルが表示されないことを意味します。",
+                "name": "厳密な範囲"
+            },
+            "noCollision": {
+                "hint": "有効にすると、タイルは視界を妨げません。",
+                "name": "視覚を許可する"
+            },
+            "noFogHide": {
+                "hint": "このタイルをレベルの「Advanced Fog of War」から除外します。",
+                "name": "このタイルを霧の中に隠さないでください"
+            },
+            "noOverhead": "これはオーバーヘッド タイルではありません。このタイルは背景の標高でレンダリングされます。\nこれらの設定を変更するには、「オーバーヘッドはありますか?」を有効にしてください。\nオーバーヘッドタブのオプション。",
+            "occlusionNone": "オクルージョン モードは「なし」に設定されており、このタイルは視界を妨げません。\nこのタイルで視界を遮りたい場合は、オクルージョン モードを「フェード」に設定します。",
+            "range": {
+                "unit": "標高"
+            },
+            "rangeBottom": {
+                "name": "高さ(下)"
+            },
+            "rangeTop": {
+                "name": "高さ（上部）"
+            },
+            "showAboveRange": {
+                "hint": "「以下の場合でも表示しますか？」の場合\nが有効になっている場合、これはトークンとタイルの間の最大標高差であり、この値を超えるとタイルは表示されなくなります。",
+                "name": "最大標高差"
+            },
+            "showIfAbove": {
+                "hint": "有効にすると、トークンが下部の高さの範囲を下回っている場合でもタイルが表示されます (使用例、バルコニー)。",
+                "name": "以下の場合でも表示しますか?"
+            }
+        },
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "トークン LOS 高さ",
+                "unit": "（距離）"
+            }
+        },
+        "ui": {
+            "addLevel": "新しいレベルを追加する",
+            "clearLevels": "レベルをクリアする",
+            "debugScene": "デバッグ シーン (赤は問題が検出されたことを意味します)",
+            "editLevels": "レベルの編集",
+            "getFromScene": "シーンからレベルを取得",
+            "minElevDiff": "最小レベルサイズ",
+            "players": "プレーヤーを表示",
+            "stair": "図面を階段として配置する",
+            "title": "レベル - レイヤーツール",
+            "tokenAttacher": "現在のレベルを基準にしてトークン アタッチャー プレハブを配置します<hr>プレハブを配置しない場合は、このオプションを無効にする必要があります",
+            "warning": "警告！\nシーン設定で「ライトを無効にしない」が有効になっています - 複数のレベルは正しく機能しません。\nクリックしてこの問題を解決してください。"
+        },
+        "widget": {
+            "element": "レベル",
+            "title": "レベル"
+        },
+        "yesnodialog": {
+            "no": "キャンセル",
+            "yes": "確認する"
+        }
+    }
 }

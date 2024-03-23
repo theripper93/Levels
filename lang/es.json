@@ -1,133 +1,290 @@
 {
-    "I18N.LANGUAGE": "Español",
-    "I18N.MAINTAINERS": "@Viriato139ac#0342",
-    "levels.modulename": "Levels (Niveles)",
-    "levels.settings.enableTooltips.name": "Habilitar globos",
-    "levels.settings.enableTooltips.hint": "Muestra globos de información de los niveles superior e inferior cuando se pasa el ratón por encima de objetos de nivel",
-    "levels.settings.tokenElevScale.name": "Cambiar tamaño de los iconos",
-    "levels.settings.tokenElevScale.hint": "Cambia el tamaño de los iconos en base a la elevación del icono que se está controlando",
-    "levels.settings.tokenElevScaleMultiSett.name": "Multiplicador de escala de elevación personalizado",
-    "levels.settings.tokenElevScaleMultiSett.hint": "Multiplica la escala de elevación por este número. Un número mayor que 1 hará los iconos más grandes, mientras que uno menor a 1, los hará más pequeños",
-    "levels.settings.fogHiding.name": "Niebla de guerra avanzada",
-    "levels.settings.fogHiding.hint": "Oculta las plantas que aún no han explorado de la niebla de guerra",
-    "levels.settings.lockElevation.name": "Bloquear elevación",
-    "levels.settings.lockElevation.hint": "Evita que los jugadores puedan cambiar la elevación desde el HUD del icono. Tenga en cuenta que si los jugadores tienen permisos para editar iconos, podrán cambiarlo en la configuración de los mismos",
-    "levels.settings.defaultLosHeight.name": "Altura de icono por defecto",
-    "levels.settings.defaultLosHeight.hint": "Altura, en unidades, de un icono (hasta donde la criatura tiene los ojos). Por defecto: 6",
-    "levels.settings.autoLOSHeight.name": "Altura de icono automática",
-    "levels.settings.autoLOSHeight.hint": "Calcula automáticamente la altura de un icono en base a su tamaño y escala. Se ignorará la altura de icono por defecto, aunque toda configuración de icono distinta de 0 tendrá prioridad sobre el cálculo automático",
-    "levels.settings.debugRaycast.name": "Depuración: Habilitar vista de rayos",
-    "levels.settings.debugRaycast.hint": "Muestra la vista 3D de rayos (verde visible, rojo no visible)",
-    "levels.settings.preciseLightOcclusion.name": "Experimental: obstrucción precisa del haz de luz",
-    "levels.settings.preciseLightOcclusion.hint": "Elimina artefactos de obstrucción del haz de luz, a coste de reducir el rendimiento",
-    "levels.settings.preciseTokenVisibility.name": "Visibilidad precisa de icono",
-    "levels.settings.preciseTokenVisibility.hint": "Al habilitar esta opción, se comprobará la visión desde las esquinas del icono, ademas de la habitual desde el centro, a coste de reducir el rendimiento",
-    "levels.settings.exactTokenVisibility.name": "Visibilidad exacta de icono",
-    "levels.settings.exactTokenVisibility.hint": "Se debe habilitar visibilidad precisa de icono para que esta opción funcione. Hará que se haga una comprobación de las esquinas de los iconos. Se sugiere usar esta opción si se está usando 3D Canvas",
-    "levels.settings.blockSightMovement.name": "Obstáculos",
-    "levels.settings.blockSightMovement.hint": "Al habilitarlo, los muros con altura que no restringen la visión, seguirán restringiendo el movimiento",
-    "levels.settings.forceUiRefresh.name": "Forzar recarga de la UI",
-    "levels.settings.forceUiRefresh.hint": "Fuerza que se refresque con mayor frecuenta la UI de niveles a costa de reducir el rendimiento; puede causar problemas en algunos sistemas (p.ej. PF2e)",
-    "levels.settings.hideElevation.name": "Ocultar elevación",
-    "levels.settings.hideElevation.hint": "No mostrar la elevación de los iconos",
-    "levels.settings.hideElevation.opt0": "No ocultar",
-    "levels.settings.hideElevation.opt1": "Ocultar a los jugadores",
-    "levels.settings.hideElevation.opt2": "Ocultar a todo el mundo",
-    "levels.settings.revealTokenInFog.name": "Revelar niebla en icono",
-    "levels.settings.revealTokenInFog.hint": "Si un icono es visible, revela la niebla de guerra a su alrededor",
-    "levels.tileconfig.noOverhead": "Esto no es una baldosa superior, esta baldosa será ignorada por niveles y se generará desde el final de la pila",
-    "levels.tileconfig.rangeTop.name": "Altura (superior)",
-    "levels.tileconfig.rangeBottom.name": "Altura (inferior)",
-    "levels.tileconfig.showIfAbove.name": "¿Mostrar incluso cuando se esté por debajo?",
-    "levels.tileconfig.showIfAbove.hint": "Si se habilita, la baldosa se mostrará incluso si el icono está por debajo del rango de altura inferior (por ejemplo, se puede usar en balcones)",
-    "levels.tileconfig.showAboveRange.name": "Diferencia máxima de elevación",
-    "levels.tileconfig.showAboveRange.hint": "Cuando se habilita '¿Mostrar incluso cuando esté por debajo?', esta será la máxima diferencia de elevación entre el icono y la baldosa, por encima de este valor, la baldosa no se mostrará",
-    "levels.tileconfig.isBasement.name": "¿Se trata del sótano?",
-    "levels.tileconfig.isBasement.hint": "Si se habilita, la baldosa solo se mostrará si el icono está dentro del rango de la baldosa, esto significa que un icono por encima del rango superior no verá la baldosa",
-    "levels.tileconfig.noFogHide.name": "No ocultar esta baldosa en la niebla",
-    "levels.tileconfig.noFogHide.hint": "Excluir esta baldosa del modo 'Niebla de guerra avanzada' de Levels",
-    "levels.tileconfig.range.unit": "Elevación",
-    "levels.tileconfig.excludeFromChecker.name": "Excluir del depurador de escenas",
-    "levels.tileconfig.noCollision.name": "Permitir visión",
-    "levels.tileconfig.noCollision.hint": "Si se habilita, la baldosa no bloqueará la visión",
-    "levels.tileconfig.allWallBlockSight.name": "Todos los muros bloquean la visión",
-    "levels.tileconfig.allWallBlockSight.hint": "Cuando se habilita, todos los muros bajo esta baldosa se tendrán en cuenta a la hora de bloquear la visión cuando la baldosa no está ocluida",
-    "levels.drawingconfig.hb.name": "Altura (inferior)",
-    "levels.drawingconfig.ht.name": "Altura (superior)",
-    "levels.drawingconfig.range.name": "Rango",
-    "levels.drawingconfig.elevatorFloors.name": "Plantas de elevador",
-    "levels.drawingconfig.elevatorFloors.hint": "Defina plantas como: elevación,nombre|elevación,nombre... - eg. 0,Planta baja|10,Primera planta...",
-    "levels.drawingconfig.isHole.name": "Modo de dibujo de niveles",
-    "levels.drawingconfig.isHole.opt0": "Ninguno",
-    "levels.drawingconfig.isHole.opt1": "Agujero",
-    "levels.drawingconfig.isHole.opt2": "Escaleras",
-    "levels.drawingconfig.isHole.opt21": "Escaleras (sentido único - descendentes)",
-    "levels.drawingconfig.isHole.opt22": "Escaleras (sentido único - ascendentes)",
-    "levels.drawingconfig.isHole.opt3": "Ascensor",
-    "levels.drawingHud.title": "Conmutar estado de bloqueo de las escaleras",
-    "levels.tokenconfig.tokenHeight.name": "Altura de la linea de visión de iconos",
-    "levels.tokenconfig.tokenHeight.unit": "(Distancia)",
-    "levels.template.elevation.name": "Elevación",
-    "levels.template.special.name": "Especial",
-    "levels.sceneconfig.backgroundElevation.name": "Elevación del fondo",
-    "levels.sceneconfig.backgroundElevation.notes": "Elevación en unidades de distancia que configura la altura de la imagen de fondo para las baldosas bajo los pies",
-    "levels.sceneconfig.weatherElevation.name": "Elevación del clima",
-    "levels.sceneconfig.weatherElevation.notes": "Elevación en unidades de distancia que configura la altura de los efectos climatológicos",
-    "levels.sceneconfig.lightMasking.name": "Máscara de luces",
-    "levels.sceneconfig.lightMasking.notes": "Muestra luces bajo la elevación actual y las enmascara usando baldosas. Esta característica tiene ciertas limitaciones, por favor consulte la documentación del módulo si quiere más información",
-    "levels.controls.main.name": "Niveles",
-    "levels.controls.levelsview.name": "Habilitar visión/colocación de niveles",
-    "levels.controls.definelevels.name": "Editar niveles",
-    "levels.controls.levelup.name": "Subir un nivel",
-    "levels.controls.leveldown.name": "Bajar un nivel",
-    "levels.controls.levelsroof.name": "Habilitar visión/colocación de tejados de nivel",
-    "levels.controls.levelshole.name": "Coloca un dibujo para las escaleras, si no se marca esta opción aparecerán agujeros",
-    "levels.controls.levelsclear.name": "Borrar niveles",
-    "levels.controls.placeOverhead.name": "Si se habilita, colocará baldosas superpuestas 'dentro' de los niveles",
-    "levels.controls.setTemplateElevation.name": "Ajuste la elevación para la la próxima plantilla",
-    "levels.controls.suppressBrmode.name": "Suprimir aplicación de modo Better Roofs",
-    "levels.dialog.levelsclear.title": "Borrar niveles",
-    "levels.dialog.levelsclear.content": "¿Eliminar todos los niveles almacenados?",
-    "levels.dialog.define.warn": "Defina los niveles como: inferior,superior|inferior,superior - eg. 0,9|10,19|20,29",
-    "levels.dialog.define.title": "Defina los niveles de esta escena",
-    "levels.dialog.define.text": "Niveles: ",
-    "levels.dialog.removeLevel.title": "Borrar nivel",
-    "levels.dialog.removeLevel.content": "¿Está seguro de que quiere borrar este nivel?",
-    "levels.dialog.getFromScene.title": "Tomar niveles de la escena",
-    "levels.dialog.getFromScene.content": "¿Desea tomar los niveles de la escena actual? Esto sobrescribirá los niveles actuales",
-    "levels.dialog.elevator.title": "Niveles - Elija una planta",
-    "levels.dialog.elevation.title": "Ajuste la elevación para la la próxima plantilla",
-    "levels.ui.title": "Levels (Niveles) - Herramienta de capas",
-    "levels.yesnodialog.yes": "Confirmar",
-    "levels.yesnodialog.no": "Cancelar",
-    "levels.widget.title": "Niveles",
-    "levels.widget.element": "Nivel",
-    "levels.form.bottom": "Inferior:",
-    "levels.form.top": "Superior:",
-    "levels.form.name": "Nombre:",
-    "levels.form.currentLevel": "Niveles actuales",
-    "levels.form.addNew": "Añadir nuevo nivel",
-    "levels.form.tip": "*Los niveles no se deben solapar (eg. 0,9 / 10,19 / 20,29)",
-    "levels.form.suggestedLevels": "Generar niveles sugeridos",
-    "levels.form.autoLevels": "Obtener niveles de la escena",
-    "levels.err.collision": "Este movimiento entra en conflicto con al menos un piso/techo",
-    "levels.err.wallheight": "¡AVISO! Levels necesita la versión 4.1.0 de Wall Height para funcionar correctamente",
-    "levels.err.lessfog": "Niveles: ¡AVISO! Se ha detectado el módulo Less Fog - la visibilidad de los iconos no funcionará adecuadamente, por favor, deshabilite uno de los dos",
-    "levels.err.tokenheight": "Niveles: ¡AVISO! Se ha detectado que tiene habilitada la opción de Wall Height 'Habilitar altura de iconos' - ¡este ajuste es incompatible con Levels y se ha deshabilitado!",
-    "levels.info.advancedMode": "Niveles: El modo avanzado de Better Roofs ha sido habilitado",
-    "levels.firsttime.dialog": "",
-    "levels.dialog.checkScene.title": "Niveles - Depuración de escenas",
-    "levels.dialog.checkScene.content": "Se han detectado baldosas con polígonos que o bien no han sido autodetectados o bien no han sido definidos correctamente, por favor, compruebe las baldosas siguientes:",
-    "levels.dialog.checkScene.learnMore": "¿No sabe lo que es Polígono? ¿Tiene cualquier otro problema? Acude a la página de Levels, encontrará un vídeo dedicado exclusivamente a Polígono",
-    "levels.dialog.checkScene.noIssues": "¡No se ha detectado ningún problema!",
-    "levels.dialog.checkScene.excluded": "Excluidas de la depuración",
-    "levels.ui.players": "Mostrar a los jugadores en la IU",
-    "levels.ui.stair": "Colocar dibujos como escaleras",
-    "levels.ui.addLevel": "Añadir nuevo nivel",
-    "levels.ui.editLevels": "Editar niveles",
-    "levels.ui.getFromScene": "Importar los niveles de la escena",
-    "levels.ui.clearLevels": "Borrar niveles",
-    "levels.ui.debugScene": "Depurar escena (en rojo significa que se han detectado problemas)",
-    "levels.ui.minElevDiff": "Tamaño de nivel mínimo",
-    "levels.conflicts.midiqol.tokenvis": "Habilitar la opción de MidiQOL 'Permitir a los jugadores controlar sus iconos ocultos' producirá problemas con la visibilidad de los iconos. Por favor, deshabilite esa opción"
+    "levels": {
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "Habilitar la opción 'Los jugadores controlan los tokens ocultos propios' en MidiQOL causará problemas de visibilidad de los tokens. \nDesactive esta opción en la configuración del módulo."
+            }
+        },
+        "controls": {
+            "definelevels": {
+                "name": "Editar niveles"
+            },
+            "leveldown": {
+                "name": "Bajar un nivel"
+            },
+            "levelsclear": {
+                "name": "Borrar niveles"
+            },
+            "levelshole": {
+                "name": "Coloque dibujos como escaleras cuando esté habilitado, colóquelos como agujeros cuando esté deshabilitado"
+            },
+            "levelsroof": {
+                "name": "Vista/ubicación de techos"
+            },
+            "levelsview": {
+                "name": "Habilitar vista/ubicación de niveles"
+            },
+            "levelup": {
+                "name": "Un nivel arriba"
+            },
+            "main": {
+                "name": "Niveles"
+            },
+            "placeOverhead": {
+                "name": "Coloque los mosaicos como mosaicos elevados en niveles 'interiores'"
+            },
+            "setTemplateElevation": {
+                "name": "Establecer elevación para la siguiente plantilla colocada"
+            },
+            "suppressBrmode": {
+                "name": "Suprimir la aplicación del modo Better Roofs"
+            }
+        },
+        "dialog": {
+            "checkScene": {
+                "content": "Mosaicos detectados con polígonos que posiblemente no se detectaron automáticamente o no se definieron correctamente, verifique dos veces los siguientes mosaicos:",
+                "excluded": "Excluido del cheque",
+                "learnMore": "¿No sabes qué es el Polígono? \n¿Tiene otros problemas? \nEcha un vistazo a la página de Niveles, ¡incluye un vídeo dedicado al Polígono!",
+                "noIssues": "¡No se detectaron problemas!",
+                "title": "Niveles - Comprobador de escena"
+            },
+            "define": {
+                "text": "Niveles:",
+                "title": "Definir niveles para esta escena",
+                "warn": "Defina los niveles como: inferior,superior|inferior,superior - por ejemplo. \n0,9|10,19|20,29"
+            },
+            "elevation": {
+                "title": "Establecer elevación para la próxima ubicación de la plantilla"
+            },
+            "elevator": {
+                "title": "Niveles - Elija un piso"
+            },
+            "getFromScene": {
+                "content": "¿Obtener niveles de la escena actual? \nEsto sobrescribirá tus niveles actuales.",
+                "title": "Obtener niveles de la escena"
+            },
+            "levelsclear": {
+                "content": "¿Borrar todos los niveles almacenados?",
+                "title": "Borrar niveles"
+            },
+            "removeLevel": {
+                "content": "¿Estás seguro de que deseas eliminar este nivel?",
+                "title": "Eliminar nivel"
+            },
+            "sceneDrop": {
+                "content": "Todos los elementos de la escena eliminada se colocarán en el nivel actual. ¿Estás seguro de que quieres continuar?",
+                "title": "Niveles: caída de escena"
+            }
+        },
+        "drawingHud": {
+            "title": "Alternar estado bloqueado para escalera"
+        },
+        "drawingconfig": {
+            "elevatorFloors": {
+                "hint": "Defina Pisos como: elevación, nombre|elevación, nombre... - por ejemplo. \n0,Planta Baja|10,Primer Piso...",
+                "name": "Pisos de ascensor"
+            },
+            "hb": {
+                "name": "Altura (inferior)"
+            },
+            "ht": {
+                "name": "Altura (arriba)"
+            },
+            "isHole": {
+                "name": "Modo de dibujo de niveles",
+                "opt0": "Ninguno",
+                "opt1": "Agujero",
+                "opt2": "Escalera",
+                "opt21": "Escalera (Unidireccional - Abajo)",
+                "opt22": "Escalera (Unidireccional - Arriba)",
+                "opt3": "Ascensor"
+            },
+            "range": {
+                "name": "Rango de agujeros"
+            }
+        },
+        "err": {
+            "collision": "Niveles: El intento de movimiento choca con al menos un piso/techo",
+            "elevatedvision": "Niveles: ¡ADVERTENCIA! \nSe detectó la opción 'Predeterminada para elevación automática de tokens' habilitada en el módulo 'Visión elevada'. Se sabe que esta configuración interrumpe la funcionalidad normal de los niveles y se ha deshabilitado.",
+            "elevatedvisioncompat": "Niveles: ¡ADVERTENCIA! \nMódulo detectado 'Visión elevada': se sabe que este módulo altera la funcionalidad normal de los niveles y no debe usarse en combinación con los niveles.",
+            "lessfog": "Niveles: ¡ADVERTENCIA! \nSe detectó menos niebla: la visibilidad del token no funcionará como se esperaba; deshabilite cualquiera de los módulos",
+            "tokenOOB": "Niveles: la altura del token %n excede el límite máximo del nivel seleccionado actualmente. \nConfigure manualmente la altura del token o aumente su nivel. \nObtenga más información <a href='https://wiki.theripper93.com/free/wall-height",
+            "tokenheight": "Niveles: ¡ADVERTENCIA! \nSe detectó la opción 'Habilitar altura del token' habilitada en el módulo Altura de la pared: ¡esta configuración es incompatible con los niveles y se ha deshabilitado!",
+            "wallheight": "¡ADVERTENCIA! \nLos niveles requieren que Wall Height sea la versión 4.1.0 o superior para funcionar correctamente."
+        },
+        "firsttime": {
+            "dialog": "."
+        },
+        "form": {
+            "addNew": "Agregar un nuevo nivel",
+            "autoLevels": "Obtener niveles de la escena",
+            "bottom": "Abajo:",
+            "currentLevel": "Niveles actuales",
+            "name": "Nombre:",
+            "suggestedLevels": "Generar niveles sugeridos",
+            "tip": "*Los niveles no deben superponerse (p. ej. 0,9 / 10,19 / 20,29)",
+            "top": "Arriba:"
+        },
+        "info": {
+            "advancedMode": "Niveles: se ha habilitado la opción Modo avanzado en Better Roofs."
+        },
+        "modulename": "Niveles",
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "Elevación de fondo",
+                "notes": "Una elevación en unidades de distancia que configura la altura de la imagen de fondo y los mosaicos bajo los pies."
+            },
+            "lightMasking": {
+                "name": "Niveles: No desactives las luces.",
+                "notes": "Cuando está habilitado, los niveles no tomarán el control de la visibilidad de la luz; esta opción debe deshabilitarse en escenas que utilizan múltiples niveles."
+            },
+            "weatherElevation": {
+                "name": "Elevación del clima",
+                "notes": "Una elevación en unidades de distancia que configura la altura de los efectos meteorológicos."
+            }
+        },
+        "settings": {
+            "autoLOSHeight": {
+                "hint": "Calcule automáticamente la altura del token según el tamaño y la escala. \nIgnorará la altura predeterminada del token, pero la configuración por token que no esté establecida en 0 tendrá prioridad sobre el cálculo automático.",
+                "name": "Altura del token automático"
+            },
+            "blockSightMovement": {
+                "hint": "Cuando está habilitado, las paredes con una altura que no restringe la visión seguirán restringiendo el movimiento.",
+                "name": "Cerca"
+            },
+            "debugRaycast": {
+                "hint": "Muestra los rayos de visión 3D (verde visible, rojo no visible)",
+                "name": "DEBUG: Habilitar visualización de rayos"
+            },
+            "defaultLosHeight": {
+                "hint": "Altura de una ficha (donde están los ojos de esa criatura) en unidades. \nPredeterminado 6.",
+                "name": "Altura del token predeterminado"
+            },
+            "enableTooltips": {
+                "hint": "Mostrar información sobre herramientas con la parte superior e inferior al pasar el cursor sobre los objetos de niveles",
+                "name": "Habilitar información sobre herramientas"
+            },
+            "exactTokenVisibility": {
+                "hint": "Se debe habilitar la visibilidad precisa del token para que esta opción funcione. \nEsta opción realizará una verificación de 11 puntos en las esquinas de la ficha. \nSugerido si estás usando 3D Canvas",
+                "name": "Visibilidad exacta del token"
+            },
+            "fogHiding": {
+                "hint": "Oculta pisos inexplorados de la niebla de guerra explorada.",
+                "name": "Niebla de guerra avanzada"
+            },
+            "forceUiRefresh": {
+                "hint": "Fuerza actualizaciones más frecuentes de la interfaz de usuario de los niveles a costa del rendimiento; si está habilitado, puede causar problemas en sistemas específicos (por ejemplo, PF2e).",
+                "name": "Forzar actualización de la interfaz de usuario"
+            },
+            "hideElevation": {
+                "hint": "Ocultar elevación de las fichas",
+                "name": "Ocultar elevación",
+                "opt0": "No te escondas",
+                "opt1": "Ocultar para los jugadores",
+                "opt2": "Ocultar para todos"
+            },
+            "lockElevation": {
+                "hint": "Evite que los jugadores cambien la elevación del HUD simbólico. \nTenga en cuenta que si el jugador tiene permiso para editar tokens, podrá cambiarlo en la configuración del token.",
+                "name": "Elevación de bloqueo"
+            },
+            "preciseLightOcclusion": {
+                "hint": "Elimina artefactos de oclusión leve a costa del rendimiento.",
+                "name": "Experimental: oclusión luminosa precisa"
+            },
+            "preciseTokenVisibility": {
+                "hint": "Al habilitar esta opción se verificará la visión en las esquinas del token además del centro a costa de algo de rendimiento.",
+                "name": "Visibilidad precisa del token"
+            },
+            "revealTokenInFog": {
+                "hint": "Si una ficha es visible, revela la niebla de guerra alrededor de esa ficha.",
+                "name": "Revelar ficha en la niebla"
+            },
+            "tokenElevScale": {
+                "hint": "Cambiar el tamaño de los tokens según la elevación del token controlado",
+                "name": "Escala de elevación"
+            },
+            "tokenElevScaleMultiSett": {
+                "hint": "Multiplique la escala de elevación por este número. \nUn número mayor que 1 hará que las fichas sean más grandes, mientras que uno menor que 1 las hará más pequeñas.",
+                "name": "Multiplicador de escala de elevación"
+            }
+        },
+        "template": {
+            "depth": {
+                "name": "Profundidad"
+            },
+            "elevation": {
+                "name": "Elevación"
+            },
+            "special": {
+                "name": "Especial"
+            }
+        },
+        "tileconfig": {
+            "allWallBlockSight": {
+                "hint": "Cuando se marca, todas las paredes debajo de este mosaico contarán como bloqueo de la visión cuando el mosaico no esté ocluido.",
+                "name": "Todas las paredes bloquean la vista"
+            },
+            "excludeFromChecker": {
+                "name": "Excluir del Comprobador de escena"
+            },
+            "isBasement": {
+                "hint": "Si está habilitado, el mosaico solo se mostrará si el token está dentro del rango del mosaico, esto significa que un token por encima del rango superior no verá este mosaico.",
+                "name": "Rango estricto"
+            },
+            "noCollision": {
+                "hint": "Si está habilitado, el mosaico no bloqueará la vista.",
+                "name": "Permitir la vista"
+            },
+            "noFogHide": {
+                "hint": "Excluye este mosaico de la 'Niebla de guerra avanzada' del nivel.",
+                "name": "No escondas este mosaico en la niebla"
+            },
+            "noOverhead": "Este NO es un mosaico elevado, este mosaico se representará en la elevación del fondo. \nPara cambiar esta configuración, habilite la opción '¿Está sobrecargado?' \nopción en la pestaña de gastos generales.",
+            "occlusionNone": "El modo de oclusión está configurado en \"Ninguno\", este mosaico no bloqueará la vista. \nEstablezca el Modo de oclusión en 'Desvanecer' si desea que este mosaico bloquee la vista.",
+            "range": {
+                "unit": "Elevación"
+            },
+            "rangeBottom": {
+                "name": "Altura (inferior)"
+            },
+            "rangeTop": {
+                "name": "Altura (arriba)"
+            },
+            "showAboveRange": {
+                "hint": "Cuando '¿Mostrar incluso cuando esté debajo?' \nestá habilitado, esta es la diferencia de elevación máxima entre el token y el mosaico; más allá de este valor, el mosaico ya no se mostrará.",
+                "name": "Diferencia de elevación máxima"
+            },
+            "showIfAbove": {
+                "hint": "Si está habilitado, el mosaico se mostrará incluso si el token está por debajo del rango de altura inferior (uso por ejemplo, balcones)",
+                "name": "¿Mostrar incluso cuando está debajo?"
+            }
+        },
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "Altura de LOS del token",
+                "unit": "(Distancia)"
+            }
+        },
+        "ui": {
+            "addLevel": "Agregar un nuevo nivel",
+            "clearLevels": "Borrar niveles",
+            "debugScene": "Escena de depuración (rojo significa problemas detectados)",
+            "editLevels": "Editar niveles",
+            "getFromScene": "Obtener niveles de la escena",
+            "minElevDiff": "Tamaño mínimo del nivel",
+            "players": "Mostrar jugadores",
+            "stair": "Colocar dibujos como escaleras",
+            "title": "Niveles - Herramienta Capa",
+            "tokenAttacher": "Colocar prefabricados de Token Attacher en relación con el nivel actual<hr>Si NO está colocando prefabricados, esta opción debe estar DESACTIVADA",
+            "warning": "¡ADVERTENCIA! \n\"No desactivar las luces\" está habilitado en la Configuración de escena: varios niveles no funcionarán correctamente. \nHaga clic para resolver este problema."
+        },
+        "widget": {
+            "element": "Nivel",
+            "title": "Niveles"
+        },
+        "yesnodialog": {
+            "no": "Cancelar",
+            "yes": "Confirmar"
+        }
+    }
 }

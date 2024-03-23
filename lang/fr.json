@@ -1,84 +1,290 @@
 {
-    "levels.modulename": "Niveaux",
-    "levels.settings.enableTooltips.name": "Activer les info-bulles",
-    "levels.settings.enableTooltips.hint": "Afficher les info-bulles avec le haut et le bas lors du survol des objets de niveaux",
-    "levels.settings.tokenElevScale.name": "Modifier la taille du jeton en fonction de l'altitude",
-    "levels.settings.tokenElevScale.hint": "Modifier la taille des jetons en fonction de l'élévation du jeton contrôlé",
-    "levels.settings.tokenElevScaleMultiSett.name": "Multiplicateur personnalisé d'échelle d'élévation",
-    "levels.settings.tokenElevScaleMultiSett.hint": "Multipliez l'échelle d'altitude par ce nombre. Un nombre supérieur à 1 augmentera les jetons tandis qu'un nombre inférieur à 1 les rendra plus petits",
-    "levels.settings.fogHiding.name": "Brouillard de guerre avancé",
-    "levels.settings.fogHiding.hint": "Cacher les étages inexplorés du brouillard de guerre exploré",
-    "levels.settings.lockElevation.name": "Verrouiller l'élévation",
-    "levels.settings.lockElevation.hint": "Empêcher les joueurs de changer d'élévation à partir du HUD du jeton. Gardez à l'esprit que si le joueur a la permission de modifier les jetons, il pourra le changer dans la configuration du jeton",
-    "levels.settings.defaultLosHeight.name": "Hauteur de jeton par défaut",
-    "levels.settings.defaultLosHeight.hint": "Hauteur d'un jeton (où se trouvent les yeux de cette créature) en unités. Par défaut 6",
-    "levels.settings.autoLOSHeight.name": "Hauteur automatique du jeton",
-    "levels.settings.autoLOSHeight.hint": "Calculer automatiquement la hauteur du jeton en fonction de la taille et de l'échelle. Ignorera la hauteur du jeton par défaut, mais les paramètres de jeton non définis sur 0 auront la priorité sur le calcul automatique",
-    "levels.settings.debugRaycast.name": "DEBUG : activer la visualisation des rayons",
-    "levels.settings.debugRaycast.hint": "Afficher les rayons Vue 3D (vert visible, rouge non visible)",
-    "levels.settings.preciseLightOcclusion.name": "Expérimental : occlusion lumineuse précise",
-    "levels.settings.preciseLightOcclusion.hint": "Supprime les artefacts d'occlusion lumineuse au détriment des performances",
-    "levels.settings.preciseTokenVisibility.name": "Visibilité précise du jeton",
-    "levels.settings.preciseTokenVisibility.hint": "L'activation de cette option vérifiera la vue contre les coins du jeton en plus du centre au prix de certaines performances",
-    "levels.settings.blockSightMovement.name": "Clôture",
-    "levels.settings.blockSightMovement.hint": "Lorsqu'il est activé, les murs dont la hauteur ne restreint pas la vision restreignent toujours les mouvements",
-    "levels.settings.forceUiRefresh.name": "Forcer l'actualisation de l'interface utilisateur",
-    "levels.settings.forceUiRefresh.hint": "Force des actualisations plus fréquentes de l'interface utilisateur des niveaux au détriment des performances, si activé peut causer des problèmes sur des systèmes spécifiques (par exemple PF2e)",
-    "levels.settings.hideElevation.name": "Masquer l'élévation",
-    "levels.settings.hideElevation.hint": "Masquer l'élévation des jetons",
-    "levels.settings.hideElevation.opt0": "Ne pas cacher",
-    "levels.settings.hideElevation.opt1": "Masquer pour les joueurs",
-    "levels.settings.hideElevation.opt2": "Masquer pour tout le monde",
-    "levels.settings.revealTokenInFog.name": "Révéler le jeton dans le brouillard",
-    "levels.settings.revealTokenInFog.hint": "Si un jeton est visible, révèle le brouillard de guerre autour de ce jeton",
-    "levels.tileconfig.rangeTop.name": "Hauteur (Haut)",
-    "levels.tileconfig.rangeBottom.name": "Hauteur (Bas)",
-    "levels.tileconfig.showIfAbove.name": "Afficher même en dessous ?",
-    "levels.tileconfig.showAboveRange.name": "Différence d'élévation maximale",
-    "levels.tileconfig.isBasement.name": "est le sous-sol ?",
-    "levels.tileconfig.noFogHide.name": "Ne cachez pas cette tuile dans le brouillard",
-    "levels.tileconfig.range.unit": "Élévation",
-    "levels.drawingconfig.hb.name": "Hauteur (Bas)",
-    "levels.drawingconfig.ht.name": "Hauteur (Haut)",
-    "levels.drawingconfig.range.name": "Plage de trous",
-    "levels.drawingconfig.elevatorFloors.name": "Elevator Floors",
-    "levels.drawingconfig.elevatorFloors.hint": "Définir les étages comme : élévation, nom|élévation, nom... - par exemple 0,Rez-de-chaussée|10,Premier étage...",
-    "levels.drawingconfig.isHole.name": "Mode de dessin des niveaux",
-    "levels.drawingconfig.isHole.opt0": "Aucun",
-    "levels.drawingconfig.isHole.opt1": "Trou",
-    "levels.drawingconfig.isHole.opt2": "Escalier",
-    "levels.drawingconfig.isHole.opt3": "Ascenseur",
-    "levels.drawingHud.title": " Basculer l'état verrouillé pour l'escalier ",
-    "levels.tokenconfig.tokenHeight.name": "Hauteur LOS du jeton",
-    "levels.tokenconfig.tokenHeight.unit": "(Distance)",
-    "levels.template.elevation.name": "Élévation",
-    "levels.template.special.name": "Spécial",
-    "levels.controls.main.name": "Niveaux",
-    "levels.controls.levelsview.name": "Activer l'affichage/le placement des niveaux",
-    "levels.controls.definelevels.name": "Modifier les niveaux",
-    "levels.controls.levelup.name": "Remonter d'un niveau",
-    "levels.controls.leveldown.name": "En bas d'un niveau",
-    "levels.controls.levelsroof.name": "Activer la vue/le placement des toits de niveaux",
-    "levels.controls.levelshole.name": "Placer les dessins en tant qu'escaliers lorsqu'il est activé, placer en tant que trous lorsqu'il est désactivé",
-    "levels.controls.levelsclear.name": "Effacer les niveaux",
-    "levels.controls.placeOverhead.name": "Si activé, placez les tuiles comme tuiles aériennes 'à l'intérieur' des niveaux",
-    "levels.controls.setTemplateElevation.name": "Définir l'élévation pour le prochain modèle placé",
-    "levels.controls.suppressBrmode.name": "Supprimer l'application du mode Better Roofs",
-    "levels.ui.title": "Niveaux - Outil de calque",
-    "levels.yesnodialog.yes": "Confirmer",
-    "levels.yesnodialog.no": "Annuler",
-    "levels.widget.title": "Niveaux",
-    "levels.widget.element": "Niveau",
-    "levels.form.bottom": "Bas :",
-    "levels.form.top": "Top :",
-    "levels.form.name": "Nom :",
-    "levels.form.currentLevel": "Niveaux actuels",
-    "levels.form.addNew": "Ajouter un nouveau niveau",
-    "levels.form.tip": "*Les niveaux ne doivent pas se chevaucher (ex. 0,9 / 10,19 / 20,29)",
-    "levels.form.suggestedLevels": "Générer les niveaux suggérés",
-    "levels.form.autoLevels": "Obtenir les niveaux de la scène",
-    "levels.err.collision": "La tentative de mouvement entre en collision avec au moins un sol/plafond",
-    "levels.err.lessfog": "Niveaux : AVERTISSEMENT ! Moins de brouillard détecté - la visibilité des jetons ne fonctionnera pas comme prévu, veuillez désactiver l'un ou l'autre module",
-    "levels.err.tokenheight": "Niveaux : AVERTISSEMENT ! L'option 'Activer la hauteur du jeton' détectée est activée dans le module Hauteur du mur - ce paramètre est incompatible avec les niveaux et a été désactivé !",
-    "levels.firsttime.dialog": ""
+    "levels": {
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "L'activation de l'option « Les joueurs contrôlent les jetons cachés détenus » dans MidiQOL entraînera des problèmes de visibilité des jetons. \nVeuillez désactiver cette option dans les paramètres du module."
+            }
+        },
+        "controls": {
+            "definelevels": {
+                "name": "Modifier les niveaux"
+            },
+            "leveldown": {
+                "name": "En bas d'un niveau"
+            },
+            "levelsclear": {
+                "name": "Effacer les niveaux"
+            },
+            "levelshole": {
+                "name": "Placer les dessins en tant qu'escaliers lorsqu'il est activé, placer en tant que trous lorsqu'il est désactivé"
+            },
+            "levelsroof": {
+                "name": "Vue/emplacement des toits"
+            },
+            "levelsview": {
+                "name": "Activer l'affichage/le placement des niveaux"
+            },
+            "levelup": {
+                "name": "Augmente d'un niveau"
+            },
+            "main": {
+                "name": "Les niveaux"
+            },
+            "placeOverhead": {
+                "name": "Placez les tuiles comme tuiles au-dessus des niveaux « à l'intérieur »"
+            },
+            "setTemplateElevation": {
+                "name": "Définir l'élévation pour le prochain modèle placé"
+            },
+            "suppressBrmode": {
+                "name": "Supprimer l'application du mode Better Roofs"
+            }
+        },
+        "dialog": {
+            "checkScene": {
+                "content": "Tuiles détectées avec des polygones qui n'ont peut-être pas été détectés automatiquement ou définis correctement, veuillez revérifier les tuiles suivantes :",
+                "excluded": "Exclus du chèque",
+                "learnMore": "Vous ne savez pas ce qu'est le polygone ? \nVous avez d'autres problèmes ? \nConsultez la page Niveaux, elle comprend une vidéo dédiée au Polygone !",
+                "noIssues": "Aucun problème détecté !",
+                "title": "Niveaux - Vérificateur de scène"
+            },
+            "define": {
+                "text": "Les niveaux:",
+                "title": "Définir les niveaux pour cette scène",
+                "warn": "Définissez les niveaux comme : bas, haut | bas, haut - par exemple. \n0,9|10,19|20,29"
+            },
+            "elevation": {
+                "title": "Définir l'élévation pour le prochain placement du modèle"
+            },
+            "elevator": {
+                "title": "Niveaux - Choisissez un étage"
+            },
+            "getFromScene": {
+                "content": "Obtenir les niveaux de la scène actuelle ? \nCela écrasera vos niveaux actuels",
+                "title": "Obtenir les niveaux de la scène"
+            },
+            "levelsclear": {
+                "content": "Effacer tous les niveaux stockés ?",
+                "title": "Effacer les niveaux"
+            },
+            "removeLevel": {
+                "content": "Êtes-vous sûr de vouloir supprimer ce niveau ?",
+                "title": "Supprimer le niveau"
+            },
+            "sceneDrop": {
+                "content": "Tous les éléments de la scène supprimée seront placés au niveau actuel. Êtes-vous sûr de vouloir continuer ?",
+                "title": "Niveaux - Chute de scène"
+            }
+        },
+        "drawingHud": {
+            "title": "Activer/Désactiver l'état verrouillé pour l'escalier"
+        },
+        "drawingconfig": {
+            "elevatorFloors": {
+                "hint": "Définissez les étages comme : élévation, nom | élévation, nom... - par exemple. \n0,Rez-de-chaussée|10,Premier étage...",
+                "name": "Planchers d'ascenseur"
+            },
+            "hb": {
+                "name": "Hauteur (en bas)"
+            },
+            "ht": {
+                "name": "Hauteur (haut)"
+            },
+            "isHole": {
+                "name": "Mode de dessin des niveaux",
+                "opt0": "Aucun",
+                "opt1": "Trou",
+                "opt2": "Escalier",
+                "opt21": "Escalier (à sens unique - vers le bas)",
+                "opt22": "Escalier (à sens unique - vers le haut)",
+                "opt3": "Ascenseur"
+            },
+            "range": {
+                "name": "Plage de trous"
+            }
+        },
+        "err": {
+            "collision": "Niveaux : La tentative de mouvement heurte au moins un sol/plafond",
+            "elevatedvision": "Niveaux : ATTENTION ! \nOption « Par défaut pour l'élévation automatique des jetons » détectée et activée dans le module « Vision élevée » - ce paramètre est connu pour perturber la fonctionnalité régulière des niveaux et a été désactivé !",
+            "elevatedvisioncompat": "Niveaux : ATTENTION ! \nModule détecté 'Elevated Vision' - ce module est connu pour perturber la fonctionnalité régulière de Levels et ne doit pas être utilisé en combinaison avec Levels.",
+            "lessfog": "Niveaux : ATTENTION ! \nMoins de brouillard détecté - la visibilité des jetons ne fonctionnera pas comme prévu, veuillez désactiver l'un ou l'autre module",
+            "tokenOOB": "Niveaux : la hauteur du jeton %n dépasse le plafond du niveau actuellement sélectionné. \nVeuillez définir manuellement la hauteur du jeton ou augmenter votre niveau. \nEn savoir plus <a href='https://wiki.theripper93.com/free/wall-height",
+            "tokenheight": "Niveaux : ATTENTION ! \nOption « Activer la hauteur du jeton » détectée et activée dans le module Hauteur du mur - ce paramètre est incompatible avec les niveaux et a été désactivé !",
+            "wallheight": "AVERTISSEMENT! \nLes niveaux nécessitent que Wall Height soit la version 4.1.0 ou supérieure pour fonctionner correctement."
+        },
+        "firsttime": {
+            "dialog": "."
+        },
+        "form": {
+            "addNew": "Ajouter un nouveau niveau",
+            "autoLevels": "Obtenez les niveaux de la scène",
+            "bottom": "Bas:",
+            "currentLevel": "Niveaux actuels",
+            "name": "Nom:",
+            "suggestedLevels": "Générer des niveaux suggérés",
+            "tip": "*Les niveaux ne doivent pas se chevaucher (par exemple 0,9 / 10,19 / 20,29)",
+            "top": "Haut:"
+        },
+        "info": {
+            "advancedMode": "Niveaux : l'option Mode avancé dans Better Roofs a été activée."
+        },
+        "modulename": "Les niveaux",
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "Altitude d'arrière-plan",
+                "notes": "Une élévation en unités de distance qui configure la hauteur de l'image d'arrière-plan et des tuiles sous les pieds."
+            },
+            "lightMasking": {
+                "name": "Niveaux : ne désactivez pas les lumières",
+                "notes": "Lorsqu'elle est activée, les niveaux ne prendront pas le contrôle de la visibilité de la lumière, cette option doit être désactivée dans les scènes qui utilisent plusieurs niveaux."
+            },
+            "weatherElevation": {
+                "name": "Altitude météorologique",
+                "notes": "Une élévation en unités de distance qui configure la hauteur des effets météorologiques."
+            }
+        },
+        "settings": {
+            "autoLOSHeight": {
+                "hint": "Calculez automatiquement la hauteur du jeton en fonction de la taille et de l'échelle. \nIgnorera la hauteur du jeton par défaut, mais les paramètres par jeton non définis sur 0 auront la priorité sur le calcul automatique.",
+                "name": "Hauteur de jeton automatique"
+            },
+            "blockSightMovement": {
+                "hint": "Lorsqu'ils sont activés, les murs dont la hauteur ne restreint pas la vision restreindront toujours les mouvements.",
+                "name": "Clôture"
+            },
+            "debugRaycast": {
+                "hint": "Afficher les rayons 3D Sight (vert visible, rouge non visible)",
+                "name": "DEBUG : Activer la visualisation des rayons"
+            },
+            "defaultLosHeight": {
+                "hint": "Hauteur d'un jeton (là où se trouvent les yeux de cette créature) en unités. \nPar défaut 6.",
+                "name": "Hauteur du jeton par défaut"
+            },
+            "enableTooltips": {
+                "hint": "Afficher les info-bulles en haut et en bas lors du survol des objets de niveau",
+                "name": "Activer les info-bulles"
+            },
+            "exactTokenVisibility": {
+                "hint": "Une visibilité précise des jetons doit être activée pour que cette option fonctionne. \nCette option effectuera une vérification en 11 points par rapport aux coins du jeton. \nSuggéré si vous utilisez 3D Canvas",
+                "name": "Visibilité exacte des jetons"
+            },
+            "fogHiding": {
+                "hint": "Cachez les étages inexplorés du brouillard de guerre exploré",
+                "name": "Brouillard de guerre avancé"
+            },
+            "forceUiRefresh": {
+                "hint": "Force des actualisations plus fréquentes des niveaux d'interface utilisateur au détriment des performances, si cette option est activée, elle peut provoquer des problèmes sur des systèmes spécifiques (par exemple PF2e).",
+                "name": "Forcer l'actualisation de l'interface utilisateur"
+            },
+            "hideElevation": {
+                "hint": "Masquer l'élévation des jetons",
+                "name": "Masquer l'élévation",
+                "opt0": "Ne te cache pas",
+                "opt1": "Cacher pour les joueurs",
+                "opt2": "Cachez-vous pour tout le monde"
+            },
+            "lockElevation": {
+                "hint": "Empêchez les joueurs de changer d'élévation à partir du jeton HUD. \nGardez à l'esprit que si le joueur a la permission de modifier les jetons, il pourra le modifier dans la configuration des jetons.",
+                "name": "Verrouiller l'élévation"
+            },
+            "preciseLightOcclusion": {
+                "hint": "Supprime les artefacts d'occlusion de la lumière au détriment des performances",
+                "name": "Expérimental : occlusion précise de la lumière"
+            },
+            "preciseTokenVisibility": {
+                "hint": "L'activation de cette option vérifiera la vue par rapport aux coins du jeton en plus du centre au prix d'une certaine performance.",
+                "name": "Visibilité précise des jetons"
+            },
+            "revealTokenInFog": {
+                "hint": "Si un jeton est visible, révélez le brouillard de guerre autour de ce jeton.",
+                "name": "Révéler le jeton dans le brouillard"
+            },
+            "tokenElevScale": {
+                "hint": "Modifier la taille des jetons en fonction de l'élévation du jeton contrôlé",
+                "name": "Échelle d'élévation"
+            },
+            "tokenElevScaleMultiSett": {
+                "hint": "Multipliez l'échelle d'élévation par ce nombre. \nUn nombre supérieur à 1 rendra les jetons plus gros tandis qu'un nombre inférieur à 1 les rendra plus petits.",
+                "name": "Multiplicateur d'échelle d'élévation"
+            }
+        },
+        "template": {
+            "depth": {
+                "name": "Profondeur"
+            },
+            "elevation": {
+                "name": "Élévation"
+            },
+            "special": {
+                "name": "Spécial"
+            }
+        },
+        "tileconfig": {
+            "allWallBlockSight": {
+                "hint": "Lorsque cette case est cochée, tous les murs situés sous cette tuile compteront comme bloquant la vision lorsque la tuile n'est pas obstruée.",
+                "name": "Tous les murs bloquent la vue"
+            },
+            "excludeFromChecker": {
+                "name": "Exclure du vérificateur de scène"
+            },
+            "isBasement": {
+                "hint": "Si cette option est activée, la vignette ne sera affichée que si le jeton se trouve à l'intérieur de la plage de vignettes, cela signifie qu'un jeton au-dessus de la plage supérieure ne verra pas cette vignette.",
+                "name": "Plage stricte"
+            },
+            "noCollision": {
+                "hint": "Si elle est activée, la tuile ne bloquera pas la vue.",
+                "name": "Autoriser la vue"
+            },
+            "noFogHide": {
+                "hint": "Excluez cette tuile du « Brouillard de guerre avancé » du niveau.",
+                "name": "Ne cachez pas cette tuile dans le brouillard"
+            },
+            "noOverhead": "Il ne s'agit PAS d'une vignette aérienne, cette vignette sera rendue à l'élévation d'arrière-plan. \nPour modifier ces paramètres, veuillez activer l'option « Est-ce un surcoût ? » \noption dans l’onglet des frais généraux.",
+            "occlusionNone": "Le mode d'occlusion est défini sur « Aucun », cette tuile ne bloquera pas la vue. \nRéglez le mode d'occlusion sur « Fade » si vous souhaitez que cette tuile bloque la vue.",
+            "range": {
+                "unit": "Élévation"
+            },
+            "rangeBottom": {
+                "name": "Hauteur (en bas)"
+            },
+            "rangeTop": {
+                "name": "Hauteur (haut)"
+            },
+            "showAboveRange": {
+                "hint": "Lorsque « Afficher même en dessous ? » \nest activé, c'est la différence d'élévation maximale entre le jeton et la tuile, au-delà de cette valeur la tuile ne s'affichera plus.",
+                "name": "Différence d'élévation maximale"
+            },
+            "showIfAbove": {
+                "hint": "Si activé, la tuile sera affichée même si le jeton est en dessous de la plage de hauteur inférieure (exemple d'utilisation, balcons)",
+                "name": "Afficher même en dessous ?"
+            }
+        },
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "Hauteur du jeton LOS",
+                "unit": "(Distance)"
+            }
+        },
+        "ui": {
+            "addLevel": "Ajouter un nouveau niveau",
+            "clearLevels": "Effacer les niveaux",
+            "debugScene": "Scène de débogage (le rouge signifie que les problèmes sont détectés)",
+            "editLevels": "Modifier les niveaux",
+            "getFromScene": "Obtenir les niveaux de la scène",
+            "minElevDiff": "Taille minimale du niveau",
+            "players": "Afficher les joueurs",
+            "stair": "Placer des dessins comme escaliers",
+            "title": "Niveaux - Outil Calque",
+            "tokenAttacher": "Placer les préfabriqués Token Attacher par rapport au niveau actuel<hr>Si vous ne placez PAS de préfabriqués, cette option doit être DÉSACTIVÉE",
+            "warning": "AVERTISSEMENT! \n« Ne pas désactiver les lumières » est activé dans les paramètres de scène. Plusieurs niveaux ne fonctionneront pas correctement. \nCliquez pour résoudre ce problème."
+        },
+        "widget": {
+            "element": "Niveau",
+            "title": "Les niveaux"
+        },
+        "yesnodialog": {
+            "no": "Annuler",
+            "yes": "Confirmer"
+        }
+    }
 }

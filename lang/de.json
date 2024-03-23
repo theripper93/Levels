@@ -1,78 +1,290 @@
 {
-    "levels.modulename": "Levels",
-    "levels.settings.enableTooltips.name": "Tooltips einschalten",
-    "levels.settings.enableTooltips.hint": "Tooltips mit Ober- und Unterseite anzeigen, wenn der Mauszeiger über Levels-Objekten schwebt",
-    "levels.settings.tokenElevScale.name": "Token-Größe basierend auf der Höhe ändern",
-    "levels.settings.tokenElevScale.hint": "Größe der Token basierend auf der Elevation des kontrollierten Tokens ändern",
-    "levels.settings.tokenElevScaleMultiSett.name": "Aufzugsskala benutzerdefinierter Multiplikator",
-    "levels.settings.tokenElevScaleMultiSett.hint": "Multiplizieren Sie die Aufzugsskala mit dieser Zahl. Eine Zahl, die größer als 1 ist, macht Token größer, eine kleinere als 1 macht sie kleiner",
-    "levels.settings.fogHiding.name": "Erweiterte Kriegsnebel",
-    "levels.settings.fogHiding.hint": "Unerforschte Etagen vor dem erforschten Fog of War verstecken",
-    "levels.settings.lockElevation.name": "Sperre Aufzug",
-    "levels.settings.lockElevation.hint": "Verhindert, dass Spieler die Höhe über das Token-HUD ändern können. Denken Sie daran, dass der Spieler, wenn er die Berechtigung hat, Token zu bearbeiten, diese in der Token-Konfiguration ändern kann.",
-    "levels.settings.defaultLosHeight.name": "Standard-Token-Höhe",
-    "levels.settings.defaultLosHeight.hint": "Höhe eines Tokens (wo sich die Augen dieser Kreatur befinden) in Einheiten. Standardmäßig 6.",
-    "levels.settings.autoLOSHeight.name": "Automatische Token-Höhe",
-    "levels.settings.autoLOSHeight.hint": "Berechnet automatisch die Token-Höhe basierend auf Größe und Maßstab. Ignoriert die Standard Token-Höhe, aber pro Token-Einstellungen, die nicht auf 0 gesetzt sind, haben Vorrang vor der automatischen Berechnung. ",
-    "levels.settings.debugRaycast.name": "DEBUG: Strahlenvisualisierung einschalten",
-    "levels.settings.debugRaycast.hint": "Zeige die 3D-Sichtstrahlen (grün sichtbar, rot nicht sichtbar)",
-    "levels.settings.preciseLightOcclusion.name": "Experimentell: Präzise Lichtokklusion",
-    "levels.settings.preciseLightOcclusion.hint": "Entfernt Artefakte der Lichtokklusion auf Kosten der Leistung",
-    "levels.settings.preciseTokenVisibility.name": "Präzise Token-Sichtbarkeit",
-    "levels.settings.preciseTokenVisibility.hint": "Das Aktivieren dieser Option prüft auf Kosten einer gewissen Performance die Sichtbarkeit gegen die Ecken des Tokens zusätzlich zur Mitte",
-    "levels.settings.blockSightMovement.name": "Zaun",
-    "levels.settings.blockSightMovement.hint": "Wenn aktiviert, schränken Wände mit einer Höhe, die die Sicht nicht einschränkt, trotzdem die Bewegung ein",
-    "levels.tileconfig.rangeTop.name": "Höhe (oben)",
-    "levels.tileconfig.rangeBottom.name": "Höhe (Unten)",
-    "levels.tileconfig.showIfAbove.name": "Auch anzeigen, wenn unten?",
-    "levels.tileconfig.showAboveRange.name": "Maximale Höhendifferenz",
-    "levels.tileconfig.isBasement.name": "Ist Fundament?",
-    "levels.tileconfig.noFogHide.name": "Diese Kachel im Nebel nicht ausblenden",
-    "levels.tileconfig.range.unit": "Aufzug",
-    "levels.drawingconfig.hb.name": "Höhe (Unten)",
-    "levels.drawingconfig.ht.name": "Höhe (Oben)",
-    "levels.drawingconfig.range.name": "Lochbereich",
-    "levels.drawingconfig.elevatorFloors.name": "Aufzug Floors",
-    "levels.drawingconfig.elevatorFloors.hint": "Definieren Sie Floors als: elevation,name|elevation,name... - z.B. 0,Ground Floor|10,First Floor...",
-    "levels.drawingconfig.isHole.name": "Ebenen-Zeichnungsmodus",
-    "levels.drawingconfig.isHole.opt0": "Keine",
-    "levels.drawingconfig.isHole.opt1": "Loch",
-    "levels.drawingconfig.isHole.opt2": "Treppe",
-    "levels.drawingconfig.isHole.opt3": "Aufzug",
-    "levels.drawingHud.title": "Verriegelungszustand für Treppe umschalten",
-    "levels.tokenconfig.tokenHeight.name": "Token LOS Höhe",
-    "levels.tokenconfig.tokenHeight.unit": "(Entfernung)",
-    "levels.template.elevation.name": "Auf",
-    "levels.template.special.name": "Spezial",
-    "levels.controls.main.name": "Levels",
-    "levels.controls.levelsview.name": "Levels-Ansicht/Platzierung aktivieren",
-    "levels.controls.definelevels.name": "Levels bearbeiten",
-    "levels.controls.levelup.name": "Eine Ebene höher",
-    "levels.controls.leveldown.name": "Ein Level runter",
-    "levels.controls.levelsroof.name": "Ansicht/Platzierung der Leveldächer aktivieren",
-    "levels.controls.levelshole.name": "Zeichnungen als Treppe platzieren, wenn aktiviert, als Löcher platzieren, wenn deaktiviert",
-    "levels.controls.levelsclear.name": "Levels löschen",
-    "levels.controls.placeOverhead.name": "Wenn aktiviert, platziere Kacheln als Overhead-Kacheln 'innerhalb' von Levels",
-    "levels.controls.setTemplateElevation.name": "Höhe für nächste platzierte Vorlage setzen",
-    "levels.dialog.levelsclear.title": "Levels löschen",
-    "levels.dialog.levelsclear.content": "Alle gespeicherten Ebenen löschen?",
-    "levels.dialog.define.warn": "Definieren Sie Ebenen als: unten,oben|unten,oben - z.B. 0,9|10,19|20,29",
-    "levels.dialog.define.title": "Ebenen für diese Szene definieren",
-    "levels.dialog.define.text": "Ebenen: ",
-    "levels.dialog.elevator.title": "Ebenen - Wählen Sie eine Etage",
-    "levels.dialog.elevation.title": "Elevation für nächste Vorlagenplatzierung festlegen",
-    "levels.yesnodialog.yes": "Bestätigen",
-    "levels.yesnodialog.no": "Abbrechen",
-    "levels.widget.title": "Levels",
-    "levels.widget.element": "Level",
-    "levels.form.bottom": "Unten:",
-    "levels.form.top": "Oben:",
-    "levels.form.name": "Name:",
-    "levels.form.currentLevel": "Aktuelles Level",
-    "levels.form.addNew": "Neue Ebene hinzufügen",
-    "levels.form.tip": "*Levels sollten sich nicht überschneiden (z.B. 0,9 / 10,19 / 20,29)",
-    "levels.form.suggestedLevels": "Vorgeschlagene Levels generieren",
-    "levels.form.autoLevels": "Levels von Szene holen",
-    "levels.err.lessfog": "Levels: WARNUNG! Less Fog erkannt - die Token-Sichtbarkeit funktioniert nicht wie erwartet, bitte deaktivieren Sie eines der beiden Module.",
-    "levels.firsttime.dialog": ""
+    "levels": {
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "Das Aktivieren der Option „Spieler kontrollieren eigene versteckte Token“ in MidiQOL führt zu Problemen mit der Token-Sichtbarkeit. \nBitte deaktivieren Sie diese Option in den Moduleinstellungen."
+            }
+        },
+        "controls": {
+            "definelevels": {
+                "name": "Ebenen bearbeiten"
+            },
+            "leveldown": {
+                "name": "Eine Ebene tiefer"
+            },
+            "levelsclear": {
+                "name": "Klare Level"
+            },
+            "levelshole": {
+                "name": "Platzieren Sie Zeichnungen als Treppen, wenn diese Option aktiviert ist, und als Löcher, wenn sie deaktiviert ist"
+            },
+            "levelsroof": {
+                "name": "Ansicht/Platzierung der Dächer"
+            },
+            "levelsview": {
+                "name": "Ebenenansicht/-platzierung aktivieren"
+            },
+            "levelup": {
+                "name": "Eine Ebene höher"
+            },
+            "main": {
+                "name": "Ebenen"
+            },
+            "placeOverhead": {
+                "name": "Platzieren Sie die Kacheln als Überkopfkacheln „innerhalb“ der Ebenen"
+            },
+            "setTemplateElevation": {
+                "name": "Legen Sie die Höhe für die nächste platzierte Vorlage fest"
+            },
+            "suppressBrmode": {
+                "name": "Unterdrücken Sie die Anwendung im Better Roofs-Modus"
+            }
+        },
+        "dialog": {
+            "checkScene": {
+                "content": "Erkannte Kacheln mit Polygonen, die möglicherweise nicht automatisch erkannt oder nicht korrekt definiert wurden. Bitte überprüfen Sie die folgenden Kacheln noch einmal:",
+                "excluded": "Vom Scheck ausgeschlossen",
+                "learnMore": "Sie wissen nicht, was das Polygon ist? \nHaben Sie andere Probleme? \nSchauen Sie sich die Levels-Seite an, sie enthält ein Video, das dem Polygon gewidmet ist!",
+                "noIssues": "Keine Probleme festgestellt!",
+                "title": "Levels – Szenenprüfer"
+            },
+            "define": {
+                "text": "Ebenen:",
+                "title": "Definieren Sie Ebenen für diese Szene",
+                "warn": "Definieren Sie Ebenen als: unten,oben|unten,oben – z.B. \n0,9|10,19|20,29"
+            },
+            "elevation": {
+                "title": "Legen Sie die Höhe für die nächste Platzierung der Vorlage fest"
+            },
+            "elevator": {
+                "title": "Ebenen – Wählen Sie eine Etage"
+            },
+            "getFromScene": {
+                "content": "Levels aus der aktuellen Szene abrufen? \nDadurch werden Ihre aktuellen Level überschrieben",
+                "title": "Holen Sie sich Levels aus der Szene"
+            },
+            "levelsclear": {
+                "content": "Alle gespeicherten Ebenen löschen?",
+                "title": "Klare Level"
+            },
+            "removeLevel": {
+                "content": "Möchten Sie diese Ebene wirklich entfernen?",
+                "title": "Ebene entfernen"
+            },
+            "sceneDrop": {
+                "content": "Alle Elemente der abgelegten Szene werden auf der aktuellen Ebene platziert. Möchten Sie wirklich fortfahren?",
+                "title": "Levels – Szenen-Drop"
+            }
+        },
+        "drawingHud": {
+            "title": "Schalten Sie den gesperrten Zustand für die Treppe um"
+        },
+        "drawingconfig": {
+            "elevatorFloors": {
+                "hint": "Definieren Sie Etagen als: Höhe,Name|Höhe,Name... - z. B. \n0,Erdgeschoss|10,Erster Stock...",
+                "name": "Aufzugböden"
+            },
+            "hb": {
+                "name": "Höhe (unten)"
+            },
+            "ht": {
+                "name": "Höhe (oben)"
+            },
+            "isHole": {
+                "name": "Ebenen-Zeichenmodus",
+                "opt0": "Keiner",
+                "opt1": "Loch",
+                "opt2": "Treppe",
+                "opt21": "Treppe (einseitig – nach unten)",
+                "opt22": "Treppe (einseitig – nach oben)",
+                "opt3": "Aufzug"
+            },
+            "range": {
+                "name": "Lochbereich"
+            }
+        },
+        "err": {
+            "collision": "Ebenen: Die versuchte Bewegung kollidiert mit mindestens einem Boden/einer Decke",
+            "elevatedvision": "Levels: ACHTUNG! \nEs wurde festgestellt, dass die Option „Standard für automatische Token-Erhöhung“ im Modul „Erhöhte Sicht“ aktiviert ist – diese Einstellung stört bekanntermaßen die normale Funktionalität von Levels und wurde deaktiviert!",
+            "elevatedvisioncompat": "Levels: ACHTUNG! \nErkanntes Modul „Elevated Vision“ – dieses Modul stört bekanntermaßen die normale Funktionalität von Levels und sollte nicht in Kombination mit Levels verwendet werden.",
+            "lessfog": "Levels: ACHTUNG! \nWeniger Nebel erkannt – die Token-Sichtbarkeit funktioniert nicht wie erwartet. Bitte deaktivieren Sie eines der Module",
+            "tokenOOB": "Ebenen: Die Höhe des Tokens %n überschreitet die Obergrenze der aktuell ausgewählten Ebene. \nBitte stellen Sie die Token-Höhe manuell ein oder erhöhen Sie Ihr Level. \nErfahren Sie mehr <a href='https://wiki.theripper93.com/free/wall-height",
+            "tokenheight": "Levels: ACHTUNG! \nEs wurde festgestellt, dass die Option „Tokenhöhe aktivieren“ im Modul „Wandhöhe“ aktiviert ist – diese Einstellung ist nicht mit Levels kompatibel und wurde deaktiviert!",
+            "wallheight": "WARNUNG! \nDamit Levels ordnungsgemäß funktioniert, muss Wall Height Version 4.1.0 oder höher sein."
+        },
+        "firsttime": {
+            "dialog": "."
+        },
+        "form": {
+            "addNew": "Fügen Sie eine neue Ebene hinzu",
+            "autoLevels": "Holen Sie sich Levels von Scene",
+            "bottom": "Unten:",
+            "currentLevel": "Aktuelle Level",
+            "name": "Name:",
+            "suggestedLevels": "Vorgeschlagene Level generieren",
+            "tip": "*Stufen sollten sich nicht überschneiden (z. B. 0,9 / 10,19 / 20,29)",
+            "top": "Spitze:"
+        },
+        "info": {
+            "advancedMode": "Ebenen: Die Option „Erweiterter Modus“ in Better Roofs wurde aktiviert."
+        },
+        "modulename": "Ebenen",
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "Hintergrundhöhe",
+                "notes": "Eine Höhe in Entfernungseinheiten, die die Höhe des Hintergrundbilds und der Kacheln unter den Füßen konfiguriert."
+            },
+            "lightMasking": {
+                "name": "Ebenen: Deaktivieren Sie die Lichter nicht",
+                "notes": "Wenn diese Option aktiviert ist, übernehmen die Ebenen nicht die Kontrolle über die Sichtbarkeit des Lichts. Diese Option sollte in Szenen deaktiviert werden, die mehrere Ebenen verwenden."
+            },
+            "weatherElevation": {
+                "name": "Wetterhöhe",
+                "notes": "Eine Höhe in Entfernungseinheiten, die die Höhe der Wettereffekte konfiguriert."
+            }
+        },
+        "settings": {
+            "autoLOSHeight": {
+                "hint": "Berechnen Sie die Token-Höhe automatisch basierend auf Größe und Maßstab. \nIgnoriert die Standard-Tokenhöhe, aber die Einstellungen pro Token, die nicht auf 0 gesetzt sind, haben Vorrang vor der automatischen Berechnung",
+                "name": "Automatische Tokenhöhe"
+            },
+            "blockSightMovement": {
+                "hint": "Wenn diese Option aktiviert ist, schränken Wände, deren Höhe die Sicht nicht einschränkt, die Bewegung dennoch ein",
+                "name": "Zaun"
+            },
+            "debugRaycast": {
+                "hint": "Zeigen Sie die 3D-Sichtstrahlen an (grün sichtbar, rot nicht sichtbar)",
+                "name": "DEBUG: Strahlenvisualisierung aktivieren"
+            },
+            "defaultLosHeight": {
+                "hint": "Höhe eines Spielsteins (wo sich die Augen dieser Kreatur befinden) in Einheiten. \nStandard 6.",
+                "name": "Standard-Token-Höhe"
+            },
+            "enableTooltips": {
+                "hint": "Zeigen Sie Tooltips oben und unten an, wenn Sie mit der Maus über Ebenenobjekte fahren",
+                "name": "Aktivieren Sie Tooltips"
+            },
+            "exactTokenVisibility": {
+                "hint": "Damit diese Option funktioniert, muss die präzise Token-Sichtbarkeit aktiviert sein. \nDiese Option führt eine 11-Punkte-Prüfung anhand der Ecken des Spielsteins durch. \nEmpfohlen, wenn Sie 3D Canvas verwenden",
+                "name": "Exakte Token-Sichtbarkeit"
+            },
+            "fogHiding": {
+                "hint": "Verstecke unerforschte Böden vor dem erforschten Nebel des Krieges",
+                "name": "Fortgeschrittener Nebel des Krieges"
+            },
+            "forceUiRefresh": {
+                "hint": "Erzwingt häufigere Aktualisierungen der Level-Benutzeroberfläche auf Kosten der Leistung. Wenn diese Option aktiviert ist, kann dies zu Problemen auf bestimmten Systemen führen (z. B. PF2e).",
+                "name": "Aktualisierung der Benutzeroberfläche erzwingen"
+            },
+            "hideElevation": {
+                "hint": "Höhe vor den Token ausblenden",
+                "name": "Höhe ausblenden",
+                "opt0": "Versteck dich nicht",
+                "opt1": "Für Spieler verstecken",
+                "opt2": "Versteck dich für alle"
+            },
+            "lockElevation": {
+                "hint": "Verhindern Sie, dass Spieler die Höhe über das Token-HUD ändern. \nBeachten Sie, dass der Spieler, wenn er über die Berechtigung zum Bearbeiten von Token verfügt, diese in der Token-Konfiguration ändern kann",
+                "name": "Höhe sperren"
+            },
+            "preciseLightOcclusion": {
+                "hint": "Entfernt leichte Okklusionsartefakte auf Kosten der Leistung",
+                "name": "Experimentell: Präzise Lichtokklusion"
+            },
+            "preciseTokenVisibility": {
+                "hint": "Wenn Sie diese Option aktivieren, wird auf Kosten der Leistung zusätzlich zur Mitte auch die Sicht auf die Ecken des Tokens geprüft",
+                "name": "Präzise Token-Sichtbarkeit"
+            },
+            "revealTokenInFog": {
+                "hint": "Wenn ein Spielstein sichtbar ist, decken Sie den Nebel des Krieges um diesen Spielstein auf",
+                "name": "Token im Nebel enthüllen"
+            },
+            "tokenElevScale": {
+                "hint": "Ändern Sie die Größe der Token basierend auf der Höhe des kontrollierten Tokens",
+                "name": "Höhenskala"
+            },
+            "tokenElevScaleMultiSett": {
+                "hint": "Multiplizieren Sie den Höhenmaßstab mit dieser Zahl. \nBei einer Zahl größer als 1 werden die Token größer, bei einer Zahl kleiner als 1 werden sie kleiner",
+                "name": "Höhenskalenmultiplikator"
+            }
+        },
+        "template": {
+            "depth": {
+                "name": "Tiefe"
+            },
+            "elevation": {
+                "name": "Elevation"
+            },
+            "special": {
+                "name": "Besonders"
+            }
+        },
+        "tileconfig": {
+            "allWallBlockSight": {
+                "hint": "Wenn diese Option aktiviert ist, gelten alle Wände unter dieser Kachel als Sichtbehinderung, wenn die Kachel nicht verdeckt ist.",
+                "name": "Alle Wände blockieren die Sicht"
+            },
+            "excludeFromChecker": {
+                "name": "Aus Scene Checker ausschließen"
+            },
+            "isBasement": {
+                "hint": "Wenn diese Option aktiviert ist, wird die Kachel nur angezeigt, wenn sich der Token innerhalb des Kachelbereichs befindet. Dies bedeutet, dass ein Token oberhalb des oberen Bereichs diese Kachel nicht sieht.",
+                "name": "Strenge Reichweite"
+            },
+            "noCollision": {
+                "hint": "Wenn diese Option aktiviert ist, blockiert die Kachel nicht die Sicht.",
+                "name": "Sicht zulassen"
+            },
+            "noFogHide": {
+                "hint": "Schließe dieses Plättchen vom „Fortgeschrittenen Nebel des Krieges“ des Levels aus.",
+                "name": "Verstecke diese Kachel nicht im Nebel"
+            },
+            "noOverhead": "Dies ist KEINE Overhead-Kachel, diese Kachel wird auf der Hintergrundhöhe gerendert. \nUm diese Einstellungen zu ändern, aktivieren Sie bitte die Option „Ist Overhead?“. \nOption im Overhead-Tab.",
+            "occlusionNone": "Der Okklusionsmodus ist auf „Keine“ eingestellt. Diese Kachel blockiert nicht die Sicht. \nStellen Sie den Okklusionsmodus auf „Ausblenden“ ein, wenn Sie möchten, dass diese Kachel die Sicht blockiert.",
+            "range": {
+                "unit": "Elevation"
+            },
+            "rangeBottom": {
+                "name": "Höhe (unten)"
+            },
+            "rangeTop": {
+                "name": "Höhe (oben)"
+            },
+            "showAboveRange": {
+                "hint": "Wenn „Auch unten anzeigen?“ angezeigt wird. \naktiviert ist, ist dies der maximale Höhenunterschied zwischen dem Token und der Kachel. Über diesen Wert hinaus wird die Kachel nicht mehr angezeigt.",
+                "name": "Maximaler Höhenunterschied"
+            },
+            "showIfAbove": {
+                "hint": "Wenn aktiviert, wird die Kachel auch dann angezeigt, wenn der Token unterhalb des unteren Höhenbereichs liegt (Beispielverwendung: Balkone).",
+                "name": "Auch wenn unten angezeigt?"
+            }
+        },
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "Token-LOS-Höhe",
+                "unit": "(Distanz)"
+            }
+        },
+        "ui": {
+            "addLevel": "Fügen Sie eine neue Ebene hinzu",
+            "clearLevels": "Klare Level",
+            "debugScene": "Debug-Szene (Rot bedeutet erkannte Probleme)",
+            "editLevels": "Ebenen bearbeiten",
+            "getFromScene": "Holen Sie sich Levels aus der Szene",
+            "minElevDiff": "Mindestlevelgröße",
+            "players": "Spieler anzeigen",
+            "stair": "Platzieren Sie Zeichnungen als Treppen",
+            "title": "Ebenen – Ebenenwerkzeug",
+            "tokenAttacher": "Platzieren Sie Token Attacher-Fertigobjekte relativ zur aktuellen Ebene.<hr>Wenn Sie KEINE Fertigobjekte platzieren, muss diese Option DEAKTIVIERT werden",
+            "warning": "WARNUNG! \n„Lichter nicht deaktivieren“ ist in den Szeneneinstellungen aktiviert – mehrere Ebenen funktionieren nicht richtig. \nKlicken Sie hier, um dieses Problem zu beheben."
+        },
+        "widget": {
+            "element": "Ebene",
+            "title": "Ebenen"
+        },
+        "yesnodialog": {
+            "no": "Stornieren",
+            "yes": "Bestätigen"
+        }
+    }
 }
