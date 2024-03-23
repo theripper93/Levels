@@ -245,6 +245,7 @@
             "clearLevels": "Clear Levels",
             "debugScene": "Debug Scene (Red means issues detected)",
             "minElevDiff": "Minimum Level Size",
+            "tokenAttacher": "Place Token Attacher prefabs relative to the current level",
             "warning": "WARNING! 'Don't disable lights' is enabled in the Scene Settings - Multiple levels will not work correctly. Click to resolve this issue."
         },
         "yesnodialog": {
