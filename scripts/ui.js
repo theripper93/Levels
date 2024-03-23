@@ -41,7 +41,8 @@ class LevelsUI extends FormApplication {
 
     getData() {
         return {
-            lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
+          lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
+          isTA: game.modules.get("token-attacher")?.active,
         };
     }
 
