@@ -8,7 +8,7 @@ class LevelsUI extends FormApplication {
         this.roofEnabled = false;
         this.placeOverhead = false;
         this.stairEnabled = true;
-        this.tokenOnly = false;
+        this.tokensOnly = false;
     }
 
     static get defaultOptions() {
@@ -42,7 +42,7 @@ class LevelsUI extends FormApplication {
     getData() {
         return {
           lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
-          isTA: game.modules.get("token-attacher")?.active,
+            isTA: false,
         };
     }
 
@@ -77,7 +77,7 @@ class LevelsUI extends FormApplication {
         });
       
       html.on("click", "#levels-ui-controls .fa-link", async () => {
-        this.tokenOnly = !this.tokenOnly;
+        this.tokensOnly = !this.tokensOnly;
         this.setButtonStyles();
       });
 

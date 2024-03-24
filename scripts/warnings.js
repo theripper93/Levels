@@ -9,7 +9,9 @@ export function setupWarnings() {
         const losHeight = token.losHeight;
 
         if (tokenElevation < bottom || losHeight >= top) {
-            ui.notifications.error(game.i18n.localize("levels.err.tokenOOB").replace("%n", token.document.name), {permanent: true});
+            //make sure at least tokenElevation or losHeight is within the range
+            const inRange = tokenElevation >= bottom && tokenElevation <= top || losHeight >= bottom && losHeight <= top;
+            if(inRange) ui.notifications.error(game.i18n.localize("levels.err.tokenOOB").replace("%n", token.document.name), {permanent: true});
         }
     });
 
