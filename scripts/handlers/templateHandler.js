@@ -73,7 +73,7 @@ export class TemplateHandler{
         this.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
       }
 
-    static getTemplateData(){
+    static getTemplateData(wipeStore = true){
     const cToken = canvas.tokens.controlled[0] || _token;
       const handMode =
         typeof LevelsVolumetricTemplates !== "undefined" &&
@@ -88,13 +88,15 @@ export class TemplateHandler{
       if (CONFIG.Levels.UI.nextTemplateHeight !== undefined) {
         elevation = CONFIG.Levels.UI.nextTemplateHeight;
         special = CONFIG.Levels.UI.nextTemplateSpecial;
-        CONFIG.Levels.UI.nextTemplateHeight = undefined;
-        CONFIG.Levels.UI.nextTemplateSpecial = undefined;
-        CONFIG.Levels.UI.templateElevation = false;
-        CONFIG.Levels.UI._levelsTemplateTool.active = false;
-        $("body")
-          .find(`li[data-tool="setTemplateElevation"]`)
-          .removeClass("active");
+        if(wipeStore){
+          CONFIG.Levels.UI.nextTemplateHeight = undefined;
+          CONFIG.Levels.UI.nextTemplateSpecial = undefined;
+          CONFIG.Levels.UI.templateElevation = false;
+          CONFIG.Levels.UI._levelsTemplateTool.active = false;
+          $("body")
+            .find(`li[data-tool="setTemplateElevation"]`)
+            .removeClass("active");
+        }
       } else {
         elevation = cToken?.document?.elevation + handMode || 0;
       }

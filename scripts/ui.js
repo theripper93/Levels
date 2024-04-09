@@ -41,7 +41,7 @@ class LevelsUI extends FormApplication {
 
     getData() {
         return {
-          lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
+            lightMasking: canvas.scene.getFlag(CONFIG.Levels.MODULE_ID, "lightMasking") ?? true,
             isTA: false,
         };
     }
@@ -75,11 +75,11 @@ class LevelsUI extends FormApplication {
             await canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "lightMasking", false);
             this.render(true);
         });
-      
-      html.on("click", "#levels-ui-controls .fa-link", async () => {
-        this.tokensOnly = !this.tokensOnly;
-        this.setButtonStyles();
-      });
+
+        html.on("click", "#levels-ui-controls .fa-link", async () => {
+            this.tokensOnly = !this.tokensOnly;
+            this.setButtonStyles();
+        });
 
         html.on("drop", (event) => {
             let data;
@@ -111,8 +111,8 @@ class LevelsUI extends FormApplication {
         this.element.find(".fa-archway").toggleClass("active", this.roofEnabled);
         this.element.find(".fa-tree").toggleClass("active", this.placeOverhead);
         this.element.find(".fa-sort-amount-up-alt").toggleClass("active", this.stairEnabled);
-      this.element.find(".fa-users").toggleClass("active", this.element.find(".players-on-level").hasClass("active"));
-      this.element.find(".fa-link").toggleClass("active", this.tokenOnly);
+        this.element.find(".fa-users").toggleClass("active", this.element.find(".players-on-level").hasClass("active"));
+        this.element.find(".fa-link").toggleClass("active", this.tokenOnly);
     }
 
     _onAddLevel(event) {
