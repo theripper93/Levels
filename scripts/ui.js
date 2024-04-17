@@ -249,7 +249,12 @@ class LevelsUI extends FormApplication {
                 let bottom = $element.find(".level-bottom").val();
                 data.push([bottom, top, name]);
             });
-        canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", data);
+        canvas.scene.setFlag(CONFIG.Levels.MODULE_ID, "sceneLevels", data).then(() => {
+            const active = this.element.find(".level-item.active");
+            const first = this.element.find(".level-item").first();
+            if (active.length) active.click();
+            else if (first.length) first.click();
+        });
     }
 
     async loadLevels() {
