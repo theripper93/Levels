@@ -639,7 +639,7 @@ Hooks.on("ready", () => {
                 if (CONFIG.Levels.UI.rangeEnabled == true) {
                     drawing.updateSource({
                         hidden: CONFIG.Levels.UI.stairEnabled,
-                        text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${CONFIG.Levels.UI.range[1] + 1}` : "",
+                        text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${parseFloat(CONFIG.Levels.UI.range[1]) + 1}` : "",
                         flags: {
                             levels: {
                                 drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
