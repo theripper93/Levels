@@ -615,12 +615,15 @@ Hooks.on("ready", () => {
             const top = aboverange ? aboverange[0] : parseFloat(CONFIG.Levels.UI.range[1]);
 
             region.updateSource({
-                name: `Levels Stair ${bottom}-${top}`,
-                color: "#fe6c0b",
                 elevation: {
                     bottom,
                     top,
                 },
+            });
+            if (!CONFIG.Levels.UI.stairEnabled) return;
+            region.updateSource({
+                name: `Levels Stair ${bottom}-${top}`,
+                color: "#fe6c0b",
             });
             Hooks.once("createRegion", (region) => {
                 region.createEmbeddedDocuments("RegionBehavior", [
