@@ -16,6 +16,7 @@ import { LevelsAPI } from "./API.js";
 import { registerWrappers } from "./wrappers.js";
 import { inRange, getRangeForDocument, cloneTileMesh, inDistance } from "./helpers.js";
 import { setupWarnings } from "./warnings.js";
+import {LevelsMigration} from "./migration.js";
 
 //warnings
 
@@ -23,28 +24,12 @@ Hooks.on("ready", () => {
     if (!game.user.isGM) return;
 
     setupWarnings();
-
-    const recommendedVersion = "10.291";
-
-    if (isNewerVersion(recommendedVersion, game.version)) {
-        ui.notifications.error(`Levels recommends Foundry VTT version ${recommendedVersion} or newer. Levels might not work as expected in the currently installed version (${game.version}).`, { permanent: true });
-        return;
-    }
 });
 
 Object.defineProperty(globalThis, "_levels", {
     get: () => {
         console.warn("Levels: _levels is deprecated. Use CONFIG.Levels.API instead.");
         return CONFIG.Levels.API;
-    },
-});
-
-Object.defineProperty(TileDocument.prototype, "elevation", {
-    get: function () {
-        if (CONFIG.Levels?.UI?.rangeEnabled && !this.id) {
-            return parseFloat(CONFIG.Levels.UI.range[0] || 0);
-        }
-        return this.overhead ? this.flags?.levels?.rangeBottom ?? canvas.scene.foregroundElevation : canvas.primary.background.elevation;
     },
 });
 
@@ -62,45 +47,6 @@ Tile.prototype.inTriggeringRange = function (token) {
     }
 };
 
-Object.defineProperty(DrawingDocument.prototype, "elevation", {
-    get: function () {
-        if (CONFIG.Levels?.UI?.rangeEnabled && !this.id) {
-            return parseFloat(CONFIG.Levels.UI.range[0] || 0);
-        }
-        return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
-    },
-});
-
-Object.defineProperty(NoteDocument.prototype, "elevation", {
-    get: function () {
-        return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
-    },
-});
-
-Object.defineProperty(AmbientLightDocument.prototype, "elevation", {
-    get: function () {
-        if (CONFIG.Levels.UI.rangeEnabled && !this.id) {
-            return parseFloat(CONFIG.Levels.UI.range[0] || 0);
-        }
-        return this.flags?.levels?.rangeBottom ?? canvas.primary.background.elevation;
-    },
-});
-
-Object.defineProperty(AmbientSoundDocument.prototype, "elevation", {
-    get: function () {
-        if (CONFIG.Levels.UI.rangeEnabled && !this.id) {
-            return parseFloat(CONFIG.Levels.UI.range[0] || 0);
-        }
-        if (isNaN(this.flags?.levels?.rangeBottom)) return canvas.primary.background.elevation;
-        return (this.flags?.levels?.rangeBottom + (this.flags?.levels?.rangeTop ?? this.flags?.levels?.rangeBottom)) / 2;
-    },
-});
-
-Object.defineProperty(MeasuredTemplateDocument.prototype, "elevation", {
-    get: function () {
-        return this.flags?.levels?.elevation ?? canvas.primary.background.elevation;
-    },
-});
 
 Object.defineProperty(WeatherEffects.prototype, "elevation", {
     get: function () {
@@ -155,6 +101,7 @@ Hooks.on("init", () => {
         getRangeForDocument,
         cloneTileMesh,
         inDistance,
+        migration: new LevelsMigration(),
     };
 
     CONFIG.Levels.API = LevelsAPI;
@@ -170,10 +117,14 @@ Hooks.on("init", () => {
     CONFIG.Levels.FoWHandler = new FoWHandler();
     CONFIG.Levels.handlers.BackgroundHandler.setupElevation();
 
+
     Hooks.callAll("levelsReady", CONFIG.Levels);
 });
 
 Hooks.once("ready", () => {
+
+    if(game.user.isGM && game.settings.get("levels", "migrateOnStartup")) CONFIG.Levels.helpers.migration.migrateAll();
+
     if (game.modules.get("levels-3d-preview")?.active) return;
     // Module title
     const MODULE_ID = CONFIG.Levels.MODULE_ID;
@@ -337,6 +288,16 @@ Hooks.on("init", () => {
             CONFIG.Levels.settings.cacheSettings();
         },
     });
+
+    game.settings.register(CONFIG.Levels.MODULE_ID, "migrateOnStartup", {
+        name: game.i18n.localize("levels.settings.migrateOnStartup.name"),
+        hint: game.i18n.localize("levels.settings.migrateOnStartup.hint"),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: true,
+    });
 });
 
 Hooks.on("updateTile", (tile, updates) => {
@@ -498,7 +459,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 Hooks.on("renderDrawingConfig", (app, html, data) => {
     const injHtml = injectConfig.inject(app, html, {
         moduleId: "levels",
-        inject: 'input[name="z"]',
+        inject: 'input[name="sort"]',
         drawingMode: {
             type: "select",
             label: game.i18n.localize("levels.drawingconfig.isHole.name"),

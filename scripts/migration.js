@@ -48,7 +48,7 @@ export class LevelsMigration {
         ui.notifications.warn("Levels - Migrating all scenes, do not refresh the page!");
         await this.migrateScenes();
         await this.migrateCompendiums();
-        ui.notifications.notify(`Wall Height - Migration Complete.`);
+        ui.notifications.notify(`Levels - Migration Complete.`);
         await game.settings.set("levels", "migrateOnStartup", false);
     }
 
@@ -68,14 +68,19 @@ export class LevelsMigration {
                         _id: document.id,
                         elevation: oldBottom,
                         flags: {
-                            "-=levels.rangeBottom": null,
+                            levels: {
+                                "-=rangeBottom": null,
+                            },
                         },
                     };
+                    if (documents[0].documentName === "Drawing") {
+                        update.interface = false;
+                    }
                     updates.push(update);
                 }
             }
             if (updates.length <= 0) continue;
-            await collection.updateEmbeddedDocuments(documents[0].documentName, updates);
+            await scene.updateEmbeddedDocuments(documents[0].documentName, updates);
             ui.notifications.notify("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
             console.log("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
         }
@@ -92,7 +97,7 @@ export class LevelsMigration {
                     label: "Migrate Current Scene",
                     callback: () => this.migrateData(),
                 },
-                all: {
+                sidebar: {
                     label: "Migrate All Sidebar Scenes",
                     callback: () => this.migrateScenes(),
                 },
@@ -100,6 +105,11 @@ export class LevelsMigration {
                     label: "Migrate All Scenes in Compendiums",
                     callback: () => this.migrateCompendiums(),
                 },
+                all: {
+                    label: "Migrate All Scenes in Compendiums and Sidebar",
+                    callback: () => this.migrateAll(),
+                },
+
             },
             default: "scene",
         }).render(true);

@@ -6,7 +6,7 @@ export class LightHandler{
         if(!CONFIG.Levels.handlers.UIHandler.emitsLightUI(this)) return false;
         if (game.Levels3DPreview?._active) return result;
         const isToken = this instanceof Token;
-        const rangeBottom = isToken ? this.document.elevation : this.document.flags.levels?.rangeBottom ?? -Infinity;
+        const rangeBottom = this.document.elevation ?? -Infinity;
         const rangeTop = isToken ? this.losHeight : this.document.flags.levels?.rangeTop ?? Infinity;
         const currentElevation = CONFIG.Levels.currentToken?.losHeight
         if(currentElevation === undefined) return result;

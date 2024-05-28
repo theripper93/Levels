@@ -1,24 +1,30 @@
 export class TileHandler{
-    static isTileVisible(tile){
+    static isTileVisible(tile) {
         const currentToken = CONFIG.Levels.currentToken;
-
-        CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
-        if(!currentToken) return true;
-
-        const tokenElevation = currentToken.document.elevation;
-        const tokenLOS = currentToken.losHeight;
         const bgElevation = canvas?.scene?.flags?.levels?.backgroundElevation ?? 0;
 
-        //Handle background tiles
-        if(!tile.document.overhead){
+        CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
+        if (!currentToken) {
+            canvas.primary.hoverFadeElevation = bgElevation;
+            return true;
+        }
+        
+        
+        const tokenElevation = currentToken.document.elevation;
+        const tokenLOS = currentToken.losHeight;
+
+        canvas.primary.hoverFadeElevation = tokenElevation;
+
+        if(tile.document.elevation === bgElevation){
             return tokenLOS >= bgElevation
         }
 
+        
         if(!tile.document.flags.levels) return true;
 
         const {rangeTop, rangeBottom, showIfAbove, showAboveRange, isBasement, noFogHide} = getFlags(tile.document)
         //Not a levels tile, hide if token is under background
-        if(rangeTop === Infinity && rangeBottom === -Infinity || !tile.document.overhead) return tokenLOS >= bgElevation;
+        if(rangeTop === Infinity && rangeBottom === -Infinity) return tokenLOS >= bgElevation;
 
         const inRange = tokenLOS < rangeTop && tokenLOS >= rangeBottom;
 
@@ -58,6 +64,8 @@ function getFlags(document){
     for( const [k,v] of Object.entries(document.flags.levels)){
         flags[k] = v ?? defaultValues[k];
     }
+
+    flags.rangeBottom = document.elevation;
 
     return flags;
 

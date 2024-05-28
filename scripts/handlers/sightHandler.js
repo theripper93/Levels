@@ -126,7 +126,7 @@ export class SightHandler {
     static testInLight(object, testTarget, source, result) {
         const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
         const top = object.document.flags?.levels?.rangeTop ?? Infinity;
-        const bottom = object.document.flags?.levels?.rangeBottom ?? -Infinity;
+        const bottom = object.document.elevation ?? -Infinity;
         let lightHeight = null;
         if (object instanceof Token) {
             lightHeight = object.losHeight;
@@ -152,6 +152,33 @@ export class SightHandler {
         return false;
     }
 
+    static _createVisibilityTestConfig(point, { tolerance = 2, object = null, elevation = 0 } = {}) {
+        const t = tolerance;
+        const offsets =
+            t > 0
+                ? [
+                      [0, 0],
+                      [-t, -t],
+                      [-t, t],
+                      [t, t],
+                      [t, -t],
+                      [-t, 0],
+                      [t, 0],
+                      [0, -t],
+                      [0, t],
+                  ]
+                : [[0, 0]];
+        const e = object instanceof Token && !Number.isFinite(elevation) ? object.document.losHeight : elevation;
+        return {
+            object,
+            tests: offsets.map((o) => ({
+                point: { x: point.x + o[0], y: point.y + o[1] },
+                e,
+                los: new Map(),
+            })),
+        };
+    }
+
     static _testCollision(wrapped, ...args) {
         const visionSource = this.config?.source;
         const target = CONFIG?.Levels?.visibilityTestObject;
@@ -160,7 +187,7 @@ export class SightHandler {
         if (target instanceof Token) {
             targetElevation = target.losHeight;
         } else if (target instanceof PlaceableObject) {
-            targetElevation = target.document.elevation ?? target.document.flags.levels?.rangeBottom;
+            targetElevation = target.document.elevation;
         } else if (target instanceof DoorControl) {
             targetElevation = visionSource.elevation;
         } else {
@@ -190,9 +217,9 @@ export class SightHandler {
     static containsWrapper(wrapped, ...args) {
         const LevelsConfig = CONFIG.Levels;
         const testTarget = LevelsConfig.visibilityTestObject;
-        if (!this.config?.source?.object || !(testTarget instanceof Token) || this.config.source instanceof GlobalLightSource) return wrapped(...args);
+        if (!this.config?.source?.object || !(testTarget instanceof Token) || this.config.source instanceof Globalfoundry.canvas.sources.PointLightSource) return wrapped(...args);
         let result;
-        if (this.config.source instanceof LightSource) {
+        if (this.config.source instanceof foundry.canvas.sources.PointLightSource) {
             result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));
         } else if (this.config.source.object instanceof Token) {
             const point = {
@@ -290,12 +317,12 @@ export class SightHandler {
 
         //Loop through all the planes and check for both ceiling and floor collision on each tile
         for (let tile of canvas.tiles.placeables) {
-            if (tile.document.flags?.levels?.noCollision || !tile.document.overhead) continue;
-            const bottom = tile.document.flags?.levels?.rangeBottom ?? -Infinity;
+            if (tile.document.flags?.levels?.noCollision) continue;
+            const bottom = tile.document.elevation ?? -Infinity;
             const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
             if (bottom != -Infinity) {
                 const zIntersectionPoint = getPointForPlane(bottom);
-                if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.mesh?.containsPixel(zIntersectionPoint.x, zIntersectionPoint.y, ALPHATTHRESHOLD)) {
+                if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.mesh?.containsCanvasPoint({ x: zIntersectionPoint.x, y: zIntersectionPoint.y }, ALPHATTHRESHOLD)) {
                     return {
                         x: zIntersectionPoint.x,
                         y: zIntersectionPoint.y,

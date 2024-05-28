@@ -7,10 +7,10 @@
     {{/if_null}}
     </span>
     <span class='name'><i class="fas fa-arrow-down"></i></span>
-    <span class='value'>{{#if_null flags.levels.rangeBottom}}
+    <span class='value'>{{#if_null elevation}}
         <i class="fas fa-infinity"></i>
     {{else}}
-        {{{flags.levels.rangeBottom}}}
+        {{{elevation}}}
     {{/if_null}}
     </span>
 </form>

@@ -85,9 +85,9 @@ export class LevelsAPI {
                     if (!isNaN(elevation)) updateData.elevation = elevation * rescaleFactor;
                     delete updateData.flags;
                 } else {
-                    const rangeBottom = document.flags?.levels?.rangeBottom;
+                    const rangeBottom = document.elevation;
                     const rangeTop = document.flags?.levels?.rangeTop;
-                    if (!isNaN(rangeBottom)) updateData.flags.levels.rangeBottom = rangeBottom * rescaleFactor;
+                    if (!isNaN(rangeBottom)) updateData.elevation = rangeBottom * rescaleFactor;
                     if (!isNaN(rangeTop)) updateData.flags.levels.rangeTop = rangeTop * rescaleFactor;
                 }
                 updates.push(updateData);

@@ -13,7 +13,7 @@ Hooks.on("init", () => {
     libWrapper.register(CONFIG.Levels.MODULE_ID, "MeasuredTemplate.prototype._refreshRulerText", _levelsRefreshRulerText, "OVERRIDE");
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Token.prototype.isVisible", _levelsTokenIsVisible, "OVERRIDE");
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Note.prototype.isVisible", _levelsNoteIsVisible, "WRAPPER");
-    libWrapper.register(CONFIG.Levels.MODULE_ID, "LightSource.prototype._renderTexture", _levelsRenderLightTexture, "OVERRIDE");
+    libWrapper.register(CONFIG.Levels.MODULE_ID, "foundry.canvas.sources.PointLightSource.prototype._renderTexture", _levelsRenderLightTexture, "OVERRIDE");
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Token.prototype._drawTooltip", _levelsTokendrawTooltip, "MIXED");
 
     if (_betterRoofs) _betterRoofs.initializeRoofs();
@@ -188,20 +188,20 @@ Hooks.on("init", () => {
 Hooks.on("renderTileConfig", (app, html, data) => {
     const isInjected = html.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).length > 0;
     if (isInjected) return;
-    let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
-    let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
+    let heightRangeBottom = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (heightRangeBottom == undefined || heightRangeBottom == null) heightRangeBottom = -Infinity;
 
-    let showAboveRange = app.object.getFlag(CONFIG.Levels.MODULE_ID, "showAboveRange");
+    let showAboveRange = app.document.getFlag(CONFIG.Levels.MODULE_ID, "showAboveRange");
     if (showAboveRange == undefined || showAboveRange == null) showAboveRange = Infinity;
 
-    let showifbelow = app.object.getFlag(CONFIG.Levels.MODULE_ID, "showIfAbove");
+    let showifbelow = app.document.getFlag(CONFIG.Levels.MODULE_ID, "showIfAbove");
     let checkedbox = showifbelow ? ` checked=""` : "";
-    let isBasement = app.object.getFlag(CONFIG.Levels.MODULE_ID, "isBasement");
+    let isBasement = app.document.getFlag(CONFIG.Levels.MODULE_ID, "isBasement");
     let checkedboxisBasement = isBasement ? ` checked=""` : "";
-    let noFogHide = app.object.getFlag(CONFIG.Levels.MODULE_ID, "noFogHide");
+    let noFogHide = app.document.getFlag(CONFIG.Levels.MODULE_ID, "noFogHide");
     let checkedboxnoFogHide = noFogHide ? ` checked=""` : "";
 
     const injHtml = injectConfig.inject(app, html, {
@@ -304,10 +304,10 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
-    let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
-    let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
+    let heightRangeBottom = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (heightRangeBottom == undefined || heightRangeBottom == null) heightRangeBottom = -Infinity;
 
     let newHtml = `
@@ -333,10 +333,10 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
 });
 
 Hooks.on("renderNoteConfig", (app, html, data) => {
-    let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
-    let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
+    let heightRangeBottom = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (heightRangeBottom == undefined || heightRangeBottom == null) heightRangeBottom = -Infinity;
 
     let newHtml = `
@@ -362,10 +362,10 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
-    let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
-    let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
+    let heightRangeBottom = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (heightRangeBottom == undefined || heightRangeBottom == null) heightRangeBottom = -Infinity;
 
     let newHtml = `
@@ -391,19 +391,20 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
-    let heightRangeTop = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
+    debugger
+    let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
-    let heightRangeBottom = app.object.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
+    let heightRangeBottom = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeBottom");
     if (heightRangeBottom == undefined || heightRangeBottom == null) heightRangeBottom = -Infinity;
 
-    let drawingMode = app.object.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode") || 0;
+    let drawingMode = app.document.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode") || 0;
     let opt0 = drawingMode == 0 ? `selected=""` : ``;
     let opt1 = drawingMode == 1 ? `selected=""` : ``;
     let opt2 = drawingMode == 2 ? `selected=""` : ``;
     let opt3 = drawingMode == 3 ? `selected=""` : ``;
 
-    let elevatorFloors = app.object.getFlag(CONFIG.Levels.MODULE_ID, "elevatorFloors") || "";
+    let elevatorFloors = app.document.getFlag(CONFIG.Levels.MODULE_ID, "elevatorFloors") || "";
 
     const newHtml = `
 
@@ -440,7 +441,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 </div>
 
 `;
-    const overh = html.find('input[name="z"]');
+    const overh = html.find('input[name="sort"]');
     const formGroup = overh.closest(".form-group");
     formGroup.after(newHtml);
     app.setPosition({ height: "auto" });
@@ -494,7 +495,7 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
 });
 
 Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
-    let elevation = app.object.getFlag(CONFIG.Levels.MODULE_ID, "elevation");
+    let elevation = app.document.getFlag(CONFIG.Levels.MODULE_ID, "elevation");
 
     let newHtml = `
 <div class="form-group">

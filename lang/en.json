@@ -64,6 +64,10 @@
             "revealTokenInFog": {
                 "name": "Reveal token in fog",
                 "hint": "If a token is visible, reveal the fog of war around that token"
+            },
+            "migrateOnStartup": {
+                "name": "Migrate settings on startup",
+                "hint": "If enabled, the module will migrate the data from the V11 data structure to the V12 one on startup. You can use the macro 'CONFIG.Levels.helpers.migration.showManualMigrationDialog()' to manually migrate your settings."
             }
         },
         "tileconfig": {
