@@ -19,8 +19,6 @@ export function registerWrappers() {
         CONFIG.Levels.settings.get("tokenElevScale") && LevelsConfig.handlers.RefreshHandler.refresh(canvas.tokens);
     });
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.AmbientLight.objectClass.prototype.isVisible", LevelsConfig.handlers.UIHandler.isVisibleWrapper, "WRAPPER");
-
     Hooks.on("refreshWall", (placeable) => {
         computeUI(placeable);
     })

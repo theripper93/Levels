@@ -326,14 +326,6 @@ Hooks.on("renderTileConfig", (app, html, data) => {
             placeholder: "Infinity",
             step: "any",
         },
-        rangeBottom: {
-            type: "number",
-            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: "",
-            placeholder: "-Infinity",
-            step: "any",
-        },
         showIfAbove: {
             type: "checkbox",
             label: game.i18n.localize("levels.tileconfig.showIfAbove.name"),
@@ -398,15 +390,7 @@ Hooks.on("renderAmbientLightConfig", (app, html, data) => {
             default: "",
             placeholder: "Infinity",
             step: "any",
-        },
-        rangeBottom: {
-            type: "number",
-            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: "",
-            placeholder: "-Infinity",
-            step: "any",
-        },
+        }
     });
 });
 
@@ -421,15 +405,7 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
             default: "",
             placeholder: "Infinity",
             step: "any",
-        },
-        rangeBottom: {
-            type: "number",
-            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: "",
-            placeholder: "-Infinity",
-            step: "any",
-        },
+        }
     });
 });
 
@@ -444,15 +420,7 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
             default: "",
             placeholder: "Infinity",
             step: "any",
-        },
-        rangeBottom: {
-            type: "number",
-            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: "",
-            placeholder: "-Infinity",
-            step: "any",
-        },
+        }
     });
 });
 
@@ -485,15 +453,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
             default: "",
             placeholder: "Infinity",
             step: "any",
-        },
-        rangeBottom: {
-            type: "number",
-            label: game.i18n.localize("levels.tileconfig.rangeBottom.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: "",
-            placeholder: "-Infinity",
-            step: "any",
-        },
+        }
     });
 });
 
@@ -580,7 +540,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
 
     injectConfig.inject(app, html, {
         moduleId: "levels",
-        inject: 'input[name="fogExploration"]',
+        inject: 'input[name="fog.exploration"]',
         lightMasking: {
             type: "checkbox",
             label: game.i18n.localize("levels.sceneconfig.lightMasking.name"),

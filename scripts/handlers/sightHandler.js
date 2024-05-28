@@ -217,7 +217,7 @@ export class SightHandler {
     static containsWrapper(wrapped, ...args) {
         const LevelsConfig = CONFIG.Levels;
         const testTarget = LevelsConfig.visibilityTestObject;
-        if (!this.config?.source?.object || !(testTarget instanceof Token) || this.config.source instanceof Globalfoundry.canvas.sources.PointLightSource) return wrapped(...args);
+        if (!this.config?.source?.object || !(testTarget instanceof Token) || this.config.source instanceof foundry.canvas.sources.GlobalLightSource) return wrapped(...args);
         let result;
         if (this.config.source instanceof foundry.canvas.sources.PointLightSource) {
             result = LevelsConfig.handlers.SightHandler.testInLight(this.config.source.object, testTarget, this, wrapped(...args));

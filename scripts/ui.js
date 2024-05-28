@@ -47,6 +47,7 @@ class LevelsUI extends FormApplication {
     }
 
     async activateListeners(html) {
+        await canvas.scene.update({foregroundElevation: 999});
         canvas.tiles.activate();
         this.rangeEnabled = true;
         this.loadLevels();
