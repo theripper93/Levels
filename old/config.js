@@ -391,7 +391,6 @@ Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
 });
 
 Hooks.on("renderDrawingConfig", (app, html, data) => {
-    debugger
     let heightRangeTop = app.document.getFlag(CONFIG.Levels.MODULE_ID, "rangeTop");
     if (heightRangeTop == undefined || heightRangeTop == null) heightRangeTop = Infinity;
 
