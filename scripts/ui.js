@@ -47,7 +47,7 @@ class LevelsUI extends FormApplication {
     }
 
     async activateListeners(html) {
-        await canvas.scene.update({foregroundElevation: 999});
+        await canvas.scene.update({ foregroundElevation: 999 });
         canvas.tiles.activate();
         this.rangeEnabled = true;
         this.loadLevels();
@@ -603,6 +603,43 @@ Hooks.on("ready", () => {
             }
         });
 
+        Hooks.on("preCreateRegion", (region, updates) => {
+            if (CONFIG.Levels.UI.tokensOnly) return;
+            let sortedLevels = [...CONFIG.Levels.UI.definedLevels].sort((a, b) => {
+                return parseFloat(b[0]) - parseFloat(a[0]);
+            });
+            let aboverange = sortedLevels.find((l) => CONFIG.Levels.UI.range[0] === l[0] && CONFIG.Levels.UI.range[1] === l[1]);
+            aboverange = sortedLevels.indexOf(aboverange) === 0 ? undefined : sortedLevels[sortedLevels.indexOf(aboverange) - 1];
+
+            const bottom = parseFloat(CONFIG.Levels.UI.range[0]);
+            const top = aboverange ? aboverange[0] : parseFloat(CONFIG.Levels.UI.range[1]);
+
+            region.updateSource({
+                name: `Levels Stair ${bottom}-${top}`,
+                color: "#fe6c0b",
+                elevation: {
+                    bottom,
+                    top,
+                },
+            });
+            Hooks.once("createRegion", (region) => {
+                region.createEmbeddedDocuments("RegionBehavior", [
+                    {
+                        name: "Execute Script",
+                        type: "executeScript",
+                        system: {
+                            events: ["tokenEnter"],
+                            source: `CONFIG.Levels.handlers.RegionHandler.stair(region,event)
+                            //Use CONFIG.Levels.handlers.RegionHandler.stairUp(region,event) for one way stairs going up
+                            //Use CONFIG.Levels.handlers.RegionHandler.stairDown(region,event) for one way stairs going down
+                            //Use CONFIG.Levels.handlers.RegionHandler.elevator(region,event,elevatorData) for elevators, elevatorData is the same as the string you would input in a drawing elevator
+                            `,
+                        },
+                    },
+                ])
+            });
+        });
+
         Hooks.on("preCreateDrawing", (drawing, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
             let sortedLevels = [...CONFIG.Levels.UI.definedLevels].sort((a, b) => {
@@ -671,7 +708,7 @@ Hooks.on("ready", () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls, b, c) => {
-    if(!CONFIG.Levels) return;
+    if (!CONFIG.Levels) return;
     let templateTool = {
         name: "setTemplateElevation",
         title: game.i18n.localize("levels.controls.setTemplateElevation.name"),
