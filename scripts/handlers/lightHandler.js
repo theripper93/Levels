@@ -1,6 +1,5 @@
 export class LightHandler{
     static isLightVisibleWrapper(wrapped, ...args) {
-        debugger
         const result = wrapped(...args);
         const isPreview = this.document?.id == null;
         if(isPreview) return result;
