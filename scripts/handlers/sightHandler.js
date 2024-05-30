@@ -7,7 +7,7 @@ export class SightHandler {
         const sourceZ = visionSource.elevation * unitsToPixel;
         const dx = test.point.x - visionSource.x;
         const dy = test.point.y - visionSource.y;
-        const dz = (test.point.z ?? sourceZ) - sourceZ;
+        const dz = (test.elevation ?? sourceZ) - sourceZ;
         return dx * dx + dy * dy + dz * dz <= radius * radius;
     }
 
@@ -170,7 +170,7 @@ export class SightHandler {
                   ]
                 : [[0, 0]];
         const e = object instanceof Token && !Number.isFinite(elevation) ? object.document.losHeight : elevation;
-        return {
+        const config = {
             object,
             tests: offsets.map((o) => ({
                 point: { x: point.x + o[0], y: point.y + o[1] },
@@ -178,6 +178,34 @@ export class SightHandler {
                 los: new Map(),
             })),
         };
+        return SightHandler.elevatePoints(config, e);
+    }
+
+    static elevatePoints(config, e) {
+        const object = config.object;
+        const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
+        if (object instanceof Token) {
+            if (config.tests._levels !== object) {
+                config.tests.length = 0;
+                for (const p of SightHandler.getTestPoints(object)) {
+                    config.tests.push({ point: { x: p.x, y: p.y, z: p.z * unitsToPixel }, los: new Map() });
+                }
+                config.tests._levels = object;
+            }
+        } else {
+            let z;
+            if (object instanceof PlaceableObject) {
+                z = object.document.elevation;
+            } else if (object instanceof DoorControl) {
+                z = e;
+            }
+            z ??= canvas.primary.background.elevation;
+            z *= unitsToPixel;
+            for (const test of config.tests) {
+                test.point.z = z;
+            }
+        }
+        return config;
     }
 
     static _testCollision(wrapped, ...args) {

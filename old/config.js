@@ -4,7 +4,7 @@ Hooks.on("init", () => {
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Token.prototype.refresh", _levelsTokenRefresh, "MIXED");
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Tile.prototype.refresh", _levelsTileRefresh, "WRAPPER");
     libWrapper.register(CONFIG.Levels.MODULE_ID, "Token.prototype._onMovementFrame", _levelsOnMovementFrame, "WRAPPER");
-    if (!game.modules.get("perfect-vision")?.active || isNewerVersion("2.8.0", game.modules.get("perfect-vision").data.version)) {
+    if (!game.modules.get("perfect-vision")?.active || foundry.utils.isNewerVersion("2.8.0", game.modules.get("perfect-vision").data.version)) {
         libWrapper.register(CONFIG.Levels.MODULE_ID, "LightingLayer.prototype.refresh", _lightingRefresh, "OVERRIDE");
         libWrapper.register(CONFIG.Levels.MODULE_ID, "SightLayer.prototype.testVisibility", _levelsTestVisibility, "OVERRIDE");
         libWrapper.register(CONFIG.Levels.MODULE_ID, "AmbientSound.prototype.isAudible", _levelsIsAudible, "OVERRIDE");
