@@ -119,9 +119,9 @@ export function registerWrappers() {
 
     libWrapper.register(LevelsConfig.MODULE_ID, "ClockwiseSweepPolygon.prototype._testCollision", LevelsConfig.handlers.SightHandler._testCollision, "MIXED");
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.AmbientLight.objectClass.prototype.emitsLight", LevelsConfig.handlers.LightHandler.isLightVisibleWrapper, "WRAPPER");
+    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.AmbientLight.objectClass.prototype._isLightSourceDisabled", LevelsConfig.handlers.LightHandler._isLightSourceDisabled, "WRAPPER");
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Token.objectClass.prototype.emitsLight", LevelsConfig.handlers.LightHandler.isLightVisibleWrapper, "WRAPPER");
+    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Token.objectClass.prototype._isLightSource", LevelsConfig.handlers.LightHandler.isLightVisibleWrapper, "WRAPPER");
 
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.AmbientSound.objectClass.prototype.isAudible", LevelsConfig.handlers.SoundHandler.isAudible, "WRAPPER");
 
