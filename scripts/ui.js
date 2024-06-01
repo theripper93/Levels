@@ -605,6 +605,7 @@ Hooks.on("ready", () => {
 
         Hooks.on("preCreateRegion", (region, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
+            if (!CONFIG.Levels.UI.rangeEnabled) return;
             let sortedLevels = [...CONFIG.Levels.UI.definedLevels].sort((a, b) => {
                 return parseFloat(b[0]) - parseFloat(a[0]);
             });
@@ -632,10 +633,7 @@ Hooks.on("ready", () => {
                         type: "executeScript",
                         system: {
                             events: ["tokenEnter"],
-                            source: `CONFIG.Levels.handlers.RegionHandler.stair(region,event)
-                            //Use CONFIG.Levels.handlers.RegionHandler.stairUp(region,event) for one way stairs going up
-                            //Use CONFIG.Levels.handlers.RegionHandler.stairDown(region,event) for one way stairs going down
-                            //Use CONFIG.Levels.handlers.RegionHandler.elevator(region,event,elevatorData) for elevators, elevatorData is the same as the string you would input in a drawing elevator
+                            source: `CONFIG.Levels.handlers.RegionHandler.stair(region,event);\n//Check the wiki page for more region options https://wiki.theripper93.com/levels#regions
                             `,
                         },
                     },
