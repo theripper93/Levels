@@ -111,33 +111,36 @@ export class DrawingHandler {
         let content = `<div id="levels-elevator">`;
 
         elevatorFloors.forEach((f) => {
-            content += `<div class="button">
-        <button id="${f[0]}" class="elevator-level">${f[1]}</button>
-    </div>`;
+            content += `<div class="button" type="button">
+                            <button id="${f[0]}" class="elevator-level">${f[1]}</button>
+                </div>`;
         });
-        content += `<hr></div>`;
+        content += `</div>`;
 
-        let dialog = new Dialog({
-            title: game.i18n.localize("levels.dialog.elevator.title"),
+        let dialog = new foundry.applications.api.DialogV2({
+            window: {title: game.i18n.localize("levels.dialog.elevator.title")},
             content: content,
-            buttons: {
-                close: {
+            buttons: [
+                {
                     label: game.i18n.localize("levels.yesnodialog.no"),
                     callback: () => {},
                 },
-            },
+            ],
             default: "close",
             close: () => {},
         });
-        await dialog._render(true);
-        let renderedFrom = $("body").find(`div[id="levels-elevator"]`);
-        for (let btn of $(renderedFrom).find("button")) {
-            $(btn).on("click", updateElev);
-        }
-        function updateElev(event) {
-            let newElev = parseFloat(event.target.id);
-            if (newElev || newElev == 0) canvas.tokens.controlled[0]?.document?.update({ elevation: newElev, flags: { levels: { stairUpdate: true } } });
-        }
+        await dialog.render(true);
+
+        const html = dialog.element;
+        html.querySelector(".form-footer").style.display = "none";
+        const buttons = html.querySelectorAll("#levels-elevator button");
+        buttons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                let newElev = parseFloat(event.target.id);
+                if (newElev || newElev == 0) canvas.tokens.controlled[0]?.document?.update({ elevation: newElev, flags: { levels: { stairUpdate: true } } });
+            });
+        });
     }
 
     static getFlagsForObject(drawing) {
