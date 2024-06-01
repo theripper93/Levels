@@ -32,6 +32,7 @@ export class UIHandler {
             rangeTop = placeable.losHeight;
         }
         const visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop);
+        placeable.visible = visible;
         return visible;
     }
 

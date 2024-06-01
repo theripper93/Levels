@@ -6,6 +6,9 @@ export class TileHandler{
         CONFIG.Levels.FoWHandler.lazyCreateTileFogMask(tile);
         if (!currentToken) {
             canvas.primary.hoverFadeElevation = bgElevation;
+            if (game.user.isGM && CONFIG.Levels?.UI?.rangeEnabled) {
+                canvas.primary.hoverFadeElevation = CONFIG.Levels.UI.getRange().bottom
+            }
             return true;
         }
         
