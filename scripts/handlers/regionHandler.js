@@ -12,21 +12,21 @@ export class RegionHandler {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation !== bottom && elevation !== top) return;
-        tokenDocument.update({ elevation: elevation === top ? bottom : top, "flags.levels.stairUpdate" : true });
+        tokenDocument.update({ elevation: elevation === top ? bottom : top }, {teleport: true});
     }
 
     static stairDown(region, event) {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation > top || elevation <= bottom) return;
-        tokenDocument.update({ elevation: bottom, "flags.levels.stairUpdate" : true });
+        tokenDocument.update({ elevation: bottom }, {teleport: true});
     }
 
     static stairUp(region, event) {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation < bottom || elevation >= top) return;
-        tokenDocument.update({ elevation: top, "flags.levels.stairUpdate" : true });
+        tokenDocument.update({ elevation: top }, {teleport: true});
     }
 
     static getRegionEventData(region, event) {

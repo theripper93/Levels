@@ -138,7 +138,7 @@ export class DrawingHandler {
             button.addEventListener("click", (event) => {
                 event.preventDefault();
                 let newElev = parseFloat(event.target.id);
-                if (newElev || newElev == 0) canvas.tokens.controlled[0]?.document?.update({ elevation: newElev, flags: { levels: { stairUpdate: true } } });
+                if (newElev || newElev == 0) canvas.tokens.controlled[0]?.document?.update({ elevation: newElev }, {teleport: true});
             });
         });
     }
