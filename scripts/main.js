@@ -18,7 +18,7 @@ Hooks.on("preUpdateToken", (token, updates, updateData) => {
   if (isStairUpdate) {
     delete updates.flags.levels.stairUpdate;
   }
-  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate){
+  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate && !updateData.teleport){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const prevElevation = token.object.losHeight;
     const newElevation = prevElevation - elevDiff;

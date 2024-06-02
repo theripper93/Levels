@@ -1,3 +1,8 @@
-2024/06/01-15:45:17.374 dd8 Recovering log #2407
-2024/06/01-15:45:17.378 dd8 Delete type=0 #2407
-2024/06/01-15:45:17.378 dd8 Delete type=3 #2406
+2024/06/02-13:30:04.604 74f0 Recovering log #2417
+2024/06/02-13:30:04.607 74f0 Delete type=0 #2417
+2024/06/02-13:30:04.607 74f0 Delete type=3 #2416
+2024/06/02-13:36:51.095 ca4 Level-0 table #2421: started
+2024/06/02-13:36:51.095 ca4 Level-0 table #2421: 0 bytes OK
+2024/06/02-13:36:51.096 ca4 Delete type=0 #2419
+2024/06/02-13:36:51.096 ca4 Manual compaction at level-0 from '!scenes!i1noRqT20RD5stIK' @ 72057594037927935 : 1 .. '!scenes.walls!zksLSgRdh6f8jiUO.z5ptMNOLPqAgK6MH' @ 0 : 0; will stop at (end)
+2024/06/02-13:36:51.096 ca4 Manual compaction at level-1 from '!scenes!i1noRqT20RD5stIK' @ 72057594037927935 : 1 .. '!scenes.walls!zksLSgRdh6f8jiUO.z5ptMNOLPqAgK6MH' @ 0 : 0; will stop at (end)
