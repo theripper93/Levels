@@ -70,6 +70,7 @@ export class UIHandler {
                 return true;
             }
         }
-        return top <= UITop; //bottom >= UIBottom && top <= UITop;
+        //return top <= UITop; //bottom >= UIBottom && top <= UITop;
+        return bottom < UITop;
     }
 }
