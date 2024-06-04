@@ -541,6 +541,7 @@ Hooks.on("ready", () => {
         Hooks.on("preCreateTile", (tile, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
             if (CONFIG.Levels.UI.rangeEnabled == true) {
+                tile.updateSource({occlusion: { mode: 1 }});
                 if (!game.Levels3DPreview?._active) {
                     tile.updateSource({
                         elevation: CONFIG.Levels.UI.roofEnabled ? parseFloat(CONFIG.Levels.UI.range[1]) : parseFloat(CONFIG.Levels.UI.range[0]),
