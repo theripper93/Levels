@@ -369,7 +369,6 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     html.on("change", "input", (e) => {
         const occlusionMode = html.find(`select[name="occlusion.mode"]`).val();
         const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");
-        injHtml.find("input").prop("disabled", !isOverhead);
         injHtml.find("input[name='flags.levels.showAboveRange']").closest(".form-group").toggle(isShowIfAbove);
         html.find("#occlusion-none-warning").toggle(occlusionMode == 0);
         app.setPosition({ height: "auto" });

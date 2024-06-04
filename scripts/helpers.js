@@ -47,7 +47,7 @@ export function getRangeForDocument(document) {
     }
     const rangeBottom = document.elevation ?? document.elevation ?? -Infinity;
     const rangeTop = document.flags?.levels?.rangeTop ?? Infinity;
-    return { rangeBottom, rangeTop };
+    return { rangeBottom, rangeTop, elevation: rangeBottom };
 }
 
 export function cloneTileMesh(tile) {
