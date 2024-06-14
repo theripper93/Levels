@@ -366,14 +366,14 @@ Hooks.on("renderTileConfig", (app, html, data) => {
     injHtml.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).closest(".form-group").before(`
   <p class="notes" style="color: red" id="occlusion-none-warning">${game.i18n.localize("levels.tileconfig.occlusionNone")}</>
   `);
-    html.on("change", "input", (e) => {
+    html.on("change", "input, select", (e) => {
         const occlusionMode = html.find(`select[name="occlusion.mode"]`).val();
         const isShowIfAbove = injHtml.find(`input[name="flags.levels.showIfAbove"]`).is(":checked");
         injHtml.find("input[name='flags.levels.showAboveRange']").closest(".form-group").toggle(isShowIfAbove);
         html.find("#occlusion-none-warning").toggle(occlusionMode == 0);
         app.setPosition({ height: "auto" });
     });
-    html.find(`input[name="overhead"]`).trigger("change");
+    html.find(`[name="occlusion.mode"]`).trigger("change");
     app.setPosition({ height: "auto" });
 });
 
