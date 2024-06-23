@@ -36,11 +36,6 @@ export function registerWrappers() {
             if (CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
                 if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < this.document.elevation) {
                     if (!visible) {
-                        if (this.mesh) {
-                            /*this.mesh.occluded = true;
-                        this.mesh.shader.enabled = false;
-                        this.mesh.alpha = 0;*/
-                        }
                         result = result && visible;
                     }
                 } else {

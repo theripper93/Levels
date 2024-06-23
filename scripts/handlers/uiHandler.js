@@ -12,9 +12,9 @@ export class UIHandler {
             if (CONFIG.Levels.UI?.rangeEnabled && !placeable.document?.flags?.levels) {
                 const uiRange = CONFIG.Levels.UI.getRange();
                 placeable.document.flags.levels = {
-                    rangeBottom: uiRange.bottom,
                     rangeTop: uiRange.top,
                 };
+                placeable.document.elevation = uiRange.bottom;
             }
             return true;
         }

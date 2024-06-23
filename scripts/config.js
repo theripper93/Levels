@@ -378,6 +378,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
+    if(html.querySelector(`[name="flags.levels.rangeTop"]`)) return;
     const injHtml = injectConfig.inject(app, html, {
         moduleId: "levels",
         inject: 'input[name="config.dim"]',
@@ -408,6 +409,7 @@ Hooks.on("renderNoteConfig", (app, html, data) => {
 });
 
 Hooks.on("renderAmbientSoundConfig", (app, html, data) => {
+    if(html.querySelector(`[name="flags.levels.rangeTop"]`)) return;
     const injHtml = injectConfig.inject(app, html, {
         moduleId: "levels",
         inject: 'input[name="radius"]',
