@@ -265,7 +265,7 @@ export class SightHandler {
                 object: testTarget,
             };
             result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, point, this, this.config.type);
-            if(canvas.effects.darknessSources.size) result = result && wrapped(...args);
+            //if(canvas.effects.darknessSources.size) result = result && wrapped(...args);
         } else {
             result = wrapped(...args);
         }
@@ -278,6 +278,7 @@ export class SightHandler {
      * @returns {boolean} Whether the wall should be ignored
      */
     static shouldIgnoreWall(wall, collisionType, options) {
+        if(!wall) return false;
         const proximity = this.shouldIgnoreProximityWall(wall.document, options.A, options.B, options.source?.vision?.data?.externalRadius ?? 0);
         if (collisionType === 0) {
             return (
@@ -300,7 +301,7 @@ export class SightHandler {
         const d = document.threshold?.sight;
         if (!d || d.sight < 30) return false; // No threshold applies
         const proximity = document.sight === CONST.WALL_SENSE_TYPES.PROXIMITY;
-        const pt = foundry.utils.closestPointToSegment(source, document.object.A, document.object.B);
+        const pt = foundry.utils.closestPointToSegment(source, document.object.edge.a, document.object.edge.b);
         //const ptTarget = foundry.utils.closestPointToSegment(target, document.object.A, document.object.B);
         //const targetDistance = Math.hypot(ptTarget.x - target.x, ptTarget.y - target.y);
         const sourceDistance = Math.hypot(pt.x - source.x, pt.y - source.y);
@@ -394,6 +395,10 @@ export class SightHandler {
         }
         //Get wall heights flags, avoid infinity, use arbitrary large number instead
         function getWallHeightRange3Dcollision(wall) {
+            if(!wall) return [-1e9, 1e9];
+            if (wall.elevation !== undefined) {
+                return [wall.elevation, wall.document.flags.levels?.rangeTop ?? Infinity];
+            }
             let { top, bottom } = WallHeight.getWallBounds(wall);
             if (bottom == -Infinity) bottom = -1e9;
             if (top == Infinity) top = 1e9;
@@ -410,19 +415,20 @@ export class SightHandler {
             const rect = new PIXI.Rectangle(rectX, rectY, rectW, rectH);
             const walls = canvas.walls.quadtree.getObjects(rect);
             let terrainWalls = 0;
-            for (let wall of walls) {
-                if (this.shouldIgnoreWall(wall, TYPE, options)) continue;
-
-                let isTerrain = (TYPE === 0 && wall.document.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && wall.document.move === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 2 && wall.document.sound === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 3 && wall.document.light === CONST.WALL_SENSE_TYPES.LIMITED);
+            for (const [k, edge] of canvas.edges) {
+                if (this.shouldIgnoreWall(edge.object, TYPE, options)) continue;
+                
+                let isTerrain = (TYPE === 0 && edge.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && edge.move === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 2 && edge.sound === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 3 && edge.light === CONST.WALL_MOVEMENT_TYPES.LIMITED);
 
                 //declare points in 3d space of the rectangle created by the wall
-                const wallBotTop = getWallHeightRange3Dcollision(wall);
-                const wx1 = wall.document.c[0];
-                const wx2 = wall.document.c[2];
-                const wx3 = wall.document.c[2];
-                const wy1 = wall.document.c[1];
-                const wy2 = wall.document.c[3];
-                const wy3 = wall.document.c[3];
+                const wallBotTop = getWallHeightRange3Dcollision(edge.object);
+
+                const wx1 = edge.a.x;
+                const wx2 = edge.b.x;
+                const wx3 = edge.b.x;
+                const wy1 = edge.a.y;
+                const wy2 = edge.b.y;
+                const wy3 = edge.b.y;
                 const wz1 = wallBotTop[0];
                 const wz2 = wallBotTop[0];
                 const wz3 = wallBotTop[1];
@@ -442,11 +448,11 @@ export class SightHandler {
 
                 //Check for directional walls
 
-                if (wall.direction !== null) {
+                if (edge.direction) {
                     // Directional walls where the ray angle is not in the same hemisphere
                     const rayAngle = Math.atan2(y1 - y0, x1 - x0);
                     const angleBounds = [rayAngle - Math.PI / 2, rayAngle + Math.PI / 2];
-                    if (!wall.isDirectionBetweenAngles(...angleBounds)) continue;
+                    if (edge.object?.isDirectionBetweenAngles && !edge.object.isDirectionBetweenAngles(...angleBounds)) continue;
                 }
 
                 //calculate intersection point
@@ -462,6 +468,7 @@ export class SightHandler {
                     continue;
                 }
                 if (isb && iz <= wallBotTop[1] && iz >= wallBotTop[0]) return { x: ix, y: iy, z: iz };
+
             }
             return false;
         }
