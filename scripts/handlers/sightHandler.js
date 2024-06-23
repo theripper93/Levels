@@ -1,7 +1,7 @@
 export class SightHandler {
     static _testRange(visionSource, mode, target, test) {
-        if ( mode.range === null ) return true;
-        if ( mode.range <= 0 ) return false;
+        if (mode.range === null) return true;
+        if (mode.range <= 0) return false;
         let radius = visionSource.object.getLightRadius(mode.range);
         const unitsToPixel = canvas.dimensions.size / canvas.dimensions.distance;
         const sourceZ = visionSource.elevation * unitsToPixel;
@@ -169,7 +169,12 @@ export class SightHandler {
                       [0, t],
                   ]
                 : [[0, 0]];
-        const e = object instanceof Token && !Number.isFinite(elevation) ? object.document.losHeight : elevation;
+
+        let e;
+
+        if (object instanceof Token && !Number.isFinite(elevation)) e = object.document.losHeight;
+        else if (object instanceof DoorControl) e = WallHeight.currentTokenElevation;
+        else e = elevation;
         const config = {
             object,
             tests: offsets.map((o) => ({
