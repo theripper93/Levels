@@ -265,6 +265,7 @@ export class SightHandler {
                 object: testTarget,
             };
             result = LevelsConfig.handlers.SightHandler.performLOSTest(this.config.source.object, point, this, this.config.type);
+            if(canvas.effects.darknessSources.size) result = result && wrapped(...args);
         } else {
             result = wrapped(...args);
         }

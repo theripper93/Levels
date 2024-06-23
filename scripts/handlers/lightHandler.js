@@ -28,7 +28,6 @@ export class LightHandler{
     }
 
     static _isLightSourceDisabled(wrapped, ...args) {
-        debugger
         const result = wrapped(...args);
         const isPreview = this.document?.id == null;
         if(isPreview) return result;

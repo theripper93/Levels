@@ -65,6 +65,10 @@
                 "name": "Reveal token in fog",
                 "hint": "If a token is visible, reveal the fog of war around that token"
             },
+            "strictVisionCheck": {
+                "name": "Strict Vision Check",
+                "hint": "If disabled Darkness light sources will not block sight. If enabled, tokens outside of the vision polygon but visible to 3D sight calculations will be visible."
+            },
             "migrateOnStartup": {
                 "name": "Migrate settings on startup",
                 "hint": "If enabled, the module will migrate the data from the V11 data structure to the V12 one on startup. You can use the macro 'CONFIG.Levels.helpers.migration.showManualMigrationDialog()' to manually migrate your settings."
