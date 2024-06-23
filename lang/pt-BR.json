@@ -1,0 +1,290 @@
+{
+    "levels": {
+        "modulename": "Levels",
+        "settings": {
+            "enableTooltips": {
+                "name": "Ativar Dicas",
+                "hint": "Mostrar dicas com topo e fundo ao passar o mouse sobre objetos de níveis"
+            },
+            "tokenElevScale": {
+                "name": "Escala de Elevação",
+                "hint": "Alterar o tamanho dos tokens com base na elevação do token controlado"
+            },
+            "tokenElevScaleMultiSett": {
+                "name": "Multiplicador de Escala de Elevação",
+                "hint": "Multiplicar a escala de elevação por este número. Um número maior que 1 fará os tokens maiores, enquanto um menor que 1 os fará menores"
+            },
+            "fogHiding": {
+                "name": "Névoa de Guerra Avançada",
+                "hint": "Ocultar andares não explorados da névoa de guerra explorada"
+            },
+            "lockElevation": {
+                "name": "Travar Elevação",
+                "hint": "Impedir que os jogadores mudem a elevação a partir do HUD do token. Lembre-se de que se o jogador tiver permissão para editar tokens, ele poderá alterá-la na configuração do token"
+            },
+            "defaultLosHeight": {
+                "name": "Altura Padrão do Token",
+                "hint": "Altura de um token (onde os olhos dessa criatura estão) em unidades. Padrão 6."
+            },
+            "autoLOSHeight": {
+                "name": "Altura Automática do Token",
+                "hint": "Calcular automaticamente a altura do token com base no tamanho e escala. Ignorará a altura padrão do token, mas as configurações por token que não estejam definidas para 0 terão prioridade sobre o cálculo automático"
+            },
+            "debugRaycast": {
+                "name": "DEBUG: Habilitar visualização de raios",
+                "hint": "Mostrar os raios de Visão 3D (verde visível, vermelho não visível)"
+            },
+            "preciseLightOcclusion": {
+                "name": "Experimental: Oclusão precisa de luz",
+                "hint": "Remove artefatos de oclusão de luz ao custo de desempenho"
+            },
+            "preciseTokenVisibility": {
+                "name": "Visibilidade precisa do token",
+                "hint": "Habilitar esta opção verificará a visão contra os cantos do token além do centro ao custo de algum desempenho"
+            },
+            "exactTokenVisibility": {
+                "name": "Visibilidade exata do token",
+                "hint": "A visibilidade precisa do token deve estar habilitada para que esta opção funcione. Esta opção fará uma verificação de 11 pontos contra os cantos do token. Sugerido se você estiver usando 3D Canvas"
+            },
+            "blockSightMovement": {
+                "name": "Cerca",
+                "hint": "Quando habilitado, paredes com altura que não restrinjam a visão ainda restringirão o movimento"
+            },
+            "forceUiRefresh": {
+                "name": "Forçar atualização da UI",
+                "hint": "Força atualizações mais frequentes da interface do usuário dos níveis ao custo de desempenho; se habilitado, pode causar problemas em sistemas específicos (por exemplo, PF2e)"
+            },
+            "hideElevation": {
+                "name": "Ocultar Elevação",
+                "hint": "Ocultar elevação dos tokens",
+                "opt0": "Não ocultar",
+                "opt1": "Ocultar dos jogadores",
+                "opt2": "Ocultar de todos"
+            },
+            "revealTokenInFog": {
+                "name": "Revelar token na névoa",
+                "hint": "Se um token estiver visível, revele a névoa de guerra ao redor desse token"
+            }
+        },
+        "tileconfig": {
+            "noOverhead": "Este NÃO é um tile superior, este tile será renderizado na elevação de fundo. Para alterar essas configurações, habilite a opção 'É Superior?' na aba superior.",
+            "occlusionNone": "Modo de Oclusão está definido como 'Nenhum', este tile não bloqueará a visão. Defina o Modo de Oclusão como 'Desvanecer' se quiser que este tile bloqueie a visão.",
+            "rangeTop": {
+                "name": "Altura (Topo)"
+            },
+            "rangeBottom": {
+                "name": "Altura (Base)"
+            },
+            "showIfAbove": {
+                "name": "Mostrar mesmo quando abaixo?",
+                "hint": "Se habilitado, o tile será mostrado mesmo que o token esteja abaixo da faixa de altura inferior (uso de exemplo, varandas)"
+            },
+            "showAboveRange": {
+                "name": "Diferença Máxima de Elevação",
+                "hint": "Quando 'Mostrar mesmo quando abaixo?' está habilitado, esta é a diferença máxima de elevação entre o token e o tile; além deste valor, o tile não será mais mostrado."
+            },
+            "isBasement": {
+                "name": "Faixa Estrita",
+                "hint": "Se habilitado, o tile só será mostrado se o token estiver dentro da faixa do tile; isso significa que um token acima da faixa superior não verá este tile."
+            },
+            "noFogHide": {
+                "name": "Não esconder este tile na Névoa",
+                "hint": "Excluir este tile da 'Névoa de Guerra Avançada' dos Níveis."
+            },
+            "range": {
+                "unit": "Elevação"
+            },
+            "excludeFromChecker": {
+                "name": "Excluir do Verificador de Cena"
+            },
+            "noCollision": {
+                "name": "Permitir Visão",
+                "hint": "Se habilitado, o tile não bloqueará a visão."
+            },
+            "allWallBlockSight": {
+                "name": "Todas as Paredes Bloqueiam a Visão",
+                "hint": "Quando marcado, todas as paredes sob este tile contarão como bloqueio de visão quando o tile não estiver ocluído."
+            }
+        },
+        "drawingconfig": {
+            "hb": {
+                "name": "Altura (Base)"
+            },
+            "ht": {
+                "name": "Altura (Topo)"
+            },
+            "range": {
+                "name": "Faixa de Buraco"
+            },
+            "elevatorFloors": {
+                "name": "Andares do Elevador",
+                "hint": "Defina os Andares como: elevação,nome|elevação,nome... - ex. 0,Térreo|10,Primeiro Andar..."
+            },
+            "isHole": {
+                "name": "Modo de Desenho de Níveis",
+                "opt0": "Nenhum",
+                "opt1": "Buraco",
+                "opt2": "Escada",
+                "opt21": "Escada (Mão Única - Baixo)",
+                "opt22": "Escada (Mão Única - Cima)",
+                "opt3": "Elevador"
+            }
+        },
+        "drawingHud": {
+            "title": "Alternar Estado Bloqueado para Escada"
+        },
+        "tokenconfig": {
+            "tokenHeight": {
+                "name": "Altura de LOS do Token",
+                "unit": "(Distância)"
+            }
+        },
+        "template": {
+            "elevation": {
+                "name": "Elevação"
+            },
+            "special": {
+                "name": "Especial"
+            },
+            "depth": {
+                "name": "Profundidade"
+            }
+        },
+        "sceneconfig": {
+            "backgroundElevation": {
+                "name": "Elevação de Fundo",
+                "notes": "Uma elevação em unidades de distância que configura a altura da imagem de fundo e dos tiles sob os pés."
+            },
+            "weatherElevation": {
+                "name": "Elevação do Clima",
+                "notes": "Uma elevação em unidades de distância que configura a altura dos efeitos climáticos."
+            },
+            "lightMasking": {
+                "name": "Levels: Não desativar luzes",
+                "notes": "Quando habilitado, Níveis não controlará a visibilidade da Luz; esta opção deve ser desativada em cenas que utilizam vários níveis."
+            }
+        },
+        "controls": {
+            "main": {
+                "name": "Levels"
+            },
+            "levelsview": {
+                "name": "Habilitar Visualização/Colocação de Níveis"
+            },
+            "definelevels": {
+                "name": "Editar Níveis"
+            },
+            "levelup": {
+                "name": "Subir um Nível"
+            },
+            "leveldown": {
+                "name": "Descer um Nível"
+            },
+            "levelsroof": {
+                "name": "Visualização/Colocação de Telhados"
+            },
+            "levelshole": {
+                "name": "Colocar desenhos como Escadas quando habilitado, colocar como buracos quando desativado"
+            },
+            "levelsclear": {
+                "name": "Limpar Níveis"
+            },
+            "placeOverhead": {
+                "name": "Colocar tiles como tiles superiores 'dentro' dos níveis"
+            },
+            "setTemplateElevation": {
+                "name": "Definir elevação para o próximo modelo colocado"
+            },
+            "suppressBrmode": {
+                "name": "Suprimir aplicação do modo Better Roofs"
+            }
+        },
+		"dialog": {
+            "levelsclear": {
+                "title": "Limpar Níveis",
+                "content": "Limpar todos os níveis armazenados?"
+            },
+            "define": {
+                "warn": "Defina os níveis como: base,topo|base,topo - ex. 0,9|10,19|20,29",
+                "title": "Definir Níveis para esta Cena",
+                "text": "Levels: "
+            },
+            "removeLevel": {
+                "title": "Remover Nível",
+                "content": "Tem certeza de que deseja remover este nível?"
+            },
+            "getFromScene": {
+                "title": "Obter Níveis da Cena",
+                "content": "Obter Níveis da cena atual? Isso substituirá seus níveis atuais"
+            },
+            "elevator": {
+                "title": "Níveis - Escolher um Andar"
+            },
+            "elevation": {
+                "title": "Definir Elevação para próxima colocação de Modelo"
+            },
+            "sceneDrop": {
+                "title": "Níveis - Queda de Cena",
+                "content": "Todos os elementos da cena descartada serão colocados no nível atual; tem certeza de que deseja continuar?"
+            },
+            "checkScene": {
+                "title": "Níveis - Verificador de Cena",
+                "content": "Tiles detectados com polígonos que possivelmente não foram detectados ou definidos corretamente; por favor, verifique os seguintes tiles:",
+                "learnMore": "Não sabe o que é o Polígono? Tendo outros problemas? Confira a página dos Níveis, inclui um vídeo dedicado ao Polígono!",
+                "noIssues": "Nenhum Problema Detectado!",
+                "excluded": "Excluído da Verificação"
+            }
+        },
+        "ui": {
+            "title": "Níveis - Ferramenta de Camada",
+            "players": "Mostrar Jogadores",
+            "stair": "Colocar Desenhos como Escadas",
+            "addLevel": "Adicionar um novo nível",
+            "editLevels": "Editar Níveis",
+            "getFromScene": "Obter Níveis da Cena",
+            "clearLevels": "Limpar Níveis",
+            "debugScene": "Depurar Cena (Vermelho significa problemas detectados)",
+            "minElevDiff": "Tamanho Mínimo do Nível",
+            "tokenAttacher": "Colocar prefabs do Anexador de Token em relação ao nível atual<hr>Se você NÃO estiver colocando Prefabs, esta opção precisa ser DESATIVADA",
+            "warning": "AVISO! 'Não desativar luzes' está habilitado nas Configurações da Cena - Múltiplos níveis não funcionarão corretamente. Clique para resolver este problema."
+        },
+        "yesnodialog": {
+            "yes": "Confirmar",
+            "no": "Cancelar"
+        },
+        "widget": {
+            "title": "Levels",
+            "element": "Level"
+        },
+        "form": {
+            "bottom": "Base:",
+            "top": "Topo:",
+            "name": "Nome:",
+            "currentLevel": "Níveis Atuais",
+            "addNew": "Adicionar um novo nível",
+            "tip": "*Os níveis não devem se sobrepor (ex. 0,9 / 10,19 / 20,29)",
+            "suggestedLevels": "Gerar Níveis Sugeridos",
+            "autoLevels": "Obter níveis da Cena"
+        },
+        "err": {
+            "collision": "Levels: O movimento tentado colide com pelo menos um piso/teto",
+            "tokenOOB": "Levels: A altura do token %n excede o teto do nível atualmente selecionado. Por favor, defina manualmente a altura do token ou aumente seu nível. Saiba mais <a href='https://wiki.theripper93.com/free/wall-height#token-height' target='_blank'>aqui</a>.",
+            "wallheight": "AVISO! Níveis requer a versão 4.1.0 ou superior do Wall Height para funcionar corretamente.",
+            "lessfog": "Levels: AVISO! Menos Névoa detectada - a visibilidade do token não funcionará como esperado, por favor, desative um dos módulos",
+            "tokenheight": "Levels: AVISO! Detectada opção 'Habilitar Altura do Token' ativada no módulo Wall Height - esta configuração é incompatível com Níveis e foi desativada!",
+            "elevatedvision": "Levels: AVISO! Detectada opção 'Padrão para elevação automática do token' ativada no módulo 'Elevated Vision' - esta configuração é conhecida por atrapalhar a funcionalidade regular dos Níveis e foi desativada!",
+            "elevatedvisioncompat": "Levels: AVISO! Detectado módulo 'Elevated Vision' - este módulo é conhecido por atrapalhar a funcionalidade regular dos Níveis e não deve ser usado em combinação com Níveis."
+        },
+        "info": {
+            "advancedMode": "Levels: Modo Avançado na Better Roofs foi ativado."
+        },
+        "firsttime": {
+            "dialog": "."
+        },
+        "conflicts": {
+            "midiqol": {
+                "tokenvis": "Habilitar a opção 'Os jogadores controlam tokens ocultos possuídos' no MidiQOL causará problemas de visibilidade do token. Por favor, desative esta opção nas configurações do módulo."
+            }
+        }
+    }
+}
