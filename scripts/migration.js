@@ -82,7 +82,7 @@ export class LevelsMigration {
             if (updates.length <= 0) continue;
             await scene.updateEmbeddedDocuments(documents[0].documentName, updates);
             ui.notifications.notify("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
-            console.log("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
+            console.log("Levels - Migrated " + updates.length + " " + collectionName + " to new elevation data structure in scene " + scene.name);
         }
     }
 
