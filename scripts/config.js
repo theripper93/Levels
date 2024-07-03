@@ -460,15 +460,7 @@ Hooks.on("renderDrawingConfig", (app, html, data) => {
 Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
     const injHtml = injectConfig.inject(app, html, {
         moduleId: "levels",
-        inject: 'input[name="width"]',
-        elevation: {
-            type: "text",
-            dType: "Number",
-            label: game.i18n.localize("levels.template.elevation.name"),
-            units: game.i18n.localize("levels.tileconfig.range.unit"),
-            default: Infinity,
-            step: "any",
-        },
+        inject: '[name="elevation"]',
         special: {
             type: "number",
             label: game.i18n.localize("levels.template.depth.name"),
@@ -508,9 +500,10 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
     const templateData = CONFIG.Levels.handlers.TemplateHandler.getTemplateData();
-    if (template.flags?.levels?.elevation) return;
+    if (template.elevation) return;
     template.updateSource({
-        flags: { levels: { elevation: templateData.elevation, special: templateData.special } },
+        elevation: templateData.elevation,
+        flags: { levels: { special: templateData.special } },
     });
 });
 

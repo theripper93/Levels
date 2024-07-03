@@ -126,11 +126,5 @@ export function registerWrappers() {
 
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Note.objectClass.prototype.isVisible", LevelsConfig.handlers.NoteHandler.isVisible, "WRAPPER");
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.MeasuredTemplate.objectClass.prototype.draw", LevelsConfig.handlers.TemplateHandler.drawTooltip, "WRAPPER");
-
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.MeasuredTemplate.objectClass.prototype._refreshRulerText", LevelsConfig.handlers.TemplateHandler._refreshRulerText, "OVERRIDE");
-
-    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.MeasuredTemplate.objectClass.prototype.isVisible", LevelsConfig.handlers.TemplateHandler.isVisible, "WRAPPER");
-
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Token.objectClass.prototype.isVisible", LevelsConfig.handlers.UIHandler.tokenUIWrapperIsVisible, "WRAPPER");
 }
