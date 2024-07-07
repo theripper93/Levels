@@ -74,18 +74,9 @@ export function registerWrappers() {
         "TokenLayer.prototype._getOccludableTokens",
         function (wrapped, ...args) {
             if (game.user.isGM) return wrapped(...args);
-            else {
-                const M = CONST.TOKEN_OCCLUSION_MODES;
-                const mode = this.occlusionMode;
-                if (mode & M.VISIBLE || (mode & M.HIGHLIGHTED && this.highlightObjects)) {
-                    return this.placeables.filter((t) => t.visible);
-                }
-                const tokens = new Set();
-                if (mode & M.HOVERED && this.hover) tokens.add(this.hover);
-                if (mode & M.CONTROLLED && CONFIG.Levels.currentToken) tokens.add(CONFIG.Levels.currentToken);
-                if (mode & M.OWNED) this.ownedTokens.filter((t) => !t.document.hidden).forEach((t) => tokens.add(t));
-                return Array.from(tokens);
-            }
+            const isLevels = canvas.scene?.flags?.levels?.sceneLevels?.length > 0;
+            if (!isLevels) return wrapped(...args);
+            return CONFIG.Levels.currentToken ? [CONFIG.Levels.currentToken] : [];
         },
         "MIXED",
     );
