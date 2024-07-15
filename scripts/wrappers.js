@@ -74,7 +74,6 @@ export function registerWrappers() {
         "TokenLayer.prototype._getOccludableTokens",
         function (wrapped, ...args) {
             if (game.user.isGM) return wrapped(...args);
-            debugger
             const isLevels = canvas.scene?.flags?.levels?.sceneLevels?.length > 0;
             if (!isLevels) return wrapped(...args);
             return CONFIG.Levels.currentToken ? [CONFIG.Levels.currentToken] : [];
