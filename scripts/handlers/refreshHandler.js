@@ -3,6 +3,7 @@ export class RefreshHandler{
     static refreshPlaceables(){
         this.refresh(canvas.tiles);
         this.refresh(canvas.drawings);
+        canvas.perception.update({ refreshOcclusion: true }, true);
     }
 
     static refreshAll(){
