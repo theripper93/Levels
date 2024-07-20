@@ -32,6 +32,8 @@ export function registerWrappers() {
         "CONFIG.Tile.objectClass.prototype.isVisible",
         function (wrapped, ...args) {
             const visible = LevelsConfig.handlers.TileHandler.isTileVisible(this);
+            const hasRestrictions = (this.document.restrictions.light || this.document.restrictions.weather) && !CONFIG.Levels.UI?.rangeEnabled;
+            if(hasRestrictions) return wrapped(...args);
             let result = wrapped(...args);
             if (CONFIG.Levels.currentToken || canvas.tokens.controlled.length) {
                 if ((CONFIG.Levels.currentToken ?? canvas.tokens.controlled[0]).losHeight < this.document.elevation) {
