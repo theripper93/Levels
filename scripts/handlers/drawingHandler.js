@@ -1,4 +1,6 @@
-import { adjustPolygonPoints } from "../helpers.js";
+import {adjustPolygonPoints} from "../helpers.js";
+
+let lastDialog = null;
 
 export class DrawingHandler {
     static isDrawingVisible(drawing) {
@@ -65,7 +67,7 @@ export class DrawingHandler {
             }
             token.inStair = inStair;
             if (!inStair) {
-                $("#levels-elevator").closest(".app").find(`a[class="header-button close"]`).click();
+                DrawingHandler.closeElevatorDialog();
             }
             if (newUpdates) {
                 newUpdates.flags ??= {};
@@ -101,6 +103,11 @@ export class DrawingHandler {
         return stairs;
     }
 
+    static closeElevatorDialog() {
+        if (lastDialog) lastDialog.close();
+        lastDialog = null;
+    }
+
     static async renderElevatorDalog(levelsFlag) {
         //await new Promise((resolve) => setTimeout(resolve, 1000));
         let elevatorFloors = [];
@@ -129,6 +136,7 @@ export class DrawingHandler {
             default: "close",
             close: () => {},
         });
+        lastDialog = dialog;
         await dialog.render(true);
 
         const html = dialog.element;
