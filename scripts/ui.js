@@ -568,7 +568,7 @@ Hooks.on("ready", () => {
                 if (CONFIG.Levels.UI.placeOverhead) {
                     tile.updateSource({
                         roof: false,
-                        elevation: parseFloat(CONFIG.Levels.UI.range[1]),
+                        elevation: parseFloat(CONFIG.Levels.UI.range[1]) - 0.1,
                         flags: {
                             [`${CONFIG.Levels.MODULE_ID}`]: {
                                 showIfAbove: true,
