@@ -27,6 +27,10 @@ export function registerWrappers() {
         computeUI(placeable);
     });
 
+    Hooks.on("refreshAmbientSound", (placeable) => {
+        computeUI(placeable);
+    });
+
     libWrapper.register(
         LevelsConfig.MODULE_ID,
         "CONFIG.Tile.objectClass.prototype.isVisible",
