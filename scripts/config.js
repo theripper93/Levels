@@ -255,18 +255,6 @@ Hooks.on("init", () => {
         },
     });
 
-    game.settings.register(CONFIG.Levels.MODULE_ID, "enableTooltips", {
-        name: game.i18n.localize("levels.settings.enableTooltips.name"),
-        hint: game.i18n.localize("levels.settings.enableTooltips.hint"),
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: false,
-        onChange: () => {
-            CONFIG.Levels.settings.cacheSettings();
-        },
-    });
-
     game.settings.register(CONFIG.Levels.MODULE_ID, "preciseTokenVisibility", {
         name: game.i18n.localize("levels.settings.preciseTokenVisibility.name"),
         hint: game.i18n.localize("levels.settings.preciseTokenVisibility.hint"),
