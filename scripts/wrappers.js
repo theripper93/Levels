@@ -103,10 +103,6 @@ export function registerWrappers() {
         "WRAPPER",
     );
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "RegionBehavior.prototype.active", function a(wrapped, ...args) {
-        return wrapped(...args) && false;
-    }, "WRAPPER");
-
     libWrapper.register(LevelsConfig.MODULE_ID, "CanvasVisibility.prototype._createVisibilityTestConfig", LevelsConfig.handlers.SightHandler._createVisibilityTestConfig, "OVERRIDE", { perf_mode: "FAST" });
 
     libWrapper.register(LevelsConfig.MODULE_ID, "DetectionMode.prototype._testRange", LevelsConfig.handlers.SightHandler._testRange, "OVERRIDE", { perf_mode: "FAST" });
