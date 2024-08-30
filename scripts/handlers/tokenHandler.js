@@ -9,9 +9,10 @@ export class TokenHandler{
 
     static setScale(token, renderFlags){
       if(!CONFIG.Levels.settings.get("tokenElevScale") || !token?.document) return;
-      
+
       const scaleMultiplier = CONFIG.Levels.settings.get("tokenElevScaleMultiSett");
-      const elevationDiff = Math.abs(token.document.elevation - CONFIG.Levels.currentToken.document.elevation) / 8;
+      const currentTokenElevation = CONFIG.Levels.currentToken?.document?.elevation ?? token.document.elevation;
+      const elevationDiff = Math.abs(token.document.elevation - currentTokenElevation) / 8;
       
       const scaleFactor = elevationDiff == 0 ? 1 : Math.min(scaleMultiplier / elevationDiff, 1);
       if(renderFlags.refreshMesh) token.mesh.originalScale = null; 
