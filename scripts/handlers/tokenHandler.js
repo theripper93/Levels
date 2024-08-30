@@ -8,7 +8,7 @@ export class TokenHandler{
   }
 
     static setScale(token, renderFlags){
-      if(!CONFIG.Levels.settings.get("tokenElevScale")) return;
+      if(!CONFIG.Levels.settings.get("tokenElevScale") || !token?.document) return;
       
       const scaleMultiplier = CONFIG.Levels.settings.get("tokenElevScaleMultiSett");
       const elevationDiff = Math.abs(token.document.elevation - CONFIG.Levels.currentToken.document.elevation) / 8;
