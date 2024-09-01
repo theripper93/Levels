@@ -18,7 +18,7 @@ export class SightHandler {
     static advancedLosTestVisibility(sourceToken, tokenOrPoint, source, type = "sight") {
         const angleTest = this.testInAngle(sourceToken, tokenOrPoint, source);
         if (!angleTest) return false;
-        return !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
+        return !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type, source);
         const inLOS = !this.advancedLosTestInLos(sourceToken, tokenOrPoint, type);
         if (sourceToken.vision.los === source) return inLOS;
         const inRange = this.tokenInRange(sourceToken, tokenOrPoint);
@@ -58,15 +58,15 @@ export class SightHandler {
         return tokenCorners;
     }
 
-    static advancedLosTestInLos(sourceToken, tokenOrPoint, type = "sight") {
-        if (!(tokenOrPoint instanceof Token) || CONFIG.Levels.settings.get("preciseTokenVisibility") === false) return this.checkCollision(sourceToken, tokenOrPoint, type);
+    static advancedLosTestInLos(sourceToken, tokenOrPoint, type = "sight", source) {
+        if (!(tokenOrPoint instanceof Token) || CONFIG.Levels.settings.get("preciseTokenVisibility") === false) return this.checkCollision(sourceToken, tokenOrPoint, type, { sourcePolygon: source });
         const sourceCenter = {
             x: sourceToken.vision.x,
             y: sourceToken.vision.y,
             z: sourceToken.losHeight,
         };
         for (let point of this.getTestPoints(tokenOrPoint)) {
-            let collision = this.testCollision(sourceCenter, point, type, { source: sourceToken, target: tokenOrPoint });
+            let collision = this.testCollision(sourceCenter, point, type, { source: sourceToken, target: tokenOrPoint, sourcePolygon: source });
             if (!collision) return collision;
         }
         return true;
@@ -319,6 +319,7 @@ export class SightHandler {
      **/
 
     static testCollision(p0, p1, type = "sight", options = {}) {
+        debugger
         if (canvas?.scene?.flags["levels-3d-preview"]?.object3dSight) {
             if (!game.Levels3DPreview?._active) return true;
             return game.Levels3DPreview.interactionManager.computeSightCollision(p0, p1, type);
@@ -337,6 +338,7 @@ export class SightHandler {
 
         const TYPE = type == "sight" ? 0 : type == "sound" ? 2 : type == "light" ? 3 : 1;
         const ALPHATTHRESHOLD = type == "sight" ? 0.99 : 0.1;
+        const IGNOREDARKNESS = !options?.sourcePolygon?.config?.includeDarkness;
         //If the point are on the same Z axis return the 3d wall test
         if (z0 == z1) {
             return walls3dTest.bind(this)();
@@ -417,7 +419,7 @@ export class SightHandler {
             let terrainWalls = 0;
             for (const [k, edge] of canvas.edges) {
                 if (this.shouldIgnoreWall(edge.object, TYPE, options)) continue;
-                
+                if (IGNOREDARKNESS && edge.type === "darkness") continue;
                 let isTerrain = (TYPE === 0 && edge.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && edge.move === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 2 && edge.sound === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 3 && edge.light === CONST.WALL_MOVEMENT_TYPES.LIMITED);
 
                 //declare points in 3d space of the rectangle created by the wall
@@ -481,7 +483,7 @@ export class SightHandler {
      * @param {String} type - "sight" or "move"/"collision" or "sound" or "light" (defaults to "sight")
      * @returns {Boolean} returns the collision point if a collision is detected, flase if it's not
      **/
-    static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight") {
+    static checkCollision(tokenOrPoint1, tokenOrPoint2, type = "sight", options = {}) {
         const p0 =
             tokenOrPoint1 instanceof Token
                 ? {
@@ -498,6 +500,6 @@ export class SightHandler {
                       z: tokenOrPoint2.losHeight,
                   }
                 : tokenOrPoint2;
-        return this.testCollision(p0, p1, type, { source: tokenOrPoint1, target: tokenOrPoint2 });
+        return this.testCollision(p0, p1, type, { source: tokenOrPoint1, target: tokenOrPoint2, ...options });
     }
 }
