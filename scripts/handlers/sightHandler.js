@@ -277,27 +277,26 @@ export class SightHandler {
      * @param {Integer} collisionType - The collision type being checked: 0 for sight, 1 for movement, 2 for sound, 3 for light
      * @returns {boolean} Whether the wall should be ignored
      */
-    static shouldIgnoreWall(wall, collisionType, options) {
-        if(!wall) return false;
-        const proximity = this.shouldIgnoreProximityWall(wall.document, options.A, options.B, options.source?.vision?.data?.externalRadius ?? 0);
+    static shouldIgnoreWall(wall, collisionType, options, edge) {
+        const {sight, light, sound, move} = edge;
+        const proximity = this.shouldIgnoreProximityWall(wall?.document, options.A, options.B, options.source?.vision?.data?.externalRadius ?? 0);
         if (collisionType === 0) {
             return (
-                wall.document.sight === CONST.WALL_SENSE_TYPES.NONE ||
+                sight === CONST.WALL_SENSE_TYPES.NONE ||
                 proximity ||
-                //wall.document.sight > 20 ||
-                (wall.document.door != 0 && wall.document.ds === 1)
+                (wall?.document?.door != 0 && wall?.document?.ds === 1)
             );
         } else if (collisionType === 1) {
-            return wall.document.move === CONST.WALL_MOVEMENT_TYPES.NONE || (wall.document.door != 0 && wall.document.ds === 1);
+            return move === CONST.WALL_MOVEMENT_TYPES.NONE || (wall?.document?.door != 0 && wall?.document?.ds === 1);
         } else if (collisionType === 2) {
-            return wall.document.sound === CONST.WALL_MOVEMENT_TYPES.NONE || wall.document.sound > 20 || (wall.document.door != 0 && wall.document.ds === 1);
+            return sound === CONST.WALL_MOVEMENT_TYPES.NONE || sound > 20 || (wall?.document?.door != 0 && wall?.document?.ds === 1);
         } else if (collisionType === 3) {
-            return wall.document.light === CONST.WALL_MOVEMENT_TYPES.NONE || wall.document.light > 20 || (wall.document.door != 0 && wall.document.ds === 1);
+            return light === CONST.WALL_MOVEMENT_TYPES.NONE || light > 20 || (wall?.document?.door != 0 && wall?.document?.ds === 1);
         }
     }
 
     static shouldIgnoreProximityWall(document, source, target, externalRadius = 0) {
-        if (!source || !target) return false;
+        if (!source || !target || !document) return false;
         const d = document.threshold?.sight;
         if (!d || d.sight < 30) return false; // No threshold applies
         const proximity = document.sight === CONST.WALL_SENSE_TYPES.PROXIMITY;
@@ -414,10 +413,9 @@ export class SightHandler {
             const rectW = Math.abs(x1 - x0);
             const rectH = Math.abs(y1 - y0);
             const rect = new PIXI.Rectangle(rectX, rectY, rectW, rectH);
-            const walls = canvas.walls.quadtree.getObjects(rect);
             let terrainWalls = 0;
             for (const [k, edge] of canvas.edges) {
-                if (this.shouldIgnoreWall(edge.object, TYPE, options)) continue;
+                if (this.shouldIgnoreWall(edge.object, TYPE, options, edge)) continue;
                 if (IGNOREDARKNESS && edge.type === "darkness") continue;
                 let isTerrain = (TYPE === 0 && edge.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && edge.move === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 2 && edge.sound === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 3 && edge.light === CONST.WALL_MOVEMENT_TYPES.LIMITED);
 
