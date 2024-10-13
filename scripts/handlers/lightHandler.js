@@ -2,8 +2,8 @@ export class LightHandler{
     static isLightVisibleWrapper(wrapped, ...args) {
         const result = wrapped(...args);
         const isPreview = this.document?.id == null;
-        if(isPreview) return result;
-        if(!CONFIG.Levels.handlers.UIHandler.emitsLightUI(this)) return false;
+        if (isPreview) return result;
+        if(!CONFIG.Levels.handlers.UIHandler.emitsLightUIToken(this)) return false;
         if (game.Levels3DPreview?._active) return result;
         const isToken = this instanceof Token;
         const rangeBottom = this.document.elevation ?? -Infinity;
