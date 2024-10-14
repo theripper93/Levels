@@ -14,7 +14,7 @@ import {BackgroundHandler} from "./handlers/backgroundHandler.js";
 import {RegionHandler} from "./handlers/regionHandler.js";
 import { SettingsHandler } from "./handlers/settingsHandler.js";
 import { LevelsAPI } from "./API.js";
-import { registerWrappers } from "./wrappers.js";
+import { registerWrappers, registerSetupWrappers } from "./wrappers.js";
 import { inRange, getRangeForDocument, cloneTileMesh, inDistance } from "./helpers.js";
 import { setupWarnings } from "./warnings.js";
 import {LevelsMigration} from "./migration.js";
@@ -122,6 +122,10 @@ Hooks.on("init", () => {
 
     Hooks.callAll("levelsReady", CONFIG.Levels);
 });
+
+Hooks.once("setup", () => {
+    registerSetupWrappers();
+} );
 
 Hooks.once("ready", () => {
 

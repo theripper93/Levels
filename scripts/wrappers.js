@@ -87,24 +87,6 @@ export function registerWrappers() {
         "MIXED",
     );
 
-    const visibilityTestObjectStack = [];
-    libWrapper.register(
-        LevelsConfig.MODULE_ID,
-        "CanvasVisibility.prototype.testVisibility",
-        function visibilityWrapper(wrapped, ...args) {
-            const options = (args[1] ??= {});
-            if (options.object instanceof Token) options.tolerance = 0;
-            visibilityTestObjectStack.push(LevelsConfig.visibilityTestObject);
-            LevelsConfig.visibilityTestObject = args[1].object;
-            const res = wrapped(...args);
-            LevelsConfig.visibilityTestObject = visibilityTestObjectStack.pop();
-            return !!res;
-        },
-        "WRAPPER",
-    );
-
-    libWrapper.register(LevelsConfig.MODULE_ID, "CanvasVisibility.prototype._createVisibilityTestConfig", LevelsConfig.handlers.SightHandler._createVisibilityTestConfig, "OVERRIDE", { perf_mode: "FAST" });
-
     libWrapper.register(LevelsConfig.MODULE_ID, "DetectionMode.prototype._testRange", LevelsConfig.handlers.SightHandler._testRange, "OVERRIDE", { perf_mode: "FAST" });
 
     libWrapper.register(LevelsConfig.MODULE_ID, "ClockwiseSweepPolygon.prototype.contains", LevelsConfig.handlers.SightHandler.containsWrapper, "MIXED");
@@ -120,4 +102,26 @@ export function registerWrappers() {
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Note.objectClass.prototype.isVisible", LevelsConfig.handlers.NoteHandler.isVisible, "WRAPPER");
 
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Token.objectClass.prototype.isVisible", LevelsConfig.handlers.UIHandler.tokenUIWrapperIsVisible, "WRAPPER");
+}
+
+export function registerSetupWrappers() {
+    const LevelsConfig = CONFIG.Levels;
+
+    const visibilityTestObjectStack = [];
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
+        "CONFIG.Canvas.groups.visibility.groupClass.prototype.testVisibility",
+        function visibilityWrapper(wrapped, ...args) {
+            const options = (args[1] ??= {});
+            if (options.object instanceof Token) options.tolerance = 0;
+            visibilityTestObjectStack.push(LevelsConfig.visibilityTestObject);
+            LevelsConfig.visibilityTestObject = args[1].object;
+            const res = wrapped(...args);
+            LevelsConfig.visibilityTestObject = visibilityTestObjectStack.pop();
+            return !!res;
+        },
+        "WRAPPER",
+    );
+
+    libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.Canvas.groups.visibility.groupClass.prototype._createVisibilityTestConfig", LevelsConfig.handlers.SightHandler._createVisibilityTestConfig, "OVERRIDE", { perf_mode: "FAST" });
 }

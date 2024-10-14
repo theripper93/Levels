@@ -193,7 +193,7 @@ export class SightHandler {
             if (config.tests._levels !== object) {
                 config.tests.length = 0;
                 for (const p of SightHandler.getTestPoints(object)) {
-                    const elevation = p.z * unitsToPixel;
+                    const elevation = p.z;
                     config.tests.push({ elevation, point: { x: p.x, y: p.y, z: elevation }, los: new Map() });
                 }
                 config.tests._levels = object;
@@ -206,7 +206,7 @@ export class SightHandler {
                 z = e;
             }
             z ??= canvas.primary.background.elevation;
-            z *= unitsToPixel;
+            //z *= unitsToPixel;
             for (const test of config.tests) {
                 test.point.z = z;
                 test.elevation = z;
