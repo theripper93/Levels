@@ -4,6 +4,7 @@ export class FoWHandler {
     }
 
     setHooks() {
+
         Hooks.on("drawCanvasVisibility", () => {
             this.init();
             canvas.visibility.explored.addChild(this.advancedFogContainer);

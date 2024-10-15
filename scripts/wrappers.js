@@ -82,7 +82,7 @@ export function registerWrappers() {
             if (game.user.isGM) return wrapped(...args);
             const isLevels = canvas.scene?.flags?.levels?.sceneLevels?.length > 0;
             if (!isLevels) return wrapped(...args);
-            return CONFIG.Levels.currentToken ? [CONFIG.Levels.currentToken] : [];
+            return CONFIG.Levels.currentToken && !CONFIG.Levels.currentToken.destroyed ? [CONFIG.Levels.currentToken] : [];
         },
         "MIXED",
     );

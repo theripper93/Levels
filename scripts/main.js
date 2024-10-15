@@ -31,3 +31,7 @@ Hooks.on("preUpdateToken", (token, updates, updateData) => {
     }
   }
 })
+
+Hooks.on("tearDownPrimaryCanvasGroup", () => {
+  if ( canvas.primary.quadtree.all.length !== 0 ) debugger;
+});
