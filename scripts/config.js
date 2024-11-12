@@ -18,6 +18,7 @@ import { registerWrappers, registerSetupWrappers } from "./wrappers.js";
 import { inRange, getRangeForDocument, cloneTileMesh, inDistance } from "./helpers.js";
 import { setupWarnings } from "./warnings.js";
 import {LevelsMigration} from "./migration.js";
+import {showWelcome} from "./showWelcome.js";
 
 //warnings
 
@@ -131,49 +132,7 @@ Hooks.once("ready", () => {
 
     if(game.user.isGM && game.settings.get("levels", "migrateOnStartup")) CONFIG.Levels.helpers.migration.migrateAll();
 
-    if (game.modules.get("levels-3d-preview")?.active) return;
-    // Module title
-    const MODULE_ID = CONFIG.Levels.MODULE_ID;
-    const MODULE_TITLE = game.modules.get(MODULE_ID).title;
-
-    const FALLBACK_MESSAGE_TITLE = MODULE_TITLE;
-    const FALLBACK_MESSAGE = `<large>
-  <p><strong>This module may be very complicated for a first timer, be sure to stop by my <a href="https://theripper93.com/">Discord</a> for help and support from the wonderful community as well as many resources</strong></p>
-
-  <p>Thanks to all the patreons supporting the development of this module making continued updates possible!</p>
-  <p>If you want to support the development of the module or get customized support in setting up your maps you can do so here : <a href="https://www.patreon.com/theripper93">Patreon</a> </p></large>
-  <p><strong>Patreons</strong> get also access to <strong>15+ premium modules</strong></p>
-  <p>Is Levels not enough? Go Full 3D</p>
-  <h1>3D Canvas</h1>
-  <iframe width="385" height="225" src="https://www.youtube.com/embed/hC1QGZFUhcU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  <p>Check 3D Canvas and all my other <strong>15+ premium modules <a href="https://theripper93.com/">Here</a></strong></p>
-  <p>Special thanks to Baileywiki for the support and feedback and Blair for the amazing UI elements</p>`;
-
-    // Settings key used for the "Don't remind me again" setting
-    const DONT_REMIND_AGAIN_KEY = "popup-dont-remind-again-2";
-
-    // Dialog code
-    game.settings.register(MODULE_ID, DONT_REMIND_AGAIN_KEY, {
-        name: "",
-        default: false,
-        type: Boolean,
-        scope: "world",
-        config: false,
-    });
-    if (game.user.isGM && !game.settings.get(MODULE_ID, DONT_REMIND_AGAIN_KEY)) {
-        new Dialog({
-            title: FALLBACK_MESSAGE_TITLE,
-            content: FALLBACK_MESSAGE,
-            buttons: {
-                ok: { icon: '<i class="fas fa-check"></i>', label: "Understood" },
-                dont_remind: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: "Don't remind me again",
-                    callback: () => game.settings.set(MODULE_ID, DONT_REMIND_AGAIN_KEY, true),
-                },
-            },
-        }).render(true);
-    }
+    showWelcome();
 });
 
 Hooks.on("init", () => {
