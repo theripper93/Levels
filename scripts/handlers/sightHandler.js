@@ -7,7 +7,7 @@ export class SightHandler {
         const sourceZ = visionSource.elevation * unitsToPixel;
         const dx = test.point.x - visionSource.x;
         const dy = test.point.y - visionSource.y;
-        const dz = (test.elevation * unitsToPixel ?? sourceZ) - sourceZ;
+        const dz = test.elevation !== undefined ? (test.elevation * unitsToPixel) - sourceZ : 0;
         return dx * dx + dy * dy + dz * dz <= radius * radius;
     }
 
