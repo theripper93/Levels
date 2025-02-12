@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-2025/02/09-16:30:27.993 37c4 Recovering log #3441
-2025/02/09-16:30:27.997 37c4 Delete type=0 #3441
-2025/02/09-16:30:27.997 37c4 Delete type=3 #3440
-2025/02/09-16:31:07.928 67e8 Level-0 table #3445: started
-2025/02/09-16:31:07.928 67e8 Level-0 table #3445: 0 bytes OK
-2025/02/09-16:31:07.929 67e8 Delete type=0 #3443
-2025/02/09-16:31:07.929 67e8 Manual compaction at level-0 from '!scenes!i1noRqT20RD5stIK' @ 72057594037927935 : 1 .. '!scenes.walls!zksLSgRdh6f8jiUO.z5ptMNOLPqAgK6MH' @ 0 : 0; will stop at (end)
-2025/02/09-16:31:07.929 67e8 Manual compaction at level-1 from '!scenes!i1noRqT20RD5stIK' @ 72057594037927935 : 1 .. '!scenes.walls!zksLSgRdh6f8jiUO.z5ptMNOLPqAgK6MH' @ 0 : 0; will stop at (end)
-=======
-2025/01/11-16:06:12.723 68d4 Recovering log #3391
-2025/01/11-16:06:12.729 68d4 Delete type=0 #3391
-2025/01/11-16:06:12.729 68d4 Delete type=3 #3390
->>>>>>> 6d8fc54942e5d20de958ccb8b899f1e5ffb34b74
+2025/02/12-16:40:45.523 38e8 Log #3396: 0 ops saved to Table #3448 OK
+2025/02/12-16:40:45.524 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/003396.log: OK
+2025/02/12-16:40:45.524 38e8 Log #3447: 0 ops saved to Table #3449 OK
+2025/02/12-16:40:45.524 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/003447.log: OK
+2025/02/12-16:40:45.524 38e8 Table #3383: 405 entries OK
+2025/02/12-16:40:45.527 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/MANIFEST-003394: OK
+2025/02/12-16:40:45.528 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/MANIFEST-003446: OK
+2025/02/12-16:40:45.530 38e8 **** Repaired leveldb D:\FoundryVTT\Data\modules\levels\packs\levels-samples; recovered 1 files; 60780 bytes. Some data may have been lost. ****

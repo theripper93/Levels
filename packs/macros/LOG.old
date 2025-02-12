@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-2025/02/09-16:30:27.978 83f8 Recovering log #3436
-2025/02/09-16:30:27.982 83f8 Delete type=0 #3436
-2025/02/09-16:30:27.982 83f8 Delete type=3 #3435
-2025/02/09-16:31:07.924 67e8 Level-0 table #3440: started
-2025/02/09-16:31:07.924 67e8 Level-0 table #3440: 0 bytes OK
-2025/02/09-16:31:07.926 67e8 Delete type=0 #3438
-2025/02/09-16:31:07.926 67e8 Manual compaction at level-0 from '!macros!2LfY4Ky5rRDkK7h8' @ 72057594037927935 : 1 .. '!macros!yx7Eb76rfzjh0LEO' @ 0 : 0; will stop at (end)
-2025/02/09-16:31:07.926 67e8 Manual compaction at level-1 from '!macros!2LfY4Ky5rRDkK7h8' @ 72057594037927935 : 1 .. '!macros!yx7Eb76rfzjh0LEO' @ 0 : 0; will stop at (end)
-=======
-2025/01/11-16:06:12.709 302c Recovering log #3386
-2025/01/11-16:06:12.714 302c Delete type=0 #3386
-2025/01/11-16:06:12.714 302c Delete type=3 #3385
->>>>>>> 6d8fc54942e5d20de958ccb8b899f1e5ffb34b74
+2025/02/12-16:40:45.506 4480 Log #3391: 0 ops saved to Table #3443 OK
+2025/02/12-16:40:45.507 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/003391.log: OK
+2025/02/12-16:40:45.507 4480 Log #3442: 0 ops saved to Table #3444 OK
+2025/02/12-16:40:45.507 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/003442.log: OK
+2025/02/12-16:40:45.507 4480 Table #3378: 9 entries OK
+2025/02/12-16:40:45.510 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/MANIFEST-003389: OK
+2025/02/12-16:40:45.510 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/MANIFEST-003441: OK
+2025/02/12-16:40:45.512 4480 **** Repaired leveldb D:\FoundryVTT\Data\modules\levels\packs\macros; recovered 1 files; 3158 bytes. Some data may have been lost. ****
