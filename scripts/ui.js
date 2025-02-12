@@ -67,7 +67,7 @@ class LevelsUI extends FormApplication {
             this.placeOverhead = !this.placeOverhead;
             this.setButtonStyles();
         });
-        html.on("click", "#levels-ui-controls .fa-sort-amount-up-alt", () => {
+        html.on("click", "#levels-ui-controls .fa-game-board", () => {
             this.stairEnabled = !this.stairEnabled;
             this.setButtonStyles();
         });
@@ -110,7 +110,7 @@ class LevelsUI extends FormApplication {
     setButtonStyles() {
         this.element.find(".fa-archway").toggleClass("active", this.roofEnabled);
         this.element.find(".fa-tree").toggleClass("active", this.placeOverhead);
-        this.element.find(".fa-sort-amount-up-alt").toggleClass("active", this.stairEnabled);
+        this.element.find(".fa-game-board").toggleClass("active", this.stairEnabled);
         this.element.find(".fa-users").toggleClass("active", this.element.find(".players-on-level").hasClass("active"));
         this.element.find(".fa-link").toggleClass("active", this.tokenOnly);
     }
@@ -644,43 +644,16 @@ Hooks.on("ready", () => {
 
         Hooks.on("preCreateDrawing", (drawing, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
-            let sortedLevels = [...CONFIG.Levels.UI.definedLevels].sort((a, b) => {
-                return parseFloat(b[0]) - parseFloat(a[0]);
-            });
-            let aboverange = sortedLevels.find((l) => CONFIG.Levels.UI.range[0] === l[0] && CONFIG.Levels.UI.range[1] === l[1]);
-            aboverange = sortedLevels.indexOf(aboverange) === 0 ? undefined : sortedLevels[sortedLevels.indexOf(aboverange) - 1];
-
-            if (aboverange) {
-                let newTop = aboverange[1];
-                let newBot = aboverange[0];
                 if (CONFIG.Levels.UI.rangeEnabled == true) {
                     drawing.updateSource({
                         elevation: parseFloat(CONFIG.Levels.UI.range[0]),
-                        hidden: CONFIG.Levels.UI.stairEnabled,
-                        text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${newBot}` : "",
                         flags: {
                             levels: {
-                                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
-                                rangeTop: newBot - 1,
-                            },
-                        },
-                    });
-                }
-            } else {
-                if (CONFIG.Levels.UI.rangeEnabled == true) {
-                    drawing.updateSource({
-                        hidden: CONFIG.Levels.UI.stairEnabled,
-                        text: CONFIG.Levels.UI.stairEnabled ? `Levels Stair ${CONFIG.Levels.UI.range[0]}-${parseFloat(CONFIG.Levels.UI.range[1]) + 1}` : "",
-                        elevation: parseFloat(CONFIG.Levels.UI.range[0]),
-                        flags: {
-                            levels: {
-                                drawingMode: CONFIG.Levels.UI.stairEnabled ? 2 : 0,
                                 rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
                             },
                         },
                     });
                 }
-            }
         });
 
         Hooks.on("preCreateWall", (wall, updates) => {

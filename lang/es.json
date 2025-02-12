@@ -206,6 +206,14 @@
             "tokenElevScaleMultiSett": {
                 "hint": "Multiplique la escala de elevación por este número. \nUn número mayor que 1 hará que las fichas sean más grandes, mientras que uno menor que 1 las hará más pequeñas.",
                 "name": "Multiplicador de escala de elevación"
+            },
+            "migrateOnStartup": {
+                "hint": "Si está habilitado, el módulo migrará los datos de la estructura de datos V11 al V12 uno en el inicio. \nPuede usar la macro 'config.levels.helpers.migration.showmanualMigrationDialog ()' para migrar manualmente su configuración.",
+                "name": "Migrar la configuración al inicio"
+            },
+            "strictVisionCheck": {
+                "hint": "Si las fuentes de luz de oscuridad discapacitados no bloquearán la vista. \nSi está habilitado, las fichas fuera del polígono de visión pero visibles para los cálculos de la vista 3D serán visibles.",
+                "name": "Verificación de visión estricta"
             }
         },
         "template": {
@@ -273,10 +281,10 @@
             "getFromScene": "Obtener niveles de la escena",
             "minElevDiff": "Tamaño mínimo del nivel",
             "players": "Mostrar jugadores",
-            "stair": "Colocar dibujos como escaleras",
             "title": "Niveles - Herramienta Capa",
             "tokenAttacher": "Colocar prefabricados de Token Attacher en relación con el nivel actual<hr>Si NO está colocando prefabricados, esta opción debe estar DESACTIVADA",
-            "warning": "¡ADVERTENCIA! \n\"No desactivar las luces\" está habilitado en la Configuración de escena: varios niveles no funcionarán correctamente. \nHaga clic para resolver este problema."
+            "warning": "¡ADVERTENCIA! \n\"No desactivar las luces\" está habilitado en la Configuración de escena: varios niveles no funcionarán correctamente. \nHaga clic para resolver este problema.",
+            "stair": "Coloque las regiones como escaleras"
         },
         "widget": {
             "element": "Nivel",

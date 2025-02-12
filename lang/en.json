@@ -246,7 +246,7 @@
         "ui": {
             "title": "Levels - Layer Tool",
             "players": "Show Players",
-            "stair": "Place Drawings as Stairs",
+            "stair": "Place Regions as Stairs",
             "addLevel": "Add a new level",
             "editLevels": "Edit Levels",
             "getFromScene": "Get Levels from Scene",

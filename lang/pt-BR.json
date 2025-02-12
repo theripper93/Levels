@@ -64,6 +64,14 @@
             "revealTokenInFog": {
                 "name": "Revelar token na névoa",
                 "hint": "Se um token estiver visível, revele a névoa de guerra ao redor desse token"
+            },
+            "migrateOnStartup": {
+                "hint": "Se ativado, o módulo migrará os dados da estrutura de dados V11 para o V12 One na inicialização. \nVocê pode usar o macro 'config.levels.helpers.migration.showmanualMigrationDialog ()' para migrar manualmente suas configurações.",
+                "name": "Migrar as configurações na inicialização"
+            },
+            "strictVisionCheck": {
+                "hint": "Se as fontes de luz de escuridão desativadas não bloquearem a visão. \nSe ativado, os tokens fora do polígono da visão, mas visíveis para os cálculos de visão 3D, serão visíveis.",
+                "name": "Verificação de visão estrita"
             }
         },
         "tileconfig": {
@@ -199,7 +207,7 @@
                 "name": "Suprimir aplicação do modo Better Roofs"
             }
         },
-		"dialog": {
+        "dialog": {
             "levelsclear": {
                 "title": "Limpar Níveis",
                 "content": "Limpar todos os níveis armazenados?"
@@ -238,7 +246,6 @@
         "ui": {
             "title": "Níveis - Ferramenta de Camada",
             "players": "Mostrar Jogadores",
-            "stair": "Colocar Desenhos como Escadas",
             "addLevel": "Adicionar um novo nível",
             "editLevels": "Editar Níveis",
             "getFromScene": "Obter Níveis da Cena",
@@ -246,7 +253,8 @@
             "debugScene": "Depurar Cena (Vermelho significa problemas detectados)",
             "minElevDiff": "Tamanho Mínimo do Nível",
             "tokenAttacher": "Colocar prefabs do Anexador de Token em relação ao nível atual<hr>Se você NÃO estiver colocando Prefabs, esta opção precisa ser DESATIVADA",
-            "warning": "AVISO! 'Não desativar luzes' está habilitado nas Configurações da Cena - Múltiplos níveis não funcionarão corretamente. Clique para resolver este problema."
+            "warning": "AVISO! 'Não desativar luzes' está habilitado nas Configurações da Cena - Múltiplos níveis não funcionarão corretamente. Clique para resolver este problema.",
+            "stair": "Coloque regiões como escadas"
         },
         "yesnodialog": {
             "yes": "Confirmar",

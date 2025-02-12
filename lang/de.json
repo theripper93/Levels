@@ -206,6 +206,14 @@
             "tokenElevScaleMultiSett": {
                 "hint": "Multiplizieren Sie den Höhenmaßstab mit dieser Zahl. \nBei einer Zahl größer als 1 werden die Token größer, bei einer Zahl kleiner als 1 werden sie kleiner",
                 "name": "Höhenskalenmultiplikator"
+            },
+            "migrateOnStartup": {
+                "hint": "Wenn dies aktiviert ist, migriert das Modul die Daten aus der V11 -Datenstruktur auf das Start von V12. \nSie können die Makro 'config.levels.helpers.Migration.ShowManualMigrationDialog ()' verwenden, um Ihre Einstellungen manuell zu migrieren.",
+                "name": "Einstellungen zum Start migrieren"
+            },
+            "strictVisionCheck": {
+                "hint": "Wenn Lichtquellen für behinderte Dunkelheit nicht das Sehen blockieren. \nWenn es aktiviert ist, sind Token außerhalb des Sehpolygons, aber für 3D -Sichtberechnungen sichtbar.",
+                "name": "Strenge Vision Check"
             }
         },
         "template": {
@@ -273,10 +281,10 @@
             "getFromScene": "Holen Sie sich Levels aus der Szene",
             "minElevDiff": "Mindestlevelgröße",
             "players": "Spieler anzeigen",
-            "stair": "Platzieren Sie Zeichnungen als Treppen",
             "title": "Ebenen – Ebenenwerkzeug",
             "tokenAttacher": "Platzieren Sie Token Attacher-Fertigobjekte relativ zur aktuellen Ebene.<hr>Wenn Sie KEINE Fertigobjekte platzieren, muss diese Option DEAKTIVIERT werden",
-            "warning": "WARNUNG! \n„Lichter nicht deaktivieren“ ist in den Szeneneinstellungen aktiviert – mehrere Ebenen funktionieren nicht richtig. \nKlicken Sie hier, um dieses Problem zu beheben."
+            "warning": "WARNUNG! \n„Lichter nicht deaktivieren“ ist in den Szeneneinstellungen aktiviert – mehrere Ebenen funktionieren nicht richtig. \nKlicken Sie hier, um dieses Problem zu beheben.",
+            "stair": "Regionen als Treppe legen"
         },
         "widget": {
             "element": "Ebene",

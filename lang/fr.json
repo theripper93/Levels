@@ -206,6 +206,14 @@
             "tokenElevScaleMultiSett": {
                 "hint": "Multipliez l'échelle d'élévation par ce nombre. \nUn nombre supérieur à 1 rendra les jetons plus gros tandis qu'un nombre inférieur à 1 les rendra plus petits.",
                 "name": "Multiplicateur d'échelle d'élévation"
+            },
+            "migrateOnStartup": {
+                "hint": "S'il est activé, le module migrera les données de la structure de données V11 vers la V12 une au démarrage. \nVous pouvez utiliser la macro 'config.levels.helpers.migration.showmanualmigrationDialog ()' pour migrer manuellement vos paramètres.",
+                "name": "Migrer les paramètres au démarrage"
+            },
+            "strictVisionCheck": {
+                "hint": "Si les sources de lumière des ténèbres handicapées ne bloqueront pas la vue. \nS'ils sont activés, les jetons en dehors du polygone de la vision mais visibles pour les calculs de vue 3D seront visibles.",
+                "name": "Vérification de la vision stricte"
             }
         },
         "template": {
@@ -273,10 +281,10 @@
             "getFromScene": "Obtenir les niveaux de la scène",
             "minElevDiff": "Taille minimale du niveau",
             "players": "Afficher les joueurs",
-            "stair": "Placer des dessins comme escaliers",
             "title": "Niveaux - Outil Calque",
             "tokenAttacher": "Placer les préfabriqués Token Attacher par rapport au niveau actuel<hr>Si vous ne placez PAS de préfabriqués, cette option doit être DÉSACTIVÉE",
-            "warning": "AVERTISSEMENT! \n« Ne pas désactiver les lumières » est activé dans les paramètres de scène. Plusieurs niveaux ne fonctionneront pas correctement. \nCliquez pour résoudre ce problème."
+            "warning": "AVERTISSEMENT! \n« Ne pas désactiver les lumières » est activé dans les paramètres de scène. Plusieurs niveaux ne fonctionneront pas correctement. \nCliquez pour résoudre ce problème.",
+            "stair": "Placer les régions comme des escaliers"
         },
         "widget": {
             "element": "Niveau",
