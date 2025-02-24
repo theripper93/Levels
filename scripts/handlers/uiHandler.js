@@ -23,7 +23,7 @@ export class UIHandler {
         const isVision = canvas.effects.visionSources.size;
         if (isTokenSelected && isVision) return true;
         if (isTokenSelected && !isVision && !(placeable instanceof Token)) return true;
-        if ((canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken) && canvas.effects.visionSources.size) return true;
+        if (isTokenSelected && canvas.effects.visionSources.size) return true;
         let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document);
         rangeBottom = placeable.document.elevation ?? rangeBottom;
         if (rangeBottom == -Infinity && rangeTop == Infinity) return true;
@@ -67,6 +67,7 @@ export class UIHandler {
     static inUIRange(bottom, top) {
         const UIBottom = parseFloat(CONFIG.Levels.UI.range[0]);
         const UITop = parseFloat(CONFIG.Levels.UI.range[1]);
+        return bottom >= UIBottom && bottom < UITop;
         return bottom >= UIBottom && top <= UITop;
     }
 
@@ -78,7 +79,6 @@ export class UIHandler {
                 return true;
             }
         }
-        //return top <= UITop; //bottom >= UIBottom && top <= UITop;
         return bottom < UITop;
     }
 }

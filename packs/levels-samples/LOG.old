@@ -1,8 +1,3 @@
-2025/02/12-16:40:45.523 38e8 Log #3396: 0 ops saved to Table #3448 OK
-2025/02/12-16:40:45.524 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/003396.log: OK
-2025/02/12-16:40:45.524 38e8 Log #3447: 0 ops saved to Table #3449 OK
-2025/02/12-16:40:45.524 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/003447.log: OK
-2025/02/12-16:40:45.524 38e8 Table #3383: 405 entries OK
-2025/02/12-16:40:45.527 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/MANIFEST-003394: OK
-2025/02/12-16:40:45.528 38e8 Archiving D:\FoundryVTT\Data\modules\levels\packs\levels-samples/MANIFEST-003446: OK
-2025/02/12-16:40:45.530 38e8 **** Repaired leveldb D:\FoundryVTT\Data\modules\levels\packs\levels-samples; recovered 1 files; 60780 bytes. Some data may have been lost. ****
+2025/02/24-22:07:41.233 307c Recovering log #3496
+2025/02/24-22:07:41.236 307c Delete type=0 #3496
+2025/02/24-22:07:41.237 307c Delete type=3 #3495

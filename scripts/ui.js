@@ -265,22 +265,21 @@ class LevelsUI extends FormApplication {
     }
 
     generateLi(data) {
-        //data 0 - top 1- bottom 2- name
         let $li = $(`
-	<li class="level-item" draggable>
-    <i class="fas fa-arrows-alt"></i>
-    <div class="players-on-level"></div>
-    <i class="fas fa-caret-right"></i>
-    <div class="level-inputs">
-    <input type="text" class="level-name" value="${data[2] ?? ""}" placeholder="${game.i18n.localize("levels.widget.element")}">
-    <i class="fas fa-caret-down"></i>
-    <input type="number" class="level-bottom" value="${data[0]}" placeholder="0">
-    <i class="fas fa-caret-up"></i>
-    <input type="number" class="level-top" value="${data[1]}" placeholder="0">
-    <i class="fas fa-trash"></i>
-    </div>
-	</li>
-	`);
+            <li class="level-item" draggable>
+            <i class="fas fa-arrows-alt"></i>
+            <div class="players-on-level"></div>
+            <i class="fas fa-caret-right"></i>
+            <div class="level-inputs">
+            <input type="text" class="level-name" value="${data[2] ?? ""}" placeholder="${game.i18n.localize("levels.widget.element")}">
+            <i class="fas fa-caret-down"></i>
+            <input type="number" class="level-bottom" value="${data[0]}" placeholder="0">
+            <i class="fas fa-caret-up"></i>
+            <input type="number" class="level-top" value="${data[1]}" placeholder="0">
+            <i class="fas fa-trash"></i>
+            </div>
+            </li>
+        `);
         $li.find("input").prop("readonly", !this.isEdit);
         $li.find(".fa-trash").toggleClass("hidden", this.isEdit);
         $li.find(".fa-arrows-alt").toggleClass("hidden", this.isEdit);
@@ -541,7 +540,7 @@ Hooks.on("ready", () => {
         Hooks.on("preCreateTile", (tile, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
             if (CONFIG.Levels.UI.rangeEnabled == true) {
-                tile.updateSource({occlusion: { mode: 1 }});
+                tile.updateSource({ occlusion: { mode: 1 } });
                 if (!game.Levels3DPreview?._active) {
                     tile.updateSource({
                         elevation: CONFIG.Levels.UI.roofEnabled ? parseFloat(CONFIG.Levels.UI.range[1]) : parseFloat(CONFIG.Levels.UI.range[0]),
@@ -638,22 +637,22 @@ Hooks.on("ready", () => {
                             `,
                         },
                     },
-                ])
+                ]);
             });
         });
 
         Hooks.on("preCreateDrawing", (drawing, updates) => {
             if (CONFIG.Levels.UI.tokensOnly) return;
-                if (CONFIG.Levels.UI.rangeEnabled == true) {
-                    drawing.updateSource({
-                        elevation: parseFloat(CONFIG.Levels.UI.range[0]),
-                        flags: {
-                            levels: {
-                                rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
-                            },
+            if (CONFIG.Levels.UI.rangeEnabled == true) {
+                drawing.updateSource({
+                    elevation: parseFloat(CONFIG.Levels.UI.range[0]),
+                    flags: {
+                        levels: {
+                            rangeTop: parseFloat(CONFIG.Levels.UI.range[1]),
                         },
-                    });
-                }
+                    },
+                });
+            }
         });
 
         Hooks.on("preCreateWall", (wall, updates) => {

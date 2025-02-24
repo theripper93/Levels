@@ -1,8 +1,3 @@
-2025/02/12-16:40:45.506 4480 Log #3391: 0 ops saved to Table #3443 OK
-2025/02/12-16:40:45.507 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/003391.log: OK
-2025/02/12-16:40:45.507 4480 Log #3442: 0 ops saved to Table #3444 OK
-2025/02/12-16:40:45.507 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/003442.log: OK
-2025/02/12-16:40:45.507 4480 Table #3378: 9 entries OK
-2025/02/12-16:40:45.510 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/MANIFEST-003389: OK
-2025/02/12-16:40:45.510 4480 Archiving D:\FoundryVTT\Data\modules\levels\packs\macros/MANIFEST-003441: OK
-2025/02/12-16:40:45.512 4480 **** Repaired leveldb D:\FoundryVTT\Data\modules\levels\packs\macros; recovered 1 files; 3158 bytes. Some data may have been lost. ****
+2025/02/24-22:07:41.220 5db4 Recovering log #3491
+2025/02/24-22:07:41.224 5db4 Delete type=0 #3491
+2025/02/24-22:07:41.225 5db4 Delete type=3 #3490
