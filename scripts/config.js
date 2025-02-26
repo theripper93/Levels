@@ -451,7 +451,7 @@ Hooks.on("renderTokenHUD", (data, hud, drawData) => {
 
 Hooks.on("preCreateMeasuredTemplate", (template) => {
     const templateData = CONFIG.Levels.handlers.TemplateHandler.getTemplateData();
-    if (template.elevation) return;
+    if (template.elevation || template.flags["levels-3d-preview"]) return;
     template.updateSource({
         elevation: templateData.elevation,
         flags: { levels: { special: templateData.special } },
