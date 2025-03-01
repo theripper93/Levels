@@ -19,6 +19,7 @@ import { inRange, getRangeForDocument, cloneTileMesh, inDistance } from "./helpe
 import { setupWarnings } from "./warnings.js";
 import {LevelsMigration} from "./migration.js";
 import {showWelcome} from "./showWelcome.js";
+import {LevelsFogManager} from "./handlers/FogManager.js";
 
 //warnings
 
@@ -26,6 +27,11 @@ Hooks.on("ready", () => {
     if (!game.user.isGM) return;
 
     setupWarnings();
+});
+
+Hooks.on("setup", () => {
+    CONFIG.Canvas.fogManager = LevelsFogManager;
+    canvas.fog = new LevelsFogManager();
 });
 
 Object.defineProperty(globalThis, "_levels", {
