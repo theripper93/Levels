@@ -58,6 +58,7 @@ class LevelsUI extends FormApplication {
         html.on("click", "#levels-ui-controls .fa-edit", this._onToggleEdit.bind(this));
         html.on("click", "#levels-ui-controls .fa-map", this._onGetFromScene.bind(this));
         html.on("click", "#levels-ui-controls .fa-users", this._onShowPlayerList.bind(this));
+        html.on("click", "#levels-ui-controls .fa-cloud", () => { canvas.fog.setupMultilevelFogExploration(); });
         html.on("click", "#levels-ui-controls .fa-archway", () => {
             this.roofEnabled = !this.roofEnabled;
             this.setButtonStyles();

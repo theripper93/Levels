@@ -5,11 +5,23 @@ export class LevelsFogManager extends FogManager {
     constructor(...args) {
         super(...args);
         Hooks.on("controlToken", (token, controlled) => {
-            this.load();
+            this.reload();
         });
         Hooks.on("updateToken", (token, updates) => {
-            if ("elevation" in updates) this.load();
+            if ("elevation" in updates) this.reload();
         });
+        Hooks.on("canvasReady", () => {
+            this.lastScene = null;
+        });
+    }
+
+    reload() {
+        return this.load();
+        // Test this if performance is an issue
+        if (this.scene !== this.lastScene) {
+            this.lastScene = this.scene;
+            this.load();
+        }
     }
 
     get scene() {
@@ -26,7 +38,8 @@ export class LevelsFogManager extends FogManager {
 
     static async setupMultilevelFogExploration(scene) {
         const levels = scene.getFlag("levels", "sceneLevels") ?? [];
-        if (levels.length < 2) return ui.notifications.warn("This scene does not have multiple levels.");
+        const folder = game.folders.find((f) => f.name === game.settings.get(CONFIG.Levels.MODULE_ID, "multilevelFogFolder")) ?? await Folder.create({ name: game.settings.get(CONFIG.Levels.MODULE_ID, "multilevelFogFolder"), type: "Scene" });
+        if (levels.length < 2) return ui.notifications.warn(game.i18n.localize("levels.multiLevelFog.noLevels"))
         const ranges = levels.map((l) => ({bottom: parseFloat(l[0]), top: parseFloat(l[1])}));
         const sceneData = scene.toObject();
         for (const [key, value] of Object.entries(sceneData)) {
@@ -39,15 +52,21 @@ export class LevelsFogManager extends FogManager {
         for (const range of ranges) {
             const levelSceneData = foundry.utils.deepClone(sceneData);
             levelSceneData.name = sceneData.name + "[" + range.bottom + "-" + range.top + "]";
+            levelSceneData.folder = folder.id;
             const existing = game.scenes.getName(levelSceneData.name);
             if (existing) {
-                ui.notifications.warn(`Scene ${levelSceneData.name} already exists.`);
+                ui.notifications.warn(game.i18n.localize("levels.multiLevelFog.alreadyExists") + levelSceneData.name)
                 continue;
             }
             created.push(levelSceneData.name);
             await Scene.create(levelSceneData);
         }
-        ui.notifications.info(`Created ${created.join(", ")} scenes.`);
+        if (!created.length) return;
+        ui.notifications.info(game.i18n.localize("levels.multiLevelFog.createdScenes").replace("%n", created.join(", ")));
+        const advancedFog = game.settings.get(CONFIG.Levels.MODULE_ID, "fogHiding");
+        if (advancedFog) {
+            ui.notifications.warn(game.i18n.localize("levels.multiLevelFog.advancedFogWarn"), { permanent: true });
+        }
     }
     
     async setupMultilevelFogExploration() {

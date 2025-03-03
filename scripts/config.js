@@ -248,6 +248,18 @@ Hooks.on("init", () => {
         },
     });
 
+    game.settings.register(CONFIG.Levels.MODULE_ID, "multilevelFogFolder", {
+        name: game.i18n.localize("levels.settings.multilevelFogFolder.name"),
+        hint: game.i18n.localize("levels.settings.multilevelFogFolder.hint"),
+        scope: "world",
+        config: true,
+        type: String,
+        default: "LevelsMultiLevelFog",
+        onChange: () => {
+            CONFIG.Levels.settings.cacheSettings();
+        },
+    });
+
     game.settings.register(CONFIG.Levels.MODULE_ID, "migrateOnStartup", {
         name: game.i18n.localize("levels.settings.migrateOnStartup.name"),
         hint: game.i18n.localize("levels.settings.migrateOnStartup.hint"),
@@ -257,6 +269,7 @@ Hooks.on("init", () => {
         default: true,
         requiresReload: true,
     });
+
 });
 
 Hooks.on("updateTile", (tile, updates) => {
