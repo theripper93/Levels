@@ -214,6 +214,10 @@
             "strictVisionCheck": {
                 "hint": "Si las fuentes de luz de oscuridad discapacitados no bloquearán la vista. \nSi está habilitado, las fichas fuera del polígono de visión pero visibles para los cálculos de la vista 3D serán visibles.",
                 "name": "Verificación de visión estricta"
+            },
+            "multilevelFogFolder": {
+                "hint": "El nombre de la carpeta para almacenar las escenas generadas para la niebla de guerra multinivel.",
+                "name": "Carpeta de niebla multinivel"
             }
         },
         "template": {
@@ -284,7 +288,8 @@
             "title": "Niveles - Herramienta Capa",
             "tokenAttacher": "Colocar prefabricados de Token Attacher en relación con el nivel actual<hr>Si NO está colocando prefabricados, esta opción debe estar DESACTIVADA",
             "warning": "¡ADVERTENCIA! \n\"No desactivar las luces\" está habilitado en la Configuración de escena: varios niveles no funcionarán correctamente. \nHaga clic para resolver este problema.",
-            "stair": "Coloque las regiones como escaleras"
+            "stair": "Coloque las regiones como escaleras",
+            "fog": "Configuración de niebla multinivel (beta)"
         },
         "widget": {
             "element": "Nivel",
@@ -293,6 +298,12 @@
         "yesnodialog": {
             "no": "Cancelar",
             "yes": "Confirmar"
+        },
+        "multiLevelFog": {
+            "advancedFogWarn": "Niveles: La niebla avanzada de la configuración de la guerra debe deshabilitarse para que funcione la niebla múltiple de nivel, deshabilitarla en la configuración del módulo o deshabilitarla por mosaico.",
+            "alreadyExists": "La escena ya existe, vea la escena y restablezca la niebla para restablecer la niebla del nivel específico o eliminar la escena y reinicializar la niebla múltiple. \nEscena:",
+            "createdScenes": "Creado %n escenas. \n<a href = 'https: //wiki.theripper93.com/levels",
+            "noLevels": "Esta escena no tiene múltiples niveles."
         }
     }
 }

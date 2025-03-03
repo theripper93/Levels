@@ -52,6 +52,10 @@
                 "name": "Exact token visibility",
                 "hint": "Precise token visibility must be enabled for this option to work. This option will do an 11 point check against the token's corners. Suggested if you are using 3D Canvas"
             },
+            "multilevelFogFolder": {
+                "name": "Multilevel Fog Folder",
+                "hint": "The folder name to store the generated scenes for the multilevel fog of war."
+            },
             "blockSightMovement": {
                 "name": "Fence",
                 "hint": "When enabled, walls with height that does not restrict vision will still restrict movement"
@@ -256,7 +260,7 @@
             "addLevel": "Add a new level",
             "editLevels": "Edit Levels",
             "getFromScene": "Get Levels from Scene",
-            "fog": "Setup Multilevel Fog",
+            "fog": "Setup Multilevel Fog (BETA)",
             "clearLevels": "Clear Levels",
             "debugScene": "Debug Scene (Red means issues detected)",
             "minElevDiff": "Minimum Level Size",

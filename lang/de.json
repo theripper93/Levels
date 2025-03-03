@@ -214,6 +214,10 @@
             "strictVisionCheck": {
                 "hint": "Wenn Lichtquellen für behinderte Dunkelheit nicht das Sehen blockieren. \nWenn es aktiviert ist, sind Token außerhalb des Sehpolygons, aber für 3D -Sichtberechnungen sichtbar.",
                 "name": "Strenge Vision Check"
+            },
+            "multilevelFogFolder": {
+                "hint": "Der Ordnername zum Speichern der generierten Szenen für den Multilevel -Nebel des Krieges.",
+                "name": "Multilevel Nebelordner"
             }
         },
         "template": {
@@ -284,7 +288,8 @@
             "title": "Ebenen – Ebenenwerkzeug",
             "tokenAttacher": "Platzieren Sie Token Attacher-Fertigobjekte relativ zur aktuellen Ebene.<hr>Wenn Sie KEINE Fertigobjekte platzieren, muss diese Option DEAKTIVIERT werden",
             "warning": "WARNUNG! \n„Lichter nicht deaktivieren“ ist in den Szeneneinstellungen aktiviert – mehrere Ebenen funktionieren nicht richtig. \nKlicken Sie hier, um dieses Problem zu beheben.",
-            "stair": "Regionen als Treppe legen"
+            "stair": "Regionen als Treppe legen",
+            "fog": "Setup Multilevel Nebel (Beta) einrichten"
         },
         "widget": {
             "element": "Ebene",
@@ -293,6 +298,12 @@
         "yesnodialog": {
             "no": "Stornieren",
             "yes": "Bestätigen"
+        },
+        "multiLevelFog": {
+            "advancedFogWarn": "Levels: Der fortgeschrittene Nebel der Kriegseinstellung muss deaktiviert werden, damit der Multi -Level -Nebel funktioniert, bitte deaktivieren Sie ihn in den Moduleinstellungen oder deaktivieren Sie sie pro Fliese.",
+            "alreadyExists": "Szene existiert bereits. Bitte sehen Sie sich die Szene an und setzen Sie den Nebel zurück, um den Nebel des spezifischen Levels zurückzusetzen oder die Szene zu löschen und Multi -Level -Nebel neu zu initialisieren. \nSzene:",
+            "createdScenes": "%N Szenen erstellt. \n<a href = 'https: //wiki.theripper93.com/levels",
+            "noLevels": "Diese Szene hat nicht mehrere Ebenen."
         }
     }
 }

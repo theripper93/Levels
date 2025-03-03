@@ -214,6 +214,10 @@
             "strictVisionCheck": {
                 "hint": "Si les sources de lumière des ténèbres handicapées ne bloqueront pas la vue. \nS'ils sont activés, les jetons en dehors du polygone de la vision mais visibles pour les calculs de vue 3D seront visibles.",
                 "name": "Vérification de la vision stricte"
+            },
+            "multilevelFogFolder": {
+                "hint": "Le nom du dossier pour stocker les scènes générées pour le brouillard à plusieurs niveaux de guerre.",
+                "name": "Dossier de brouillard à plusieurs niveaux"
             }
         },
         "template": {
@@ -284,7 +288,8 @@
             "title": "Niveaux - Outil Calque",
             "tokenAttacher": "Placer les préfabriqués Token Attacher par rapport au niveau actuel<hr>Si vous ne placez PAS de préfabriqués, cette option doit être DÉSACTIVÉE",
             "warning": "AVERTISSEMENT! \n« Ne pas désactiver les lumières » est activé dans les paramètres de scène. Plusieurs niveaux ne fonctionneront pas correctement. \nCliquez pour résoudre ce problème.",
-            "stair": "Placer les régions comme des escaliers"
+            "stair": "Placer les régions comme des escaliers",
+            "fog": "Configuration du brouillard à plusieurs niveaux (bêta)"
         },
         "widget": {
             "element": "Niveau",
@@ -293,6 +298,12 @@
         "yesnodialog": {
             "no": "Annuler",
             "yes": "Confirmer"
+        },
+        "multiLevelFog": {
+            "advancedFogWarn": "Niveaux: Le brouillard avancé des paramètres de guerre doit être désactivé pour que le brouillard à plusieurs niveaux fonctionne, veuillez le désactiver dans les paramètres du module ou le désactiver par tuile.",
+            "alreadyExists": "La scène existe déjà, veuillez consulter la scène et réinitialiser son brouillard pour réinitialiser le brouillard du niveau spécifique ou supprimer la scène et réinitialiser le brouillard à plusieurs niveaux. \nScène:",
+            "createdScenes": "Créé% n scènes. \n<a href = 'https: //wiki.theripper93.com/levels",
+            "noLevels": "Cette scène n'a pas plusieurs niveaux."
         }
     }
 }
