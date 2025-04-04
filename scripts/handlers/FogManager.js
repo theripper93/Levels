@@ -16,7 +16,7 @@ export class LevelsFogManager extends FogManager {
     }
 
     reload() {
-        return this.load();
+        //return this.load();
         // Test this if performance is an issue
         if (this.scene !== this.lastScene) {
             this.lastScene = this.scene;
