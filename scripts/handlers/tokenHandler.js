@@ -15,7 +15,8 @@ export class TokenHandler{
       const elevationDiff = Math.abs(token.document.elevation - currentTokenElevation) / 8;
       
       const scaleFactor = elevationDiff == 0 ? 1 : Math.min(scaleMultiplier / elevationDiff, 1);
-      if(renderFlags.refreshMesh) token.mesh.originalScale = null; 
+      if(renderFlags.refreshMesh || renderFlags.refreshSize) token.mesh.originalScale = null; 
+
       if (!token.mesh.originalScale) {
         token.mesh.originalScale = {x: token.mesh.scale.x, y: token.mesh.scale.y};
       }

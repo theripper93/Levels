@@ -1,7 +1,3 @@
-2025/04/04-16:54:25.240 4b84 Recovering log #3622
-2025/04/04-16:54:25.244 4b84 Delete type=0 #3622
-2025/04/04-16:54:25.244 4b84 Delete type=3 #3621
-2025/04/04-16:54:34.296 2238 Level-0 table #3626: started
-2025/04/04-16:54:34.296 2238 Level-0 table #3626: 0 bytes OK
-2025/04/04-16:54:34.297 2238 Delete type=0 #3624
-2025/04/04-16:54:34.298 2238 Manual compaction at level-0 from '!scenes!i1noRqT20RD5stIK' @ 72057594037927935 : 1 .. '!scenes.walls!zksLSgRdh6f8jiUO.z5ptMNOLPqAgK6MH' @ 0 : 0; will stop at (end)
+2025/04/09-18:18:46.468 4338 Recovering log #3636
+2025/04/09-18:18:46.472 4338 Delete type=0 #3636
+2025/04/09-18:18:46.472 4338 Delete type=3 #3635
