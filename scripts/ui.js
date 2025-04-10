@@ -671,8 +671,8 @@ Hooks.on("ready", () => {
             }
         });
 
-        Hooks.on("preCreateToken", (token, updates) => {
-            if (CONFIG.Levels.UI.rangeEnabled == true) {
+        Hooks.on("preCreateToken", (token, updates, options, a,b,c) => {
+            if (CONFIG.Levels.UI.rangeEnabled == true && !updates?._regions?.length && !options?.teleport) {
                 if (updates) updates.elevation = parseFloat(CONFIG.Levels.UI.range[0]);
                 token.updateSource({
                     elevation: updates?.elevation ?? parseFloat(CONFIG.Levels.UI.range[0]),
