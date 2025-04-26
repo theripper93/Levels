@@ -26,6 +26,7 @@ export class LevelsFogManager extends FogManager {
 
     get scene() {
         const currentScene = game.scenes.viewed;
+        if(!currentScene) return currentScene;
         const levels = currentScene.getFlag("levels", "sceneLevels") ?? [];
         if (levels.length < 2) return currentScene;
         const ranges = levels.map((l) => ({ bottom: parseFloat(l[0]), top: parseFloat(l[1]) }));
