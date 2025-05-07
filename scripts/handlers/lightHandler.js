@@ -5,7 +5,7 @@ export class LightHandler{
         if (isPreview) return result;
         if(!CONFIG.Levels.handlers.UIHandler.emitsLightUIToken(this)) return false;
         if (game.Levels3DPreview?._active) return result;
-        const isToken = this instanceof Token;
+        const isToken = this instanceof foundry.canvas.placeables.Token;
         const rangeBottom = this.document.elevation ?? -Infinity;
         const rangeTop = isToken ? this.losHeight : this.document.flags.levels?.rangeTop ?? Infinity;
         const currentElevation = CONFIG.Levels.currentToken?.losHeight
@@ -33,7 +33,7 @@ export class LightHandler{
         if(isPreview || (canvas.scene.flags.levels?.lightMasking ?? true)) return result;
         if(!CONFIG.Levels.handlers.UIHandler.emitsLightUI(this)) return true;
         if (game.Levels3DPreview?._active) return result;
-        const isToken = this instanceof Token;
+        const isToken = this instanceof foundry.canvas.placeables.Token;
         const rangeBottom = this.document.elevation ?? -Infinity;
         const rangeTop = isToken ? this.losHeight : this.document.flags.levels?.rangeTop ?? Infinity;
         const currentElevation = CONFIG.Levels.currentToken?.losHeight

@@ -6,6 +6,8 @@ export class UIHandler {
     }
 
     static UIVisible(placeable) {
+        try {
+        
         const isPreview = placeable.document?.id == null;
         if (isPreview) {
             placeable.visible = true;
@@ -22,18 +24,22 @@ export class UIHandler {
         const isTokenSelected = canvas?.tokens?.controlled[0] || CONFIG.Levels.currentToken;
         const isVision = canvas.effects.visionSources.size;
         if (isTokenSelected && isVision) return true;
-        if (isTokenSelected && !isVision && !(placeable instanceof Token)) return true;
+        if (isTokenSelected && !isVision && !(placeable instanceof foundry.canvas.placeables.Token)) return true;
         if (isTokenSelected && canvas.effects.visionSources.size) return true;
         let { rangeBottom, rangeTop } = CONFIG.Levels.helpers.getRangeForDocument(placeable.document);
         rangeBottom = placeable.document.elevation ?? rangeBottom;
         if (rangeBottom == -Infinity && rangeTop == Infinity) return true;
-        if (placeable instanceof Token) {
+        if (placeable instanceof foundry.canvas.placeables.Token) {
             rangeBottom = placeable.losHeight;
             rangeTop = placeable.losHeight;
         }
-        const visible = placeable instanceof Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop);
+        const visible = placeable instanceof foundry.canvas.placeables.Tile ? CONFIG.Levels.handlers.UIHandler.inUIRangeTile(rangeBottom, rangeTop, placeable) : CONFIG.Levels.handlers.UIHandler.inUIRange(rangeBottom, rangeTop);
         placeable.visible = visible;
         return visible;
+    } catch (error) {
+        console.error(error);
+     return true       
+    }
     }
 
     static tokenUIWrapperIsVisible(wrapped, ...args) {

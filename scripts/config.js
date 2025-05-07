@@ -41,7 +41,7 @@ Object.defineProperty(globalThis, "_levels", {
     },
 });
 
-Tile.prototype.inTriggeringRange = function (token) {
+foundry.canvas.placeables.Tile.prototype.inTriggeringRange = function (token) {
     const bottom = this.document.elevation;
     let top = this.document.flags?.levels?.rangeTop ?? Infinity;
     if (game.Levels3DPreview?._active) {
@@ -56,7 +56,7 @@ Tile.prototype.inTriggeringRange = function (token) {
 };
 
 
-Object.defineProperty(WeatherEffects.prototype, "elevation", {
+Object.defineProperty(foundry.canvas.layers.WeatherEffects.prototype, "elevation", {
     get: function () {
         return canvas?.scene?.flags?.levels?.weatherElevation ?? Infinity;
     },

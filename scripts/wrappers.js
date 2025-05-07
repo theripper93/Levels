@@ -77,7 +77,7 @@ export function registerWrappers() {
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
-        "TokenLayer.prototype._getOccludableTokens",
+        "foundry.canvas.layers.TokenLayer.prototype._getOccludableTokens",
         function (wrapped, ...args) {
             if (game.user.isGM) return wrapped(...args);
             const isLevels = canvas.scene?.flags?.levels?.sceneLevels?.length > 0;
@@ -87,11 +87,11 @@ export function registerWrappers() {
         "MIXED",
     );
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "DetectionMode.prototype._testRange", LevelsConfig.handlers.SightHandler._testRange, "OVERRIDE", { perf_mode: "FAST" });
+    libWrapper.register(LevelsConfig.MODULE_ID, "foundry.canvas.perception.DetectionMode.prototype._testRange", LevelsConfig.handlers.SightHandler._testRange, "OVERRIDE", { perf_mode: "FAST" });
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "ClockwiseSweepPolygon.prototype.contains", LevelsConfig.handlers.SightHandler.containsWrapper, "MIXED");
+    libWrapper.register(LevelsConfig.MODULE_ID, "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype.contains", LevelsConfig.handlers.SightHandler.containsWrapper, "MIXED");
 
-    libWrapper.register(LevelsConfig.MODULE_ID, "ClockwiseSweepPolygon.prototype._testCollision", LevelsConfig.handlers.SightHandler._testCollision, "MIXED");
+    libWrapper.register(LevelsConfig.MODULE_ID, "foundry.canvas.geometry.ClockwiseSweepPolygon.prototype._testCollision", LevelsConfig.handlers.SightHandler._testCollision, "MIXED");
 
     libWrapper.register(LevelsConfig.MODULE_ID, "CONFIG.AmbientLight.objectClass.prototype._isLightSourceDisabled", LevelsConfig.handlers.LightHandler._isLightSourceDisabled, "WRAPPER");
 
@@ -113,7 +113,7 @@ export function registerSetupWrappers() {
         "CONFIG.Canvas.groups.visibility.groupClass.prototype.testVisibility",
         function visibilityWrapper(wrapped, ...args) {
             const options = (args[1] ??= {});
-            if (options.object instanceof Token) options.tolerance = 0;
+            if (options.object instanceof foundry.canvas.placeables.Token) options.tolerance = 0;
             visibilityTestObjectStack.push(LevelsConfig.visibilityTestObject);
             LevelsConfig.visibilityTestObject = args[1].object;
             const res = wrapped(...args);

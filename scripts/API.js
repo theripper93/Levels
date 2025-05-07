@@ -13,7 +13,7 @@ export class LevelsAPI {
     /**
      * Test if a token's losHeight is contained within the range of the placeable or document.
      * @param {Token} token - the token to test
-     * @param {PlaceableObject|Document} placeableOrDocument - "sight" or "collision" (defaults to "sight")
+     * @param {foundry.canvas.placeables.PlaceableObject|Document} placeableOrDocument - "sight" or "collision" (defaults to "sight")
      * @param {boolean} useElevation - if true, use the token's elevation, otherwise use the token's losHeight (the 'eye' elevation)
      * @returns {Boolean} returns wether the token is in the range or not
      **/

@@ -1,11 +1,11 @@
 export class BackgroundHandler{
     static setupElevation(){
         Hooks.on("canvasInit", () => {
-          PrimaryCanvasGroup.BACKGROUND_ELEVATION = (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)  
+          foundry.canvas.groups.PrimaryCanvasGroup.BACKGROUND_ELEVATION = (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)  
         });
 
         Hooks.on("canvasReady", ()=>{
-          canvas.primary.background.elevation = PrimaryCanvasGroup.BACKGROUND_ELEVATION;
+          canvas.primary.background.elevation = foundry.canvas.groups.PrimaryCanvasGroup.BACKGROUND_ELEVATION;
             Object.defineProperty(canvas.primary.background, "visible", {
               get: function () {
                 if(this.texture == PIXI.Texture.EMPTY) return false;
@@ -23,8 +23,8 @@ export class BackgroundHandler{
 
         Hooks.on("updateScene", (scene, updates)=>{
             if(scene.id === canvas.scene?.id && updates.flags?.levels?.backgroundElevation !== undefined){
-              PrimaryCanvasGroup.BACKGROUND_ELEVATION = (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)  
-              canvas.primary.background.elevation = PrimaryCanvasGroup.BACKGROUND_ELEVATION;
+              foundry.canvas.groups.PrimaryCanvasGroup.BACKGROUND_ELEVATION = (canvas?.scene?.flags?.levels?.backgroundElevation ?? 0)  
+              canvas.primary.background.elevation = foundry.canvas.groups.PrimaryCanvasGroup.BACKGROUND_ELEVATION;
             }
         })
     }
