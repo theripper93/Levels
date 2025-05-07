@@ -280,8 +280,10 @@ Hooks.on("updateTile", (tile, updates) => {
 });
 
 Hooks.on("renderTileConfig", (app, html, data) => {
-    const isInjected = html.find(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`).length > 0;
+    const isInjected = html.querySelector(`input[name="flags.${CONFIG.Levels.MODULE_ID}.rangeTop"]`);
     if (isInjected) return;
+
+    html = $(html);
 
     const injHtml = injectConfig.inject(app, html, {
         moduleId: "levels",
@@ -349,7 +351,7 @@ Hooks.on("renderTileConfig", (app, html, data) => {
 
 Hooks.on("renderAmbientLightConfig", (app, html, data) => {
     if(html.querySelector(`[name="flags.levels.rangeTop"]`)) return;
-    const injHtml = injectConfig.inject(app, html, {
+    const injHtml = injectConfig.inject(app, $(html), {
         moduleId: "levels",
         inject: 'input[name="config.dim"]',
         rangeTop: {

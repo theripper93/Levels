@@ -1,3 +1,5 @@
-2025/05/07-23:50:13.014 5968 Recovering log #3659
-2025/05/07-23:50:13.018 5968 Delete type=0 #3659
-2025/05/07-23:50:13.018 5968 Delete type=3 #3658
+2025/05/08-00:08:04.196 fbdc Recovering log #3661
+2025/05/08-00:08:04.197 fbdc Level-0 table #3663: started
+2025/05/08-00:08:04.198 fbdc Level-0 table #3663: 3125 bytes OK
+2025/05/08-00:08:04.202 fbdc Delete type=0 #3661
+2025/05/08-00:08:04.202 fbdc Delete type=3 #3660
