@@ -606,7 +606,12 @@ class LevelsUI extends FormApplication {
 }
 
 Hooks.on("renderSceneControls", (controls, b, c) => {
-  if (game.user.isGM) {
+  if (
+    game.user.isGM ||
+    document.querySelector(
+      "#scene-controls-layers button[data-control='levels']"
+    )
+  ) {
     document.querySelector("#scene-controls-layers").insertAdjacentHTML(
       "beforeend",
       `<li>
