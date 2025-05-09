@@ -1,5 +1,6 @@
 export class TileHandler{
     static isTileVisible(tile) {
+
         const currentToken = CONFIG.Levels.currentToken;
         const bgElevation = canvas?.scene?.flags?.levels?.backgroundElevation ?? 0;
 
@@ -12,9 +13,9 @@ export class TileHandler{
             return true;
         }
         
-        
-        const tokenElevation = currentToken.document.elevation;
-        const tokenLOS = currentToken.losHeight;
+        const movementDelta = (currentToken.document.movement.destination?.elevation ?? currentToken.document.elevation) - currentToken.document.elevation;
+        const tokenElevation = currentToken.document.elevation + movementDelta;
+        const tokenLOS = currentToken.losHeight + movementDelta;
 
         canvas.primary.hoverFadeElevation = tokenElevation;
 
