@@ -12,21 +12,21 @@ export class RegionHandler {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation !== bottom && elevation !== top) return;
-        tokenDocument.update({ elevation: elevation === top ? bottom : top }, {teleport: true});
+        RegionHandler.waitForAnimation(tokenDocument, () => tokenDocument.update(...RegionHandler.generateUpdateArgs(elevation === top ? bottom : top)))
     }
 
     static stairDown(region, event) {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation > top || elevation <= bottom) return;
-        tokenDocument.update({ elevation: bottom }, {teleport: true});
+        RegionHandler.waitForAnimation(tokenDocument, () => tokenDocument.update(...RegionHandler.generateUpdateArgs(bottom)));
     }
 
     static stairUp(region, event) {
         if(game.user !== event.user) return;
         const {top, bottom, tokenDocument, elevation} = this.getRegionEventData(region, event);
         if (elevation < bottom || elevation >= top) return;
-        tokenDocument.update({ elevation: top }, {teleport: true});
+        RegionHandler.waitForAnimation(tokenDocument, () => tokenDocument.update(...RegionHandler.generateUpdateArgs(top)));
     }
 
     static getRegionEventData(region, event) {
@@ -36,5 +36,16 @@ export class RegionHandler {
             tokenDocument: event.data.token,
             elevation: event.data.token.elevation,
         }
+    }
+
+    static generateUpdateArgs(elevation){
+        const waypoints = [{action: "displace", elevation}];
+        return [{elevation}, {waypoints}];
+    }
+
+    static async waitForAnimation(tokenDocument, fn){
+        const object = tokenDocument.object;
+        const promises = Array.from(object.animationContexts.values()).map(a=>[a.promise, ...a.chain.map(c=>c.promise)]).flat();
+        fn();
     }
 }
