@@ -46,6 +46,9 @@ export class RegionHandler {
     static async waitForAnimation(tokenDocument, fn){
         const object = tokenDocument.object;
         const promises = Array.from(object.animationContexts.values()).map(a=>[a.promise, ...a.chain.map(c=>c.promise)]).flat();
+        await Promise.all(promises);
+        //sleep 100ms
+        await new Promise(resolve => setTimeout(resolve, 250));
         fn();
     }
 }
