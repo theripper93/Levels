@@ -13,12 +13,14 @@ Hooks.on("controlToken", (token, controlled)=>{
 })
 
 Hooks.on("preUpdateToken", (token, updates, updateData) => {
+  debugger
   if (token?.object?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
   const isStairUpdate = updates?.flags?.levels?.stairUpdate;
   if (isStairUpdate) {
     delete updates.flags.levels.stairUpdate;
   }
-  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate && !updateData.teleport && updateData.waypoints?.[0]?.action !== "displace"){
+  const isDisplace = updateData.movement?.waypoints?.[0]?.action === "displace" || updateData.waypoints?.[0]?.action === "displace" || updateData.movement?.[token.id]?.waypoints?.[0]?.action;
+  if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate && !updateData.teleport && !isDisplace ){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const prevElevation = token.object.losHeight;
     const newElevation = prevElevation - elevDiff;
