@@ -39,8 +39,9 @@ export class RegionHandler {
     }
 
     static updateMovement(tokenDocument, elevation){
-        const newMove = {...tokenDocument.movement, elevation, action: "displace"};
-        tokenDocument.move([newMove], {...newMove});
+        const position = tokenDocument.getSnappedPosition({...tokenDocument.movement.destination, elevation, action: "displace"});
+        tokenDocument.stopMovement();
+        tokenDocument.move([{...position, action: "displace"}], {...tokenDocument.movement});
     }
 
     static async waitForAnimation(tokenDocument, fn){
