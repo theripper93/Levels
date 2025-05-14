@@ -465,8 +465,8 @@ Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
     if (CONFIG.Levels.settings.get("lockElevation") && !game.user.isGM) {
-        const controlIcons = hud.find(`div[class="attribute elevation"]`);
-        $(controlIcons[0]).remove();
+        const controlIcons = hud.querySelector(`[class="attribute elevation"]`);
+        controlIcons?.remove();
     }
 });
 

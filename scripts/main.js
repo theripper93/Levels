@@ -13,7 +13,6 @@ Hooks.on("controlToken", (token, controlled)=>{
 })
 
 Hooks.on("preUpdateToken", (token, updates, updateData) => {
-  debugger
   if (token?.object?.controlled) CONFIG.Levels.handlers.DrawingHandler.executeStairs(updates, token);
   const isStairUpdate = updates?.flags?.levels?.stairUpdate;
   if (isStairUpdate) {
