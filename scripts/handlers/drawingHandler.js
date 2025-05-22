@@ -70,6 +70,7 @@ export class DrawingHandler {
                 DrawingHandler.closeElevatorDialog();
             }
             if (newUpdates) {
+                if(game.user.isGM) ui.notifications.warn("Stair Drawings are deprecated, please switch to Regions if you are experiencing unexpected behavior")
                 newUpdates.flags ??= {};
                 newUpdates.flags.levels ??= {};
                 newUpdates.flags.levels.stairUpdate = true;

@@ -484,8 +484,8 @@ export class SightHandler {
         const p0 =
             tokenOrPoint1 instanceof foundry.canvas.placeables.Token
                 ? {
-                      x: tokenOrPoint1.vision.x,
-                      y: tokenOrPoint1.vision.y,
+                      x: tokenOrPoint1.vision?.x ?? tokenOrPoint1.center.x,
+                      y: tokenOrPoint1.vision?.y ?? tokenOrPoint1.center.y,
                       z: tokenOrPoint1.losHeight,
                   }
                 : tokenOrPoint1;
