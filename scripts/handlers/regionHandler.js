@@ -39,6 +39,11 @@ export class RegionHandler {
         }
     }
 
+    static async updatePendingMovementElevation(region, event, elevation){
+        const { tokenDocument, movement } = this.getRegionEventData(region, event);
+        return this.updateMovement(tokenDocument, elevation, movement);
+    }
+
     static async updateMovement(tokenDocument, elevation, movement) {
         tokenDocument.stopMovement();
         if (tokenDocument.rendered) await tokenDocument.object.movementAnimationPromise;

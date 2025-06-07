@@ -417,7 +417,7 @@ export class SightHandler {
             for (const [k, edge] of canvas.edges) {
                 if (this.shouldIgnoreWall(edge.object, TYPE, options, edge)) continue;
                 if (IGNOREDARKNESS && edge.type === "darkness") continue;
-                let isTerrain = (TYPE === 0 && edge.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && edge.move === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 2 && edge.sound === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 3 && edge.light === CONST.WALL_MOVEMENT_TYPES.LIMITED);
+                let isTerrain = (TYPE === 0 && edge.sight === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 1 && edge.move === CONST.WALL_MOVEMENT_TYPES.LIMITED) || (TYPE === 2 && edge.sound === CONST.WALL_SENSE_TYPES.LIMITED) || (TYPE === 3 && edge.light === CONST.WALL_SENSE_TYPES.LIMITED);
 
                 //declare points in 3d space of the rectangle created by the wall
                 const wallBotTop = getWallHeightRange3Dcollision(edge.object);

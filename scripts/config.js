@@ -442,26 +442,6 @@ Hooks.on("renderMeasuredTemplateConfig", (app, html, data) => {
     });
 });
 
-Hooks.on("renderDrawingHUD", (data, hud, drawData) => {
-    let drawing = data.object.document;
-    if (drawing.getFlag(CONFIG.Levels.MODULE_ID, "drawingMode")) {
-        let active = drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false;
-        let toggleStairbtn = `<div class="control-icon${active ? " active" : ""}" id="toggleStair">
-              <i class="fas fa-lock" width="36" height="36" title='${game.i18n.localize("levels.drawingHud.title")}'></i>
-                              </div>`;
-        const controlIcons = hud.find("div.control-icon");
-        controlIcons.last().after(toggleStairbtn);
-        $(hud.find(`div[id="toggleStair"]`)).on("click", test);
-        function test() {
-            console.log("test");
-            active = !active;
-            drawing.setFlag(CONFIG.Levels.MODULE_ID, "stairLocked", !(drawing.getFlag(CONFIG.Levels.MODULE_ID, "stairLocked") || false));
-            let hudbtn = hud.find(`div[id="toggleStair"]`);
-            if (active) hudbtn.addClass("active");
-            else hudbtn.removeClass("active");
-        }
-    }
-});
 
 Hooks.on("renderTokenHUD", (data, hud, drawData) => {
     if (CONFIG.Levels.settings.get("lockElevation") && !game.user.isGM) {
