@@ -33,6 +33,18 @@ export function registerWrappers() {
 
     libWrapper.register(
         LevelsConfig.MODULE_ID,
+        "foundry.canvas.placeables.Token.prototype._getShiftedPosition",
+        function (dx, dy, dz) {
+                const { x, y, elevation, width, height, shape } = this.document._source;
+                const snapped = this.document.getSnappedPosition({ x, y, elevation, width, height, shape });
+                if(!dz) snapped.elevation = elevation;
+                return PlaceableObject._getShiftedPosition(dx, dy, dz, { x, y, elevation }, snapped, this.scene.grid);
+        },
+        "OVERRIDE",
+    );
+
+    libWrapper.register(
+        LevelsConfig.MODULE_ID,
         "CONFIG.Tile.objectClass.prototype.isVisible",
         function (wrapped, ...args) {
             const visible = LevelsConfig.handlers.TileHandler.isTileVisible(this);
