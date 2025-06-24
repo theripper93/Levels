@@ -14,6 +14,7 @@ export class DrawingHandler {
     static executeStairs(updates, token) {
         if ("x" in updates || "y" in updates) {
             let stairs = this.getStairs();
+            if(!stairs.length) return;
             let tokenX = updates.x || token.x;
             let tokenY = updates.y || token.y;
             let newUpdates;
@@ -110,7 +111,7 @@ export class DrawingHandler {
     }
 
     static async renderElevatorDalog(levelsFlag) {
-        //await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 250));
         let elevatorFloors = [];
         levelsFlag.split("|").forEach((f) => {
             elevatorFloors.push(f.split(","));
