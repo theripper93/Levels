@@ -126,7 +126,7 @@ class LevelsUI extends FormApplication {
     //make list sortable
     html.find("#levels-list").sortable({
       axis: "y",
-      handle: ".fa-arrows-alt",
+      handle: ".fa-arrows-up-down-left-right",
       update: this.saveData.bind(this),
     });
     const index = this.definedLevels
@@ -171,7 +171,7 @@ class LevelsUI extends FormApplication {
     let $inputs = $(".level-inputs input");
     $inputs.prop("readonly", !$inputs.prop("readonly"));
     $(".level-item .fa-trash").toggleClass("hidden");
-    $(".level-item .fa-arrows-alt").toggleClass("hidden");
+    $(".level-item .fa-arrows-up-down-left-right").toggleClass("hidden");
     this.saveData();
   }
 
@@ -328,7 +328,7 @@ class LevelsUI extends FormApplication {
   generateLi(data) {
     let $li = $(`
             <li class="level-item" draggable>
-            <i class="fas fa-arrows-alt"></i>
+            <i class="fas fa-arrows-up-down-left-right"></i>
             <div class="players-on-level"></div>
             <i class="fas fa-caret-right"></i>
             <div class="level-inputs">
@@ -349,7 +349,7 @@ class LevelsUI extends FormApplication {
         `);
     $li.find("input").prop("readonly", !this.isEdit);
     $li.find(".fa-trash").toggleClass("hidden", this.isEdit);
-    $li.find(".fa-arrows-alt").toggleClass("hidden", this.isEdit);
+    $li.find(".fa-arrows-up-down-left-right").toggleClass("hidden", this.isEdit);
     return $li;
   }
 
