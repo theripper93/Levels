@@ -5,10 +5,20 @@ import deepl from 'deepl-node';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+const DEEPL_MAPPING = {
+  "en-au": "EN-GB",
+  "pt-br": "PT-BR",
+  "pt": "PT-PT",
+  "zh-tw": "ZH",
+  "zh-hans": "ZH",
+  "cn": "ZH"
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const secretsPath = path.join(__dirname, '..', 'SECRETS.json');
+const moduleJsonPath = path.join(__dirname, 'module.json'); 
 
 let authKey;
 try {
@@ -29,6 +39,30 @@ const translator = new deepl.Translator(authKey);
 
 const languagesDir = path.join(__dirname, 'languages');
 const sourceFile = 'en.json';
+
+// --- Ensure all language files exist before translating ---
+try {
+  const moduleRaw = await fs.readFile(moduleJsonPath, 'utf-8');
+  const moduleJson = JSON.parse(moduleRaw);
+  if (Array.isArray(moduleJson.languages)) {
+    for (const lang of moduleJson.languages) {
+      if (lang.path && lang.path !== `languages/${sourceFile}`) {
+        const langFilePath = path.join(__dirname, lang.path);
+        try {
+          await fs.access(langFilePath);
+        } catch {
+          // File does not exist, create it as empty object
+          await fs.writeFile(langFilePath, '{}', 'utf-8');
+          console.log(`Created missing language file: ${langFilePath}`);
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('Failed to check or create language files from module.json:', e.message);
+  process.exit(1);
+}
+// --- End ensure language files exist ---
 
 async function translateFile(targetFile) {
   const sourcePath = path.join(languagesDir, sourceFile);
@@ -56,6 +90,7 @@ async function translateFile(targetFile) {
 }
 
 async function translateObjectWithCache(sourceObj, targetObj, langCode) {
+  langCode = DEEPL_MAPPING[langCode.toLowerCase()] || langCode; // Map to DeepL's expected codes
   if (typeof sourceObj === 'string') {
     if (sourceObj.trim() === '') return sourceObj; // skip empty strings
 
