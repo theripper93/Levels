@@ -348,7 +348,7 @@ class LevelsUI extends FormApplication {
             </li>
         `);
     $li.find("input").prop("readonly", !this.isEdit);
-    $li.find(".fa-trash").toggleClass("hidden", this.isEdit);
+    $li.find(".fa-trash").toggleClass("hidden", !this.isEdit);
     $li.find(".fa-arrows-up-down-left-right").toggleClass("hidden", this.isEdit);
     return $li;
   }

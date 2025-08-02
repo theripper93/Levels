@@ -81,7 +81,6 @@ body.dragging, body.dragging * {
     color: #f94848;
     margin-right: 0.2rem;
     margin-left: 0.2rem;
-    display: none;
 }
 
 #levelsUI li .fa-arrows-alt{
