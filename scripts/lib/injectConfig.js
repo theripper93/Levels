@@ -58,7 +58,7 @@ export const injectConfig = {
         } else {
             injectPoint = data.inject;
         }
-        injectPoint = injectPoint ?? (data.tab ? [...html.querySelectorAll("form > .tab")].at(-1) ?? [...html.querySelectorAll(".tab")].at(-1) : [...html.querySelectorAll(".form-group").at(-1)]);
+        injectPoint = injectPoint ?? (data.tab ? [...html.querySelectorAll(".window-content > .tab")].at(-1) ?? [...html.querySelectorAll(".tab")].at(-1) : [...html.querySelectorAll(".form-group").at(-1)]);
         return injectPoint;
     },
 
