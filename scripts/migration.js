@@ -3,8 +3,15 @@ This is internal code not currently used for the future V11 -> V12 migration
 For every document in the collection, we want to migrate "flags.levels.rangeBottom" to the new core "elevation" property.
 */
 
+const regionSourceCodeMapping = {
+    "2": `CONFIG.Levels.handlers.RegionHandler.stair(region,event);\n//Check the wiki page for more region options https://wiki.theripper93.com/levels#regions`,
+    "3": `CONFIG.Levels.handlers.RegionHandler.elevator(region,event,elevatorData);`,
+    "21": `CONFIG.Levels.handlers.RegionHandler.stairDown(region,event);`,
+    "22": `CONFIG.Levels.handlers.RegionHandler.stairUp(region,event);`,
+}
+
 export class LevelsMigration {
-    constructor() {}
+    constructor() { }
 
     async migrateCompendiums() {
         let migratedScenes = 0;
@@ -84,6 +91,70 @@ export class LevelsMigration {
             ui.notifications.notify("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
             console.log("Levels - Migrated " + updates.length + " " + collectionName + " to new elevation data structure in scene " + scene.name);
         }
+    }
+
+    async migrateDrawingsToRegions(scene) {
+        if (!scene) scene = canvas.scene;
+
+        const baseRegionData = {
+            "color": "#fe6c0b",
+            "elevation": {
+            },
+            "behaviors": [
+                {
+                    "name": "Execute Script",
+                    "type": "executeScript",
+                    "system": {
+                        "events": [
+                            "tokenEnter"
+                        ]
+                    },
+                }
+            ]
+        };
+
+        const drawings = scene.drawings.contents;
+        const regionsData = [];
+        const toDelete = [];
+        let migratedCount = 0;
+        for (const drawing of drawings) {
+            if(!drawing.flags?.levels?.drawingMode) continue;
+            if(drawing.flags?.levels?.drawingMode == 1){
+                toDelete.push(drawing.id);
+                continue;
+            }
+            const bottom = drawing.elevation;
+            const top = drawing.flags.levels?.rangeTop;
+            const elevatorFloors = drawing.flags.levels?.elevatorFloors;
+            if (!Number.isNumeric(bottom) || !Number.isNumeric(top)) continue;
+            const name = drawing.text || "Levels Stair " + parseFloat(bottom) + "-" + parseFloat(top);
+            const regionData = foundry.utils.deepClone(baseRegionData);
+            regionData.name = name;
+            regionData.elevation.bottom = parseFloat(bottom);
+            regionData.elevation.top = parseFloat(top) + 1;
+            const scriptSource= regionSourceCodeMapping[drawing.flags.levels?.drawingMode.toString()];
+            if(!scriptSource) continue;
+            regionData.behaviors[0].system.source = scriptSource.replace("elevatorData", `"${elevatorFloors}"`)
+            regionData.shapes = [
+                {
+                    "type": "rectangle",
+                    "x": drawing.x,
+                    "y": drawing.y,
+                    "width": drawing.shape.width,
+                    "height": drawing.shape.height,
+                    "rotation": 0,
+                    "hole": false
+                }
+            ];
+            migratedCount++;
+            regionsData.push(regionData);
+            toDelete.push(drawing.id);
+        }
+        await scene.createEmbeddedDocuments("Region", regionsData);
+        await scene.deleteEmbeddedDocuments("Drawing", toDelete);
+        ui.notifications.notify("Levels - Migrated " + migratedCount + " drawings to regions in scene " + scene.name);
+        console.log("Levels - Migrated " + migratedCount + " drawings to regions in scene " + scene.name);
+        return migratedCount;
     }
 
     showManualMigrationDialog() {
