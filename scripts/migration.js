@@ -118,7 +118,7 @@ export class LevelsMigration {
         const toDelete = [];
         let migratedCount = 0;
         for (const drawing of drawings) {
-            if(!drawing.flags?.levels?.drawingMode) continue;
+            if(!drawing.flags?.levels?.drawingMode || drawing.shape.type !== "r") continue;
             if(drawing.flags?.levels?.drawingMode == 1){
                 toDelete.push(drawing.id);
                 continue;
