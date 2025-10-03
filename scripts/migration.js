@@ -17,6 +17,10 @@ export class LevelsMigration {
         let migratedScenes = 0;
         const compendiums = Array.from(game.packs).filter((p) => p.documentName === "Scene");
         for (const compendium of compendiums) {
+            if(compendium.locked){
+                console.warn(`Levels - Compendium ${compendium.collection} is locked, skipping migration.`);
+                continue;
+            }
             const scenes = await compendium.getDocuments();
             for (const scene of scenes) {
                 const migrated = await this.migrateData(scene);
