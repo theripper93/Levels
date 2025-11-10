@@ -5,7 +5,7 @@
             "createdScenes": "Vytvořeno %n scén. <a href='https://wiki.theripper93.com/levels#multilevel-fog-of-war' target='_blank'>Více informací</a>",
             "noLevels": "Tato scéna nemá víc úrovní.",
             "alreadyExists": "Scéna již existuje, prosím zobraz ji a resetuj její mlhu, aby se resetovala mlha konkrétní úrovně, nebo scénu smaž a znovu inicializuj víceúrovňovou mlhu. Scéna: ",
-            "advancedFogWarn": "Levels: Aby fungovala víceúrovňová mlha, musí být vypnutá ´Pokročilá válečná mlha´. Vypni ji v nastavení modulu, nebo jednotlivě v každé dlaždici."
+            "advancedFogWarn": "Levels: Aby fungovala víceúrovňová mlha, musí být odškrtnuta pokročilá válečná mlha. Vypni ji v nastavení modulu, nebo jednotlivě v každé dlaždici."
         },
         "settings": {
             "enableTooltips": {
@@ -50,7 +50,7 @@
             },
             "exactTokenVisibility": {
                 "name": "Používat nejpřesnější viditelnost tokenu?",
-                "hint": "Pro tuto možnost musí být povolena ´Přesná viditelnost tokenu´. Tato možnost provádí kontrolu v 11 bodech kolem rohů tokenu. Doporučeno při používání ´3D Canvas´."
+                "hint": "Pro tuto možnost musí být zaškrnuta přesná viditelnost tokenu. Tato možnost provádí kontrolu v 11 bodech kolem rohů tokenu. Doporučeno při používání modulu 3D Canvas."
             },
             "multilevelFogFolder": {
                 "name": "Složka víceúrovňové mlhy",
@@ -58,7 +58,7 @@
             },
             "blockSightMovement": {
                 "name": "Plot",
-                "hint": "Pokud je zaškrtnuto, tak zdi s výškou neomezující vidění budou stále omezovat pohyb."
+                "hint": "Po zaškrtnutí budou zdi s výškou neomezující vidění stále omezovat pohyb."
             },
             "forceUiRefresh": {
                 "name": "Vynucení obnovení UI",
@@ -77,7 +77,7 @@
             },
             "strictVisionCheck": {
                 "name": "Přísná kontrola vidění",
-                "hint": "Pokud je vypnuto, zdroje světla typu ´Temnota´ nebudou vidění blokovat. Pokud je zapnuto, tak tokeny mimo zorný polygon, ale viditelné pro 3D výpočty vidění, budou viditelné."
+                "hint": "Pokud je vypnuto, zdroje světla typu Tma nebudou vidění blokovat. Pokud je zapnuto, tak budou tokeny mimo zorný polygon, ale viditelné pro 3D výpočty vidění, viditelné."
             },
             "migrateOnStartup": {
                 "name": "Migrovat nastavení při spuštění?",
@@ -85,8 +85,8 @@
             }
         },
         "tileconfig": {
-            "noOverhead": "Toto NENÍ nadhledová dlaždice, tato dlaždice bude vykreslena na úrovni pozadí. Chceš-li toto nastavení změnit, povol možnost 'Je nadhled?' na kartě nadhledu.",
-            "occlusionNone": "Režim zakrývání je nastaven na 'Žádné', tato dlaždice nebude blokovat viditelnost. Pokud chceš, aby viditelnost blokovala, nastav režim zakrývání na 'Postupné'.",
+            "noOverhead": "Toto NENÍ dlaždice nad hlavou, tato dlaždice bude vykreslena na úrovni pozadí. Chceš-li toto nastavení změnit, povol možnost 'Je nadhled?' na kartě nadhledu.",
+            "occlusionNone": "Režim mizení je nastaven na 'Žádný', tato dlaždice nebude blokovat vidění. Pokud chceš, aby vidění blokovala, nastav režim mizení na 'Zeslabení'.",
             "rangeTop": {
                 "name": "Výška (Horní)"
             },
@@ -99,11 +99,11 @@
             },
             "showAboveRange": {
                 "name": "Maximální rozdíl výšky",
-                "hint": "Když je zaškrtnuta možnost 'Zobrazovat i při pohledu zespodu?', je toto maximální rozdíl výšky mezi tokenem a dlaždicí. Pokud je překročen, dlaždice se přestane zobrazovat."
+                "hint": "Když je zaškrtnuta možnost 'Zobrazovat i při pohledu zespoda?', je toto maximální rozdíl výšky mezi tokenem a dlaždicí. Pokud je překročen, dlaždice se přestane zobrazovat."
             },
             "isBasement": {
-                "name": "Používat přísný rozsah?",
-                "hint": "Po zaškrtnutí se dlaždice zobrazí pouze tehdy, když je token uvnitř rozsahu dlaždice, což znamená, že token nad horním rozsahem ji neuvidí."
+                "name": "Používat přísně rozsah?",
+                "hint": "Po zaškrtnutí se dlaždice zobrazí pouze tehdy, když je token uvnitř výškového rozsahu dlaždice, což znamená, že token nad horním rozsahem ji neuvidí."
             },
             "noFogHide": {
                 "name": "Zakázat skrývání dlaždice v mlze?",
@@ -116,11 +116,11 @@
                 "name": "Vyloučení z kontroly scény"
             },
             "noCollision": {
-                "name": "Povolit vidění?",
+                "name": "Umožnit vidění?",
                 "hint": "Po zaškrtnutí nebude dlaždice blokovat vidění."
             },
             "allWallBlockSight": {
-                "name": "Mají všechny zdi blokovat vidění?",
+                "name": "Mají zdi blokovat vidění?",
                 "hint": "Po zaškrtnutí budou všechny zdi pod touto dlaždicí, pokud dlaždice není zakrytá, blokovat vidění."
             }
         },
@@ -178,8 +178,8 @@
                 "notes": "Výška v jednotkách vzdálenosti, která určuje výšku efektů počasí."
             },
             "lightMasking": {
-                "name": "Má Levels zachovávat osvětlení?",
-                "notes": "Pokud je zaškrtnuto, nebude modul Levels řídit viditelnost osvětlení. Tato možnost by měla být ve scénách, které používají více úrovní, vypnuta."
+                "name": "Zachovat původní osvětlení?",
+                "notes": "Po zaškrtnutí nebude modul Levels řídit viditelnost osvětlení. Tato možnost by měla být ve scénách používajících více úrovní odškrtnuta."
             }
         },
         "controls": {
@@ -214,13 +214,13 @@
                 "name": "Nastavit výšku pro další umístěnou šablonu"
             },
             "suppressBrmode": {
-                "name": "Potlačit aplikaci režimu ´Better Roofs´"
+                "name": "Potlačit aplikaci režimu modulu Better Roofs"
             }
         },
         "dialog": {
             "levelsclear": {
                 "title": "Odstranit úrovně",
-                "content": "Vymazat všechny uložené úrovně?"
+                "content": "Odstranit všechny uložené úrovně?"
             },
             "define": {
                 "warn": "Definuje úrovně jako: spodní, horní|spodní, horní - např. 0,9|10,19|20,29",
@@ -248,7 +248,7 @@
             "checkScene": {
                 "title": "Levels: Kontrola",
                 "content": "Byly detekovány dlaždice s polygony, které možná nebyly automaticky detekovány či správně definovány. Prosím, pečlivě zkontroluj následující dlaždice:",
-                "learnMore": "Nevíš, co je polygon? Máš jiné problémy? Podívej se na webovou stránku Úrovní, kde je video věnované polygonu!",
+                "learnMore": "Nevíš, co je polygon? Máš jiné problémy? Podívej se na webovou stránku Levels, kde je video věnované polygonu!",
                 "noIssues": "Nebyla zjištěna žádná problémová místa!",
                 "excluded": "Vyloučeno z kontroly"
             }
@@ -265,7 +265,7 @@
             "debugScene": "Ladit scénu (červená znamená detekované problémy)",
             "minElevDiff": "Minimální výška úrovně",
             "tokenAttacher": "Umístit prefaby připojené k tokenu relativně k aktuální úrovni<hr>Pokud NEumisťuješ prefaby, musí být tato možnost VYPNUTA.",
-            "warning": "VAROVÁNÍ! V nastavení scény je povolena možnost 'Nevypínat osvětlení' – vícenásobné úrovně tak nebudou správně fungovat. Kliknutí tento problém vyřeší."
+            "warning": "VAROVÁNÍ! V nastavení scény je zaškrtnuto zachování osvětlení. Vícenásobné úrovně tak nebudou správně fungovat. Kliknutí tento problém vyřeší."
         },
         "yesnodialog": {
             "yes": "Potvrdit",
@@ -288,21 +288,21 @@
         "err": {
             "collision": "Levels: Pokus o pohyb koliduje s alespoň jednou podlahou či stropem.",
             "tokenOOB": "Levels: Výška tokenu %n přesahuje strop aktuálně vybrané úrovně. Prosím, manuálně nastav výšku tokenu, nebo zvyš úroveň. Více informací <a href='https://wiki.theripper93.com/free/wall-height#token-height' target='_blank'>zde</a>.",
-            "wallheight": "Levels: VAROVÁNÍ! Levels pro správnou funkčnost vyžaduje ´Wall Height´ verze 4.1.0 nebo vyšší.",
-            "lessfog": "Levels: VAROVÁNÍ! Detekován modul ´Less Fog´. Viditelnost tokenů tak nebude fungovat správně. Prosím, deaktivuj jeden z těchto modulů.",
-            "tokenheight": "Levels: VAROVÁNÍ! Detekováno 'Povolení výšky tokenu' v modulu ´Wall Height´. Tato volba není kompatibilní s Levels a byla deaktivována!",
-            "elevatedvision": "Levels: VAROVÁNÍ! Detekována povolená možnost 'Výchozí pro automatickou výšku tokenu' v modulu ´Elevated Vision´. Tato volba narušuje běžnou funkčnost Levels a byla deaktivována!",
-            "elevatedvisioncompat": "Levels: VAROVÁNÍ! Detekován modul ´Elevated Vision´. Tento modul narušuje běžnou funkčnost Levels a neměl by být používán současně."
+            "wallheight": "Levels: VAROVÁNÍ! Levels pro správnou funkčnost vyžaduje Wall Height verze 4.1.0 nebo vyšší.",
+            "lessfog": "Levels: VAROVÁNÍ! Detekován modul Less Fog. Viditelnost tokenů tak nebude fungovat správně. Prosím, deaktivuj jeden z těchto modulů.",
+            "tokenheight": "Levels: VAROVÁNÍ! Detekováno zaškrtnutí automatické výšky tokenů v modulu Wall Height. Tato volba není kompatibilní s Levels a byla deaktivována!",
+            "elevatedvision": "Levels: VAROVÁNÍ! Detekována povolená výchozí možnost automatické výšky tokenů v modulu Elevated Vision. Tato volba narušuje běžnou funkčnost Levels a byla deaktivována!",
+            "elevatedvisioncompat": "Levels: VAROVÁNÍ! Detekován modul Elevated Vision. Tento modul narušuje běžnou funkčnost Levels a neměl by být používán současně s Levels."
         },
         "info": {
-            "advancedMode": "Levels: Byla povolena možnost ´Pokročilý režim´ v modulu ´Better Roofs´."
+            "advancedMode": "Levels: Byla povolena možnost pokročilého režimu modulu Better Roofs."
         },
         "firsttime": {
             "dialog": "."
         },
         "conflicts": {
             "midiqol": {
-                "tokenvis": "Povolení možnosti 'Hráči ovládají vlastněné skryté tokeny' v MidiQOL způsobí problémy s viditelností tokenů. Prosím, zakaž tuto možnost v nastavení modulu Midi."
+                "tokenvis": "Povolení možnosti ovládání svých vlastněných skrytých tokenů v MidiQOL způsobí problémy s viditelností tokenů. Tuto možnost v nastavení modulu Midi, prosím, zakaž."
             }
         }
     }
