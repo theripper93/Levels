@@ -18,7 +18,8 @@ Hooks.on("preUpdateToken", (token, updates, updateData) => {
   if (isStairUpdate) {
     delete updates.flags.levels.stairUpdate;
   }
-  const isDisplace = updateData.movement?.waypoints?.[0]?.action === "displace" || updateData.waypoints?.[0]?.action === "displace" || updateData.movement?.[token.id]?.waypoints?.[0]?.action;
+  const isDisplace = updateData.movement?.waypoints?.[0]?.action === "displace" || updateData.waypoints?.[0]?.action === "displace";
+  debugger
   if(token.object && "elevation" in updates && !CONFIG.Levels?.useCollision3D && !isStairUpdate && !updateData.teleport && !isDisplace ){
     const elevDiff = token.object.document.elevation - updates.elevation;
     const prevElevation = token.object.losHeight;
