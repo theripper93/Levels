@@ -17,7 +17,7 @@ export class LevelsMigration {
         let migratedScenes = 0;
         const compendiums = Array.from(game.packs).filter((p) => p.documentName === "Scene");
         for (const compendium of compendiums) {
-            if(compendium.locked){
+            if (compendium.locked) {
                 console.warn(`Levels - Compendium ${compendium.collection} is locked, skipping migration.`);
                 continue;
             }
@@ -63,32 +63,87 @@ export class LevelsMigration {
         await game.settings.set("levels", "migrateOnStartup", false);
     }
 
+    async getFromScene(maxRange = 9) {
+        let autoLevels = {};
+        for (let wall of canvas.walls.placeables) {
+            const { top, bottom } = WallHeight.getWallBounds(wall);
+            let entityRange = [bottom, top];
+            if (
+                entityRange[0] != -Infinity &&
+                entityRange[1] != Infinity &&
+                (entityRange[0] || entityRange[0] == 0) &&
+                (entityRange[1] || entityRange[1] == 0)
+            ) {
+                autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
+            }
+        }
+
+        for (let tile of canvas.tiles.placeables.filter((t) => t)) {
+            let { rangeBottom, rangeTop } =
+                CONFIG.Levels.helpers.getRangeForDocument(tile);
+            if (
+                (rangeBottom || rangeBottom == 0) &&
+                (rangeTop || rangeTop == 0) &&
+                rangeTop != Infinity &&
+                rangeBottom != -Infinity
+            ) {
+                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+            }
+        }
+
+        for (let light of canvas.lighting.placeables) {
+            let { rangeBottom, rangeTop } =
+                CONFIG.Levels.helpers.getRangeForDocument(light);
+            if (
+                (rangeBottom || rangeBottom == 0) &&
+                (rangeTop || rangeTop == 0) &&
+                rangeTop != Infinity &&
+                rangeBottom != -Infinity
+            ) {
+                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+            }
+        }
+
+        for (let drawing of canvas.drawings.placeables) {
+            let { rangeBottom, rangeTop } =
+                CONFIG.Levels.helpers.getRangeForDocument(drawing);
+            if (
+                (rangeBottom || rangeBottom == 0) &&
+                (rangeTop || rangeTop == 0) &&
+                rangeTop != Infinity &&
+                rangeBottom != -Infinity
+            ) {
+                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
+            }
+        }
+        let autoRange = Object.entries(autoLevels)
+            .map((x) => x[1])
+            .filter((x) => Math.abs(x[1] - x[0]) >= maxRange)
+            .sort()
+            .reverse();
+        if (autoRange.length) {
+            await canvas.scene.setFlag(
+                CONFIG.Levels.MODULE_ID,
+                "sceneLevels",
+                autoRange
+            );
+            this.loadLevels();
+        }
+    }
+
     async migrateData(scene) {
         if (!scene) scene = canvas.scene;
 
         const collections = scene.collections;
 
+        // Migrate drawings first
+        await this.migrateDrawingsToRegions(scene);
+
         for (const [collectionName, collection] of Object.entries(collections)) {
             const documents = collection.contents;
             const updates = [];
             for (const document of documents) {
-                const oldBottom = document.flags?.levels?.rangeBottom;
-                let update = {};
-                if (Number.isNumeric(oldBottom)) {
-                    update = {
-                        _id: document.id,
-                        elevation: oldBottom,
-                        flags: {
-                            levels: {
-                                "-=rangeBottom": null,
-                            },
-                        },
-                    };
-                    if (documents[0].documentName === "Drawing") {
-                        update.interface = false;
-                    }
-                    updates.push(update);
-                }
+
             }
             if (updates.length <= 0) continue;
             await scene.updateEmbeddedDocuments(documents[0].documentName, updates);
@@ -96,6 +151,8 @@ export class LevelsMigration {
             console.log("Levels - Migrated " + updates.length + " " + collectionName + " to new elevation data structure in scene " + scene.name);
         }
     }
+
+    async inferSceneLevels(scene) {}
 
     async migrateDrawingsToRegions(scene) {
         if (!scene) scene = canvas.scene;
@@ -122,8 +179,8 @@ export class LevelsMigration {
         const toDelete = [];
         let migratedCount = 0;
         for (const drawing of drawings) {
-            if(!drawing.flags?.levels?.drawingMode || drawing.shape.type !== "r") continue;
-            if(drawing.flags?.levels?.drawingMode == 1){
+            if (!drawing.flags?.levels?.drawingMode || drawing.shape.type !== "r") continue;
+            if (drawing.flags?.levels?.drawingMode == 1) {
                 toDelete.push(drawing.id);
                 continue;
             }
@@ -136,8 +193,8 @@ export class LevelsMigration {
             regionData.name = name;
             regionData.elevation.bottom = parseFloat(bottom);
             regionData.elevation.top = parseFloat(top) + 1;
-            const scriptSource= regionSourceCodeMapping[drawing.flags.levels?.drawingMode.toString()];
-            if(!scriptSource) continue;
+            const scriptSource = regionSourceCodeMapping[drawing.flags.levels?.drawingMode.toString()];
+            if (!scriptSource) continue;
             regionData.behaviors[0].system.source = scriptSource.replace("elevatorData", `"${elevatorFloors}"`)
             regionData.shapes = [
                 {
