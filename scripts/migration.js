@@ -63,93 +63,167 @@ export class LevelsMigration {
         await game.settings.set("levels", "migrateOnStartup", false);
     }
 
-    async getFromScene(maxRange = 9) {
-        let autoLevels = {};
-        for (let wall of canvas.walls.placeables) {
-            const { top, bottom } = WallHeight.getWallBounds(wall);
-            let entityRange = [bottom, top];
-            if (
-                entityRange[0] != -Infinity &&
-                entityRange[1] != Infinity &&
-                (entityRange[0] || entityRange[0] == 0) &&
-                (entityRange[1] || entityRange[1] == 0)
-            ) {
-                autoLevels[`${entityRange[0]}${entityRange[1]}`] = entityRange;
-            }
+    getDocumentLevel(document) {
+        if (document.documentName === "Wall") {
+            const top = parseFloat(document.flags?.["wall-height"]?.top) ?? Infinity;
+            const bottom = parseFloat(document.flags?.["wall-height"]?.bottom) ?? -Infinity;
+            return { top, bottom };
         }
-
-        for (let tile of canvas.tiles.placeables.filter((t) => t)) {
-            let { rangeBottom, rangeTop } =
-                CONFIG.Levels.helpers.getRangeForDocument(tile);
-            if (
-                (rangeBottom || rangeBottom == 0) &&
-                (rangeTop || rangeTop == 0) &&
-                rangeTop != Infinity &&
-                rangeBottom != -Infinity
-            ) {
-                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-            }
+        if (document.documentName === "Region") {
+            return document.elevation;
         }
-
-        for (let light of canvas.lighting.placeables) {
-            let { rangeBottom, rangeTop } =
-                CONFIG.Levels.helpers.getRangeForDocument(light);
-            if (
-                (rangeBottom || rangeBottom == 0) &&
-                (rangeTop || rangeTop == 0) &&
-                rangeTop != Infinity &&
-                rangeBottom != -Infinity
-            ) {
-                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-            }
-        }
-
-        for (let drawing of canvas.drawings.placeables) {
-            let { rangeBottom, rangeTop } =
-                CONFIG.Levels.helpers.getRangeForDocument(drawing);
-            if (
-                (rangeBottom || rangeBottom == 0) &&
-                (rangeTop || rangeTop == 0) &&
-                rangeTop != Infinity &&
-                rangeBottom != -Infinity
-            ) {
-                autoLevels[`${rangeBottom}${rangeTop}`] = [rangeBottom, rangeTop];
-            }
-        }
-        let autoRange = Object.entries(autoLevels)
-            .map((x) => x[1])
-            .filter((x) => Math.abs(x[1] - x[0]) >= maxRange)
-            .sort()
-            .reverse();
-        if (autoRange.length) {
-            await canvas.scene.setFlag(
-                CONFIG.Levels.MODULE_ID,
-                "sceneLevels",
-                autoRange
-            );
-            this.loadLevels();
-        }
+        const bottom = document.elevation;
+        const top = parseFloat(document.flags?.levels?.rangeTop ?? bottom);
+        return { top, bottom };
     }
 
     async migrateData(scene) {
         if (!scene) scene = canvas.scene;
+        const isLevelsScene = scene.flags.levels?.sceneLevels?.length || scene.walls.find(wall => wall.flags?.["wall-height"]?.top || wall.flags?.["wall-height"]?.bottom);
+        if (!isLevelsScene) return;
 
+        const firstLevel = scene.firstLevel;
         const collections = scene.collections;
+
+        const tileToUpdate = [];
+        for (const tile of scene.tiles) {
+            const collisions = tile.flags?.levels?.noCollision === false;
+            if (collisions) {
+                tileToUpdate.push({
+                    flags: {
+                        levels: {
+                            blockSightMovement: true,
+                        }
+                    }
+                });
+            }
+        }
+        await scene.updateEmbeddedDocuments("Tile", tileToUpdate);
 
         // Migrate drawings first
         await this.migrateDrawingsToRegions(scene);
+        const existingLevels = scene.flags.levels?.sceneLevels?.map(level => {
+            return {
+                bottom: parseFloat(level[0]),
+                top: parseFloat(level[1]),
+                name: level[2],
+            }
+        }) ?? [];
+        
+        const inferredLevels = {};
+        const orphanedDocuments = [];
 
         for (const [collectionName, collection] of Object.entries(collections)) {
             const documents = collection.contents;
-            const updates = [];
             for (const document of documents) {
-
+                const { bottom, top } = this.getDocumentLevel(document);
+                if (!Number.isFinite(top) || !Number.isFinite(bottom)) {
+                    orphanedDocuments.push(document);
+                    continue;
+                };
+                const key = `${bottom}${top}`;
+                if (inferredLevels[key]) {
+                    inferredLevels[key].documents.push(document);
+                    continue;
+                }
+                inferredLevels[`${bottom}${top}`] = {
+                    bottom,
+                    top,
+                    documents: [document]
+                };
             }
-            if (updates.length <= 0) continue;
-            await scene.updateEmbeddedDocuments(documents[0].documentName, updates);
-            ui.notifications.notify("Levels - Migrated " + updates.length + " " + collectionName + "s to new elevation data structure in scene " + scene.name);
-            console.log("Levels - Migrated " + updates.length + " " + collectionName + " to new elevation data structure in scene " + scene.name);
         }
+        const levelsToCreate = [];
+        const levelsToMerge = [];
+        const minRange = scene.grid.distance * 1.5;
+        for (const level of Object.values(inferredLevels)) {
+            const levelRange = level.top - level.bottom;
+            if (levelRange < minRange) {
+                levelsToMerge.push(level);
+                continue;
+            }
+            const existingLevel = existingLevels.find(x => Math.round(x.bottom) == Math.round(level.bottom) && Math.round(x.top) == Math.round(level.top));
+            level.name = existingLevel?.name || `${scene.name} - Level (${level.bottom}|${level.top})`;
+            levelsToCreate.push(level);
+        }
+        for (const level of levelsToMerge) {
+            const containingLevel = levelsToCreate.find(x => level.bottom >= x.bottom && level.top <= x.top);
+            if (!containingLevel) {
+                levelsToCreate.push(level);
+                continue;
+            }
+            containingLevel.documents.push(...level.documents);
+        }
+        levelsToCreate.sort((a, b) => a.bottom - b.bottom);
+
+        const createdLevels = await scene.createEmbeddedDocuments("Level", levelsToCreate.map(level => {
+            return {
+                name: level.name,
+                elevation: {
+                    bottom: level.bottom,
+                    top: level.top,
+                }
+            }
+        }));
+        await scene.updateEmbeddedDocuments("Level", createdLevels.map(level => {
+            return {
+                _id: level.id,
+                visibility: {
+                    levels: createdLevels.filter(x => x.elevation.bottom <= level.elevation.bottom).map(x => x.id)
+                }
+            }
+        }));
+        createdLevels.sort((a, b) => a.elevation.bottom - b.elevation.bottom);
+        const backgroundLevel = createdLevels.find(x => x.elevation.bottom === scene.flags.levels?.backgroundElevation) ?? createdLevels.find(x => x.elevation.bottom >= 0) ?? createdLevels[0];
+        await backgroundLevel.update({
+            background: {
+                src: firstLevel.background.src,
+            }
+        });
+        for (const level of levelsToCreate) {
+            level.id = scene.levels.getName(level.name).id;
+        }
+        for (const level of levelsToCreate) {
+            level.includedLevels = levelsToCreate.filter(x => level.bottom <= x.bottom && level.top >= x.top).map(x => x.id);
+            level.belowLevels = levelsToCreate.filter(x => level.top >= x.top).map(x => x.id);
+        }
+        const includedWallDocuments = ["Wall", "Light"];
+        const documentsToUpdate = {};
+        for (const level of levelsToCreate) {
+            for (const document of level.documents) {
+                documentsToUpdate[document.documentName] ??= [];
+                if (document.documentName === "Region") {
+                    const includedLevels = levelsToCreate.filter(x => Number.between(document.elevation.bottom, x.bottom, x.top) || Number.between(document.elevation.top, x.bottom, x.top)).map(x => x.id);
+                    documentsToUpdate[document.documentName].push({
+                        _id: document.id,
+                        levels: includedLevels
+                    });
+                    continue;
+                }
+                documentsToUpdate[document.documentName].push({
+                    _id: document.id,
+                    levels: includedWallDocuments.includes(document.documentName) ? level.includedLevels : level.belowLevels,
+                });
+            }
+        }
+        const allLevels = levelsToCreate.map(x => x.id);
+        for (const orphan of orphanedDocuments) {
+            documentsToUpdate[orphan.documentName] ??= [];
+            documentsToUpdate[orphan.documentName].push({
+                _id: orphan.id,
+                levels: allLevels
+            });
+        }
+        for (const [documentName, updates] of Object.entries(documentsToUpdate)) {
+            await scene.updateEmbeddedDocuments(documentName, updates);
+        }
+        await scene.update({
+            name: "Updated",
+        })
+        await firstLevel.delete();
+        const msg = "Levels Module - Migrated scene to Core Foundry Levels";
+        ui.notifications.success(msg);
+        console.log(msg);
     }
 
     async inferSceneLevels(scene) {}

@@ -295,6 +295,8 @@ export class SightHandler {
         }
     }
 
+
+
     static shouldIgnoreProximityWall(document, source, target, externalRadius = 0) {
         if (!source || !target || !document) return false;
         const d = document.threshold?.sight;
@@ -355,9 +357,9 @@ export class SightHandler {
 
         //Loop through all the planes and check for both ceiling and floor collision on each tile
         for (let tile of canvas.tiles.placeables) {
-            if (tile.document.flags?.levels?.noCollision) continue;
+            // Checkbox tile
+            if (!tile.document.flags?.levels?.blockSightMovement) continue;
             const bottom = tile.document.elevation ?? -Infinity;
-            const top = tile.document.flags?.levels?.rangeTop ?? Infinity;
             if (bottom != -Infinity) {
                 const zIntersectionPoint = getPointForPlane(bottom);
                 if (((z0 < bottom && bottom < z1) || (z1 < bottom && bottom < z0)) && tile.mesh?.containsCanvasPoint({ x: zIntersectionPoint.x, y: zIntersectionPoint.y }, ALPHATTHRESHOLD)) {

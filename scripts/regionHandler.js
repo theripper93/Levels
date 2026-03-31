@@ -1,11 +1,11 @@
-import { DrawingHandler } from "./drawingHandler.js";
+// import { DrawingHandler } from "./drawingHandler.js";
 
 export class RegionHandler {
     static elevator(region, event, elevatorData) {
         if (game.user !== event.user) return;
         const { top, bottom, tokenDocument, elevation, movement } = this.getRegionEventData(region, event);
         if (elevation > top || elevation < bottom) return;
-        DrawingHandler.renderElevatorDalog(elevatorData);
+        // DrawingHandler.renderElevatorDalog(elevatorData);
     }
 
     static stair(region, event) {
@@ -36,6 +36,9 @@ export class RegionHandler {
             tokenDocument: event.data.token,
             elevation: event.data.token.elevation,
             movement: event.data.movement,
+            // topLevels: region.levels,
+            // bottomLevels: ,
+            // tokenLevel: ,
         }
     }
 
