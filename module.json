@@ -14,78 +14,19 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
-    },
-    {
-      "lang": "cs",
-      "name": "Čeština",
-      "path": "lang/cs.json"
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch",
-      "path": "lang/de.json"
-    },
-    {
-      "lang": "fr",
-      "name": "Français",
-      "path": "lang/fr.json"
-    },
-    {
-      "lang": "es",
-      "name": "Español",
-      "path": "lang/es.json"
-    },
-    {
-      "lang": "ja",
-      "name": "日本語",
-      "path": "lang/ja.json"
-    },
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt-BR.json"
     }
   ],
   "scripts": [
-    "scripts/ui.js",
-    "scripts/lib/jquerysortable.js"
   ],
   "esmodules": [
-    "scripts/config.js",
     "scripts/main.js"
   ],
   "styles": [
     "styles/levels.css"
   ],
   "packs": [
-    {
-      "name": "levelsmacros",
-      "label": "Levels Macros",
-      "path": "packs/macros.db",
-      "type": "Macro",
-      "private": false
-    },
-    {
-      "name": "maps",
-      "label": "Levels Sample Scenes",
-      "path": "/packs/levels-samples.db",
-      "type": "Scene",
-      "private": false
-    }
   ],
   "packFolders": [
-    {
-      "name": "Levels",
-      "sorting": "a",
-      "color": "#ffa200",
-      "ownership": {
-        "PLAYER": "NONE"
-      },
-      "packs": [
-        "levelsmacros",
-        "maps"
-      ]
-    }
   ],
   "url": "https://github.com/theripper93/Levels",
   "manifest": "https://github.com/theripper93/Levels/releases/latest/download/module.json",
@@ -93,24 +34,8 @@
   "id": "levels",
   "relationships": {
     "requires": [
-      {
-        "id": "lib-wrapper",
-        "type": "module",
-        "compatibility": {}
-      },
-      {
-        "id": "wall-height",
-        "type": "module",
-        "compatibility": {}
-      }
     ],
     "recommends": [
-      {
-        "id": "theripper-premium-hub",
-        "type": "module",
-        "reason": "TheRipper93's Module Hub will alert you of critical updates and give you easy access to documentation in the configure settings screen",
-        "compatibility": {}
-      }
     ]
   },
   "compatibility": {
