@@ -6,6 +6,7 @@ const MODULE_ID = "levels";
 export const API = {};
 
 Hooks.once("init", () => {
+
     API.migration = new LevelsMigration();
     game.modules.get(MODULE_ID).API = API;
     CONFIG.Levels = {
@@ -15,10 +16,34 @@ Hooks.once("init", () => {
     };
 
     libWrapper.register(MODULE_ID, "Scene.prototype.testSurfaceCollision", sceneTestSurfaceCollision, "MIXED");
+
+    const renderTileConfig = (app, html, data) => {
+        if (!game.user.isGM || html.querySelector("input[name='flags.patrol.blockSightMovement']")) return;
+      
+        const tile = app.document;
+        const toggleHTML = `
+          <div class="form-group notification warning" data-tooltip="${game.i18n.localize("levels.settings.blockSightMovement.hint")}">
+            <label>${game.i18n.localize("levels.settings.blockSightMovement.name")}</label>
+            <input type="checkbox" name="flags.levels.blockSightMovement" data-dtype="Boolean" ${tile.getFlag(MODULE_ID, "blockSightMovement") ? "checked" : ""}>
+          </div>
+        `;
+      
+        const levelsInput = html.querySelector("[name='levels']");
+        const formGroup = levelsInput.closest(".form-group");
+      
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = toggleHTML;
+        formGroup.insertAdjacentElement("afterend", wrapper);
+      
+        app.setPosition({ height: "auto" });
+    }
+    Hooks.on("renderTileConfig", renderTileConfig);
+    // Hooks.on("renderPrototypeTileConfig",renderTokenConfig);
 });
 
 function sceneTestSurfaceCollision(wrapped, ...args) {
     const [ origin, destination, options ] = args;
+    if (game.Levels3DPreview?._active) return wrapped(...args);
     if (!["move", "sight"].includes(options.type) || options.mode !== "any") return wrapped(...args);
 
     const ALPHATTHRESHOLD = options.type == "sight" ? 0.99 : 0.1;
