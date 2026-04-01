@@ -10,23 +10,27 @@ export class RegionHandler {
 
     static stair(region, event) {
         if (game.user !== event.user) return;
-        const { top, bottom, tokenDocument, elevation, movement } = this.getRegionEventData(region, event);
-        if (elevation !== bottom && elevation !== top) return;
-        RegionHandler.updateMovement(tokenDocument, elevation === top ? bottom : top, movement);
+        const { tokenDocument, tokenLevel } = this.getRegionEventData(region, event);
+        const levelDown = region.levels.find(x => Math.round(tokenLevel.elevation.bottom) === Math.round(x.top));
+        if (levelDown) return tokenDocument.update({ level: levelDown._id });
+        const levelUp = region.levels.find(x => Math.round(tokenLevel.elevation.top) === Math.round(x.bottom));
+        if (levelUp) return tokenDocument.update({ level: levelUp._id });
     }
 
     static stairDown(region, event) {
         if (game.user !== event.user) return;
-        const { top, bottom, tokenDocument, elevation, movement } = this.getRegionEventData(region, event);
-        if (elevation > top || elevation <= bottom) return;
-        RegionHandler.updateMovement(tokenDocument, bottom, movement);
+        const { tokenDocument, tokenLevel } = this.getRegionEventData(region, event);
+        if (!tokenLevel) return;
+        const levelDown = region.levels.find(x => Math.round(tokenLevel.elevation.bottom) === Math.round(x.top));
+        if (levelDown) return tokenDocument.update({ level: levelDown._id });
     }
 
     static stairUp(region, event) {
         if (game.user !== event.user) return;
-        const { top, bottom, tokenDocument, elevation, movement } = this.getRegionEventData(region, event);
-        if (elevation < bottom || elevation >= top) return;
-        RegionHandler.updateMovement(tokenDocument, top, movement);
+        const { tokenDocument, tokenLevel } = this.getRegionEventData(region, event);
+        if (!tokenLevel) return;
+        const levelUp = region.levels.find(x => Math.round(tokenLevel.elevation.top) === Math.round(x.bottom));
+        if (levelUp) return tokenDocument.update({ level: levelUp._id });
     }
 
     static getRegionEventData(region, event) {
@@ -36,9 +40,7 @@ export class RegionHandler {
             tokenDocument: event.data.token,
             elevation: event.data.token.elevation,
             movement: event.data.movement,
-            // topLevels: region.levels,
-            // bottomLevels: ,
-            // tokenLevel: ,
+            tokenLevel: canvas.scene.levels.get(event.data.token.level),
         }
     }
 

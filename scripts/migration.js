@@ -186,6 +186,8 @@ export class LevelsMigration {
         for (const level of levelsToCreate) {
             level.includedLevels = levelsToCreate.filter(x => level.bottom <= x.bottom && level.top >= x.top).map(x => x.id);
             level.belowLevels = levelsToCreate.filter(x => level.top >= x.top).map(x => x.id);
+            level.aboveLevels = levelsToCreate.filter(x => level.bottom <= x.bottom).map(x => x.id);
+            level.allLevels = levelsToCreate.map(x => x.id);
         }
         const includedWallDocuments = ["Wall", "Light"];
         const documentsToUpdate = {};
@@ -198,6 +200,23 @@ export class LevelsMigration {
                         _id: document.id,
                         levels: includedLevels
                     });
+                    continue;
+                }
+                if (document.documentName === "Tile" && document.flags.levels) {
+                    const { rangeTop, showIfAbove, showAboveRange, isBasement } = document.flags.levels || {};
+                    const update = { _id: document.id, levels: [] };
+                    if (isBasement) {
+                        update.levels = level.includedLevels;
+                    } else if (showIfAbove && showAboveRange) {
+                        const elevation = document.elevation;
+                        const minElevation = elevation - showAboveRange;
+                        update.levels = levelsToCreate.filter(x => x.top >= minElevation).map(x => x.id);
+                    } else if (!Number.isFinite(rangeTop)) {
+                        update.levels = level.allLevels;
+                    } else {
+                        update.levels = level.belowLevels;
+                    }
+                    documentsToUpdate[document.documentName].push(update);
                     continue;
                 }
                 documentsToUpdate[document.documentName].push({
@@ -293,31 +312,57 @@ export class LevelsMigration {
     }
 
     showManualMigrationDialog() {
-        //shows a dialog with buttons for migrating current scene, all scenes, or all scenes in compendiums
-        new Dialog({
-            title: "Levels - Migration",
-            content: `<p>Use this dialog to migrate your scenes to the new elevation data structure. This is required for Levels to function properly in V12.</p>
-            <p><b>WARNING:</b> This will modify your scene data. Please back up your world before proceeding.</p>`,
-            buttons: {
-                scene: {
-                    label: "Migrate Current Scene",
-                    callback: () => this.migrateData(),
-                },
-                sidebar: {
-                    label: "Migrate All Sidebar Scenes",
-                    callback: () => this.migrateScenes(),
-                },
-                compendiums: {
-                    label: "Migrate All Scenes in Compendiums",
-                    callback: () => this.migrateCompendiums(),
-                },
-                all: {
-                    label: "Migrate All Scenes in Compendiums and Sidebar",
+        const msg = `
+        <div class="scrollable" style="width: 900px; max-width: 80vw; max-height: 70vh;">
+            <h1 id="levels">Levels</h1>
+            <p>Thank you for using the Levels Module for the past 5 years. Its functionality has been implemented into core Foundry VTT as the <strong>Scene Levels</strong> feature, and the module is now being retired. The current version will attempt to migrate your scenes automatically, though some manual adjustments may be needed as the two implementations do not match 1:1.</p>
+            <h2 id="current-module-features">Current Module Features</h2>
+            <ul>
+            <li><strong>Block Sight and Movement:</strong> The tile option has been ported to V14 and will continue to work on existing Levels tiles. Core Scene Levels does not use tiles for this purpose; you will need to use <strong>Regions</strong> and the <strong>Define Surface</strong> behavior instead.</li>
+            <li><strong>Region Scripts:</strong> To save you from re-doing all your stair regions, their functionality has been kept and they will now change the token level instead of its elevation.</li>
+            <li><strong>Migration:</strong> You can re-run the scene migration utility at any time via the <strong>"Migrate on Startup"</strong> module setting.</li>
+            </ul>
+            <h2 id="wall-height">Wall Height</h2>
+            <p>Wall Height has also been retired. In V14, walls can be assigned to levels that define their top and bottom elevation rather than setting it individually per wall. The behavior is similar but not a 1:1 replacement.</p>
+            <h2 id="support">Support</h2>
+            <p>For help with Scene Levels, please refer to the Foundry VTT Discord, as it is now vanilla Foundry VTT functionality.</p>
+            <p>The features listed above will be supported through V14, but should be considered unsupported as of V15. You should migrate your tiles to regions with the <strong>Define Surface</strong> behavior and your stair regions to the new <strong>Change Level</strong> behavior for any scenes you plan to keep using.</p>
+            <h2 id="going-forward">Going Forward</h2>
+            <p>It has been a pleasure to pioneer this feature so many years ahead of its time, with all the challenges of building it on top of a system that did not natively support it. I hope it served as inspiration to the Foundry team.</p>
+            <p>If you enjoyed this early tech, it is time to take a look at <strong>3D Canvas</strong>, the true evolution of vertical combat! To celebrate Levels' retirement, 3D Canvas is now free for everyone. Check out the video below and <a href="https://foundryvtt.com/packages/levels-3d-preview">download the module</a>.</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/oOAusysEiXw?si=k0WEx27iRdhi7Qne" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+        </div>
+        `;
+        new foundry.applications.api.DialogV2({
+            window: { title: "Levels - Migration" },
+            content: msg,
+            buttons: [
+                {
+                    label: "Migrate All",
+                    action: "all",
                     callback: () => this.migrateAll(),
                 },
-
-            },
-            default: "scene",
-        }).render(true);
+                {
+                    label: "Migrate Scene",
+                    action: "scene",
+                    callback: () => this.migrateData(),
+                },
+                {
+                    label: "Migrate All Scenes",
+                    action: "scenes",
+                    callback: () => this.migrateScenes(),
+                },
+                {
+                    label: "Migrate Compendiums",
+                    action: "compendiums",
+                    callback: () => this.migrateCompendiums(),
+                },
+                {   
+                    label: "Don't Show Again",
+                    action: "hide",
+                    callback: () => game.settings.set("levels", "migrateOnStartupDialog", false),
+                },
+            ],
+        }).render({ force: true });
     }
 }

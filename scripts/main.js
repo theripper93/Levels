@@ -13,6 +13,11 @@ Hooks.once("init", () => {
         handlers: {
             RegionHandler,
         },
+        helpers: {
+            migration: {
+                showManualMigrationDialog: API.migration.showManualMigrationDialog,
+            }
+        }
     };
 
     libWrapper.register(MODULE_ID, "Scene.prototype.testSurfaceCollision", sceneTestSurfaceCollision, "MIXED");
@@ -37,8 +42,22 @@ Hooks.once("init", () => {
       
         app.setPosition({ height: "auto" });
     }
+
     Hooks.on("renderTileConfig", renderTileConfig);
-    // Hooks.on("renderPrototypeTileConfig",renderTokenConfig);
+
+    game.settings.register(MODULE_ID, "migrateOnStartupDialog", {
+        name: game.i18n.localize(`${MODULE_ID}.settings.migrateOnStartupDialog.name`),
+        hint: game.i18n.localize(`${MODULE_ID}.settings.migrateOnStartupDialog.hint`),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: true,
+        requiresReload: true,
+    });
+});
+
+Hooks.once("ready", () => {
+    if (game.user.isGM && game.settings.get(MODULE_ID, "migrateOnStartupDialog")) API.migration.showManualMigrationDialog();
 });
 
 function sceneTestSurfaceCollision(wrapped, ...args) {
