@@ -5,16 +5,17 @@ export class RegionHandler {
         if (game.user !== event.user) return;
         const { top, bottom, tokenDocument, elevation, movement } = this.getRegionEventData(region, event);
         if (elevation > top || elevation < bottom) return;
-        // DrawingHandler.renderElevatorDalog(elevatorData);
+        CONFIG.Levels.handlers.RegionHandler.elevator(region,event,"0,Ground Floor|10, First Floor")
     }
 
     static stair(region, event) {
         if (game.user !== event.user) return;
-        const { tokenDocument, tokenLevel } = this.getRegionEventData(region, event);
-        const levelDown = region.levels.find(x => Math.round(tokenLevel.elevation.bottom) === Math.round(x.top));
-        if (levelDown) return tokenDocument.update({ level: levelDown._id });
-        const levelUp = region.levels.find(x => Math.round(tokenLevel.elevation.top) === Math.round(x.bottom));
-        if (levelUp) return tokenDocument.update({ level: levelUp._id });
+        const { top, bottom, tokenDocument, tokenLevel, movement } = this.getRegionEventData(region, event);
+        const regionBottomLevels = region.parent.levels.filter(x => x.elevation.bottom === bottom);
+        const regionTopLevels = region.parent.levels.filter(x => x.elevation.bottom === top);
+        const targetLevel = regionBottomLevels.includes(tokenLevel) ? regionTopLevels[0] : regionBottomLevels[0];
+        if (!targetLevel) return;
+        this.updateMovement(tokenDocument, targetLevel.id, movement);
     }
 
     static stairDown(region, event) {
@@ -49,10 +50,10 @@ export class RegionHandler {
         return this.updateMovement(tokenDocument, elevation, movement);
     }
 
-    static async updateMovement(tokenDocument, elevation, movement) {
+    static async updateMovement(tokenDocument, level, movement) {
         tokenDocument.stopMovement();
         if (tokenDocument.rendered) await tokenDocument.object.movementAnimationPromise;
-        const adjustedWaypoints = movement.pending.waypoints.filter(w => !w.intermediate).map(w => ({ ...w, elevation, action: "displace" }));
+        const adjustedWaypoints = movement.pending.waypoints.filter(w => !w.intermediate).map(w => ({ ...w, level, action: "displace" }));
         await tokenDocument.move(adjustedWaypoints, {
             ...movement.updateOptions,
             constrainOptions: movement.constrainOptions,

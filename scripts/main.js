@@ -15,7 +15,7 @@ Hooks.once("init", () => {
         },
         helpers: {
             migration: {
-                showManualMigrationDialog: API.migration.showManualMigrationDialog,
+                showManualMigrationDialog: API.migration.showManualMigrationDialog.bind(API.migration),
             }
         }
     };

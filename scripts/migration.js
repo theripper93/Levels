@@ -77,12 +77,13 @@ export class LevelsMigration {
         return { top, bottom };
     }
 
-    async migrateData(scene) {
+    async migrateData(scene, force = false) {
         if (!scene) scene = canvas.scene;
         const isLevelsScene = scene.flags.levels?.sceneLevels?.length || scene.walls.find(wall => wall.flags?.["wall-height"]?.top || wall.flags?.["wall-height"]?.bottom);
         if (!isLevelsScene) return;
+        if (scene.getFlag("levels", "sceneLevelsMigration") && !force) return;
 
-        const firstLevel = scene.firstLevel;
+        const firstLevel = scene.levels.get("defaultLevel0000");
         const collections = scene.collections;
 
         const tileToUpdate = [];
@@ -102,6 +103,7 @@ export class LevelsMigration {
 
         // Migrate drawings first
         await this.migrateDrawingsToRegions(scene);
+        
         const existingLevels = scene.flags.levels?.sceneLevels?.map(level => {
             return {
                 bottom: parseFloat(level[0]),
@@ -116,6 +118,8 @@ export class LevelsMigration {
         for (const [collectionName, collection] of Object.entries(collections)) {
             const documents = collection.contents;
             for (const document of documents) {
+                if (document instanceof Level) continue;
+                if (document instanceof Tile && !document.flags?.levels) continue;
                 const { bottom, top } = this.getDocumentLevel(document);
                 if (!Number.isFinite(top) || !Number.isFinite(bottom)) {
                     orphanedDocuments.push(document);
@@ -133,7 +137,7 @@ export class LevelsMigration {
                 };
             }
         }
-        const levelsToCreate = [];
+        const levelsWithContent = [];
         const levelsToMerge = [];
         const minRange = scene.grid.distance * 1.5;
         for (const level of Object.values(inferredLevels)) {
@@ -144,17 +148,20 @@ export class LevelsMigration {
             }
             const existingLevel = existingLevels.find(x => Math.round(x.bottom) == Math.round(level.bottom) && Math.round(x.top) == Math.round(level.top));
             level.name = existingLevel?.name || `${scene.name} - Level (${level.bottom}|${level.top})`;
-            levelsToCreate.push(level);
+            levelsWithContent.push(level);
         }
         for (const level of levelsToMerge) {
-            const containingLevel = levelsToCreate.find(x => level.bottom >= x.bottom && level.top <= x.top);
+            const containingLevel = levelsWithContent.find(x => level.bottom >= x.bottom && level.top <= x.top);
             if (!containingLevel) {
-                levelsToCreate.push(level);
+                levelsWithContent.push(level);
                 continue;
             }
             containingLevel.documents.push(...level.documents);
         }
-        levelsToCreate.sort((a, b) => a.bottom - b.bottom);
+        levelsWithContent.sort((a, b) => a.bottom - b.bottom);
+
+        const existingSceneLevels = scene.levels.contents.filter(x => x !== firstLevel);
+        const levelsToCreate = levelsWithContent.filter(x => !existingSceneLevels.find(y => y.elevation.bottom === x.bottom && y.elevation.top === x.top));
 
         const createdLevels = await scene.createEmbeddedDocuments("Level", levelsToCreate.map(level => {
             return {
@@ -165,40 +172,85 @@ export class LevelsMigration {
                 }
             }
         }));
-        await scene.updateEmbeddedDocuments("Level", createdLevels.map(level => {
+        await scene.updateEmbeddedDocuments("Level", scene.levels.map(level => {
             return {
                 _id: level.id,
                 visibility: {
-                    levels: createdLevels.filter(x => x.elevation.bottom <= level.elevation.bottom).map(x => x.id)
+                    levels: scene.levels.filter(x => x.elevation.bottom <= level.elevation.bottom).map(x => x.id)
                 }
             }
         }));
         createdLevels.sort((a, b) => a.elevation.bottom - b.elevation.bottom);
-        const backgroundLevel = createdLevels.find(x => x.elevation.bottom === scene.flags.levels?.backgroundElevation) ?? createdLevels.find(x => x.elevation.bottom >= 0) ?? createdLevels[0];
-        await backgroundLevel.update({
-            background: {
-                src: firstLevel.background.src,
-            }
-        });
-        for (const level of levelsToCreate) {
+        existingSceneLevels.sort((a, b) => a.elevation.bottom - b.elevation.bottom);
+
+        const backgroundElevation = scene.flags.levels?.backgroundElevation;
+        const foundBackgroundLevel = createdLevels.find(x => x.elevation.bottom === backgroundElevation) ?? existingSceneLevels.find(x => x.elevation.bottom === backgroundElevation);
+        const backgroundLevel = foundBackgroundLevel ??
+        (Number.isFinite(backgroundElevation) ? createdLevels[0] : createdLevels.find(x => x.elevation.bottom >= 0))
+        ?? createdLevels[0] ?? existingSceneLevels[0];
+        const bgElevation = backgroundLevel.elevation.bottom;
+        
+        if (firstLevel) {
+            await backgroundLevel.update({
+                background: {
+                    src: firstLevel.background.src,
+                }
+            });
+        }
+
+        for (const level of levelsWithContent) {
             level.id = scene.levels.getName(level.name).id;
         }
-        for (const level of levelsToCreate) {
-            level.includedLevels = levelsToCreate.filter(x => level.bottom <= x.bottom && level.top >= x.top).map(x => x.id);
-            level.belowLevels = levelsToCreate.filter(x => level.top >= x.top).map(x => x.id);
-            level.aboveLevels = levelsToCreate.filter(x => level.bottom <= x.bottom).map(x => x.id);
-            level.allLevels = levelsToCreate.map(x => x.id);
+        for (const level of levelsWithContent) {
+            level.includedLevels = levelsWithContent.filter(x => level.bottom <= x.bottom && level.top >= x.top).map(x => x.id);
+            level.belowLevels = levelsWithContent.filter(x => level.top >= x.top).map(x => x.id);
+            level.aboveLevels = levelsWithContent.filter(x => level.bottom <= x.bottom).map(x => x.id);
+            level.allLevels = levelsWithContent.map(x => x.id);
         }
         const includedWallDocuments = ["Wall", "Light"];
         const documentsToUpdate = {};
-        for (const level of levelsToCreate) {
+        for (const level of levelsWithContent) {
             for (const document of level.documents) {
                 documentsToUpdate[document.documentName] ??= [];
                 if (document.documentName === "Region") {
-                    const includedLevels = levelsToCreate.filter(x => Number.between(document.elevation.bottom, x.bottom, x.top) || Number.between(document.elevation.top, x.bottom, x.top)).map(x => x.id);
+                    const levelsToAdd = [];
+                    const elevation = {};
+                    for (const behavior of document.behaviors) {
+                        if (behavior.type !== "executeScript") continue;
+                        const script = behavior.system.source;
+                        const top = document.elevation.top;
+                        const bottom = document.elevation.bottom;
+                        const regionBottomLevels = document.parent.levels.filter(x => x.elevation.bottom === bottom);
+                        const regionTopLevels = document.parent.levels.filter(x => x.elevation.bottom === top);
+                        if (script.includes("CONFIG.Levels.handlers.RegionHandler.stair(")) {
+                            levelsToAdd.push(...regionBottomLevels, ...regionTopLevels);
+                        } else if (script.includes("CONFIG.Levels.handlers.RegionHandler.stairDown")) {
+                            levelsToAdd.push(...regionBottomLevels, ...regionTopLevels);
+                            const delta = top - bottom;
+                            elevation.bottom = bottom + delta;
+                            elevation.top = (top + delta) * 0.9;
+                        } else if (script.includes("CONFIG.Levels.handlers.RegionHandler.stairUp")) {
+                            levelsToAdd.push(...regionBottomLevels, ...regionTopLevels);
+                            elevation.top = top * 0.9;
+                        } else if (script.includes("CONFIG.Levels.handlers.RegionHandler.elevator")) {
+                            const elevatorBottoms = script.match(/(-?\d+)(?=,)/g).map(x => parseFloat(x));
+                            const elevatorLevels = document.parent.levels.filter(x => elevatorBottoms.includes(x.elevation.bottom));
+                            levelsToAdd.push(...elevatorLevels);
+                        } else {
+                            continue;
+                        }
+                        await behavior.delete();
+                    };
+                    if (levelsToAdd.length) {
+                        await document.update({
+                            behaviors: [{ type: "changeLevel" }],
+                            elevation,
+                        });
+                    }
+                    const includedLevels = levelsWithContent.filter(x => Number.between(document.elevation.bottom, x.bottom, x.top) || Number.between(document.elevation.top, x.bottom, x.top)).map(x => x.id);
                     documentsToUpdate[document.documentName].push({
                         _id: document.id,
-                        levels: includedLevels
+                        levels: levelsToAdd.length ? levelsToAdd : includedLevels
                     });
                     continue;
                 }
@@ -210,36 +262,51 @@ export class LevelsMigration {
                     } else if (showIfAbove && showAboveRange) {
                         const elevation = document.elevation;
                         const minElevation = elevation - showAboveRange;
-                        update.levels = levelsToCreate.filter(x => x.top >= minElevation).map(x => x.id);
+                        update.levels = levelsWithContent.filter(x => x.top > minElevation).map(x => x.id);
                     } else if (!Number.isFinite(rangeTop)) {
-                        update.levels = level.allLevels;
+                        const elevation = document.elevation;
+                        const showAboveRangeBg = elevation - bgElevation;
+                        if (showAboveRangeBg < 0) {
+                            update.levels = level.allLevels;
+                        } else {
+                            const minElevation = elevation - showAboveRangeBg;
+                            update.levels = levelsWithContent.filter(x => x.top > minElevation).map(x => x.id);
+                        }
                     } else {
-                        update.levels = level.belowLevels;
+                        update.levels = level.aboveLevels;
                     }
+                    update.flags = { "-=levels": null };
                     documentsToUpdate[document.documentName].push(update);
+                    continue;
+                }
+                if (document.documentName === "Token") {
+                    documentsToUpdate[document.documentName].push({
+                        _id: document.id,
+                        level: level.id,
+                    });
                     continue;
                 }
                 documentsToUpdate[document.documentName].push({
                     _id: document.id,
-                    levels: includedWallDocuments.includes(document.documentName) ? level.includedLevels : level.belowLevels,
+                    flags: { "-=levels": null },
+                    levels: includedWallDocuments.includes(document.documentName) ? level.includedLevels : level.aboveLevels,
                 });
             }
         }
-        const allLevels = levelsToCreate.map(x => x.id);
+        const allLevels = levelsWithContent.map(x => x.id);
         for (const orphan of orphanedDocuments) {
             documentsToUpdate[orphan.documentName] ??= [];
             documentsToUpdate[orphan.documentName].push({
                 _id: orphan.id,
+                flags: { "-=levels": null },
                 levels: allLevels
             });
         }
         for (const [documentName, updates] of Object.entries(documentsToUpdate)) {
             await scene.updateEmbeddedDocuments(documentName, updates);
         }
-        await scene.update({
-            name: "Updated",
-        })
-        await firstLevel.delete();
+        if (firstLevel) await firstLevel.delete();
+        await scene.setFlag("levels", "sceneLevelsMigration", true);
         const msg = "Levels Module - Migrated scene to Core Foundry Levels";
         ui.notifications.success(msg);
         console.log(msg);
@@ -319,7 +386,7 @@ export class LevelsMigration {
             <h2 id="current-module-features">Current Module Features</h2>
             <ul>
             <li><strong>Block Sight and Movement:</strong> The tile option has been ported to V14 and will continue to work on existing Levels tiles. Core Scene Levels does not use tiles for this purpose; you will need to use <strong>Regions</strong> and the <strong>Define Surface</strong> behavior instead.</li>
-            <li><strong>Region Scripts:</strong> To save you from re-doing all your stair regions, their functionality has been kept and they will now change the token level instead of its elevation.</li>
+            <li><strong>Region Scripts:</strong> To save you from re-doing all your stair regions, their functionality has been migrated to the <strong>Change Level</strong> region behavior.</li>
             <li><strong>Migration:</strong> You can re-run the scene migration utility at any time via the <strong>"Migrate on Startup"</strong> module setting.</li>
             </ul>
             <h2 id="wall-height">Wall Height</h2>
