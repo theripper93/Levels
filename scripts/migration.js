@@ -148,20 +148,34 @@ export class LevelsMigration {
         const minRange = scene.grid.distance * 1.5;
         for (const level of Object.values(inferredLevels)) {
             const levelRange = level.top - level.bottom;
+            level.size = levelRange;
+            const existingLevel = existingLevels.find(x => Math.round(x.bottom) == Math.round(level.bottom) && Math.round(x.top) == Math.round(level.top));
+            level.originalName = existingLevel?.name;
             if (levelRange < minRange) {
                 levelsToMerge.push(level);
                 continue;
             }
-            const existingLevel = existingLevels.find(x => Math.round(x.bottom) == Math.round(level.bottom) && Math.round(x.top) == Math.round(level.top));
+            let isContained = false;
+            for (const maybeContainingLevel of Object.values(inferredLevels)) {
+                const maybeContainingRange = maybeContainingLevel.top - maybeContainingLevel.bottom;
+                const touches = level.bottom === maybeContainingLevel.bottom || level.top === maybeContainingLevel.top;
+                const isSmaller = levelRange > maybeContainingRange * 0.8 && levelRange < maybeContainingRange;
+                if (touches && isSmaller) {
+                    levelsToMerge.push(level);
+                    isContained = true;
+                }
+            }
+            if (isContained) continue;
             level.name = existingLevel?.name || `${scene.name} - Level (${level.bottom}|${level.top})`;
             levelsWithContent.push(level);
         }
         for (const level of levelsToMerge) {
-            const containingLevel = levelsWithContent.find(x => level.bottom >= x.bottom && level.top <= x.top);
+            const containingLevel = levelsWithContent.filter(x => level.bottom >= x.bottom && level.top <= x.top).sort((a, b) => a.size - b.size)?.[0];
             if (!containingLevel) {
                 levelsWithContent.push(level);
                 continue;
             }
+            if (level.originalName) containingLevel.name = level.originalName;
             containingLevel.documents.push(...level.documents);
         }
         levelsWithContent.sort((a, b) => a.bottom - b.bottom);
