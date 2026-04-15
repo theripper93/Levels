@@ -95,6 +95,7 @@ export class LevelsMigration {
             const collisions = tile.flags?.levels?.noCollision === false;
             if (collisions) {
                 tileToUpdate.push({
+                    _id: tile.id,
                     flags: {
                         levels: {
                             blockSightMovement: true,
@@ -135,6 +136,7 @@ export class LevelsMigration {
                     continue;
                 }
                 inferredLevels[`${bottom}${top}`] = {
+                    name: `${scene.name} - Level (${bottom}|${top})`,
                     bottom,
                     top,
                     documents: [document]
