@@ -81,6 +81,10 @@ export class LevelsMigration {
         if (!scene) scene = canvas.scene;
         const isLevelsScene = scene.flags.levels?.sceneLevels?.length || scene.walls.find(wall => wall.flags?.["wall-height"]?.top || wall.flags?.["wall-height"]?.bottom);
         if (!isLevelsScene) return;
+        const is3DScene = scene.flags["levels-3d-preview"]?.enablePlayers ||
+            scene.flags["levels-3d-preview"]?.auto3d ||
+            scene.flags["levels-3d-preview"]?.object3dSight;
+        if (is3DScene) return;
         if (scene.getFlag("levels", "sceneLevelsMigration") && !force) return;
 
         const firstLevel = scene.levels.get("defaultLevel0000");
@@ -381,23 +385,23 @@ export class LevelsMigration {
     showManualMigrationDialog() {
         const msg = `
         <div class="scrollable" style="width: 900px; max-width: 80vw; max-height: 70vh;">
-            <h1 id="levels">Levels</h1>
-            <p>Thank you for using the Levels Module for the past 5 years. Its functionality has been implemented into core Foundry VTT as the <strong>Scene Levels</strong> feature, and the module is now being retired. The current version will attempt to migrate your scenes automatically, though some manual adjustments may be needed as the two implementations do not match 1:1.</p>
-            <h2 id="current-module-features">Current Module Features</h2>
+            <h3>Thank you for using the Levels Module</h3>
+            <p>After 5 years, its functionality has been implemented into core Foundry VTT as the <strong>Scene Levels</strong> feature, and the module is now being retired. The current version will attempt to migrate your scenes automatically, though some manual adjustments may be needed as the two implementations do not match 1:1.</p>
             <ul>
             <li><strong>Block Sight and Movement:</strong> The tile option has been ported to V14 and will continue to work on existing Levels tiles. Core Scene Levels does not use tiles for this purpose; you will need to use <strong>Regions</strong> and the <strong>Define Surface</strong> behavior instead.</li>
-            <li><strong>Region Scripts:</strong> To save you from re-doing all your stair regions, their functionality has been migrated to the <strong>Change Level</strong> region behavior.</li>
             <li><strong>Migration:</strong> You can re-run the scene migration utility at any time via the <strong>"Migrate on Startup"</strong> module setting.</li>
             </ul>
-            <h2 id="wall-height">Wall Height</h2>
-            <p>Wall Height has also been retired. In V14, walls can be assigned to levels that define their top and bottom elevation rather than setting it individually per wall. The behavior is similar but not a 1:1 replacement.</p>
-            <h2 id="support">Support</h2>
-            <p>For help with Scene Levels, please refer to the Foundry VTT Discord, as it is now vanilla Foundry VTT functionality.</p>
-            <p>The features listed above will be supported through V14, but should be considered unsupported as of V15. You should migrate your tiles to regions with the <strong>Define Surface</strong> behavior and your stair regions to the new <strong>Change Level</strong> behavior for any scenes you plan to keep using.</p>
-            <h2 id="going-forward">Going Forward</h2>
-            <p>It has been a pleasure to pioneer this feature so many years ahead of its time, with all the challenges of building it on top of a system that did not natively support it. I hope it served as inspiration to the Foundry team.</p>
+            <p class="notification warning">Make sure to backup your world before proceeding with the migration.</p>
+            <h3>A 3D World - now free for everyone!</h3>
             <p>If you enjoyed this early tech, it is time to take a look at <strong>3D Canvas</strong>, the true evolution of vertical combat! To celebrate Levels' retirement, 3D Canvas is now free for everyone. Check out the video below and <a href="https://foundryvtt.com/packages/levels-3d-preview">download the module</a>.</p>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/oOAusysEiXw?si=k0WEx27iRdhi7Qne" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+            <h3 id="wall-height">Wall Height</h3>
+            <p>Wall Height has also been retired. In V14, walls can be assigned to levels that define their top and bottom elevation rather than setting it individually per wall. The behavior is similar but not a 1:1 replacement.</p>
+            <h3 id="support">Support</h3>
+            <p>For help with Scene Levels, please refer to the Foundry VTT Discord, as it is now vanilla Foundry VTT functionality.</p>
+            <p>The features listed above will be supported through V14, but should be considered unsupported as of V15. You should migrate your tiles to regions with the <strong>Define Surface</strong> behavior and your stair regions to the new <strong>Change Level</strong> behavior for any scenes you plan to keep using.</p>
+            <h3 id="going-forward">Going Forward</h3>
+            <p>It has been a pleasure to pioneer this feature so many years ahead of its time, with all the challenges of building it on top of a system that did not natively support it. I hope it served as inspiration to the Foundry team.</p>
         </div>
         `;
         new foundry.applications.api.DialogV2({

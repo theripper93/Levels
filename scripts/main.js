@@ -20,7 +20,7 @@ Hooks.once("init", () => {
         }
     };
 
-    libWrapper.register(MODULE_ID, "Scene.prototype.testSurfaceCollision", sceneTestSurfaceCollision, "MIXED");
+    window.libWrapper?.register(MODULE_ID, "Scene.prototype.testSurfaceCollision", sceneTestSurfaceCollision, "MIXED");
 
     const renderTileConfig = (app, html, data) => {
         if (!game.user.isGM || html.querySelector("input[name='flags.patrol.blockSightMovement']")) return;
