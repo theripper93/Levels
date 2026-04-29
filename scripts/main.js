@@ -14,9 +14,7 @@ Hooks.once("init", () => {
             RegionHandler,
         },
         helpers: {
-            migration: {
-                showManualMigrationDialog: API.migration.showManualMigrationDialog.bind(API.migration),
-            }
+            migration: API.migration,
         }
     };
 
@@ -44,6 +42,7 @@ Hooks.once("init", () => {
     }
 
     Hooks.on("renderTileConfig", renderTileConfig);
+    Hooks.on("getSceneContextOptions", API.migration.levelMergeContextOptions);
 
     game.settings.register(MODULE_ID, "migrateOnStartupDialog", {
         name: game.i18n.localize(`${MODULE_ID}.settings.migrateOnStartupDialog.name`),
@@ -53,6 +52,15 @@ Hooks.once("init", () => {
         type: Boolean,
         default: true,
         requiresReload: true,
+    });
+
+    game.settings.register(MODULE_ID, "fastForwardMigration", {
+        name: game.i18n.localize(`${MODULE_ID}.settings.fastForwardMigration.name`),
+        hint: game.i18n.localize(`${MODULE_ID}.settings.fastForwardMigration.hint`),
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false,
     });
 });
 

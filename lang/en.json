@@ -86,6 +86,10 @@
             "migrateOnStartupDialog": {
                 "name": "Open 'Migrate settings Dialog' on startup",
                 "hint": "If enabled, the module will open a dialog to migrate the data from the V13 data structure to the V14 one on startup. You can use the macro 'CONFIG.Levels.helpers.migration.showManualMigrationDialog()' to manually migrate your settings."
+            },
+            "fastForwardMigration": {
+                "name": "Fast Forward Migration",
+                "hint": "If enabled, skip all dialogs during migration and use default migration behavior."
             }
         },
         "tileconfig": {

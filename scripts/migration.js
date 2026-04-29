@@ -110,22 +110,33 @@ export class LevelsMigration {
         await this.migrateDrawingsToRegions(scene);
         
         const existingLevels = scene.flags.levels?.sceneLevels?.map(level => {
+            const bottom = Number.isFinite(parseFloat(level[0])) ? parseFloat(level[0]) : 0;
+            const top = Number.isFinite(parseFloat(level[1])) ? parseFloat(level[1]) : bottom + scene.dimensions.distance * 2;
             return {
-                bottom: parseFloat(level[0]),
-                top: parseFloat(level[1]),
+                bottom: bottom,
+                top: top,
                 name: level[2],
             }
         }) ?? [];
+
+        const fastForwardMigration = game.settings.get("levels", "fastForwardMigration");
         
         const inferredLevels = {};
         const orphanedDocuments = [];
 
+        const transformedLevelsKeys = {};
         for (const [collectionName, collection] of Object.entries(collections)) {
             const documents = collection.contents;
             for (const document of documents) {
                 if (document instanceof Level) continue;
                 if (document instanceof Tile && !document.flags?.levels) continue;
-                const { bottom, top } = this.getDocumentLevel(document);
+                let { bottom, top } = this.getDocumentLevel(document);
+                if (transformedLevelsKeys[`${bottom}${top}`]) {
+                    const key = `${bottom}${top}`;
+                    bottom = transformedLevelsKeys[key].bottom;
+                    top = transformedLevelsKeys[key].top;
+                    document.overriddenElevation = document.elevation > top ? top : bottom;
+                }
                 if (!Number.isFinite(top) || !Number.isFinite(bottom)) {
                     orphanedDocuments.push(document);
                     continue;
@@ -135,12 +146,54 @@ export class LevelsMigration {
                     inferredLevels[key].documents.push(document);
                     continue;
                 }
-                inferredLevels[`${bottom}${top}`] = {
-                    name: `${scene.name} - Level (${bottom}|${top})`,
-                    bottom,
-                    top,
-                    documents: [document]
-                };
+                const isContained = existingLevels.find(x => x.bottom <= bottom && x.top >= top);
+                if (existingLevels.length && !isContained && !fastForwardMigration) {
+                    let skipScene = false;
+                    let msg = `
+                        Found ${document.documentName} with level ${bottom}|${top} in scene ${scene.name}.
+                        This placeable has no matching level. Choose how you want to proceed.
+                        <code-mirror language="javascript">// Macro to manually migrate ${scene.name}\nCONFIG.Levels.helpers.migration.migrateData(await fromUuid("${scene.uuid}"));</code-mirror>
+                    `;
+                    await foundry.applications.api.DialogV2.wait({
+                        window: { title: "Levels - Migration" },
+                        content: msg,
+                        buttons: [
+                            {
+                                label: "Skip scene",
+                                action: "skipScene",
+                                callback: () => skipScene = true,
+                            },
+                            {
+                                label: "Generate level from document top and bottom",
+                                action: "generateTopBottom",
+                                callback: () => {},
+                            },
+                            ...existingLevels.map((level, index) => {
+                                return {
+                                    label: `Add to ${level.name} (${level.bottom}|${level.top})`,
+                                    action: `addToLevel${index}`,
+                                    callback: () => {
+                                        transformedLevelsKeys[`${bottom}${top}`] = { top: level.top, bottom: level.bottom };
+                                        document.overriddenElevation = document.elevation > level.top ? level.top : level.bottom;
+                                        bottom = level.bottom;
+                                        top = level.top;
+                                    },
+                                }
+                            }),
+                        ],
+                    });
+                    if (skipScene) return;
+                }
+                if (`${bottom}${top}` in inferredLevels) {
+                    inferredLevels[`${bottom}${top}`].documents.push(document);
+                } else {
+                    inferredLevels[`${bottom}${top}`] = {
+                        name: `${scene.name} - Level (${bottom}|${top})`,
+                        bottom,
+                        top,
+                        documents: [document]
+                    };
+                }
             }
         }
         const levelsWithContent = [];
@@ -277,14 +330,13 @@ export class LevelsMigration {
                 if (document.documentName === "Tile" && document.flags.levels) {
                     const { rangeTop, showIfAbove, showAboveRange, isBasement } = document.flags.levels || {};
                     const update = { _id: document.id, levels: [] };
+                    const elevation = document.overriddenElevation ?? document.elevation;
                     if (isBasement) {
                         update.levels = level.includedLevels;
                     } else if (showIfAbove && showAboveRange) {
-                        const elevation = document.elevation;
                         const minElevation = elevation - showAboveRange;
                         update.levels = levelsWithContent.filter(x => x.top > minElevation).map(x => x.id);
                     } else if (!Number.isFinite(rangeTop)) {
-                        const elevation = document.elevation;
                         const showAboveRangeBg = elevation - bgElevation;
                         if (showAboveRangeBg < 0) {
                             update.levels = level.allLevels;
@@ -451,5 +503,66 @@ export class LevelsMigration {
                 },
             ],
         }).render({ force: true });
+    }
+
+    levelMergeContextOptions(app, options) {
+        options.push({
+            label: "Merge Into Level",
+            icon: "fa-solid fa-code-merge",
+            visible: (li) => li.dataset.levelId && game.user.isGM,
+            onClick: (event, li) => {
+                const scene = game.scenes.get(li.dataset.sceneId) ?? game.scenes.active;
+                const level = scene?.levels.get(li.dataset.levelId);
+                LevelsMigration.mergeLevelDialog(scene, level);
+            }
+        });
+    }
+
+    // Show Dialog with options to select another level to merge into
+    static async mergeLevelDialog(scene, level) {
+        const levels = scene.levels.contents.filter(x => x !== level);
+        const data = await foundry.applications.api.DialogV2.input({
+            window: { title: `Levels - Merge Level ${level.name} (${level.elevation.bottom}|${level.elevation.top})` },
+            content: `
+                <p>You're about to merge all content from <strong>${level.name}</strong> into the selected level and delete it.<br><strong>This operation cannot be undone.</strong><br>Please backup your scene before proceeding.</p>
+                <select name="level">
+                    <option value="">Select a level to merge into</option>
+                    ${levels.map(x => `<option value="${x.id}">${x.name} (${x.elevation.bottom}|${x.elevation.top})</option>`).join("\n")}
+                </select>
+            `,
+        });
+        if (!data?.level) return;
+        LevelsMigration.mergeLevel(scene, level, scene.levels.get(data.level));
+    }
+
+    static async mergeLevel(scene, level, targetLevel) {
+        const updates = {};
+        for (const [collectionName, collection] of Object.entries(scene.collections)) {
+            const documents = collection.contents;
+            for (const document of documents) {
+                if (document.level === level.id) {
+                    updates[document.documentName] ??= [];
+                    updates[document.documentName].push({
+                        _id: document.id,
+                        level: targetLevel.id,
+                    });
+                    continue;
+                }
+                if (!document.levels) continue;
+                if (!document.levels.has(level.id)) continue;
+                updates[document.documentName] ??= [];
+                updates[document.documentName].push({
+                    _id: document.id,
+                    levels: [...Array.from(document.levels), targetLevel.id],
+                });
+            }
+        }
+        const movedThings = [];
+        for (const [documentName, documentUpdates] of Object.entries(updates)) {
+            movedThings.push(`${documentUpdates.length} ${documentName}`);
+            await scene.updateEmbeddedDocuments(documentName, documentUpdates);
+        }
+        await scene.deleteEmbeddedDocuments("Level", [level.id]);
+        ui.notifications.notify(`Levels - Merged level ${level.name} into ${targetLevel.name}. Moved ${movedThings.join(", ")}.`);
     }
 }
