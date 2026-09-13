@@ -25,3 +25,5 @@ Hello! It seems you haven't read the [**Before Posting an issue**](https://theri
 **The Issue has been closed.**
 
 If you are reporting a bug, feel free to follow the steps here (https://theripper93.com/info/issues) and reopen the issue with all the relevant information.
+
+If you are submitting a translation, translations are now centralized in a single repository [**Here**](https://github.com/theripper93/ripper-mod-localizations)
